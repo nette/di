@@ -43,7 +43,7 @@ class ServiceLocator extends Object implements IServiceLocator
 	private $registry = array();
 
 	/** @var bool */
-	private $autoDiscovery = TRUE;
+	private $autoDiscovery;
 
 
 
@@ -53,6 +53,7 @@ class ServiceLocator extends Object implements IServiceLocator
 	public function __construct(IServiceLocator $parent = NULL)
 	{
 		$this->parent = $parent;
+		$this->autoDiscovery = $parent === NULL;
 	}
 
 
@@ -75,16 +76,16 @@ class ServiceLocator extends Object implements IServiceLocator
 
 		} elseif (is_callable($service, TRUE)) {
 			if (empty($name)) {
-				throw new /*::*/InvalidArgumentException('Missing service name.');
+				throw new /*::*/InvalidArgumentException('Service seems to be callback, but service name is missing.');
 			}
 
 		} else {
-			throw new /*::*/InvalidArgumentException('Service must be class/interface name, object or factory callback.');
+			throw new /*::*/InvalidArgumentException('Service must be name, object or factory callback.');
 		}
 
 		$lower = strtolower($name);
 		if (isset($this->registry[$lower]) && is_object($this->registry[$lower])) {
-			throw new AmbiguousServiceException("Ambiguous service '$name'.");
+			throw new AmbiguousServiceException("Service named '$name' has been already set.");
 		}
 		$this->registry[$lower] = $service;
 
@@ -100,13 +101,14 @@ class ServiceLocator extends Object implements IServiceLocator
 	 * @param  bool   promote to higher level?
 	 * @return void
 	 */
-	public function removeService($name, $promote = FALSE)
+	public function removeService($name, $promote = TRUE)
 	{
 		if (!is_string($name) || $name === '') {
 			throw new /*::*/InvalidArgumentException('Service name must be a non-empty string.');
 		}
 
-		// not implemented yet
+		$lower = strtolower($name);
+		unset($this->registry[$lower]);
 
 		if ($promote && $this->parent !== NULL) {
 			$this->parent->removeService($name, TRUE);
@@ -118,9 +120,10 @@ class ServiceLocator extends Object implements IServiceLocator
 	/**
 	 * Gets the service object of the specified type.
 	 * @param  string service name
-	 * @return void
+	 * @param  bool
+	 * @return mixed
 	 */
-	public function getService($name)
+	public function getService($name, $need = TRUE)
 	{
 		if (!is_string($name) || $name === '') {
 			throw new /*::*/InvalidArgumentException('Service name must be a non-empty string.');
@@ -132,9 +135,8 @@ class ServiceLocator extends Object implements IServiceLocator
 			$service = $this->registry[$lower];
 			if (is_object($service)) {
 				return $service;
-			}
 
-			if (is_string($service)) {
+			} elseif (is_string($service)) {
 				if (substr($service, -2) === '()') {
 					// trick to pass callback as string
 					$service = substr($service, 0, -2);
@@ -144,7 +146,7 @@ class ServiceLocator extends Object implements IServiceLocator
 					if ($a = strrpos($service, ':')) $service = substr($service, $a + 1);/**/
 
 					if (!class_exists($service)) {
-						throw new AmbiguousServiceException("Class '$service' not found.");
+						throw new AmbiguousServiceException("Cannot instantiate service, class '$service' not found.");
 					}
 					return $this->registry[$lower] = new $service;
 				}
@@ -159,18 +161,23 @@ class ServiceLocator extends Object implements IServiceLocator
 			if (class_exists($name)) {
 				return $this->registry[$lower] = new $name;
 			}
-
-		} elseif ($this->parent !== NULL) {
-			return $this->parent->getService($name);
 		}
 
-		return NULL;
+		if ($this->parent !== NULL) {
+			return $this->parent->getService($name);
+
+		} elseif ($need) {
+			throw new /*::*/InvalidStateException("Service '$name' not found.");
+
+		} else {
+			return NULL;
+		}
 	}
 
 
 
 	/**
-	 * Returns the container if any.
+	 * Returns the parent container if any.
 	 * @return IServiceLocator|NULL
 	 */
 	public function getParent()
