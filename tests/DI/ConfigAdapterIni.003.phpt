@@ -1,38 +1,46 @@
-<h1>Nette\Config\Config & ConfigAdapterIni test #2</h1>
-
-<pre>
 <?php
-require_once '../../Nette/loader.php';
+
+/**
+ * Test: Nette\Config\ConfigAdapterIni section.
+ *
+ * @author     David Grudl
+ * @category   Nette
+ * @package    Nette\Config
+ * @subpackage UnitTests
+ */
 
 /*use Nette\Config\Config;*/
-/*use Nette\Debug;*/
-
-Debug::$maxDepth = NULL;
 
 
-echo "Load INI\n";
+
+require dirname(__FILE__) . '/../NetteTest/initialize.php';
+
+
+
+output("Load INI");
 $config = Config::fromFile('config2.ini');
-Debug::dump($config);
+dump( $config );
 
-echo "Save INI\n";
+output("Save INI");
 $config->save('tmp/cfg.ini');
 readfile('tmp/cfg.ini');
-echo "\n";
 
 
-echo "Save section to INI\n";
+output("Save section to INI");
 $config->save('tmp/cfg.ini', 'mysection');
 readfile('tmp/cfg.ini');
-echo "\n";
 
 
-echo "Load section from INI\n";
+output("Load section from INI");
 $config = Config::fromFile('config2.ini', 'development', NULL);
-Debug::dump($config);
+dump( $config );
 
-echo "Save INI\n";
+output("Save INI");
 $config->display_errors = true;
 $config->html_errors = false;
 $config->save('tmp/cfg.ini', 'mysection');
 readfile('tmp/cfg.ini');
-echo "\n";
+
+
+
+__halt_compiler();
