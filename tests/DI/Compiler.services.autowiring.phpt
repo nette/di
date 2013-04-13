@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler and autowiring.
+ * Test: Nette\DI\Compiler and autowiring.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -47,8 +47,8 @@ class Lorem
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $code = $compiler->compile($loader->load('files/compiler.services.autowiring.neon'), 'Container', 'Nette\DI\Container');
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");

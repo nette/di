@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler: services setup.
+ * Test: Nette\DI\Compiler: services setup.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -55,8 +55,8 @@ function test($arg)
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $code = $compiler->compile($loader->load('files/compiler.services.setup.neon'), 'Container', 'Nette\DI\Container');
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");

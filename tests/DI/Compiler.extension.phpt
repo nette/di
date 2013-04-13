@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler and user extension.
+ * Test: Nette\DI\Compiler and user extension.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 
-class DatabaseExtension extends Nette\Config\CompilerExtension
+class DatabaseExtension extends Nette\DI\CompilerExtension
 {
 
 	public function loadConfiguration()
@@ -39,8 +39,8 @@ class DatabaseExtension extends Nette\Config\CompilerExtension
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $extension = new DatabaseExtension;
 $compiler->addExtension('database', $extension);
 $code = $compiler->compile($loader->load('files/compiler.extension.neon'), 'Container', 'Nette\DI\Container');

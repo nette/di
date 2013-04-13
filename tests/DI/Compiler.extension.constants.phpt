@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler: constants in config.
+ * Test: Nette\DI\Compiler: constants in config.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -31,9 +31,9 @@ define('MY_CONSTANT_TEST', "one");
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
-$compiler->addExtension('constants', new Nette\Config\Extensions\ConstantsExtension);
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
+$compiler->addExtension('constants', new Nette\DI\Extensions\ConstantsExtension);
 $code = $compiler->compile($loader->load('files/compiler.extension.constants.neon'), 'Container', 'Nette\DI\Container');
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");

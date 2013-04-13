@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler: generated services accessors.
+ * Test: Nette\DI\Compiler: generated services accessors.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -29,8 +29,8 @@ interface ILoremAccessor
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $code = $compiler->compile($loader->load('files/compiler.generatedAccessor.neon'), 'Container', 'Nette\DI\Container');
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");

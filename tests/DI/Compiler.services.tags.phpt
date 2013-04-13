@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler: services tags.
+ * Test: Nette\DI\Compiler: services tags.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -15,9 +15,10 @@ require __DIR__ . '/../bootstrap.php';
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $code = $compiler->compile($loader->load('files/compiler.services.tags.neon'), 'Container', 'Nette\DI\Container');
+$code = str_replace('protected $meta', 'public $meta', $code);
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
 require TEMP_DIR . '/code.php';

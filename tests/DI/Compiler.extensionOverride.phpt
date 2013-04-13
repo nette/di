@@ -4,10 +4,10 @@
  * Test: Overriding class of service definition defined in CompilerExtension.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -50,7 +50,7 @@ class Ipsum
 }
 
 
-class FooExtension extends Nette\Config\CompilerExtension
+class FooExtension extends Nette\DI\CompilerExtension
 {
 
 	public function loadConfiguration()
@@ -116,8 +116,8 @@ class FooExtension extends Nette\Config\CompilerExtension
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $extension = new FooExtension;
 $compiler->addExtension('database', $extension);
 $code = $compiler->compile($loader->load('files/compiler.extensionOverride.neon'), 'Container', 'Nette\DI\Container');

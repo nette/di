@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Test: Nette\Config\Compiler: nonshared services factories.
+ * Test: Nette\DI\Compiler: nonshared services factories.
  *
  * @author     David Grudl
- * @package    Nette\Config
+ * @package    Nette\DI
  */
 
-use Nette\Config;
+use Nette\DI;
 
 
 
@@ -26,8 +26,8 @@ class Lorem
 
 
 
-$loader = new Config\Loader;
-$compiler = new Config\Compiler;
+$loader = new DI\Config\Loader;
+$compiler = new DI\Compiler;
 $code = $compiler->compile($loader->load('files/compiler.services.nonshared.neon'), 'Container', 'Nette\DI\Container');
 
 file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
