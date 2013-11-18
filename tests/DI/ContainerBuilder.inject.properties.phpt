@@ -30,6 +30,7 @@ class Test2 extends Test1
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('test')
+	->setInject(TRUE)
 	->setClass('Test2')
 	->addSetup('$varX', array(123));
 
