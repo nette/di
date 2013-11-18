@@ -41,6 +41,7 @@ class Lorem
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('lorem')
+	->setInject(TRUE)
 	->setClass('Lorem')
 	->addSetup('inject', array(123));
 
