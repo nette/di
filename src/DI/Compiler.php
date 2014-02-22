@@ -35,6 +35,12 @@ class Compiler extends Nette\Object
 	private static $reserved = array('services' => 1, 'factories' => 1, 'parameters' => 1);
 
 
+	public function __construct(ContainerBuilder $builder = NULL)
+	{
+		$this->builder = $builder ?: new ContainerBuilder;
+	}
+
+
 	/**
 	 * Add custom configurator extension.
 	 * @return self
@@ -85,7 +91,6 @@ class Compiler extends Nette\Object
 	public function compile(array $config, $className, $parentName)
 	{
 		$this->config = $config;
-		$this->builder = new ContainerBuilder;
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
