@@ -127,11 +127,19 @@ class ContainerBuilder extends Nette\Object
 		if (!isset($this->classes[$lower])) {
 			return;
 
-		} elseif (count($this->classes[$lower]) === 1) {
-			return $this->classes[$lower][0];
+		}
+		
+		$classes = array_filter($this->classes[$lower], function($item) { return $item[1]; });
+		if (count($classes) === 0) {
+			return;
+			
+		} elseif (count($classes) === 1) {
+			$service = end($classes);
+			return $service[0];
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower]));
+			$names = array_map(function($item) { return $item[0]; }, $classes);
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $names));
 		}
 	}
 
@@ -279,9 +287,9 @@ class ContainerBuilder extends Nette\Object
 		$this->classes = array();
 		foreach ($this->definitions as $name => $def) {
 			$class = $def->implement ?: $def->class;
-			if ($def->autowired && $class) {
+			if ($class) {
 				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-					$this->classes[strtolower($parent)][] = (string) $name;
+					$this->classes[strtolower($parent)][] = array((string) $name, $def->autowired);
 				}
 			}
 		}
