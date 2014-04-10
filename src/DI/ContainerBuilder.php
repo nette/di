@@ -123,16 +123,28 @@ class ContainerBuilder extends Nette\Object
 			return $this->currentService;
 		}
 
-		$lower = ltrim(strtolower($class), '\\');
-		if (!isset($this->classes[$lower])) {
+		$names = $this->findByType($class);
+		if (!$names) {
 			return;
 
-		} elseif (count($this->classes[$lower]) === 1) {
-			return $this->classes[$lower][0];
+		} elseif (count($names) > 1) {
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $names));
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower]));
+			return $names[0];
 		}
+	}
+	
+	
+	/**
+	 * Gets the service names of the specified type.
+	 * @param string
+	 * @return string[]
+	 */
+	public function findByType($class)
+	{
+		$lower = ltrim(strtolower($class), '\\');
+		return isset($this->classes[$lower]) ? $this->classes[$lower] : array();
 	}
 
 
