@@ -33,6 +33,13 @@ $builder->addDefinition('three')
 // compile-time
 $builder->prepareClassList();
 
+Assert::same( array('one'), $builder->findByType('service') );
+Assert::same( array('one'), $builder->findByType('service', FALSE) );
+Assert::same( array('two'), $builder->findByType('service2') );
+Assert::same( array('two', 'three'), $builder->findByType('service2', FALSE) );
+Assert::same( array(), $builder->findByType('unknown') );
+Assert::same( array(), $builder->findByType('unknown', FALSE) );
+
 Assert::same( 'one', $builder->getByType('service') );
 Assert::null( $builder->getByType('unknown') );
 Assert::exception(function() use ($builder) {
