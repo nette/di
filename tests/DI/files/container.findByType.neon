@@ -1,0 +1,7 @@
+services:
+	lorem:
+		class: Lorem
+		autowired: no
+
+	dolor:
+		class: Lorem

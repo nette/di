@@ -308,10 +308,7 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		foreach ($this->classes as $class => $foo) {
-			$autowired = (bool) count(array_filter($foo, function($item) { return $item[1]; }));
-			if ($autowired) {
-				$this->addDependency(Reflection\ClassType::from($class)->getFileName());
-			}
+			$this->addDependency(Reflection\ClassType::from($class)->getFileName());
 		}
 	}
 
@@ -419,16 +416,9 @@ class ContainerBuilder extends Nette\Object
 		$definitions = $this->definitions;
 		ksort($definitions);
 
-		$classes = array();
-		foreach ($this->classes as $class => $foo) {
-			$foo = array_map(function($item) { return $item[0]; }, array_values(array_filter($foo, function($item) { return $item[1]; })));
-			if (count($foo)) {
-				$classes[$class] = $foo;
-			}
-		}
 		$meta = $containerClass->addProperty('meta', array())
 			->setVisibility('protected')
-			->setValue(array(Container::TYPES => $classes));
+			->setValue(array(Container::TYPES => $this->classes));
 
 		foreach ($definitions as $name => $def) {
 			foreach ($def->tags as $tag => $value) {
