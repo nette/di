@@ -141,10 +141,19 @@ class ContainerBuilder extends Nette\Object
 	 * @param string
 	 * @return string[]
 	 */
-	public function findByType($class)
+	public function findByType($class, $autowired = TRUE)
 	{
 		$lower = ltrim(strtolower($class), '\\');
-		return isset($this->classes[$lower]) ? $this->classes[$lower] : array();
+		if (!isset($this->classes[$lower])) {
+			return array();
+		}
+		
+		$classes = $this->classes[$lower];
+		if ($autowired) {
+			$classes = array_values(array_filter($classes, function($item) { return $item[1]; }));
+		}
+		
+		return array_map(function($item) { return $item[0]; }, $classes);
 	}
 
 
@@ -291,15 +300,18 @@ class ContainerBuilder extends Nette\Object
 		$this->classes = array();
 		foreach ($this->definitions as $name => $def) {
 			$class = $def->implement ?: $def->class;
-			if ($def->autowired && $class) {
+			if ($class) {
 				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-					$this->classes[strtolower($parent)][] = (string) $name;
+					$this->classes[strtolower($parent)][] = array((string) $name, $def->autowired);
 				}
 			}
 		}
 
 		foreach ($this->classes as $class => $foo) {
-			$this->addDependency(Reflection\ClassType::from($class)->getFileName());
+			$autowired = (bool) count(array_filter($foo, function($item) { return $item[1]; }));
+			if ($autowired) {
+				$this->addDependency(Reflection\ClassType::from($class)->getFileName());
+			}
 		}
 	}
 
@@ -407,9 +419,16 @@ class ContainerBuilder extends Nette\Object
 		$definitions = $this->definitions;
 		ksort($definitions);
 
+		$classes = array();
+		foreach ($this->classes as $class => $foo) {
+			$foo = array_map(function($item) { return $item[0]; }, array_values(array_filter($foo, function($item) { return $item[1]; })));
+			if (count($foo)) {
+				$classes[$class] = $foo;
+			}
+		}
 		$meta = $containerClass->addProperty('meta', array())
 			->setVisibility('protected')
-			->setValue(array(Container::TYPES => $this->classes));
+			->setValue(array(Container::TYPES => $classes));
 
 		foreach ($definitions as $name => $def) {
 			foreach ($def->tags as $tag => $value) {
