@@ -1,6 +1,9 @@
 Nette Dependency Injection
 ==========================
 
+[![Downloads this Month](https://img.shields.io/packagist/dm/nette/di.svg)](https://packagist.org/packages/nette/di)
+[![Build Status](https://travis-ci.org/nette/di.svg?branch=master)](https://travis-ci.org/nette/di)
+
 Purpose of the Dependecy Injection (DI) is to free classes from the responsibility for obtaining objects that they need for its operation (these objects are called **services**). To pass them these services on their instantiation instead.
 
 Class `Nette\DI\Container` is a flexible implementation of the universal DI container. It ensures automatically, that instance of services are created only once.
@@ -72,7 +75,3 @@ $article = $container->createArticle();
 ```
 
 From the call of `$container->createArticle()` is evident, that a new object is always created. It is then a programmer's convention.
-
------
-
-[![Build Status](https://secure.travis-ci.org/nette/di.png?branch=master)](http://travis-ci.org/nette/di)
