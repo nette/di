@@ -26,9 +26,9 @@ $container = new Container;
 
 Assert::same(array(
 	'types' => array(
-		'stdclass' => array('lorem'),
-		'nette\\object' => array('container'),
-		'nette\\di\\container' => array('container'),
+		'stdclass' => array(array('lorem', TRUE)),
+		'nette\\object' => array(array('container', TRUE)),
+		'nette\\di\\container' => array(array('container', TRUE)),
 	),
 	'tags' => array(
 		'a' => array('lorem' => TRUE),
