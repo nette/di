@@ -12,17 +12,12 @@ services:
 		implement: IArticleFactory
 		parameters: [title]
 
-	foo:
-		create: Foo(..., %baz%)
-		implement: IFooFactory
-		parameters: [Baz baz]
-
-	fooFactory:
-		create: Foo(..., %baz%)
-		implement: IFooFactory
-		parameters: [Baz baz]
-
 	article2:
 		implement: IArticleFactory
 		arguments: [%title%]
 		parameters: [title]
+
+	fooFactory1:
+		create: Foo(..., %baz%)
+		implement: IFooFactory
+		parameters: [Baz baz = NULL]

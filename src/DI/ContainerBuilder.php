@@ -314,6 +314,7 @@ class ContainerBuilder extends Nette\Object
 	}
 
 
+	/** @return string|NULL */
 	private function resolveServiceClass($name, $recursive = array())
 	{
 		if (isset($recursive[$name])) {
@@ -333,6 +334,7 @@ class ContainerBuilder extends Nette\Object
 	}
 
 
+	/** @return string|NULL */
 	private function resolveEntityClass($entity, $recursive = array())
 	{
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->entity : $entity);

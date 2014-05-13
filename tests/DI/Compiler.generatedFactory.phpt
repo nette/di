@@ -71,7 +71,7 @@ class Foo
 	public $bar;
 	public $baz;
 
-	public function __construct(Bar $bar, Baz $baz)
+	public function __construct(Bar $bar, Baz $baz = NULL)
 	{
 		$this->bar = $bar;
 		$this->baz = $baz;
@@ -94,7 +94,7 @@ interface IFooFactory
 	 * @param Baz
 	 * @return Foo
 	 */
-	public function create(Baz $baz);
+	public function create(Baz $baz = NULL);
 }
 
 class TestExtension extends DI\CompilerExtension
@@ -102,11 +102,11 @@ class TestExtension extends DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
-		$builder->addDefinition('fooFactory')
+		$builder->addDefinition('fooFactory2')
 			->setFactory('Foo')
-			->setParameters(array('Baz baz'))
+			->setParameters(array('Baz baz' => NULL))
 			->setImplement('IFooFactory')
-			->setArguments(array($builder::literal('$baz')));
+			->setArguments(array(1 => $builder::literal('$baz')));
 
 		// see definition by config in Compiler::parseService()
 	}
@@ -123,6 +123,7 @@ Assert::type( 'Lorem', $lorem );
 Assert::type( 'Ipsum', $lorem->ipsum );
 Assert::same( $container->getService('ipsum'), $lorem->ipsum );
 
+Assert::type( 'ILoremFactory', $container->getByType('ILoremFactory') );
 
 Assert::type( 'IFinderFactory', $container->getService('finder') );
 $finder = $container->getService('finder')->create();
@@ -135,15 +136,32 @@ Assert::type( 'Article', $article );
 Assert::same( 'nemam', $article->title );
 
 
-Assert::type( 'IFooFactory', $container->getService('foo') );
-$foo = $container->getService('foo')->create($container->getService('baz'));
+Assert::type( 'IFooFactory', $container->getService('fooFactory1') );
+$foo = $container->getService('fooFactory1')->create($container->getService('baz'));
 Assert::type( 'Foo', $foo );
 Assert::type( 'Bar', $foo->bar );
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::type( 'Baz', $foo->baz );
 Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory1')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
 
-Assert::type( 'ILoremFactory', $container->getByType('ILoremFactory') );
+
+Assert::type( 'IFooFactory', $container->getService('fooFactory2') );
+$foo = $container->getService('fooFactory2')->create($container->getService('baz'));
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::type( 'Baz', $foo->baz );
+Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory2')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
 
 
 Assert::type('IArticleFactory', $container->getService('article2'));
