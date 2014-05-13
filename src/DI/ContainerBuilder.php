@@ -280,8 +280,25 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		if (!$def->parameters) {
+			if ($def->factory && !$def->factory->arguments) {
+				$factory = $def->factory->entity;
+				if (is_string($factory) && preg_match('#^[\w\\\\]+\z#', $factory) && $factory !== self::THIS_SERVICE &&
+					class_exists($factory) && $constructor = Reflection\ClassType::from($factory)->getConstructor()
+				) {
+					foreach ($constructor->getParameters() as $param) {
+						$constructorParams[$param->getName()] = $param;
+					}
+				}
+			}
 			foreach ($method->getParameters() as $param) {
 				$paramDef = ($param->isArray() ? 'array' : $param->getClassName()) . ' ' . $param->getName();
+				if (isset($constructorParams[$param->getName()])) {
+					$arg = $constructorParams[$param->getName()];
+					if ($param->getClassName() !== $arg->getClassName()) {
+						throw new ServiceCreationException("Argument '$arg' type hint doesn't match '" . $param->getClassName() . "' type hint.");
+					}
+					$def->factory->arguments[$arg->getPosition()] = ContainerBuilder::literal('$' . $arg->getName());
+				}
 				if ($param->isOptional()) {
 					$def->parameters[$paramDef] = $param->getDefaultValue();
 				} else {
