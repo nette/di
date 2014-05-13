@@ -21,3 +21,7 @@ services:
 		create: Foo(..., %baz%)
 		implement: IFooFactory
 		parameters: [Baz baz = NULL]
+
+	fooFactory3:
+		create: Foo
+		implement: IFooFactory

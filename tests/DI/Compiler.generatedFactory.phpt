@@ -168,3 +168,36 @@ Assert::type('IArticleFactory', $container->getService('article2'));
 $article = $container->getService('article2')->create('nemam');
 Assert::type('Article', $article);
 Assert::same('nemam', $article->title);
+
+
+Assert::type( 'IFooFactory', $container->getService('fooFactory3') );
+$foo = $container->getService('fooFactory3')->create($container->getService('baz'));
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::type( 'Baz', $foo->baz );
+Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory3')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
+
+
+class Bad1
+{
+	public function __construct(Bar $bar)
+	{
+	}
+}
+
+interface Bad2
+{
+	public function create(Baz $bar);
+}
+
+Assert::exception(function() {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
+	$builder->generateClasses();
+}, 'Nette\InvalidStateException', "Type hint for \$bar in Bad1::__construct() doesn't match type hint for \$bar in Bad2::create()");

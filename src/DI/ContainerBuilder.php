@@ -302,7 +302,23 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		if (!$def->parameters) {
+			$ctorParams = array();
+			if ($def->factory && !$def->factory->arguments && ($class = $this->resolveEntityClass($def->factory, array($name => 1)))
+				&& ($ctor = Reflection\ClassType::from($class)->getConstructor())
+			) {
+				foreach ($ctor->getParameters() as $param) {
+					$ctorParams[$param->getName()] = $param;
+				}
+			}
+
 			foreach ($method->getParameters() as $param) {
+				if (isset($ctorParams[$param->getName()])) {
+					$arg = $ctorParams[$param->getName()];
+					if ($param->getClassName() !== $arg->getClassName() || $param->isArray() !== $arg->isArray()) {
+						throw new ServiceCreationException("Type hint for $arg doesn't match type hint for $param");
+					}
+					$def->factory->arguments[$arg->getPosition()] = ContainerBuilder::literal('$' . $arg->getName());
+				}
 				$paramDef = ($param->isArray() ? 'array' : $param->getClassName()) . ' ' . $param->getName();
 				if ($param->isOptional()) {
 					$def->parameters[$paramDef] = $param->getDefaultValue();
