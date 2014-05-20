@@ -74,7 +74,11 @@ test(function(){
 test(function(){
 	$def = new ServiceDefinition;
 	$def->addSetup('Class', array(1, 2));
+	$def->addSetup(new Statement('Class', array(1, 2)));
+	$def->addSetup(new Statement('Class', array(1, 2)), array(99)); // 99 is ignored
 	Assert::equal( array(
+		new Statement('Class', array(1, 2)),
+		new Statement('Class', array(1, 2)),
 		new Statement('Class', array(1, 2)),
 	), $def->getSetup() );
 });

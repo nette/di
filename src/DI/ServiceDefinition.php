@@ -92,7 +92,7 @@ class ServiceDefinition extends Nette\Object
 
 	public function addSetup($target, array $args = array())
 	{
-		$this->setup[] = new Statement($target, $args);
+		$this->setup[] = $target instanceof Statement ? $target : new Statement($target, $args);
 		return $this;
 	}
 
