@@ -256,10 +256,12 @@ class Compiler extends Nette\Object
 			throw new Nette\InvalidStateException(sprintf("Unknown or deprecated key '%s' in definition of service.", implode("', '", $error)));
 		}
 
+		$config = self::filterArguments($config);
+
 		$arguments = array();
 		if (array_key_exists('arguments', $config)) {
 			Validators::assertField($config, 'arguments', 'array');
-			$arguments = self::filterArguments($config['arguments']);
+			$arguments = $config['arguments'];
 			$definition->setArguments($arguments);
 		}
 
@@ -269,21 +271,16 @@ class Compiler extends Nette\Object
 		}
 
 		if (array_key_exists('class', $config)) {
-			Validators::assertField($config, 'class', 'string|stdClass|null');
-			if ($config['class'] instanceof \stdClass) {
-				$definition->setClass($config['class']->value, self::filterArguments($config['class']->attributes));
-			} else {
-				$definition->setClass($config['class'], $arguments);
+			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
+			if (!$config['class'] instanceof Statement) {
+				$definition->setClass($config['class']);
 			}
+			$definition->setFactory($config['class'], $arguments);
 		}
 
 		if (array_key_exists('create', $config)) {
-			Validators::assertField($config, 'create', 'callable|stdClass|null');
-			if ($config['create'] instanceof \stdClass) {
-				$definition->setFactory($config['create']->value, self::filterArguments($config['create']->attributes));
-			} else {
-				$definition->setFactory($config['create'], $arguments);
-			}
+			Validators::assertField($config, 'create', 'callable|Nette\DI\Statement|null');
+			$definition->setFactory($config['create'], $arguments);
 		}
 
 		if (isset($config['setup'])) {
@@ -292,13 +289,8 @@ class Compiler extends Nette\Object
 			}
 			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
-				Validators::assert($setup, 'callable|stdClass', "setup item #$id");
-				if ($setup instanceof \stdClass) {
-					Validators::assert($setup->value, 'callable', "setup item #$id");
-					$definition->addSetup($setup->value, self::filterArguments($setup->attributes));
-				} else {
-					$definition->addSetup($setup);
-				}
+				Validators::assert($setup, 'callable|Nette\DI\Statement', "setup item #$id");
+				$definition->addSetup($setup);
 			}
 		}
 
