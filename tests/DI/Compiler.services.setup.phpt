@@ -13,16 +13,6 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-class Factory
-{
-	static function createLorem($arg)
-	{
-		Notes::add(__METHOD__ . ' ' . $arg);
-		return new Lorem;
-	}
-}
-
-
 class Lorem
 {
 	function test($arg)
@@ -38,7 +28,12 @@ class Ipsum
 
 	public $test;
 
-	static function test($arg)
+	function test($arg = NULL)
+	{
+		Notes::add(__METHOD__ . ' ' . $arg);
+	}
+
+	static function staticTest($arg = NULL)
 	{
 		Notes::add(__METHOD__ . ' ' . $arg);
 	}
@@ -67,11 +62,10 @@ Assert::same(array(
 Assert::type( 'Lorem', $container->getService('lorem') );
 
 Assert::same(array(
-	'Factory::createLorem 1',
 	'Lorem::test 2',
 	'Lorem::test 3',
 	'Lorem::test 4',
-	'Ipsum::test 5',
+	'Ipsum::staticTest 5',
 	'Ipsum::test 6',
 	'globtest 7',
 ), Notes::fetch());
