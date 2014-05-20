@@ -19,6 +19,11 @@ class Factory
 	{
 		return new Lorem(__METHOD__ . ' ' . $arg);
 	}
+
+	static function getClass()
+	{
+		return 'Factory::createLorem';
+	}
 }
 
 
@@ -27,6 +32,12 @@ class Lorem
 	function __construct($arg = NULL)
 	{
 		$this->arg = $arg;
+	}
+
+	function foo()
+	{
+		$this->foo = func_get_args();
+		return $this;
 	}
 
 }
@@ -98,3 +109,21 @@ Assert::notSame( $container->getService('one'), $container->getService('calledSe
 Assert::type( 'Ipsum', $container->getService('calledServiceWithArgsAsParam') );
 Assert::type( 'Ipsum', $container->getService('calledServiceWithArgsAsParam')->arg );
 Assert::notSame( $container->getService('one'), $container->getService('calledServiceWithArgsAsParam')->arg );
+
+
+Assert::type( 'Lorem', $container->getService('rich1') );
+Assert::same( 1, $container->getService('rich1')->arg );
+Assert::same( array(), $container->getService('rich1')->foo );
+
+Assert::type( 'Lorem', $container->getService('rich2') );
+Assert::type( 'Ipsum', $container->getService('rich2')->arg );
+Assert::same( $container->getService('one'), $container->getService('rich2')->arg->arg );
+Assert::same( array(1), $container->getService('rich2')->foo );
+
+Assert::type( 'Lorem', $container->getService('rich3') );
+Assert::same( 'Factory::createLorem 1', $container->getService('rich3')->arg );
+Assert::same( array(), $container->getService('rich3')->foo );
+
+Assert::type( 'Lorem', $container->getService('rich4') );
+Assert::same( 'Factory::createLorem 1', $container->getService('rich4')->arg );
+Assert::same( array(), $container->getService('rich4')->foo );

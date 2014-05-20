@@ -28,9 +28,14 @@ class Ipsum
 
 	public $test;
 
+	function __construct($arg = NULL)
+	{
+		$this->arg = $arg;
+	}
+
 	function test($arg = NULL)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg);
+		Notes::add(__METHOD__ . ' ' . $arg . ' ' . $this->arg);
 	}
 
 	static function staticTest($arg = NULL)
@@ -66,8 +71,10 @@ Assert::same(array(
 	'Lorem::test 3',
 	'Lorem::test 4',
 	'Ipsum::staticTest 5',
-	'Ipsum::test 6',
+	'Ipsum::test 6 ',
 	'globtest 7',
+	'Ipsum::test  a',
+	'Ipsum::test 10 b',
 ), Notes::fetch());
 
 Assert::same( 8, $container->getService('lorem')->test );

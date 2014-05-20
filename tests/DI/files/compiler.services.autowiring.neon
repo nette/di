@@ -1,6 +1,6 @@
 services:
 	model:
-		create: Factory::createModel
+		create: Factory()::createModel
 		setup:
 			# local methods
 			- test(...)

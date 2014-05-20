@@ -41,5 +41,17 @@ services:
 
 	stdClass: stdClass
 
-
 	factory: Lorem
+
+	rich1: Lorem(1)::foo
+
+	rich2:
+		create: Lorem(Ipsum(@one))::foo(1)
+
+	rich3: Factory::createLorem(1)::foo
+
+	rich4: Factory()::createLorem(1)::foo
+
+	rich5: Factory()(1)
+
+	rich6: Factory::getClass(1)(1)

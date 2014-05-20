@@ -242,7 +242,7 @@ class Compiler extends Nette\Object
 		} elseif ($config instanceof \stdClass && is_string($config->value) && interface_exists($config->value)) {
 			$config = array('class' => NULL, 'implement' => $config->value, 'factory' => array_shift($config->attributes));
 
-		} elseif (!is_array($config)) {
+		} elseif (!is_array($config) || isset($config[0], $config[1])) {
 			$config = array('class' => NULL, 'create' => $config);
 		}
 

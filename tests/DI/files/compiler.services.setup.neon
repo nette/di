@@ -31,5 +31,9 @@ services:
 			# other service property
 			- @ipsum::$%property%(Lorem())
 
+			# rich
+			- Ipsum(a)::test
+			- Ipsum(b)::test(10)
+
 	ipsum:
 		class: Ipsum

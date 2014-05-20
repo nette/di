@@ -273,7 +273,7 @@ class ContainerBuilder extends Nette\Object
 
 		// complete classes
 		foreach ($this->definitions as $name => $def) {
-			$this->resolveClass($name);
+			$this->resolveServiceClass($name);
 
 			if (!$def->class) {
 				continue;
@@ -301,7 +301,7 @@ class ContainerBuilder extends Nette\Object
 	}
 
 
-	private function resolveClass($name, $recursive = array())
+	private function resolveServiceClass($name, $recursive = array())
 	{
 		if (isset($recursive[$name])) {
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
@@ -309,46 +309,48 @@ class ContainerBuilder extends Nette\Object
 		$recursive[$name] = TRUE;
 
 		$def = $this->definitions[$name];
-		$factory = $def->factory->entity;
+		if (!$def->class) {
+			$def->class = $this->resolveEntityClass($def->factory->entity, $recursive);
+		}
+		return $def->class;
+	}
 
-		if ($def->class) {
-			return $def->class;
 
-		} elseif (is_array($factory)) { // method calling
-			if ($service = $this->getServiceName($factory[0])) {
-				if (Strings::contains($service, '\\')) { // @\Class
-					$factory[0] = $service;
-				} else {
-					$factory[0] = $this->resolveClass($service, $recursive);
-					if (!$factory[0]) {
-						return;
-					}
-					if ($this->definitions[$service]->implement && $factory[1] === 'create') {
-						return $def->class = $factory[0];
-					}
-				}
+	private function resolveEntityClass($entity, $recursive = array())
+	{
+		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->entity : $entity);
+
+		if (is_array($entity)) {
+			if (($service = $this->getServiceName($entity[0])) && !empty($this->definitions[$service]->implement)) { // @Implement::create
+				return $entity[1] === 'create' ? $this->resolveServiceClass($service, $recursive) : NULL;
 			}
-			if (!is_callable($factory)) {
-				throw new ServiceCreationException(sprintf("Factory '%s' is not callable.", Nette\Utils\Callback::toString($factory)));
+
+			$entity[0] = $this->resolveEntityClass($entity[0], $recursive);
+			if (!$entity[0]) {
+				return;
+			} elseif (!is_callable($entity)) {
+				throw new ServiceCreationException(sprintf("Factory '%s' is not callable.", Nette\Utils\Callback::toString($entity)));
 			}
+
 			try {
-				$reflection = Nette\Utils\Callback::toReflection($factory);
+				$reflection = Nette\Utils\Callback::toReflection($entity);
 			} catch (\ReflectionException $e) {
-				throw new ServiceCreationException(sprintf("Missing factory '%s'.", Nette\Utils\Callback::toString($factory)));
+				throw new ServiceCreationException(sprintf("Missing factory '%s'.", Nette\Utils\Callback::toString($entity)));
 			}
-			$def->class = preg_replace('#[|\s].*#', '', $reflection->getAnnotation('return'));
-			if ($def->class && $reflection instanceof \ReflectionMethod) {
-				$def->class = Reflection\AnnotationsParser::expandClassName($def->class, $reflection->getDeclaringClass());
+			$class = preg_replace('#[|\s].*#', '', $reflection->getAnnotation('return'));
+			if ($class && $reflection instanceof \ReflectionMethod) {
+				$class = Reflection\AnnotationsParser::expandClassName($class, $reflection->getDeclaringClass());
 			}
+			return $class;
 
-		} elseif ($service = $this->getServiceName($factory)) { // alias or factory
+		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
 			if (Strings::contains($service, '\\')) { // @\Class
-				return $def->class = $service;
+				return $service;
 			}
-			return $def->class = $this->definitions[$service]->implement ?: $this->resolveClass($service, $recursive);
+			return $this->definitions[$service]->implement ?: $this->resolveServiceClass($service, $recursive);
 
-		} else {
-			return $def->class = $factory; // class name
+		} elseif (is_string($entity)) {
+			return $entity;
 		}
 	}
 
@@ -545,6 +547,9 @@ class ContainerBuilder extends Nette\Object
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments);
 
+		} elseif ($entity instanceof Statement) {
+			return $this->formatPhp("call_user_func_array(?, ?)", array($entity, $arguments));
+
 		} elseif ($service = $this->getServiceName($entity)) { // factory calling
 			$params = array();
 			foreach ($this->definitions[$service]->parameters as $k => $v) {
@@ -571,6 +576,9 @@ class ContainerBuilder extends Nette\Object
 
 		} elseif ($entity[0] === '') { // globalFunc
 			return $this->formatPhp("$entity[1](?*)", array($arguments));
+
+		} elseif ($entity[0] instanceof Statement) {
+			return $this->formatPhp("call_user_func_array(?, ?)", array($entity, $arguments));
 
 		} elseif (Strings::contains($entity[1], '$')) { // property setter
 			Validators::assert($arguments, 'list:1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
@@ -675,7 +683,7 @@ class ContainerBuilder extends Nette\Object
 		} elseif (is_array($entity) && $entity[0] === $this) { // [$this, ...] -> [@container, ...]
 			$entity[0] = '@' . ContainerBuilder::THIS_CONTAINER;
 		}
-		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc]
+		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc], Statement
 	}
 
 
