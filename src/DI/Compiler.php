@@ -239,7 +239,7 @@ class Compiler extends Nette\Object
 		} elseif (is_string($config) && interface_exists($config)) {
 			$config = array('class' => NULL, 'implement' => $config);
 
-		} elseif ($config instanceof \stdClass && interface_exists($config->value)) {
+		} elseif ($config instanceof \stdClass && is_string($config->value) && interface_exists($config->value)) {
 			$config = array('class' => NULL, 'implement' => $config->value, 'factory' => array_shift($config->attributes));
 
 		} elseif (!is_array($config)) {
@@ -355,7 +355,8 @@ class Compiler extends Nette\Object
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof \stdClass && isset($v->value, $v->attributes)) {
-				$args[$k] = new Statement($v->value, self::filterArguments($v->attributes));
+				$tmp = self::filterArguments(array($v->value));
+				$args[$k] = new Statement($tmp[0], self::filterArguments($v->attributes));
 			}
 		}
 		return $args;

@@ -57,8 +57,21 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 
 			if (is_array($val)) {
 				$val = $this->process($val);
+
 			} elseif ($val instanceof Neon\Entity) {
-				$val = (object) array('value' => $val->value, 'attributes' => $this->process($val->attributes));
+				if ($val->value === Neon\Neon::CHAIN) {
+					$tmp = NULL;
+					foreach ($this->process($val->attributes) as $val) {
+						$tmp = (object) array(
+							'value' => $tmp === NULL ? $val->value : array($tmp, ltrim($val->value, ':')),
+							'attributes' => $val->attributes
+						);
+					}
+					$val = $tmp;
+				} else {
+					$tmp = $this->process(array($val->value));
+					$val = (object) array('value' => $tmp[0], 'attributes' => $this->process($val->attributes));
+				}
 			}
 			$res[$key] = $val;
 		}

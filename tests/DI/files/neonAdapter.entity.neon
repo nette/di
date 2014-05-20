@@ -1,0 +1,3 @@
+- ent(1)
+- ent(2)inner(3, 4)
+- ent(3)::inner(5)

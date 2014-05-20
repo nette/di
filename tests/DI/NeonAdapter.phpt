@@ -122,3 +122,32 @@ development < production:
 nothing: null
 EOD
 , file_get_contents(TEMP_FILE) );
+
+
+$data = $config->load('files/neonAdapter.entity.neon');
+Assert::equal( array(
+	(object) array(
+		'value' => 'ent',
+		'attributes' => array(1),
+	),
+	(object) array(
+		'value' => array(
+			(object) array(
+				'value' => 'ent',
+				'attributes' => array(2),
+			),
+			'inner',
+		),
+		'attributes' => array(3, 4),
+	),
+	(object) array(
+		'value' => array(
+			(object) array(
+				'value' => 'ent',
+				'attributes' => array(3),
+			),
+			'inner',
+		),
+		'attributes' => array(5),
+	),
+), $data );
