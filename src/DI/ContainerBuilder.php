@@ -184,61 +184,13 @@ class ContainerBuilder extends Nette\Object
 	{
 		$this->classes = FALSE;
 
-		// prepare generated factories
 		foreach ($this->definitions as $name => $def) {
-			if (!$def->implement) {
-				continue;
+			// prepare generated factories
+			if ($def->implement) {
+				$this->resolveImplement($def, $name);
 			}
 
-			if (!interface_exists($def->implement)) {
-				throw new ServiceCreationException("Interface $def->implement used in service '$name' has not been found.");
-			}
-			$rc = Reflection\ClassType::from($def->implement);
-			$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
-			if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
-				throw new ServiceCreationException("Interface $def->implement used in service '$name' must have just one non-static method create() or get().");
-			}
-			$def->implement = $rc->getName();
-			$def->implementType = $rc->hasMethod('create') ? 'create' : 'get';
-
-			if (!$def->class && empty($def->factory->entity)) {
-				$returnType = $method->getAnnotation('return');
-				if (!$returnType) {
-					throw new ServiceCreationException("Method $method used in service '$name' has not @return annotation.");
-				}
-
-				$returnType = Reflection\AnnotationsParser::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
-				if (!class_exists($returnType)) {
-					throw new ServiceCreationException("Please check a @return annotation of the $method method used in service '$name'. Class '$returnType' cannot be found.");
-				}
-				$def->setClass($returnType);
-			}
-
-			if ($method->getName() === 'get') {
-				if ($method->getParameters()) {
-					throw new ServiceCreationException("Method $method used in service '$name' must have no arguments.");
-				}
-				if (empty($def->factory->entity)) {
-					$def->setFactory('@\\' . ltrim($def->class, '\\'));
-				} elseif (!$this->getServiceName($def->factory->entity)) {
-					throw new ServiceCreationException("Invalid factory in service '$name' definition.");
-				}
-			}
-
-			if (!$def->parameters) {
-				foreach ($method->getParameters() as $param) {
-					$paramDef = ($param->isArray() ? 'array' : $param->getClassName()) . ' ' . $param->getName();
-					if ($param->isOptional()) {
-						$def->parameters[$paramDef] = $param->getDefaultValue();
-					} else {
-						$def->parameters[] = $paramDef;
-					}
-				}
-			}
-		}
-
-		// complete class-factory pairs
-		foreach ($this->definitions as $name => $def) {
+			// complete class-factory pairs
 			if (!$def->factory || !$def->factory->entity) {
 				if (!$def->class) {
 					throw new ServiceCreationException("Class and factory are missing in service '$name' definition.");
@@ -249,10 +201,8 @@ class ContainerBuilder extends Nette\Object
 					$def->factory = new Statement($def->class);
 				}
 			}
-		}
 
-		// auto-disable autowiring for aliases
-		foreach ($this->definitions as $def) {
+			// auto-disable autowiring for aliases
 			if (($alias = $this->getServiceName($def->factory->entity)) &&
 				(!$def->implement || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->implement))
 			) {
@@ -278,6 +228,56 @@ class ContainerBuilder extends Nette\Object
 
 		foreach ($this->classes as $class => $foo) {
 			$this->addDependency(Reflection\ClassType::from($class)->getFileName());
+		}
+	}
+
+
+	private function resolveImplement(ServiceDefinition $def, $name)
+	{
+		if (!interface_exists($def->implement)) {
+			throw new ServiceCreationException("Interface $def->implement used in service '$name' has not been found.");
+		}
+		$rc = Reflection\ClassType::from($def->implement);
+		$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
+		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
+			throw new ServiceCreationException("Interface $def->implement used in service '$name' must have just one non-static method create() or get().");
+		}
+		$def->implement = $rc->getName();
+		$def->implementType = $rc->hasMethod('create') ? 'create' : 'get';
+
+		if (!$def->class && empty($def->factory->entity)) {
+			$returnType = $method->getAnnotation('return');
+			if (!$returnType) {
+				throw new ServiceCreationException("Method $method used in service '$name' has not @return annotation.");
+			}
+
+			$returnType = Reflection\AnnotationsParser::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
+			if (!class_exists($returnType)) {
+				throw new ServiceCreationException("Please check a @return annotation of the $method method used in service '$name'. Class '$returnType' cannot be found.");
+			}
+			$def->setClass($returnType);
+		}
+
+		if ($method->getName() === 'get') {
+			if ($method->getParameters()) {
+				throw new ServiceCreationException("Method $method used in service '$name' must have no arguments.");
+			}
+			if (empty($def->factory->entity)) {
+				$def->setFactory('@\\' . ltrim($def->class, '\\'));
+			} elseif (!$this->getServiceName($def->factory->entity)) {
+				throw new ServiceCreationException("Invalid factory in service '$name' definition.");
+			}
+		}
+
+		if (!$def->parameters) {
+			foreach ($method->getParameters() as $param) {
+				$paramDef = ($param->isArray() ? 'array' : $param->getClassName()) . ' ' . $param->getName();
+				if ($param->isOptional()) {
+					$def->parameters[$paramDef] = $param->getDefaultValue();
+				} else {
+					$def->parameters[] = $paramDef;
+				}
+			}
 		}
 	}
 
