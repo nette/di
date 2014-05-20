@@ -262,6 +262,15 @@ class ContainerBuilder extends Nette\Object
 			}
 		}
 
+		// auto-disable autowiring for aliases
+		foreach ($this->definitions as $def) {
+			if (($alias = $this->getServiceName($def->factory->entity)) &&
+				(!$def->implement || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->implement))
+			) {
+				$def->autowired = FALSE;
+			}
+		}
+
 		// complete classes
 		foreach ($this->definitions as $name => $def) {
 			$this->resolveClass($name);
@@ -333,14 +342,8 @@ class ContainerBuilder extends Nette\Object
 			}
 
 		} elseif ($service = $this->getServiceName($factory)) { // alias or factory
-			if (!$def->implement) {
-				$def->autowired = FALSE;
-			}
 			if (Strings::contains($service, '\\')) { // @\Class
 				return $def->class = $service;
-			}
-			if ($this->definitions[$service]->implement) {
-				$def->autowired = FALSE;
 			}
 			return $def->class = $this->definitions[$service]->implement ?: $this->resolveClass($service, $recursive);
 
