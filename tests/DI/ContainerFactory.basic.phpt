@@ -2,8 +2,6 @@
 
 /**
  * Test: Nette\DI\ContainerFactory basic usage.
- *
- * @author     David Grudl
  */
 
 use Nette\DI,

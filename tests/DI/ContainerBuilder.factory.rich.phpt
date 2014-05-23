@@ -2,8 +2,6 @@
 
 /**
  * Test: Nette\DI\ContainerBuilder and rich syntax.
- *
- * @author     David Grudl
  */
 
 use Nette\DI,

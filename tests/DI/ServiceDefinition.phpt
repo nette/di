@@ -2,8 +2,6 @@
 
 /**
  * Test: ServiceDefinition
- *
- * @author     David Grudl
  */
 
 use Nette\DI\ServiceDefinition,
