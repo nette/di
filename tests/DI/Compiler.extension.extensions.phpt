@@ -20,15 +20,9 @@ class FooExtension extends DI\CompilerExtension
 }
 
 
-$loader = new DI\Config\Loader;
 $compiler = new DI\Compiler;
 $compiler->addExtension('extensions', new Nette\DI\Extensions\ExtensionsExtension);
-$code = $compiler->compile($loader->load('files/compiler.extension.extensions.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer($compiler, 'files/compiler.extension.extensions.neon');
 
 
 Assert::same( 'hello', $container->parameters['foo'] );

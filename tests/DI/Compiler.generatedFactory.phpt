@@ -112,15 +112,9 @@ class TestExtension extends DI\CompilerExtension
 	}
 }
 
-$loader = new DI\Config\Loader;
 $compiler = new DI\Compiler;
 $compiler->addExtension('test', new TestExtension);
-$code = $compiler->compile($loader->load('files/compiler.generatedFactory.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer($compiler, 'files/compiler.generatedFactory.neon');
 
 
 Assert::type( 'ILoremFactory', $container->getService('lorem') );

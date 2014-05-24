@@ -11,16 +11,12 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-$loader = new DI\Config\Loader;
 $compiler = new DI\Compiler;
-$code = $compiler->compile($loader->load('files/compiler.services.tags.neon'), 'Container', 'Nette\DI\Container');
-$code = str_replace('protected $meta', 'public $meta', $code);
+$container = createContainer($compiler, 'files/compiler.services.tags.neon');
 
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
-
+$prop = $container->getReflection()->getProperty('meta');
+$prop->setAccessible(TRUE);
 
 Assert::same(array(
 	'types' => array(
@@ -33,7 +29,7 @@ Assert::same(array(
 		'b' => array('lorem' => 'c'),
 		'd' => array('lorem' => array('e')),
 	),
-), $container->meta );
+), $prop->getValue($container) );
 
 Assert::same( array('lorem' => TRUE), $container->findByTag('a') );
 Assert::same( array(), $container->findByTag('x') );

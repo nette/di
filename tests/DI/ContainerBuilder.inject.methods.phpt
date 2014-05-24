@@ -46,11 +46,7 @@ $builder->addDefinition('lorem')
 $builder->addDefinition('ipsum')
 	->setClass('Ipsum');
 
-// run-time
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
+$container = createContainer($builder);
 
 Assert::same( array('Lorem::injectOptional', 'Lorem::inject 123', 'Lorem::injectIpsum'), $container->getService('lorem')->injects );

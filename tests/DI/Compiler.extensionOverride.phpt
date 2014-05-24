@@ -109,16 +109,10 @@ class FooExtension extends Nette\DI\CompilerExtension
 }
 
 
-$loader = new DI\Config\Loader;
 $compiler = new DI\Compiler;
 $extension = new FooExtension;
 $compiler->addExtension('database', $extension);
-$code = $compiler->compile($loader->load('files/compiler.extensionOverride.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer($compiler, 'files/compiler.extensionOverride.neon');
 
 
 Assert::type( 'Ipsum', $container->getService('one1') );

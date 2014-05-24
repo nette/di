@@ -11,15 +11,9 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-$loader = new DI\Config\Loader;
 $compiler = new DI\Compiler;
 $compiler->addExtension('constants', new Nette\DI\Extensions\ConstantsExtension);
-$code = $compiler->compile($loader->load('files/compiler.extension.constants.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer($compiler, 'files/compiler.extension.constants.neon');
 $container->initialize();
 
 Assert::same( "hello", a );

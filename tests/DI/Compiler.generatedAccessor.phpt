@@ -22,14 +22,7 @@ interface ILoremAccessor
 }
 
 
-$loader = new DI\Config\Loader;
-$compiler = new DI\Compiler;
-$code = $compiler->compile($loader->load('files/compiler.generatedAccessor.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer(new DI\Compiler, 'files/compiler.generatedAccessor.neon');
 
 
 Assert::type( 'Lorem', $container->getService('lorem') );

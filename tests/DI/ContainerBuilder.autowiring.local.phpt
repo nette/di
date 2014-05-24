@@ -51,12 +51,7 @@ $builder->addDefinition('m2')
 	->setAutowired(FALSE);
 
 
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
-
+$container = createContainer($builder);
 
 $foo = $container->getService('foo');
 Assert::type( 'Foo', $foo );
