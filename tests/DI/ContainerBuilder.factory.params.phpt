@@ -40,12 +40,8 @@ $builder->addDefinition('five')
 	->setFactory('@two::create', array(1 => array(1)))
 	->setAutowired(FALSE);
 
-// run-time
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
+$container = createContainer($builder);
 
 Assert::type( 'StdClassFactory', $container->getService('one') );
 Assert::type( 'StdClassFactory', $container->getService('two') );

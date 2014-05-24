@@ -58,12 +58,8 @@ $builder->addDefinition('seven')
 	->addSetup(array($six, 'methodA'))
 	->addSetup('$service->methodA(?)', array('a'));
 
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
-
+$container = createContainer($builder);
 
 Assert::type( 'Service', $container->getService('one') );
 Assert::false( $container->hasService('One') );

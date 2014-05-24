@@ -59,11 +59,8 @@ $builder->addDefinition('four')
 	->setAutowired(FALSE)
 	->setFactory('@\AnnotatedFactory::create');
 
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
+$container = createContainer($builder);
 
 $factory = $container->getService('factory');
 Assert::type( 'Factory', $factory );

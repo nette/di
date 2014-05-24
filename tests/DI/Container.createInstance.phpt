@@ -33,12 +33,7 @@ $builder->addDefinition('one')
 	->setClass('stdClass');
 
 
-// run-time
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer($builder);
 
 $test = $container->createInstance('Test');
 Assert::type( 'Test', $test );

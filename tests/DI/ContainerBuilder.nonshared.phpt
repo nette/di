@@ -31,12 +31,8 @@ $two = $builder->addDefinition('two')
 $builder->addDefinition('three')
 	->setFactory($two, array('hello'));
 
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-
-$container = new Container;
+$container = createContainer($builder);
 
 Assert::type( 'Service', $container->getService('one') );
 Assert::true( $container->hasService('two') );

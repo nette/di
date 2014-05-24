@@ -39,14 +39,7 @@ class Lorem
 define('MY_CONSTANT_TEST', "one");
 
 
-$loader = new DI\Config\Loader;
-$compiler = new DI\Compiler;
-$code = $compiler->compile($loader->load('files/compiler.arguments.neon'), 'Container', 'Nette\DI\Container');
-
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
+$container = createContainer(new DI\Compiler, 'files/compiler.arguments.neon');
 $container->parameters = array('something');
 
 
@@ -74,4 +67,4 @@ Assert::same( array(FALSE), $lorem->args[4] );
 Assert::same( array($lorem->var, $lorem->var, $container->parameters), $lorem->args[5] );
 
 // service constant
-Assert::same( array(Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, Container::TAGS), $lorem->args[6] );
+Assert::same( array(Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS), $lorem->args[6] );

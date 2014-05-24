@@ -59,12 +59,7 @@ $builder->addDefinition('service')
 	->setClass('Service');
 
 
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
-
-$container = new Container;
-
+$container = createContainer($builder);
 
 Assert::type( 'Service', $container->getService('service') );
 Assert::type( 'Service', $container->getService('aliasedService') );

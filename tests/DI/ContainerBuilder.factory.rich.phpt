@@ -44,12 +44,8 @@ $one = $builder->addDefinition('one')
 $two = $builder->addDefinition('two')
 	->setFactory(array(new DI\Statement(array($one, 'foo'), array(1)), 'foo'), array(2));
 
-// run-time
-$code = implode('', $builder->generateClasses());
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n$code");
-require TEMP_DIR . '/code.php';
 
-$container = new Container;
+$container = createContainer($builder);
 
 Assert::same( 'Obj', $one->class );
 Assert::type( 'Obj', $container->getService('one') );
