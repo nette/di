@@ -306,13 +306,13 @@ class ContainerBuilder extends Nette\Object
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->entity : $entity);
 
 		if (is_array($entity)) {
-			if (($service = $this->getServiceName($entity[0])) && !empty($this->definitions[$service]->implement)) { // @Implement::create
-				return $entity[1] === 'create' ? $this->resolveServiceClass($service, $recursive) : NULL;
-			}
-
-			$entity[0] = $this->resolveEntityClass($entity[0], $recursive);
-			if (!$entity[0]) {
-				return;
+			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
+				$entity[0] = $this->resolveEntityClass($entity[0], $recursive);
+				if (!$entity[0]) {
+					return;
+				} elseif (!empty($this->definitions[$service]->implement)) { // @Implement::create
+					return $entity[1] === 'create' ? $this->resolveServiceClass($service, $recursive) : NULL;
+				}
 			}
 
 			try {
