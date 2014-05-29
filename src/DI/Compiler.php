@@ -181,7 +181,7 @@ class Compiler extends Nette\Object
 		foreach ($all as $origName => $def) {
 			if ((string) (int) $origName === (string) $origName) {
 				$name = count($builder->getDefinitions())
-					. preg_replace('#\W+#', '_', $def instanceof \stdClass ? ".$def->value" : (is_scalar($def) ? ".$def" : ''));
+					. preg_replace('#\W+#', '_', $def instanceof Statement ? ".$def->entity" : (is_scalar($def) ? ".$def" : ''));
 			} elseif (array_key_exists($origName, $services) && array_key_exists($origName, $factories)) {
 				throw new ServiceCreationException("It is not allowed to use services and factories with the same name: '$origName'.");
 			} else {
@@ -239,8 +239,8 @@ class Compiler extends Nette\Object
 		} elseif (is_string($config) && interface_exists($config)) {
 			$config = array('class' => NULL, 'implement' => $config);
 
-		} elseif ($config instanceof \stdClass && is_string($config->value) && interface_exists($config->value)) {
-			$config = array('class' => NULL, 'implement' => $config->value, 'factory' => array_shift($config->attributes));
+		} elseif ($config instanceof Statement && is_string($config->entity) && interface_exists($config->entity)) {
+			$config = array('class' => NULL, 'implement' => $config->entity, 'factory' => array_shift($config->arguments));
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
 			$config = array('class' => NULL, 'create' => $config);
@@ -336,7 +336,7 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * Removes ... and replaces entities with Statement.
+	 * Removes ... recursively.
 	 * @return array
 	 */
 	public static function filterArguments(array $args)
@@ -346,9 +346,9 @@ class Compiler extends Nette\Object
 				unset($args[$k]);
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
-			} elseif ($v instanceof \stdClass && isset($v->value, $v->attributes)) {
-				$tmp = self::filterArguments(array($v->value));
-				$args[$k] = new Statement($tmp[0], self::filterArguments($v->attributes));
+			} elseif ($v instanceof Statement) {
+				$tmp = self::filterArguments(array($v->entity));
+				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
 			}
 		}
 		return $args;

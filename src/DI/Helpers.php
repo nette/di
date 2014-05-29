@@ -35,12 +35,8 @@ class Helpers
 			}
 			return $res;
 
-		} elseif ($var instanceof \stdClass || $var instanceof Statement) {
-			$res = clone $var;
-			foreach ($var as $key => $val) {
-				$res->$key = self::expand($val, $params, $recursive);
-			}
-			return $res;
+		} elseif ($var instanceof Statement) {
+			return new Statement(self::expand($var->entity, $params, $recursive), self::expand($var->arguments, $params, $recursive));
 
 		} elseif (!is_string($var)) {
 			return $var;

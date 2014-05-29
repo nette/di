@@ -5,6 +5,7 @@
  */
 
 use Nette\DI\Config,
+	Nette\DI\Statement,
 	Tester\Assert;
 
 
@@ -124,28 +125,17 @@ EOD
 
 $data = $config->load('files/neonAdapter.entity.neon');
 Assert::equal( array(
-	(object) array(
-		'value' => 'ent',
-		'attributes' => array(1),
-	),
-	(object) array(
-		'value' => array(
-			(object) array(
-				'value' => 'ent',
-				'attributes' => array(2),
-			),
+	new Statement('ent', array(1)),
+	new Statement(array(
+			new Statement('ent', array(2)),
 			'inner',
 		),
-		'attributes' => array(3, 4),
+		array(3, 4)
 	),
-	(object) array(
-		'value' => array(
-			(object) array(
-				'value' => 'ent',
-				'attributes' => array(3),
-			),
+	new Statement(array(
+			new Statement('ent', array(3)),
 			'inner',
 		),
-		'attributes' => array(5),
+		array(5)
 	),
 ), $data );

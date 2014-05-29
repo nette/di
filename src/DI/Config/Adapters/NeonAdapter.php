@@ -9,6 +9,7 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette,
 	Nette\DI\Config\Helpers,
+	Nette\DI\Statement,
 	Nette\Neon;
 
 
@@ -34,7 +35,7 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	}
 
 
-	private function process(array $arr)
+	public function process(array $arr)
 	{
 		$res = array();
 		foreach ($arr as $key => $val) {
@@ -61,16 +62,16 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 			} elseif ($val instanceof Neon\Entity) {
 				if ($val->value === Neon\Neon::CHAIN) {
 					$tmp = NULL;
-					foreach ($this->process($val->attributes) as $val) {
-						$tmp = (object) array(
-							'value' => $tmp === NULL ? $val->value : array($tmp, ltrim($val->value, ':')),
-							'attributes' => $val->attributes
+					foreach ($this->process($val->attributes) as $st) {
+						$tmp = new Statement(
+							$tmp === NULL ? $st->entity : array($tmp, ltrim($st->entity, ':')),
+							$st->arguments
 						);
 					}
 					$val = $tmp;
 				} else {
 					$tmp = $this->process(array($val->value));
-					$val = (object) array('value' => $tmp[0], 'attributes' => $this->process($val->attributes));
+					$val = new Statement($tmp[0], $this->process($val->attributes));
 				}
 			}
 			$res[$key] = $val;
