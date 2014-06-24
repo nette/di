@@ -35,6 +35,9 @@ class ContainerBuilder extends Nette\Object
 	/** @var array for auto-wiring */
 	private $classes;
 
+	/** @var string[] of classes excluded from auto-wiring */
+	private $excludedClasses = array();
+
 	/** @var array of file names */
 	private $dependencies = array();
 
@@ -226,6 +229,12 @@ class ContainerBuilder extends Nette\Object
 			}
 		}
 
+		foreach ($this->excludedClasses as $class) {
+			foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
+				unset($this->classes[strtolower($parent)]);
+			}
+		}
+
 		foreach ($this->classes as $class => $foo) {
 			$this->addDependency(Reflection\ClassType::from($class)->getFileName());
 		}
@@ -340,6 +349,17 @@ class ContainerBuilder extends Nette\Object
 			}
 			return $entity;
 		}
+	}
+
+
+	/**
+	 * @param string[]
+	 * @return self
+	 */
+	public function addExcludedClasses(array $classes)
+	{
+		$this->excludedClasses = array_merge($this->excludedClasses, $classes);
+		return $this;
 	}
 
 
