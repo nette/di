@@ -26,7 +26,20 @@ class Ipsum
 }
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.services.byClass.neon');
+$container = createContainer(new DI\Compiler, '
+services:
+	three: @\Lorem
+
+	one:
+		class: Lorem(@\Ipsum)
+
+	two:
+		class: Ipsum
+		setup:
+			- @\Ipsum::foo()
+
+	four: @\Lorem
+');
 
 
 Assert::type( 'Lorem', $container->getService('one') );

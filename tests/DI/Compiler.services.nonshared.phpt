@@ -20,7 +20,20 @@ class Lorem
 }
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.services.nonshared.neon');
+$container = createContainer(new DI\Compiler, "
+parameters:
+	'false': false
+
+services:
+	ipsum:
+		class: Ipsum
+
+	lorem:
+		class: Lorem
+		parameters: [Ipsum foo, bar: %false%]
+		setup:
+			- test(%foo%, %bar%)
+");
 
 
 Assert::true( $container->hasService('lorem') );

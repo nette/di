@@ -35,7 +35,21 @@ class DatabaseExtension extends Nette\DI\CompilerExtension
 $compiler = new DI\Compiler;
 $extension = new DatabaseExtension;
 $compiler->addExtension('database', $extension);
-$container = createContainer($compiler, 'files/compiler.extension.neon');
+$container = createContainer($compiler, '
+parameters:
+	bar: hello
+
+
+database:
+	foo: %bar%
+
+	services:
+		foo: stdClass
+
+
+services:
+	alias: @database.foo
+');
 
 
 Assert::same(array(
