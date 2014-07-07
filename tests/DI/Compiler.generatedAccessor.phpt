@@ -22,7 +22,19 @@ interface ILoremAccessor
 }
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.generatedAccessor.neon');
+$container = createContainer(new DI\Compiler, '
+services:
+	lorem: Lorem
+
+	lorem2:
+		class: Lorem
+		autowired: no
+
+	one: ILoremAccessor
+	two: ILoremAccessor()
+	three: ILoremAccessor(@lorem2)
+	four: ILoremAccessor(@\Lorem)
+');
 
 
 Assert::type( 'Lorem', $container->getService('lorem') );

@@ -54,7 +54,7 @@ function createContainer($source, $config = NULL)
 	} elseif ($source instanceof Nette\DI\Compiler) {
 		if (is_string($config)) {
 			$loader = new Nette\DI\Config\Loader;
-			$config = $loader->load($config);
+			$config = $loader->load(is_file($config) ? $config : Tester\FileMock::create($config, 'neon'));
 		}
 		$code = $source->compile((array) $config, $class, 'Nette\DI\Container');
 	} else {

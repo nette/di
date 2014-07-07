@@ -22,7 +22,13 @@ class FooExtension extends DI\CompilerExtension
 
 $compiler = new DI\Compiler;
 $compiler->addExtension('extensions', new Nette\DI\Extensions\ExtensionsExtension);
-$container = createContainer($compiler, 'files/compiler.extension.extensions.neon');
+$container = createContainer($compiler, '
+extensions:
+	foo: FooExtension
+
+foo:
+	key: value
+');
 
 
 Assert::same( 'hello', $container->parameters['foo'] );

@@ -39,7 +39,21 @@ class Lorem
 define('MY_CONSTANT_TEST', "one");
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.arguments.neon');
+$container = createContainer(new DI\Compiler, "
+services:
+	lorem:
+		class: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
+		setup:
+			- method( @lorem, @self, @container )
+			- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
+			- method( [Lorem, method], 'Lorem::add', Lorem::add )
+			- method( not(TRUE) )
+			- method( @lorem::var, @self::var, @container::parameters )
+			- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
+
+	dolor:
+		class: Lorem(::MY_FAILING_CONSTANT_TEST)
+");
 $container->parameters = array('something');
 
 

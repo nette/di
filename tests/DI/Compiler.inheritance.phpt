@@ -43,7 +43,22 @@ class SecondChildService extends ChildService
 define('PRIVATE_VALUE', 'foo.bar');
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.inheritance.neon');
+$container = createContainer(new DI\Compiler, '
+services:
+	subchild < child:
+		factory: SubChildService()
+
+	base:
+		factory: BaseService()
+		setup:
+			- setPrivate( ::PRIVATE_VALUE )
+
+	child < base:
+		factory: ChildService()
+
+	secchild < child:
+		factory: SecondChildService()
+');
 
 Assert::same(PRIVATE_VALUE, $container->getService('base')->getPrivate());
 Assert::same(PRIVATE_VALUE, $container->getService('child')->getPrivate());

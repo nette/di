@@ -43,7 +43,7 @@ class Loader extends Nette\Object
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
 		}
-		$this->dependencies[] = $file = realpath($file);
+		$this->dependencies[] = realpath($file);
 		$data = $this->getAdapter($file)->load($file);
 
 		if ($section) {

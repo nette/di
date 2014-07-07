@@ -44,7 +44,30 @@ class Ipsum
 {}
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.services.autowiring.neon');
+$container = createContainer(new DI\Compiler, '
+services:
+	model:
+		create: Factory::createModel
+		setup:
+			# local methods
+			- test(...)
+			- @model::test()
+			- @self::test()
+
+			# static class method
+			- Lorem::test
+
+			# other service method
+			- @lorem::test
+
+	lorem:
+		class: Lorem
+
+	alias: @lorem
+
+	ipsum:
+		class: Ipsum
+');
 
 
 Assert::type( 'Model', $container->getService('model') );

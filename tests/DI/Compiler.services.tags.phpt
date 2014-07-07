@@ -12,7 +12,15 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $compiler = new DI\Compiler;
-$container = createContainer($compiler, 'files/compiler.services.tags.neon');
+$container = createContainer($compiler, '
+services:
+	lorem:
+		create: stdClass
+		tags:
+			- a
+			b: c
+			d: [e]
+');
 
 
 $prop = $container->getReflection()->getProperty('meta');
