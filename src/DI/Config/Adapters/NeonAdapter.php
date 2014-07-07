@@ -35,7 +35,7 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	}
 
 
-	public function process(array $arr)
+	private function process(array $arr)
 	{
 		$res = array();
 		foreach ($arr as $key => $val) {
