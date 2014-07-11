@@ -107,8 +107,10 @@ class Helpers
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {
 						$optCount++;
+					} elseif (class_exists($class) || interface_exists($class)) {
+						throw new ServiceCreationException("Service of type {$class} needed by $method not found. Did you register it in configuration file?");
 					} else {
-						throw new ServiceCreationException("No service of type {$class} found. Make sure the type hint in $method is written correctly and service of this type is registered.");
+						throw new ServiceCreationException("Class {$class} needed by $method not found. Check type hint and 'use' statements.");
 					}
 				} else {
 					if ($container instanceof ContainerBuilder) {
@@ -145,7 +147,7 @@ class Helpers
 	 * Generates list of properties with annotation @inject.
 	 * @return array
 	 */
-	public static function getInjectProperties(Nette\Reflection\ClassType $class)
+	public static function getInjectProperties(Nette\Reflection\ClassType $class, $container = NULL)
 	{
 		$res = array();
 		foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
@@ -154,12 +156,14 @@ class Helpers
 				continue;
 
 			} elseif (!$type) {
-				throw new Nette\InvalidStateException("Property $property has not @var annotation.");
+				throw new Nette\InvalidStateException("Property $property has no @var annotation.");
 			}
 
 			$type = Nette\Reflection\AnnotationsParser::expandClassName($type, $property->getDeclaringClass());
 			if (!class_exists($type) && !interface_exists($type)) {
-				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found.");
+				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found. Check annotation and 'use' statements.");
+			} elseif ($container && !$container->getByType($type, FALSE)) {
+				throw new ServiceCreationException("Service of type {$type} used in @var annotation at $property not found. Did you register it in configuration file?");
 			}
 			$res[$property->getName()] = $type;
 		}

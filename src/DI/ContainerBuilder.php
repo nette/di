@@ -191,12 +191,12 @@ class ContainerBuilder extends Nette\Object
 			}
 
 			if (!interface_exists($def->implement)) {
-				throw new ServiceCreationException("Interface $def->implement has not been found.");
+				throw new ServiceCreationException("Interface $def->implement used in service '$name' not found.");
 			}
 			$rc = Reflection\ClassType::from($def->implement);
 			$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
 			if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
-				throw new ServiceCreationException("Interface $def->implement must have just one non-static method create() or get().");
+				throw new ServiceCreationException("Interface $def->implement used in service '$name' must have just one non-static method create() or get().");
 			}
 			$def->implement = $rc->getName();
 			$def->implementType = $rc->hasMethod('create') ? 'create' : 'get';
@@ -204,7 +204,7 @@ class ContainerBuilder extends Nette\Object
 			if (!$def->class && empty($def->factory->entity)) {
 				$returnType = $method->getAnnotation('return');
 				if (!$returnType) {
-					throw new ServiceCreationException("Method $method has not @return annotation.");
+					throw new ServiceCreationException("Method $method used in service '$name' has no @return annotation.");
 				}
 
 				$returnType = Reflection\AnnotationsParser::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
@@ -216,7 +216,7 @@ class ContainerBuilder extends Nette\Object
 
 			if ($method->getName() === 'get') {
 				if ($method->getParameters()) {
-					throw new ServiceCreationException("Method $method must have no arguments.");
+					throw new ServiceCreationException("Method $method used in service '$name' must have no arguments.");
 				}
 				if (empty($def->factory->entity)) {
 					$def->setFactory('@\\' . ltrim($def->class, '\\'));
@@ -257,7 +257,7 @@ class ContainerBuilder extends Nette\Object
 
 			if (is_string($factory) && preg_match('#^[\w\\\\]+\z#', $factory) && $factory !== self::THIS_SERVICE) {
 				if (!class_exists($factory) || !Reflection\ClassType::from($factory)->isInstantiable()) {
-					throw new ServiceCreationException("Class $factory used in service '$name' has not been found or is not instantiable.");
+					throw new ServiceCreationException("Class $factory used in service '$name' not found or is not instantiable.");
 				}
 			}
 		}
@@ -269,7 +269,7 @@ class ContainerBuilder extends Nette\Object
 			if (!$def->class) {
 				continue;
 			} elseif (!class_exists($def->class) && !interface_exists($def->class)) {
-				throw new ServiceCreationException("Class or interface $def->class used in service '$name' has not been found.");
+				throw new ServiceCreationException("Class or interface $def->class used in service '$name' not found.");
 			} else {
 				$def->class = Reflection\ClassType::from($def->class)->getName();
 			}
@@ -319,13 +319,12 @@ class ContainerBuilder extends Nette\Object
 					}
 				}
 			}
-			if (!is_callable($factory)) {
-				throw new ServiceCreationException(sprintf("Factory '%s' is not callable.", Nette\Utils\Callback::toString($factory)));
-			}
 			try {
 				$reflection = Nette\Utils\Callback::toReflection($factory);
 			} catch (\ReflectionException $e) {
-				throw new ServiceCreationException(sprintf("Missing factory '%s'.", Nette\Utils\Callback::toString($factory)));
+			}
+			if (isset($e) || !is_callable($factory)) {
+				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($factory), $name));
 			}
 			$def->class = preg_replace('#[|\s].*#', '', $reflection->getAnnotation('return'));
 			if ($def->class && $reflection instanceof \ReflectionMethod) {
@@ -452,7 +451,7 @@ class ContainerBuilder extends Nette\Object
 		$setups = (array) $def->setup;
 		if ($def->inject && $def->class) {
 			$injects = array();
-			foreach (Helpers::getInjectProperties(Reflection\ClassType::from($def->class)) as $property => $type) {
+			foreach (Helpers::getInjectProperties(Reflection\ClassType::from($def->class), $this) as $property => $type) {
 				$injects[] = new Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
 			}
 
