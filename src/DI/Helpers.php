@@ -104,8 +104,10 @@ class Helpers
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {
 						$optCount++;
+					} elseif (class_exists($class) || interface_exists($class)) {
+						throw new ServiceCreationException("No service of type {$class} found. Did you register it in configuration file?");
 					} else {
-						throw new ServiceCreationException("No service of type {$class} found. Make sure the type hint in $method is written correctly and service of this type is registered.");
+						throw new ServiceCreationException("No class {$class} found. Check type hint in $method and the 'use' statements.");
 					}
 				} else {
 					if ($container instanceof ContainerBuilder) {
@@ -156,7 +158,7 @@ class Helpers
 
 			$type = Nette\Reflection\AnnotationsParser::expandClassName($type, $property->getDeclaringClass());
 			if (!class_exists($type) && !interface_exists($type)) {
-				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found.");
+				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found. Check the 'use' statements.");
 			}
 			$res[$property->getName()] = $type;
 		}
