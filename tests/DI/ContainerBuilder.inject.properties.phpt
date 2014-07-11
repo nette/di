@@ -37,6 +37,8 @@ $builder->addDefinition('test')
 $builder->addDefinition('stdClass')
 	->setClass('stdClass');
 
+$builder->addDefinition('ReflectionClass')
+	->setFactory('ReflectionClass', array('ReflectionClass'));
 
 $container = createContainer($builder);
 

@@ -245,7 +245,7 @@ class ContainerBuilder extends Nette\Object
 	private function resolveImplement(ServiceDefinition $def, $name)
 	{
 		if (!interface_exists($def->implement)) {
-			throw new ServiceCreationException("Interface $def->implement used in service '$name' has not been found.");
+			throw new ServiceCreationException("Interface $def->implement used in service '$name' not found.");
 		}
 		$rc = Reflection\ClassType::from($def->implement);
 		$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
@@ -258,7 +258,7 @@ class ContainerBuilder extends Nette\Object
 		if (!$def->class && empty($def->factory->entity)) {
 			$returnType = $method->getAnnotation('return');
 			if (!$returnType) {
-				throw new ServiceCreationException("Method $method used in service '$name' has not @return annotation.");
+				throw new ServiceCreationException("Method $method used in service '$name' has no @return annotation.");
 			}
 
 			$returnType = Reflection\AnnotationsParser::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
@@ -303,7 +303,7 @@ class ContainerBuilder extends Nette\Object
 		$class = $this->resolveEntityClass($def->factory->entity, $recursive); // call always to check entities
 		if ($def->class = $def->class ?: $class) {
 			if (!class_exists($def->class) && !interface_exists($def->class)) {
-				throw new ServiceCreationException("Class or interface $def->class used in service '$name' has not been found.");
+				throw new ServiceCreationException("Class or interface $def->class used in service '$name' not found.");
 			}
 			$def->class = Reflection\ClassType::from($def->class)->getName();
 		}
@@ -346,7 +346,7 @@ class ContainerBuilder extends Nette\Object
 		} elseif (is_string($entity)) {
 			if (!class_exists($entity) || !Reflection\ClassType::from($entity)->isInstantiable()) {
 				$name = array_slice(array_keys($recursive), -1);
-				throw new ServiceCreationException("Class $entity used in service '$name[0]' has not been found or is not instantiable.");
+				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found or is not instantiable.");
 			}
 			return $entity;
 		}
@@ -466,7 +466,7 @@ class ContainerBuilder extends Nette\Object
 		$setups = (array) $def->setup;
 		if ($def->inject && $def->class) {
 			$injects = array();
-			foreach (Helpers::getInjectProperties(Reflection\ClassType::from($def->class)) as $property => $type) {
+			foreach (Helpers::getInjectProperties(Reflection\ClassType::from($def->class), $this) as $property => $type) {
 				$injects[] = new Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
 			}
 
