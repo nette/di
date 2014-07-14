@@ -31,3 +31,16 @@ Assert::same( array(
 		'force' => array(1, 2),
 	),
 ), $data );
+
+$data = $config->load('files/loader.includes.php', 'common');
+
+Assert::same( array(
+	'parameters' => array(
+		'me' => array(
+			'loader.includes.child.php',
+		),
+		'scalar' => 1,
+		'list' => array(5, 6, 1, 2),
+		'force' => array(1, 2),
+	),
+), $data );
