@@ -328,6 +328,8 @@ class ContainerBuilder extends Nette\Object
 			try {
 				$reflection = Nette\Utils\Callback::toReflection($entity);
 			} catch (\ReflectionException $e) {
+			}
+			if (isset($e) || !is_callable($entity)) {
 				$name = array_slice(array_keys($recursive), -1);
 				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $name[0]));
 			}

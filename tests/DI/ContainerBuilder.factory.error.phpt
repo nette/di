@@ -106,3 +106,16 @@ Assert::exception(function() {
 	$builder->addDefinition('one')->setImplement('Bad5')->setFactory('stdClass');
 	$builder->generateClasses();
 }, 'Nette\InvalidStateException', "Method Bad5::get() used in service 'one' must have no arguments.");
+
+
+class Bad6
+{
+	protected function create()
+	{}
+}
+
+Assert::exception(function() {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory('Bad6::create');
+	$builder->generateClasses();
+}, 'Nette\InvalidStateException', "Factory 'Bad6::create' used in service 'one' is not callable.");
