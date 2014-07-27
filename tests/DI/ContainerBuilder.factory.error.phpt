@@ -106,3 +106,27 @@ Assert::exception(function() {
 	$builder->addDefinition('one')->setImplement('Bad5')->setFactory('stdClass');
 	$builder->generateClasses();
 }, 'Nette\InvalidStateException', "Method Bad5::get() used in service 'one' must have no arguments.");
+
+class Bad6
+{
+	public function __construct(Bar $bar)
+	{
+	}
+}
+
+interface Bad7
+{
+	public function create(Baz $bar);
+}
+
+Assert::exception(function() {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('Bad7')->setFactory('Bad6');
+	$builder->generateClasses();
+}, 'Nette\InvalidStateException', "Argument '\$bar in Bad6::__construct()' type hint doesn't match 'Baz' type hint.");
+
+Assert::exception(function() {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('Bad7')->setFactory('Undefined');
+	$builder->generateClasses();
+}, 'Nette\InvalidStateException', "Class Undefined used in service 'one' has not been found or is not instantiable.");
