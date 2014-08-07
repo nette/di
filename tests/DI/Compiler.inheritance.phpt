@@ -43,7 +43,10 @@ class SecondChildService extends ChildService
 define('PRIVATE_VALUE', 'foo.bar');
 
 
-$container = createContainer(new DI\Compiler, '
+$compiler = new DI\Compiler;
+$compiler->getContainerBuilder()->addDefinition('outer')->setClass('stdClass');
+
+$container = createContainer($compiler, '
 services:
 	subchild < child:
 		factory: SubChildService()
@@ -58,6 +61,8 @@ services:
 
 	secchild < child:
 		factory: SecondChildService()
+
+	outerchild < outer:
 ');
 
 Assert::same(PRIVATE_VALUE, $container->getService('base')->getPrivate());
