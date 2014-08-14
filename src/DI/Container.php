@@ -19,6 +19,7 @@ class Container extends Nette\Object
 {
 	const TAGS = 'tags';
 	const TYPES = 'types';
+	const SERVICES = 'services';
 
 	/** @var array  user parameters */
 	/*private*/public $parameters = array();
@@ -63,7 +64,10 @@ class Container extends Nette\Object
 			throw new Nette\InvalidStateException("Service '$name' already exists.");
 
 		} elseif (!is_object($service)) {
-			throw new Nette\InvalidArgumentException(sprintf('Service must be a object, %s given.', gettype($service)));
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
+
+		} elseif (isset($this->meta[self::SERVICES][$name]) && !$service instanceof $this->meta[self::SERVICES][$name]) {
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->meta[self::SERVICES][$name], get_class($service)));
 		}
 
 		$this->registry[$name] = $service;

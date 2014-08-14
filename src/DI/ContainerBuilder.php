@@ -197,7 +197,7 @@ class ContainerBuilder extends Nette\Object
 			// complete class-factory pairs
 			if (!$def->factory || !$def->factory->entity) {
 				if (!$def->class) {
-					throw new ServiceCreationException("Class and factory are missing in service '$name' definition.");
+					throw new ServiceCreationException("Class and factory are missing in definition of service '$name'.");
 				}
 				if ($def->factory) {
 					$def->factory->entity = $def->class;
@@ -217,7 +217,7 @@ class ContainerBuilder extends Nette\Object
 		// resolve and check classes
 		foreach ($this->definitions as $name => $def) {
 			$this->resolveServiceClass($name);
-			}
+		}
 
 		//  build auto-wiring list
 		$this->classes = array();
@@ -411,9 +411,19 @@ class ContainerBuilder extends Nette\Object
 		$definitions = $this->definitions;
 		ksort($definitions);
 
+		$services = array();
+		foreach ($definitions as $name => $def) {
+			if ($def->class) {
+				$services[$name] = $def->class;
+			}
+		}
+
 		$meta = $containerClass->addProperty('meta', array())
 			->setVisibility('protected')
-			->setValue(array(Container::TYPES => $this->classes));
+			->setValue(array(
+				Container::TYPES => $this->classes,
+				Container::SERVICES => $services,
+			));
 
 		foreach ($definitions as $name => $def) {
 			foreach ($def->tags as $tag => $value) {
