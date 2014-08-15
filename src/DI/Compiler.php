@@ -35,6 +35,12 @@ class Compiler extends Nette\Object
 	private static $reserved = array('services' => 1, 'factories' => 1, 'parameters' => 1);
 
 
+	public function __construct(ContainerBuilder $builder = NULL)
+	{
+		$this->builder = $builder ?: new ContainerBuilder;
+	}
+
+
 	/**
 	 * Add custom configurator extension.
 	 * @return self
@@ -65,9 +71,6 @@ class Compiler extends Nette\Object
 	 */
 	public function getContainerBuilder()
 	{
-		if ($this->builder === NULL) {
-			$this->builder = new ContainerBuilder;
-		}
 		return $this->builder;
 	}
 
@@ -99,7 +102,7 @@ class Compiler extends Nette\Object
 	public function processParameters()
 	{
 		if (isset($this->config['parameters'])) {
-			$this->getContainerBuilder()->parameters = Helpers::expand($this->config['parameters'], $this->config['parameters'], TRUE);
+			$this->builder->parameters = Helpers::expand($this->config['parameters'], $this->config['parameters'], TRUE);
 		}
 	}
 
@@ -110,7 +113,7 @@ class Compiler extends Nette\Object
 		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
 			$name = key($slice);
 			if (isset($this->config[$name])) {
-				$this->config[$name] = $this->getContainerBuilder()->expand($this->config[$name]);
+				$this->config[$name] = $this->builder->expand($this->config[$name]);
 			}
 			$this->extensions[$name]->loadConfiguration();
 		}
@@ -125,11 +128,11 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processServices()
 	{
-		$this->parseServices($this->getContainerBuilder(), $this->config);
+		$this->parseServices($this->builder, $this->config);
 
 		foreach ($this->extensions as $name => $extension) {
 			if (isset($this->config[$name])) {
-				$this->parseServices($this->getContainerBuilder(), $this->config[$name], $name);
+				$this->parseServices($this->builder, $this->config[$name], $name);
 			}
 		}
 	}
@@ -138,14 +141,14 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function generateCode($className, $parentName)
 	{
-		$this->getContainerBuilder()->prepareClassList();
+		$this->builder->prepareClassList();
 
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
-			$this->getContainerBuilder()->addDependency(Nette\Reflection\ClassType::from($extension)->getFileName());
+			$this->builder->addDependency(Nette\Reflection\ClassType::from($extension)->getFileName());
 		}
 
-		$classes = $this->getContainerBuilder()->generateClasses($className, $parentName);
+		$classes = $this->builder->generateClasses($className, $parentName);
 		$classes[0]->addMethod('initialize');
 
 		foreach ($this->extensions as $extension) {
