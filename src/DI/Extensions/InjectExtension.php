@@ -18,11 +18,13 @@ use Nette,
  */
 class InjectExtension extends DI\CompilerExtension
 {
+	const TAG_INJECT = 'inject';
+
 
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if ($def->inject && $def->class) {
+			if ($def->getTag(self::TAG_INJECT) && $def->class) {
 				$this->updateDefinition($def);
 			}
 
