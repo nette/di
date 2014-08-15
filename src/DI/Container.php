@@ -187,10 +187,19 @@ class Container extends Nette\Object
 	 * @param  string
 	 * @return string[]
 	 */
-	public function findByType($class)
+	public function findByType($class, $autowired = TRUE)
 	{
-		$class = ltrim(strtolower($class), '\\');
-		return isset($this->meta[self::TYPES][$class]) ? $this->meta[self::TYPES][$class] : array();
+		$lower = ltrim(strtolower($class), '\\');
+		if (!isset($this->meta[self::TYPES][$lower])) {
+			return array();
+		}
+		
+		$classes = $this->meta[self::TYPES][$lower];
+		if ($autowired) {
+			$classes = array_values(array_filter($classes, function($item) { return $item[1]; }));
+		}
+		
+		return array_map(function($item) { return $item[0]; }, $classes);
 	}
 
 

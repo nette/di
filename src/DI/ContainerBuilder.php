@@ -126,16 +126,37 @@ class ContainerBuilder extends Nette\Object
 			return $this->currentService;
 		}
 
-		$lower = ltrim(strtolower($class), '\\');
-		if (!isset($this->classes[$lower])) {
+		$names = $this->findByType($class);
+		if (!$names) {
 			return;
 
-		} elseif (count($this->classes[$lower]) === 1) {
-			return $this->classes[$lower][0];
+		} elseif (count($names) > 1) {
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $names));
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower]));
+			return $names[0];
 		}
+	}
+	
+	
+	/**
+	 * Gets the service names of the specified type.
+	 * @param string
+	 * @return string[]
+	 */
+	public function findByType($class, $autowired = TRUE)
+	{
+		$lower = ltrim(strtolower($class), '\\');
+		if (!isset($this->classes[$lower])) {
+			return array();
+		}
+		
+		$classes = $this->classes[$lower];
+		if ($autowired) {
+			$classes = array_values(array_filter($classes, function($item) { return $item[1]; }));
+		}
+		
+		return array_map(function($item) { return $item[0]; }, $classes);
 	}
 
 
@@ -231,9 +252,9 @@ class ContainerBuilder extends Nette\Object
 		$this->classes = array();
 		foreach ($this->definitions as $name => $def) {
 			$class = $def->implement ?: $def->class;
-			if ($def->autowired && $class) {
+			if ($class) {
 				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-					$this->classes[strtolower($parent)][] = (string) $name;
+					$this->classes[strtolower($parent)][] = array((string) $name, $def->autowired);
 				}
 			}
 		}
