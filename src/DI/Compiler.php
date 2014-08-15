@@ -257,7 +257,7 @@ class Compiler extends Nette\Object
 			unset($config['factory']);
 		};
 
-		$known = array('class', 'create', 'arguments', 'setup', 'autowired', 'inject', 'parameters', 'implement', 'run', 'tags');
+		$known = array('class', 'create', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags');
 		if ($error = array_diff(array_keys($config), $known)) {
 			throw new Nette\InvalidStateException(sprintf("Unknown or deprecated key '%s' in definition of service.", implode("', '", $error)));
 		}
@@ -314,6 +314,11 @@ class Compiler extends Nette\Object
 		if (isset($config['autowired'])) {
 			Validators::assertField($config, 'autowired', 'bool');
 			$definition->setAutowired($config['autowired']);
+		}
+
+		if (isset($config['dynamic'])) {
+			Validators::assertField($config, 'dynamic', 'bool');
+			$definition->setDynamic($config['dynamic']);
 		}
 
 		if (isset($config['inject'])) {
