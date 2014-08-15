@@ -53,7 +53,7 @@ class ServiceDefinition extends Nette\Object
 	private $autowired = TRUE;
 
 	/** @var bool */
-	public $inject = FALSE;
+	private $inject = FALSE;
 
 	/** @var string  interface name */
 	private $implement;

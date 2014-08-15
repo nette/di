@@ -197,7 +197,7 @@ class ContainerBuilder extends Nette\Object
 			// complete class-factory pairs
 			if (!$def->factory || !$def->factory->entity) {
 				if (!$def->class) {
-					throw new ServiceCreationException("Class and factory are missing in service '$name' definition.");
+					throw new ServiceCreationException("Class and factory are missing in definition of service '$name'.");
 				}
 				if ($def->factory) {
 					$def->factory->entity = $def->class;
@@ -217,7 +217,7 @@ class ContainerBuilder extends Nette\Object
 		// resolve and check classes
 		foreach ($this->definitions as $name => $def) {
 			$this->resolveServiceClass($name);
-			}
+		}
 
 		//  build auto-wiring list
 		$this->classes = array();
