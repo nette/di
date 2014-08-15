@@ -20,7 +20,7 @@ Assert::exception(function() use ($container, $service) {
 
 Assert::exception(function() use ($container) {
 	$container->addService('one', NULL);
-}, 'Nette\InvalidArgumentException', 'Service must be a object, NULL given.');
+}, 'Nette\InvalidArgumentException', "Service 'one' must be a object, NULL given.");
 
 Assert::exception(function() use ($container) {
 	$container->getService('one');

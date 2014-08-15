@@ -32,6 +32,7 @@ Assert::same(array(
 		'nette\\object' => array('container'),
 		'nette\\di\\container' => array('container'),
 	),
+	'services' => array('container' => 'Nette\\DI\\Container', 'lorem' => 'stdClass'),
 	'tags' => array(
 		'a' => array('lorem' => TRUE),
 		'b' => array('lorem' => 'c'),
