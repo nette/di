@@ -194,6 +194,14 @@ class ContainerBuilder extends Nette\Object
 				$this->resolveImplement($def, $name);
 			}
 
+			if ($def->isDynamic()) {
+				if (!$def->class) {
+					throw new ServiceCreationException("Class is missing in definition of service '$name'.");
+				}
+				$def->factory = NULL;
+				continue;
+			}
+
 			// complete class-factory pairs
 			if (!$def->factory || !$def->factory->entity) {
 				if (!$def->class) {
@@ -300,7 +308,7 @@ class ContainerBuilder extends Nette\Object
 		$recursive[$name] = TRUE;
 
 		$def = $this->definitions[$name];
-		$class = $this->resolveEntityClass($def->factory->entity, $recursive); // call always to check entities
+		$class = $def->factory ? $this->resolveEntityClass($def->factory->entity, $recursive) : NULL; // call always to check entities
 		if ($def->class = $def->class ?: $class) {
 			if (!class_exists($def->class) && !interface_exists($def->class)) {
 				throw new ServiceCreationException("Class or interface $def->class used in service '$name' not found.");
@@ -452,6 +460,12 @@ class ContainerBuilder extends Nette\Object
 	{
 		$this->currentService = NULL;
 		$def = $this->definitions[$name];
+
+		if ($def->isDynamic()) {
+			return PhpHelpers::formatArgs('throw new Nette\\DI\\ServiceCreationException(?);',
+				array("Unable to create dynamic service '$name', it must be added using addService()")
+			);
+		}
 
 		$serviceRef = $this->getServiceName($def->factory->entity);
 		$factory = $serviceRef && !$def->factory->arguments && !$def->setup && $def->implementType !== 'create'
