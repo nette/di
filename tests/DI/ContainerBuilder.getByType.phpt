@@ -25,6 +25,9 @@ $builder->addDefinition('one')
 	->setClass('Service');
 $builder->addDefinition('two')
 	->setClass('Service2');
+$builder->addDefinition('three')
+	->setClass('Service2')
+	->setAutowired(FALSE);
 
 
 // compile-time
@@ -43,7 +46,11 @@ Assert::type( 'Service', $container->getByType('service') );
 Assert::null( $container->getByType('unknown', FALSE) );
 
 Assert::same( array('one'), $container->findByType('service') );
+Assert::same( array('one'), $container->findByType('service', FALSE) );
+Assert::same( array('two'), $container->findByType('service2') );
+Assert::same( array('two', 'three'), $container->findByType('service2', FALSE) );
 Assert::same( array(), $container->findByType('unknown') );
+Assert::same( array(), $container->findByType('unknown', FALSE) );
 
 Assert::exception(function() use ($container) {
 	$container->getByType('unknown');

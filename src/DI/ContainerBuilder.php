@@ -127,14 +127,14 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		$lower = ltrim(strtolower($class), '\\');
-		if (!isset($this->classes[$lower])) {
+		if (!isset($this->classes[$lower][TRUE])) {
 			return;
 
-		} elseif (count($this->classes[$lower]) === 1) {
-			return $this->classes[$lower][0];
+		} elseif (count($this->classes[$lower][TRUE]) === 1) {
+			return $this->classes[$lower][TRUE][0];
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower]));
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower][TRUE]));
 		}
 	}
 
@@ -228,19 +228,18 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		//  build auto-wiring list
-		$this->classes = array();
-		foreach ($this->definitions as $name => $def) {
-			$class = $def->implement ?: $def->class;
-			if ($def->autowired && $class) {
-				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-					$this->classes[strtolower($parent)][] = (string) $name;
-				}
-			}
+		$excludedClasses = array();
+		foreach ($this->excludedClasses as $class) {
+			$excludedClasses += array_change_key_case(class_parents($class) + class_implements($class) + array($class => $class));
 		}
 
-		foreach ($this->excludedClasses as $class) {
-			foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-				unset($this->classes[strtolower($parent)]);
+		$this->classes = array();
+		foreach ($this->definitions as $name => $def) {
+			if ($class = $def->implement ?: $def->class) {
+				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
+					$parent = strtolower($parent);
+					$this->classes[$parent][$def->autowired && empty($excludedClasses[$parent])][] = (string) $name;
+				}
 			}
 		}
 
