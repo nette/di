@@ -138,6 +138,8 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function generateCode($className, $parentName)
 	{
+		$this->getContainerBuilder()->prepareClassList();
+
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
 			$this->getContainerBuilder()->addDependency(Nette\Reflection\ClassType::from($extension)->getFileName());
