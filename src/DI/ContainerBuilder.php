@@ -408,9 +408,9 @@ class ContainerBuilder extends Nette\Object
 		unset($this->definitions[self::THIS_CONTAINER]);
 		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
 
-		$this->generatedClasses = array();
 		$this->prepareClassList();
 
+		$this->generatedClasses = array();
 		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($className);
 		$containerClass->setExtends($parentName);
 		$containerClass->addMethod('__construct')
