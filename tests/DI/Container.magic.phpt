@@ -29,4 +29,4 @@ Assert::false( isset($container->undefined) );
 Assert::error(function() {
 	$container = new Container;
 	$container->one = new Service;
-}, E_USER_DEPRECATED, 'Nette\DI\Container::__set() is deprecated; use addService() or enable nette.container.accessors in configuration.');
+}, E_USER_DEPRECATED, 'Nette\DI\Container::__set() is deprecated; use addService() or enable di.accessors in configuration.');
