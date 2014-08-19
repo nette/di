@@ -66,35 +66,19 @@ class ContainerFactory extends Nette\Object
 	protected function generateCode()
 	{
 		$compiler = $this->createCompiler();
-		$config = $this->generateConfig();
-		$this->onCompile($this, $compiler, $config);
+		$compiler->setConfig($this->config, $this->configFiles);
+		$this->onCompile($this, $compiler, $compiler->getConfig());
 
 		$code = "<?php\n";
 		foreach ($this->configFiles as $info) {
 			$code .= "// source: $info[0] $info[1]\n";
 		}
-		$code .= "\n" . $compiler->compile($config, $this->class, $this->parentClass);
+		$code .= "\n" . $compiler->compile(NULL, $this->class, $this->parentClass);
 
 		if ($this->autoRebuild !== 'compat') { // back compatibility
 			$this->dependencies = array_merge($this->dependencies, $compiler->getContainerBuilder()->getDependencies());
 		}
 		return $code;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	protected function generateConfig()
-	{
-		$config = array();
-		$loader = $this->createLoader();
-		foreach ($this->configFiles as $info) {
-			$config = Config\Helpers::merge($loader->load($info[0], $info[1]), $config);
-		}
-		$this->dependencies = array_merge($this->dependencies, $loader->getDependencies());
-
-		return Config\Helpers::merge($config, $this->config);
 	}
 
 
