@@ -104,6 +104,12 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
+	public function getTag($tag)
+	{
+		return isset($this->tags[$tag]) ? $this->tags[$tag] : NULL;
+	}
+
+
 	/** @deprecated */
 	public function setShared($on)
 	{
