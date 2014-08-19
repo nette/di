@@ -89,4 +89,8 @@ test(function(){
 		'tag1' => TRUE,
 		'tag2' => array(1, 2),
 	), $def->getTags() );
+
+	Assert::equal( TRUE, $def->getTag('tag1') );
+	Assert::equal( array(1, 2), $def->getTag('tag2') );
+	Assert::equal( NULL, $def->getTag('tag3') );
 });
