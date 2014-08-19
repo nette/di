@@ -134,7 +134,9 @@ class Compiler extends Nette\Object
 		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
 			$name = key($slice);
 			if (isset($this->config[$name])) {
-				$this->config[$name] = $this->builder->expand($this->config[$name]);
+				$this->config[$name] = $tmp = $this->builder->expand($this->config[$name]);
+				unset($tmp['services'], $tmp['factories']);
+				$this->extensions[$name]->setConfig($tmp);
 			}
 			$this->extensions[$name]->loadConfiguration();
 		}
