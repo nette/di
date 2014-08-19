@@ -185,6 +185,9 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function prepareClassList()
 	{
+		unset($this->definitions[self::THIS_CONTAINER]);
+		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
+
 		$this->classes = FALSE;
 
 		// prepare generated factories
@@ -400,9 +403,6 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function generateClasses($className = 'Container', $parentName = 'Nette\DI\Container')
 	{
-		unset($this->definitions[self::THIS_CONTAINER]);
-		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
-
 		$this->generatedClasses = array();
 		$this->prepareClassList();
 
