@@ -88,7 +88,7 @@ class Compiler extends Nette\Object
 	/**
 	 * @return string
 	 */
-	public function compile(array $config, $className, $parentName)
+	public function compile(array $config, $className, $parentName = NULL)
 	{
 		$this->config = $config;
 		$this->processParameters();
@@ -139,7 +139,7 @@ class Compiler extends Nette\Object
 
 
 	/** @internal */
-	public function generateCode($className, $parentName)
+	public function generateCode($className, $parentName = NULL)
 	{
 		$this->builder->prepareClassList();
 

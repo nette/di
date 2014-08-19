@@ -48,7 +48,7 @@ class BazExtension extends BaseExtension
 
 class ProcessingCompiler extends Nette\DI\Compiler
 {
-	public function generateCode($className, $parentName)
+	public function generateCode($className, $parentName = NULL)
 	{
 		return NULL;
 	}
