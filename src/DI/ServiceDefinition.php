@@ -25,8 +25,6 @@ use Nette;
  * @method array getTags()
  * @method ServiceDefinition setAutowired(bool)
  * @method bool isAutowired()
- * @method ServiceDefinition setInject(bool)
- * @method bool getInject()
  * @method ServiceDefinition setDynamic(bool)
  * @method bool isDynamic()
  * @method ServiceDefinition setImplement(string)
@@ -53,9 +51,6 @@ class ServiceDefinition extends Nette\Object
 
 	/** @var bool */
 	private $autowired = TRUE;
-
-	/** @var bool */
-	private $inject = FALSE;
 
 	/** @var bool */
 	private $dynamic = FALSE;
@@ -128,6 +123,22 @@ class ServiceDefinition extends Nette\Object
 	public function isShared()
 	{
 		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+	}
+
+
+	/** @deprecated */
+	public function setInject($on)
+	{
+		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $on);
+	}
+
+
+	/** @deprecated */
+	public function getInject()
+	{
+		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		return $this->getTag(Extensions\InjectExtension::TAG_INJECT);
 	}
 
 }
