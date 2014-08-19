@@ -11,21 +11,25 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-class Service extends Nette\Object
+class ParentClass
+{
+}
+
+class Service extends ParentClass
 {
 }
 
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('Nette\Object')
+	->setClass('ParentClass')
 	->setDynamic(TRUE);
 
 
 // compile-time
 $builder->prepareClassList();
 
-Assert::same( 'one', $builder->getByType('Nette\Object') );
+Assert::same( 'one', $builder->getByType('ParentClass') );
 
 $container = createContainer($builder);
 
@@ -39,7 +43,7 @@ Assert::exception(function() use ($container) {
 
 Assert::exception(function() use ($container) {
 	$container->addService('one', new stdClass);
-}, 'Nette\InvalidArgumentException', "Service 'one' must be instance of Nette\\Object, stdClass given.");
+}, 'Nette\InvalidArgumentException', "Service 'one' must be instance of ParentClass, stdClass given.");
 
 $container->addService('one', $obj = new Service);
 Assert::same( $obj, $container->getService('one') );

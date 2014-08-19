@@ -201,6 +201,9 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function prepareClassList()
 	{
+		unset($this->definitions[self::THIS_CONTAINER]);
+		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
+
 		$this->classes = FALSE;
 
 		foreach ($this->definitions as $name => $def) {
@@ -437,9 +440,6 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function generateClasses($className = 'Container', $parentName = NULL)
 	{
-		unset($this->definitions[self::THIS_CONTAINER]);
-		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
-
 		$this->prepareClassList();
 
 		$this->generatedClasses = array();
