@@ -51,7 +51,7 @@ abstract class CompilerExtension extends Nette\Object
 	 */
 	public function getConfig(array $defaults = NULL)
 	{
-		return Config\Helpers::merge($this->config, $this->getContainerBuilder()->expand($defaults));
+		return (array) Config\Helpers::merge($this->config, $this->getContainerBuilder()->expand($defaults));
 	}
 
 
