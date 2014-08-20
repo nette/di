@@ -29,6 +29,11 @@ abstract class CompilerExtension extends Nette\Object
 	private $config;
 
 
+	public function __construct()
+	{
+	}
+
+
 	public function setCompiler(Compiler $compiler, $name)
 	{
 		$this->compiler = $compiler;
