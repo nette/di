@@ -26,7 +26,7 @@ abstract class CompilerExtension extends Nette\Object
 	protected $name;
 
 	/** @var array */
-	private $config;
+	private $config = array();
 
 
 	public function setCompiler(Compiler $compiler, $name)
