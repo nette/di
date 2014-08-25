@@ -129,7 +129,7 @@ class ServiceDefinition extends Nette\Object
 	/** @deprecated */
 	public function setInject($on)
 	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $on);
 	}
 
@@ -137,7 +137,7 @@ class ServiceDefinition extends Nette\Object
 	/** @deprecated */
 	public function getInject()
 	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		return $this->getTag(Extensions\InjectExtension::TAG_INJECT);
 	}
 
