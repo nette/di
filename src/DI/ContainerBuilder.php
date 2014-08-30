@@ -610,6 +610,9 @@ class ContainerBuilder extends Nette\Object
 		} elseif (!Nette\Utils\Arrays::isList($entity) || count($entity) !== 2) {
 			throw new ServiceCreationException(sprintf('Expected class, method or property, %s given.', PhpHelpers::dump($entity)));
 
+		} elseif (!preg_match('#^\$?' . PhpHelpers::PHP_IDENT . '\z#', $entity[1])) {
+			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
+
 		} elseif ($entity[0] === '') { // globalFunc
 			return $this->formatPhp("$entity[1](?*)", array($arguments));
 
