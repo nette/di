@@ -51,7 +51,7 @@ use Nette,
 			<td class="<?php echo $autowired ? 'yes' : '' ?>"><?php echo $autowired ? 'yes' : 'no' ?></td>
 			<td>
 				<?php if (isset($registry[$name]) && !$registry[$name] instanceof Nette\DI\Container): ?>
-					<?php echo Dumper::toHtml($registry[$name], array(Dumper::COLLAPSE => TRUE)); ?>
+					<?php echo Dumper::toHtml($registry[$name], array(Dumper::COLLAPSE => TRUE, Dumper::LIVE => TRUE)); ?>
 				<?php elseif (isset($registry[$name])): ?>
 					<code><?php echo get_class($registry[$name]) ?></code>
 				<?php elseif (is_string($class)): ?>
