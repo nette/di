@@ -117,4 +117,22 @@ abstract class CompilerExtension extends Nette\Object
 	{
 	}
 
+	
+	/**
+	 * @param array
+	 * @param array
+	 * @param string|NULL
+	 * @throws \Nette\InvalidStateException
+	 */
+	protected function validate(array $config, array $expected, $name = NULL)
+	{
+		if ($name === NULL) {
+			$name = $this->name;
+		}
+		if ($extra = array_diff_key($config, $expected)) {
+			$extra = implode(", $name.", array_keys($extra));
+			throw new Nette\InvalidStateException("Unknown option $name.$extra.");
+		}
+	}
+	
 }
