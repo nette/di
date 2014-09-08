@@ -306,7 +306,10 @@ class ContainerBuilder extends Nette\Object
 
 		if (!$def->parameters) {
 			$ctorParams = array();
-			if ($def->factory && !$def->factory->arguments && ($class = $this->resolveEntityClass($def->factory, array($name => 1)))
+			if (empty($def->factory->entity)) {
+				$def->setFactory($def->class, $def->factory ? $def->factory->arguments : array());
+			}
+			if (($class = $this->resolveEntityClass($def->factory, array($name => 1)))
 				&& ($ctor = Reflection\ClassType::from($class)->getConstructor())
 			) {
 				foreach ($ctor->getParameters() as $param) {

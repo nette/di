@@ -25,3 +25,9 @@ services:
 	fooFactory3:
 		create: Foo
 		implement: IFooFactory
+
+	fooFactory4: IFooFactory
+
+	factory5:
+		implement: ITestClassFactory
+		arguments: ['foo']

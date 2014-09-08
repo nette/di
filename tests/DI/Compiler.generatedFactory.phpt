@@ -97,6 +97,23 @@ interface IFooFactory
 	public function create(Baz $baz = NULL);
 }
 
+class TestClass
+{
+	public $foo;
+	public $bar;
+	public function __construct($foo, $bar)
+	{
+		$this->foo = $foo;
+		$this->bar = $bar;
+	}
+}
+
+interface ITestClassFactory
+{
+	/** @return TestClass */
+	public function create($bar);
+}
+
 class TestExtension extends DI\CompilerExtension
 {
 	public function loadConfiguration()
@@ -182,6 +199,26 @@ Assert::type( 'Foo', $foo );
 Assert::type( 'Bar', $foo->bar );
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null( $foo->baz );
+
+
+Assert::type( 'IFooFactory', $container->getService('fooFactory4') );
+$foo = $container->getService('fooFactory4')->create($container->getService('baz'));
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::type( 'Baz', $foo->baz );
+Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory4')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
+
+
+Assert::type( 'ITestClassFactory', $container->getService('factory5') );
+$obj = $container->getService('factory5')->create('bar');
+Assert::same('foo', $obj->foo);
+Assert::same('bar', $obj->bar);
 
 
 class Bad1
