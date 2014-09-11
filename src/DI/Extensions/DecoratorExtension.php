@@ -7,8 +7,7 @@
 
 namespace Nette\DI\Extensions;
 
-use Nette,
-	Nette\DI\Statement;
+use Nette;
 
 
 /**
