@@ -30,3 +30,7 @@ services:
 		implement: IFooFactory
 
 	fooFactory5: IFooFactory
+	
+	test1:
+		implement: ITestClassFactory
+		arguments: ['foo']
