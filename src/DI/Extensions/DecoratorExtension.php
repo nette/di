@@ -22,6 +22,7 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 		'setup' => array(),
 		'tags' => array(),
 		'inject' => NULL,
+		'autowired' => NULL,
 	);
 
 
@@ -35,6 +36,7 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 			}
 			$this->addSetups($class, $info['setup']);
 			$this->addTags($class, $info['tags']);
+			$this->setAutowired($class, $info['autowired']);
 		}
 	}
 
@@ -57,6 +59,18 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 		foreach ($builder->findByType($type, FALSE) as $name) {
 			$def = $builder->getDefinition($name);
 			$def->setTags($def->getTags() + $tags);
+		}
+	}
+	
+	
+	public function setAutowired($type, $autowired)
+	{
+		if ($autowired !== NULL) {
+			$builder = $this->getContainerBuilder();
+			foreach ($builder->findByType($type, FALSE) as $name) {
+				$def = $builder->getDefinition($name);
+				$def->setAutowired($autowired);
+			}
 		}
 	}
 
