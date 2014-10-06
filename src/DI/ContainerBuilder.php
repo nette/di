@@ -179,18 +179,23 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
-	 * Gets the service names of the specified type.
+	 * Gets the service names and definitions of the specified type.
 	 * @param string
-	 * @return string[]
+	 * @return ServiceDefinition[]
 	 */
-	public function findByType($class, $autowired = TRUE)
+	public function findByType($class)
 	{
 		$class = ltrim($class, '\\');
 		self::checkCase($class);
-		return array_merge(
-			isset($this->classes[$class][TRUE]) ? $this->classes[$class][TRUE] : array(),
-			!$autowired && isset($this->classes[$class][FALSE]) ? $this->classes[$class][FALSE] : array()
-		);
+		$found = array();
+		foreach (array(TRUE, FALSE) as $mode) {
+			if (!empty($this->classes[$class][$mode])) {
+				foreach ($this->classes[$class][$mode] as $name) {
+					$found[$name] = $this->definitions[$name];
+				}
+			}
+		}
+		return $found;
 	}
 
 
