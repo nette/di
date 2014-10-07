@@ -84,7 +84,7 @@ class Compiler extends Nette\Object
 	public function setConfig(array $config, array $files = NULL)
 	{
 		$this->config = array();
-		$loader = new Config\Loader;
+		$loader = $this->createLoader();
 		foreach ($files as $info) {
 			$this->config = Config\Helpers::merge($loader->load($info[0], $info[1]), $this->config);
 		}
@@ -391,6 +391,15 @@ class Compiler extends Nette\Object
 			}
 		}
 		return $args;
+	}
+
+
+	/**
+	 * @return Config\Loader
+	 */
+	protected function createLoader()
+	{
+		return new Config\Loader;
 	}
 
 }
