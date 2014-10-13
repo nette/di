@@ -29,7 +29,7 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 	{
 		foreach ($this->getConfig() as $class => $info) {
 			$info = (array) $info;
-			$this->validate($info, $this->defaults, $this->prefix($class));
+			$this->validateConfig($this->defaults, $info, $this->prefix($class));
 			$info += $this->defaults;
 			if ($info['inject'] !== NULL) {
 				$info['tags'][InjectExtension::TAG_INJECT] = $info['inject'];
@@ -58,15 +58,6 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 		foreach ($builder->findByType($type, FALSE) as $name) {
 			$def = $builder->getDefinition($name);
 			$def->setTags($def->getTags() + $tags);
-		}
-	}
-
-
-	private function validate(array $config, array $expected, $name)
-	{
-		if ($extra = array_diff_key($config, $expected)) {
-			$extra = implode(", $name.", array_keys($extra));
-			throw new Nette\InvalidStateException("Unknown option $name.$extra.");
 		}
 	}
 
