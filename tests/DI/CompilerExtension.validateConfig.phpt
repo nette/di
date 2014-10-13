@@ -38,6 +38,6 @@ Assert::exception(function() {
 Assert::exception(function() {
 	Assert::with(new MyExtension, function() {
 		$this->setConfig(array('c' => TRUE, 'd' => TRUE));
-		$this->validateConfig(array('a' => TRUE, 'b' => TRUE), NULL, 'name');
+		$this->validateConfig(array('a' => TRUE, 'b' => TRUE));
 	});
-}, 'Nette\InvalidStateException', 'Unknown configuration option name.c, name.d.');
+}, 'Nette\InvalidStateException', 'Unknown configuration option my.c, my.d.');

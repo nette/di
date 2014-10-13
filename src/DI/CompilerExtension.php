@@ -125,7 +125,7 @@ abstract class CompilerExtension extends Nette\Object
 	 */
 	protected function validateConfig(array $expected, array $config = NULL, $name = NULL)
 	{
-		if ($extra = array_diff_key((array) $config ?: $this->config, $expected)) {
+		if ($extra = array_diff_key(func_num_args() > 1 ? (array) $config : $this->config, $expected)) {
 			$name = $name ?: $this->name;
 			$extra = implode(", $name.", array_keys($extra));
 			throw new Nette\InvalidStateException("Unknown configuration option $name.$extra.");
