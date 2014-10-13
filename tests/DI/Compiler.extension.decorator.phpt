@@ -42,6 +42,12 @@ decorator:
 			- setup
 		tags: [b, tag: 1]
 
+	spec1:
+		setup:
+		tags:
+
+	spec2:
+
 services:
 	one:
 		class: Service
