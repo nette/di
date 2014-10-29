@@ -29,7 +29,7 @@ class Compiler extends Nette\Object
 	private $builder;
 
 	/** @var array */
-	private $config = array();
+	private $config;
 
 	/** @var array reserved section names */
 	private static $reserved = array('services' => 1, 'factories' => 1, 'parameters' => 1);
@@ -76,27 +76,6 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * Sets configuration.
-	 * @param array
-	 * @param array [file => section]
-	 * @return ContainerBuilder
-	 */
-	public function setConfig(array $config, array $files = NULL)
-	{
-		$this->config = array();
-		$loader = new Config\Loader;
-		foreach ($files as $info) {
-			$this->config = Config\Helpers::merge($loader->load($info[0], $info[1]), $this->config);
-		}
-		foreach ($loader->getDependencies() as $file) {
-			$this->builder->addDependency($file);
-		}
-		$this->config = Config\Helpers::merge($this->config, $config);
-		return $this;
-	}
-
-
-	/**
 	 * Returns configuration.
 	 * @return array
 	 */
@@ -109,9 +88,9 @@ class Compiler extends Nette\Object
 	/**
 	 * @return string
 	 */
-	public function compile(array $config = NULL, $className, $parentName = NULL)
+	public function compile(array $config, $className, $parentName = NULL)
 	{
-		$this->config = $config ?: $this->config;
+		$this->config = $config;
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
