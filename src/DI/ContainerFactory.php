@@ -14,6 +14,7 @@ use Nette;
  * DI container generator.
  *
  * @author     David Grudl
+ * @deprecated
  */
 class ContainerFactory extends Nette\Object
 {
