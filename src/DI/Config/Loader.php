@@ -34,12 +34,15 @@ class Loader extends Nette\Object
 
 	/**
 	 * Reads configuration from file.
-	 * @param  string  file name
+	 * @param  string|array  file name or array with configuration
 	 * @param  string  optional section to load
 	 * @return array
 	 */
 	public function load($file, $section = NULL)
 	{
+		if (is_array($file)) {
+			return $file;
+		}
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
 		}
