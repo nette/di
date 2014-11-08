@@ -32,7 +32,7 @@ class ContainerFactory extends Nette\Object
 	/** @var array */
 	public $config = array();
 
-	/** @var array [file, section] */
+	/** @var array [file|array, section] */
 	public $configFiles = array();
 
 	/** @var string */
@@ -71,7 +71,9 @@ class ContainerFactory extends Nette\Object
 
 		$code = "<?php\n";
 		foreach ($this->configFiles as $info) {
-			$code .= "// source: $info[0] $info[1]\n";
+			if (is_scalar($info[0])) {
+				$code .= "// source: $info[0] $info[1]\n";
+			}
 		}
 		$code .= "\n" . $compiler->compile($config, $this->class, $this->parentClass);
 
@@ -90,7 +92,8 @@ class ContainerFactory extends Nette\Object
 		$config = array();
 		$loader = $this->createLoader();
 		foreach ($this->configFiles as $info) {
-			$config = Config\Helpers::merge($loader->load($info[0], $info[1]), $config);
+			$info = is_scalar($info[0]) ? $loader->load($info[0], $info[1]) : $info[0];
+			$config = Config\Helpers::merge($info, $config);
 		}
 		$this->dependencies = array_merge($this->dependencies, $loader->getDependencies());
 
