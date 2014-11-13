@@ -499,7 +499,8 @@ class ContainerBuilder extends Nette\Object
 			);
 		}
 
-		$serviceRef = $this->getServiceName($def->factory->entity);
+		$entity = $def->factory->entity;
+		$serviceRef = $this->getServiceName($entity);
 		$factory = $serviceRef && !$def->factory->arguments && !$def->setup && $def->implementType !== 'create'
 			? new Statement(array('@' . ContainerBuilder::THIS_CONTAINER, 'getService'), array($serviceRef))
 			: $def->factory;
@@ -507,7 +508,9 @@ class ContainerBuilder extends Nette\Object
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
 		$this->currentService = $name;
 
-		if ($def->class && $def->class !== $def->factory->entity && !$serviceRef) {
+		if ($def->class && !$serviceRef && $def->class !== $entity
+			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $def->class))
+		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $def->class) {\n"
 				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
 				array("Unable to create service '$name', value returned by factory is not $def->class type.")
