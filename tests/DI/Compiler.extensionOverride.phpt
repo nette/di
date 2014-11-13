@@ -13,6 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Factory
 {
+	/** @return Lorem */
 	static function createLorem($arg = NULL)
 	{
 		return new Lorem($arg);
@@ -22,6 +23,7 @@ class Factory
 
 class IpsumFactory
 {
+	/** @return Ipsum */
 	static function create($arg = NULL)
 	{
 		return new Ipsum($arg);

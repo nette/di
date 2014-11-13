@@ -13,6 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Factory
 {
+	/** @return Lorem */
 	static function createLorem($arg)
 	{
 		return new Lorem(__METHOD__ . ' ' . $arg);
@@ -32,6 +33,7 @@ class Lorem
 		$this->arg = $arg;
 	}
 
+	/** @return Lorem */
 	function foo()
 	{
 		$this->foo = func_get_args();
