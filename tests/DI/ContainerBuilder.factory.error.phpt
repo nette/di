@@ -119,3 +119,16 @@ Assert::exception(function() {
 	$builder->addDefinition('one')->setFactory('Bad6::create');
 	$builder->generateClasses();
 }, 'Nette\InvalidStateException', "Factory 'Bad6::create' used in service 'one' is not callable.");
+
+
+class Bad7
+{
+	static function create()
+	{}
+}
+
+Assert::error(function() {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory('Bad7::create');
+	$builder->generateClasses();
+}, E_USER_WARNING, "Class of service 'one' is unknown.");

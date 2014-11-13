@@ -348,6 +348,8 @@ class ContainerBuilder extends Nette\Object
 				throw new ServiceCreationException("Class or interface $def->class used in service '$name' not found.");
 			}
 			$def->class = Reflection\ClassType::from($def->class)->getName();
+		} elseif ($def->autowired) {
+			trigger_error("Class of service '$name' is unknown.", E_USER_WARNING);
 		}
 		return $def->class;
 	}
