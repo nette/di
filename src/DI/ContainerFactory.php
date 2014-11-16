@@ -107,7 +107,14 @@ class ContainerFactory extends Nette\Object
 	private function loadClass()
 	{
 		$key = md5(serialize(array($this->config, $this->configFiles, $this->class, $this->parentClass)));
-		$handle = fopen($file = "$this->tempDirectory/$key.php", 'c+');
+		$file = "$this->tempDirectory/$key.php";
+
+		if (!$this->autoRebuild && function_exists('opcache_is_script_cached') && opcache_is_script_cached($file)) {
+			require $file; // not atomic, any idea?
+			return;
+		}
+
+		$handle = fopen($file, 'c+');
 		if (!$handle) {
 			throw new Nette\IOException("Unable to open or create file '$file'.");
 		}
