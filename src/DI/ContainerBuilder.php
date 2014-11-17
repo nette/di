@@ -32,6 +32,9 @@ class ContainerBuilder extends Nette\Object
 	/** @var ServiceDefinition[] */
 	private $definitions = array();
 
+	/** @var array of alias => service */
+	private $aliases = array();
+
 	/** @var array for auto-wiring */
 	private $classes;
 
@@ -57,8 +60,9 @@ class ContainerBuilder extends Nette\Object
 	{
 		if (!is_string($name) || !$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
-
-		} elseif (isset($this->definitions[$name])) {
+		}
+		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
+		if (isset($this->definitions[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' has already been added.");
 		}
 		return $this->definitions[$name] = $definition ?: new ServiceDefinition;
@@ -72,6 +76,7 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function removeDefinition($name)
 	{
+		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		unset($this->definitions[$name]);
 	}
 
@@ -83,10 +88,11 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function getDefinition($name)
 	{
-		if (!isset($this->definitions[$name])) {
+		$service = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
+		if (!isset($this->definitions[$service])) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
-		return $this->definitions[$name];
+		return $this->definitions[$service];
 	}
 
 
@@ -101,13 +107,47 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
-	 * Does the service definition exist?
+	 * Does the service definition or alias exist?
 	 * @param  string
 	 * @return bool
 	 */
 	public function hasDefinition($name)
 	{
+		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		return isset($this->definitions[$name]);
+	}
+
+
+	/**
+	 * @param string
+	 * @param string
+	 */
+	public function addAlias($alias, $service)
+	{
+		if (!is_string($alias) || !$alias) { // builder is not ready for falsy names such as '0'
+			throw new Nette\InvalidArgumentException(sprintf('Alias name must be a non-empty string, %s given.', gettype($alias)));
+
+		} elseif (!is_string($service) || !$service) { // builder is not ready for falsy names such as '0'
+			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($service)));
+
+		} elseif (isset($this->aliases[$alias])) {
+			throw new Nette\InvalidStateException("Alias '$alias' has already been added.");
+
+		} elseif (isset($this->definitions[$alias])) {
+			throw new Nette\InvalidStateException("Service '$alias' has already been added.");
+
+		}
+		$this->aliases[$alias] = $service;
+	}
+
+
+	/**
+	 * Gets all service aliases.
+	 * @return array
+	 */
+	public function getAliases()
+	{
+		return $this->aliases;
 	}
 
 
@@ -491,6 +531,10 @@ class ContainerBuilder extends Nette\Object
 			}
 		}
 
+		$aliases = $this->aliases;
+		ksort($aliases);
+		$meta->value[Container::ALIASES] = $aliases;
+
 		return $this->generatedClasses;
 	}
 
@@ -766,6 +810,7 @@ class ContainerBuilder extends Nette\Object
 			}
 			return $res;
 		}
+		$service = isset($this->aliases[$service]) ? $this->aliases[$service] : $service;
 		if (!isset($this->definitions[$service])) {
 			throw new ServiceCreationException("Reference to missing service '$service'.");
 		}

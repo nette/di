@@ -38,6 +38,7 @@ Assert::same(array(
 		'b' => array('lorem' => 'c'),
 		'd' => array('lorem' => array('e')),
 	),
+	'aliases' => array(),
 ), $prop->getValue($container) );
 
 Assert::same( array('lorem' => TRUE), $container->findByTag('a') );

@@ -20,6 +20,7 @@ class Container extends Nette\Object
 	const TAGS = 'tags';
 	const TYPES = 'types';
 	const SERVICES = 'services';
+	const ALIASES = 'aliases';
 
 	/** @var array  user parameters */
 	/*private*/public $parameters = array();
@@ -60,7 +61,9 @@ class Container extends Nette\Object
 		if (!is_string($name) || !$name) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 
-		} elseif (isset($this->registry[$name])) {
+		}
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
+		if (isset($this->registry[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' already exists.");
 
 		} elseif (!is_object($service)) {
@@ -82,6 +85,7 @@ class Container extends Nette\Object
 	 */
 	public function removeService($name)
 	{
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		unset($this->registry[$name]);
 	}
 
@@ -94,6 +98,7 @@ class Container extends Nette\Object
 	 */
 	public function getService($name)
 	{
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		if (!isset($this->registry[$name])) {
 			$this->registry[$name] = $this->createService($name);
 		}
@@ -108,6 +113,7 @@ class Container extends Nette\Object
 	 */
 	public function hasService($name)
 	{
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		return isset($this->registry[$name])
 			|| method_exists($this, $method = Container::getMethodName($name)) && $this->getReflection()->getMethod($method)->getName() === $method;
 	}
@@ -123,6 +129,7 @@ class Container extends Nette\Object
 		if (!$this->hasService($name)) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		return isset($this->registry[$name]);
 	}
 
@@ -135,6 +142,7 @@ class Container extends Nette\Object
 	 */
 	public function createService($name, array $args = array())
 	{
+		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		$method = Container::getMethodName($name);
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
