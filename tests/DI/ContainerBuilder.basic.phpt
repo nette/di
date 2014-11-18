@@ -15,6 +15,7 @@ class Service
 {
 	public $methods;
 
+	/** @return Service */
 	static function create(DI\Container $container = NULL)
 	{
 		return new self(array_slice(func_get_args(), 1));

@@ -16,6 +16,7 @@ class Factory
 	private function __construct()
 	{}
 
+	/** @return Factory */
 	static function create()
 	{
 		return new self;
