@@ -57,8 +57,9 @@ class ProcessingCompiler extends Nette\DI\Compiler
 
 $compiler = new ProcessingCompiler;
 
-$compiler->addExtension('foo', new FooExtension());
 $compiler->addExtension('baz', new BazExtension());
+$compiler->addExtension('foo', new FooExtension());
+$compiler->addExtension('baz', new BazExtension()); // re-register baz extension
 $extensions = $compiler->getExtensions();
 
 Assert::same(2, count($extensions));
