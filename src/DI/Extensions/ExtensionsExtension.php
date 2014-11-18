@@ -21,7 +21,12 @@ class ExtensionsExtension extends Nette\DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		foreach ($this->getConfig() as $name => $class) {
-			$this->compiler->addExtension($name, new $class);
+			if ($class instanceof \stdClass) {
+				$rc = Nette\Reflection\ClassType::from($class->value);
+				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->attributes));
+			} else {
+				$this->compiler->addExtension($name, new $class);
+			}
 		}
 	}
 
