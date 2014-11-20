@@ -25,3 +25,12 @@ services:
 	fooFactory3:
 		create: Foo
 		implement: IFooFactory
+
+	fooFactory4:
+		implement: IFooFactory
+
+	fooFactory5: IFooFactory
+	
+	test1:
+		implement: ITestClassFactory
+		arguments: ['foo']

@@ -184,6 +184,34 @@ Assert::same($container->getService('bar'), $foo->bar);
 Assert::null( $foo->baz );
 
 
+Assert::type( 'IFooFactory', $container->getService('fooFactory4') );
+$foo = $container->getService('fooFactory4')->create($container->getService('baz'));
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::type( 'Baz', $foo->baz );
+Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory4')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
+
+
+Assert::type( 'IFooFactory', $container->getService('fooFactory5') );
+$foo = $container->getService('fooFactory5')->create($container->getService('baz'));
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::type( 'Baz', $foo->baz );
+Assert::same($container->getService('baz'), $foo->baz);
+$foo = $container->getService('fooFactory5')->create();
+Assert::type( 'Foo', $foo );
+Assert::type( 'Bar', $foo->bar );
+Assert::same($container->getService('bar'), $foo->bar);
+Assert::null( $foo->baz );
+
+
 class Bad1
 {
 	public function __construct(Bar $bar)
@@ -201,3 +229,26 @@ Assert::exception(function() {
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->generateClasses();
 }, 'Nette\InvalidStateException', "Type hint for \$bar in Bad1::__construct() doesn't match type hint for \$bar in Bad2::create()");
+
+
+class TestClass
+{
+	public $foo;
+	public $bar;
+	public function __construct($foo, $bar)
+	{
+		$this->foo = $foo;
+		$this->bar = $bar;
+	}
+}
+
+interface ITestClassFactory
+{
+	/** @return TestClass */
+	public function create($bar);
+}
+
+Assert::type( 'ITestClassFactory', $container->getService('test1') );
+$obj = $container->getService('test1')->create('bar');
+Assert::same('foo', $obj->foo);
+Assert::same('bar', $obj->bar);
