@@ -50,6 +50,7 @@ class Compiler extends Nette\Object
 		if (isset(self::$reserved[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is reserved.");
 		}
+		unset($this->extensions[$name]);
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
 		return $this;
 	}
