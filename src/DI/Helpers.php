@@ -159,7 +159,7 @@ class Helpers
 				throw new Nette\InvalidStateException("Property $property has no @var annotation.");
 			}
 
-			$type = Nette\Reflection\AnnotationsParser::expandClassName($type, $property->getDeclaringClass());
+			$type = Nette\Reflection\AnnotationsParser::expandClassName($type, self::getDeclaringClass($property));
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found. Check annotation and 'use' statements.");
 			} elseif ($container && !$container->getByType($type, FALSE)) {
@@ -170,5 +170,21 @@ class Helpers
 		return $res;
 	}
 
+
+	/**
+	 * Returns declaring class or trait.
+	 * @return \ReflectionClass
+	 */
+	private static function getDeclaringClass(\ReflectionProperty $prop)
+	{
+		if (PHP_VERSION_ID >= 50400) {
+			foreach ($prop->getDeclaringClass()->getTraits() as $trait) {
+				if ($trait->hasProperty($prop->getName())) {
+					return self::getDeclaringClass($trait->getProperty($prop->getName()));
+				}
+			}
+		}
+		return $prop->getDeclaringClass();
+	}
 
 }
