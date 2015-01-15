@@ -376,15 +376,20 @@ class ContainerBuilder extends Nette\Object
 
 			try {
 				$reflection = Nette\Utils\Callback::toReflection($entity);
+				$refClass = $reflection instanceof \ReflectionMethod ? $reflection->getDeclaringClass() : NULL;
 			} catch (\ReflectionException $e) {
 			}
-			if (isset($e) || !is_callable($entity)) {
+
+			if (isset($e) || ($refClass && (!$reflection->isPublic()
+				|| (PHP_VERSION_ID >= 50400 && $refClass->isTrait() && !$reflection->isStatic())
+			))) {
 				$name = array_slice(array_keys($recursive), -1);
 				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $name[0]));
 			}
+
 			$class = preg_replace('#[|\s].*#', '', $reflection->getAnnotation('return'));
-			if ($class && $reflection instanceof \ReflectionMethod) {
-				$class = Reflection\AnnotationsParser::expandClassName($class, $reflection->getDeclaringClass());
+			if ($class && $refClass) {
+				$class = Reflection\AnnotationsParser::expandClassName($class, $refClass);
 			}
 			return $class;
 
