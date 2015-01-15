@@ -23,7 +23,15 @@ class Factory
 
 }
 
-class AnnotatedFactory
+
+interface IFactory
+{
+
+	function create();
+
+}
+
+class AnnotatedFactory implements IFactory
 {
 	public $methods;
 
@@ -59,6 +67,11 @@ $builder->addDefinition('four')
 	->setAutowired(FALSE)
 	->setFactory('@\AnnotatedFactory::create');
 
+$builder->addDefinition('five')
+	->setAutowired(FALSE)
+	->setFactory('@\IFactory::create');
+
+
 
 $container = createContainer($builder);
 
@@ -85,3 +98,6 @@ Assert::type( 'stdClass', $container->getService('four') );
 Assert::same(array(
 	array('create', array()),
 ), $annotatedFactory->methods);
+
+
+Assert::type( 'stdClass', $container->getService('five') );
