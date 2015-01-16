@@ -35,5 +35,8 @@ services:
 			- Ipsum(a)::test
 			- Ipsum(b)::test(10)
 
+			# object
+			- \Ipsum(@self)
+
 	ipsum:
 		class: Ipsum

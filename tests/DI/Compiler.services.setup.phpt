@@ -24,11 +24,14 @@ class Ipsum
 {
 	public static $staticTest;
 
+	public static $instances;
+
 	public $test;
 
 	function __construct($arg = NULL)
 	{
 		$this->arg = $arg;
+		self::$instances[] = $this;
 	}
 
 	function test($arg = NULL)
@@ -71,3 +74,6 @@ Assert::same(array(
 Assert::same( 8, $container->getService('lorem')->test );
 Assert::same( 9, Ipsum::$staticTest );
 Assert::equal( new Lorem, $container->getService('ipsum')->test );
+
+Assert::same( 4, count(Ipsum::$instances) );
+Assert::same( $container->getService('lorem'), Ipsum::$instances[3]->arg );

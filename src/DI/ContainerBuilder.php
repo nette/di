@@ -529,7 +529,7 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		foreach ((array) $def->setup as $setup) {
-			if (is_string($setup->entity) && strpbrk($setup->entity, ':@?') === FALSE) { // auto-prepend @self
+			if (is_string($setup->entity) && strpbrk($setup->entity, ':@?\\') === FALSE) { // auto-prepend @self
 				$setup->entity = array('@self', $setup->entity);
 			}
 			$code .= $this->formatStatement($setup) . ";\n";
