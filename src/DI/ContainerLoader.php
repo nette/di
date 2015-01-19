@@ -61,46 +61,57 @@ class ContainerLoader extends Nette\Object
 	private function loadFile($class, $generator)
 	{
 		$file = "$this->tempDirectory/$class.php";
-		if (!$this->autoRebuild && (@include $file) !== FALSE) { // @ - file may not exist
+		if (!$this->isExpired($file) && (@include $file) !== FALSE) {
 			return;
 		}
 
 		if (!is_dir($this->tempDirectory)) {
 			@mkdir($this->tempDirectory); // @ - directory may already exist
 		}
+
 		$handle = fopen("$file.lock", 'c+');
-		if (!$handle) {
-			throw new Nette\IOException("Unable to open or create file '$file.lock'.");
+		if (!$handle || !flock($handle, LOCK_EX)) {
+			throw new Nette\IOException("Unable to acquire exclusive lock '$file.lock'.");
 		}
 
+		if (!is_file($file) || $this->isExpired($file)) {
+			list($code, $dependencies) = call_user_func($generator, $class);
+
+			$dependencies = (array) $dependencies;
+			$meta = serialize(array_combine($dependencies, @array_map('filemtime', $dependencies)));
+			if (file_put_contents("$file.tmp", $meta) !== strlen($meta) || !rename("$file.tmp", "$file.meta")) {
+				@unlink("$file.tmp"); // @ - file may not exist
+				throw new Nette\IOException("Unable to create file '$file.meta'.");
+			}
+
+			$code = "<?php\n" . $code;
+			if (file_put_contents("$file.tmp", $code) !== strlen($code) || !rename("$file.tmp", $file)) {
+				@unlink("$file.tmp"); // @ - file may not exist
+				throw new Nette\IOException("Unable to create file '$file'.");
+			}
+		}
+
+		if ((@include $file) === FALSE) { // @ - error escalated to exception
+			throw new Nette\IOException("Unable to include '$file'.");
+		}
+		flock($handle, LOCK_UN);
+	}
+
+
+	/**
+	 * @param  string
+	 * @return bool
+	 */
+	private function isExpired($file)
+	{
 		if ($this->autoRebuild) {
-			flock($handle, LOCK_SH);
 			foreach ((array) @unserialize(file_get_contents("$file.meta")) as $f => $time) { // @ - file may not exist
 				if (@filemtime($f) !== $time) { // @ - stat may fail
-					@unlink($file); // @ - file may not exist
-					break;
+					return TRUE;
 				}
 			}
 		}
-
-		if (!is_file($file)) {
-			flock($handle, LOCK_EX);
-			if (!is_file($file)) {
-				list($code, $dependencies) = call_user_func($generator, $class);
-				$code = "<?php\n" . $code;
-				if (file_put_contents("$file.tmp", $code) !== strlen($code) || !rename("$file.tmp", $file)) {
-					@unlink("$file.tmp"); // @ - file may not be created
-					throw new Nette\IOException("Unable to create file '$file'.");
-				}
-				$tmp = array();
-				foreach ((array) $dependencies as $f) {
-					$tmp[$f] = @filemtime($f); // @ - stat may fail
-				}
-				file_put_contents("$file.meta", serialize($tmp));
-			}
-		}
-
-		require $file;
+		return FALSE;
 	}
 
 }
