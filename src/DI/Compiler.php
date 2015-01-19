@@ -223,13 +223,8 @@ class Compiler extends Nette\Object
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), NULL, $e);
 			}
 
-			if ($definition->class === 'self') {
-				$definition->class = $origName;
-				trigger_error("Replace service definition '$origName: self' with '- $origName'.", E_USER_DEPRECATED);
-			}
-			if ($definition->factory && $definition->factory->entity === 'self') {
-				$definition->factory->entity = $origName;
-				trigger_error("Replace service definition '$origName: self' with '- $origName'.", E_USER_DEPRECATED);
+			if ($definition->class === 'self' || ($definition->factory && $definition->factory->entity === 'self')) {
+				throw new Nette\DeprecatedException("Replace service definition '$origName: self' with '- $origName'.");
 			}
 		}
 	}
