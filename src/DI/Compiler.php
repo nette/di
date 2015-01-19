@@ -112,6 +112,15 @@ class Compiler extends Nette\Object
 	{
 		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
 			$name = key($slice);
+
+			if (isset($this->config['nette'][$name]) && is_array($this->config['nette'][$name])) {
+				if (isset($this->config[$name])) {
+					throw new Nette\DeprecatedException("Configuration section 'nette.$name' is deprecated, move it to section '$name'.");
+				}
+				$this->config[$name] = $this->config['nette'][$name];
+				unset($this->config['nette'][$name]);
+			}
+
 			if (isset($this->config[$name])) {
 				$this->config[$name] = $tmp = $this->builder->expand($this->config[$name]);
 				unset($tmp['services']);
