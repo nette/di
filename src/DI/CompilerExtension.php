@@ -46,12 +46,14 @@ abstract class CompilerExtension extends Nette\Object
 
 	/**
 	 * Returns extension configuration.
-	 * @param  array default unexpanded values.
 	 * @return array
 	 */
-	public function getConfig(array $defaults = NULL)
+	public function getConfig()
 	{
-		return Config\Helpers::merge($this->config, $this->getContainerBuilder()->expand($defaults));
+		if (func_num_args()) { // deprecated
+			return Config\Helpers::merge($this->config, $this->getContainerBuilder()->expand(func_get_arg(0)));
+		}
+		return $this->config;
 	}
 
 
