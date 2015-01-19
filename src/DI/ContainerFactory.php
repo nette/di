@@ -114,9 +114,9 @@ class ContainerFactory extends Nette\Object
 			return;
 		}
 
-		$handle = fopen("$file.tmp", 'c+');
+		$handle = fopen("$file.lock", 'c+');
 		if (!$handle) {
-			throw new Nette\IOException("Unable to open or create file '$file.tmp'.");
+			throw new Nette\IOException("Unable to open or create file '$file.lock'.");
 		}
 
 		if ($this->autoRebuild) {
@@ -134,8 +134,9 @@ class ContainerFactory extends Nette\Object
 			if (!is_file($file)) {
 				$this->dependencies = array();
 				$code = $this->generateCode();
-				if (!file_put_contents($file, $code)) {
-					throw new Nette\IOException("Unable to write file '$file'.");
+				if (file_put_contents("$file.tmp", $code) !== strlen($code) || !rename("$file.tmp", $file)) {
+					@unlink("$file.tmp"); // @ - file may not be created
+					throw new Nette\IOException("Unable to create file '$file'.");
 				}
 				$tmp = array();
 				foreach ($this->dependencies as $f) {

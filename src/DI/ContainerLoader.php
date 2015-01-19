@@ -68,9 +68,9 @@ class ContainerLoader extends Nette\Object
 		if (!is_dir($this->tempDirectory)) {
 			@mkdir($this->tempDirectory); // @ - directory may already exist
 		}
-		$handle = fopen("$file.tmp", 'c+');
+		$handle = fopen("$file.lock", 'c+');
 		if (!$handle) {
-			throw new Nette\IOException("Unable to open or create file '$file.tmp'.");
+			throw new Nette\IOException("Unable to open or create file '$file.lock'.");
 		}
 
 		if ($this->autoRebuild) {
@@ -87,8 +87,10 @@ class ContainerLoader extends Nette\Object
 			flock($handle, LOCK_EX);
 			if (!is_file($file)) {
 				list($code, $dependencies) = call_user_func($generator, $class);
-				if (!file_put_contents($file, "<?php\n" . $code)) {
-					throw new Nette\IOException("Unable to write file '$file'.");
+				$code = "<?php\n" . $code;
+				if (file_put_contents("$file.tmp", $code) !== strlen($code) || !rename("$file.tmp", $file)) {
+					@unlink("$file.tmp"); // @ - file may not be created
+					throw new Nette\IOException("Unable to create file '$file'.");
 				}
 				$tmp = array();
 				foreach ((array) $dependencies as $f) {
