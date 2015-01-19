@@ -32,7 +32,7 @@ class Compiler extends Nette\Object
 	private $config;
 
 	/** @var array reserved section names */
-	private static $reserved = array('services' => 1, 'factories' => 1, 'parameters' => 1);
+	private static $reserved = array('services' => 1, 'parameters' => 1);
 
 
 	public function __construct(ContainerBuilder $builder = NULL)
@@ -114,7 +114,7 @@ class Compiler extends Nette\Object
 			$name = key($slice);
 			if (isset($this->config[$name])) {
 				$this->config[$name] = $tmp = $this->builder->expand($this->config[$name]);
-				unset($tmp['services'], $tmp['factories']);
+				unset($tmp['services']);
 				$this->extensions[$name]->setConfig($tmp);
 			}
 			$this->extensions[$name]->loadConfiguration();
@@ -170,33 +170,28 @@ class Compiler extends Nette\Object
 	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
 	{
 		if (!empty($config['factories'])) {
-			trigger_error("Section 'factories' is deprecated, move definitions to section 'services' and append key 'autowired: no'.", E_USER_DEPRECATED);
+			throw new Nette\DeprecatedException("Section 'factories' is deprecated, move definitions to section 'services' and append key 'autowired: no'.");
 		}
 
 		$services = isset($config['services']) ? $config['services'] : array();
-		$factories = isset($config['factories']) ? $config['factories'] : array();
-		$all = array_merge($services, $factories);
-
 		$depths = array();
-		foreach ($all as $name => $def) {
+		foreach ($services as $name => $def) {
 			$path = array();
 			while (Config\Helpers::isInheriting($def)) {
 				$path[] = $def;
-				$def = isset($all[$def[Config\Helpers::EXTENDS_KEY]]) ? $all[$def[Config\Helpers::EXTENDS_KEY]] : array();
+				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : array();
 				if (in_array($def, $path, TRUE)) {
 					throw new ServiceCreationException("Circular reference detected for service '$name'.");
 				}
 			}
 			$depths[$name] = count($path);
 		}
-		array_multisort($depths, $all);
+		array_multisort($depths, $services);
 
-		foreach ($all as $origName => $def) {
+		foreach ($services as $origName => $def) {
 			if ((string) (int) $origName === (string) $origName) {
 				$name = count($builder->getDefinitions())
 					. preg_replace('#\W+#', '_', $def instanceof Statement ? ".$def->entity" : (is_scalar($def) ? ".$def" : ''));
-			} elseif (array_key_exists($origName, $services) && array_key_exists($origName, $factories)) {
-				throw new ServiceCreationException("It is not allowed to use services and factories with the same name: '$origName'.");
 			} else {
 				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
 			}
