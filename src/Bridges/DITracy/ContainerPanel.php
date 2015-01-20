@@ -69,7 +69,8 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 
 	private function getContainerProperty($name)
 	{
-		$prop = Nette\Reflection\ClassType::from('Nette\DI\Container')->getProperty($name);
+		$rc = new \ReflectionClass('Nette\DI\Container');
+		$prop = $rc->getProperty($name);
 		$prop->setAccessible(TRUE);
 		return $prop->getValue($this->container);
 	}

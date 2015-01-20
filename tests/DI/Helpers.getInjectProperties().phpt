@@ -74,15 +74,14 @@ namespace C
 namespace
 {
 	use Nette\DI\Helpers;
-	use Nette\Reflection\ClassType;
 	use Tester\Assert;
 
 	require __DIR__ . '/../bootstrap.php';
 
 
-	$refA = ClassType::from('A\AClass');
-	$refB = ClassType::from('A\B\BClass');
-	$refC = ClassType::from('C\CClass');
+	$refA = new ReflectionClass('A\AClass');
+	$refB = new ReflectionClass('A\B\BClass');
+	$refC = new ReflectionClass('C\CClass');
 
 	Assert::same( array(
 		'varA' => 'A\AInjected',

@@ -35,7 +35,7 @@ class InjectExtension extends DI\CompilerExtension
 	private function updateDefinition($def)
 	{
 		$injects = array();
-		$properties = DI\Helpers::getInjectProperties(Nette\Reflection\ClassType::from($def->getClass()), $this->getContainerBuilder());
+		$properties = DI\Helpers::getInjectProperties(new \ReflectionClass($def->getClass()), $this->getContainerBuilder());
 		foreach ($properties as $property => $type) {
 			$injects[] = new DI\Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
 		}
