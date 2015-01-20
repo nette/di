@@ -160,7 +160,7 @@ class Helpers
 				throw new Nette\InvalidStateException("Property $property has no @var annotation.");
 			}
 
-			$type = Nette\Reflection\AnnotationsParser::expandClassName($type, PhpReflection::getDeclaringClass($property));
+			$type = PhpReflection::expandClassName($type, PhpReflection::getDeclaringClass($property));
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found. Check annotation and 'use' statements.");
 			} elseif ($container && !$container->getByType($type, FALSE)) {

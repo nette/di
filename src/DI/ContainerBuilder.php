@@ -333,7 +333,7 @@ class ContainerBuilder extends Nette\Object
 				throw new ServiceCreationException("Method $interface::$methodName() used in service '$name' has no @return annotation.");
 			}
 
-			$returnType = Nette\Reflection\AnnotationsParser::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
+			$returnType = PhpReflection::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
 			if (!class_exists($returnType)) {
 				throw new ServiceCreationException("Please check a @return annotation of the $interface::$methodName() method used in service '$name'. Class '$returnType' cannot be found.");
 			}
@@ -438,7 +438,7 @@ class ContainerBuilder extends Nette\Object
 
 			$class = preg_replace('#[|\s].*#', '', PhpReflection::parseAnnotation($reflection, 'return'));
 			if ($class) {
-				$class = $refClass ? Nette\Reflection\AnnotationsParser::expandClassName($class, $refClass) : ltrim($class, '\\');
+				$class = $refClass ? PhpReflection::expandClassName($class, $refClass) : ltrim($class, '\\');
 			}
 			return $class;
 
