@@ -58,6 +58,25 @@ abstract class CompilerExtension extends Nette\Object
 
 
 	/**
+	 * Checks whether $config contains only $expected items and returns combined array.
+	 * @return array
+	 * @throws Nette\InvalidStateException
+	 */
+	public function validateConfig(array $expected, array $config = NULL, $name = NULL)
+	{
+		if (func_num_args() === 1) {
+			return $this->config = $this->validateConfig($expected, $this->config);
+		}
+		if ($extra = array_diff_key((array) $config, $expected)) {
+			$name = $name ?: $this->name;
+			$extra = implode(", $name.", array_keys($extra));
+			throw new Nette\InvalidStateException("Unknown configuration option $name.$extra.");
+		}
+		return Config\Helpers::merge($config, $expected);
+	}
+
+
+	/**
 	 * @return ContainerBuilder
 	 */
 	public function getContainerBuilder()
@@ -119,19 +138,4 @@ abstract class CompilerExtension extends Nette\Object
 	{
 	}
 
-
-	/**
-	 * Checks whether $config contains only $expected items.
-	 * @return void
-	 * @throws Nette\InvalidStateException
-	 */
-	protected function validateConfig(array $expected, array $config = NULL, $name = NULL)
-	{
-		if ($extra = array_diff_key(func_num_args() > 1 ? (array) $config : $this->config, $expected)) {
-			$name = $name ?: $this->name;
-			$extra = implode(", $name.", array_keys($extra));
-			throw new Nette\InvalidStateException("Unknown configuration option $name.$extra.");
 		}
-	}
-
-}
