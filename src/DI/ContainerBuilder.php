@@ -749,6 +749,7 @@ class ContainerBuilder extends Nette\Object
 	/**
 	 * Expands %placeholders% in strings.
 	 * @return mixed
+	 * @deprecated
 	 */
 	public function expand($value)
 	{

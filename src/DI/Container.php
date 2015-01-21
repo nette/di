@@ -288,6 +288,7 @@ class Container extends Nette\Object
 	 * Expands %placeholders%.
 	 * @param  mixed
 	 * @return mixed
+	 * @deprecated
 	 */
 	public function expand($s)
 	{
