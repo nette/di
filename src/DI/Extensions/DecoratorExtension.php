@@ -28,9 +28,7 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getConfig() as $class => $info) {
-			$info = (array) $info;
-			$this->validateConfig($this->defaults, $info, $this->prefix($class));
-			$info += $this->defaults;
+			$info = $this->validateConfig($this->defaults, $info, $this->prefix($class));
 			if ($info['inject'] !== NULL) {
 				$info['tags'][InjectExtension::TAG_INJECT] = $info['inject'];
 			}
