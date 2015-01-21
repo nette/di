@@ -415,7 +415,7 @@ class ContainerBuilder extends Nette\Object
 			}
 
 			try {
-				$reflection = Nette\Utils\Callback::toReflection($entity);
+				$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
 				$refClass = $reflection instanceof \ReflectionMethod ? $reflection->getDeclaringClass() : NULL;
 			} catch (\ReflectionException $e) {
 			}
