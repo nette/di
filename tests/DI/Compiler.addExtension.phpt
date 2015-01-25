@@ -61,7 +61,7 @@ $compiler->addExtension('foo', new FooExtension());
 $compiler->addExtension('baz', new BazExtension());
 $extensions = $compiler->getExtensions();
 
-Assert::same(2, count($extensions));
+Assert::count(2, $extensions);
 Assert::false($extensions['foo']->loaded);
 Assert::false($extensions['baz']->loaded);
 
@@ -73,7 +73,7 @@ Assert::equal(array(), $compiler->getExtensions('UnknownExtension'));
 $compiler->compile(array(), 'SystemContainer', 'Nette\DI\Container');
 $extensions = $compiler->getExtensions();
 
-Assert::same(3, count($extensions));
+Assert::count(3, $extensions);
 Assert::true($extensions['foo']->loaded);
 Assert::true($extensions['bar']->loaded);
 Assert::true($extensions['baz']->loaded);
@@ -88,7 +88,7 @@ $extensions['baz']->loaded = false;
 $compiler->compile(array(), 'SystemContainer', 'Nette\DI\Container');
 $extensions = $compiler->getExtensions();
 
-Assert::same(3, count($extensions));
+Assert::count(3, $extensions);
 Assert::true($extensions['foo']->loaded);
 Assert::true($extensions['bar']->loaded);
 Assert::true($extensions['baz']->loaded);
