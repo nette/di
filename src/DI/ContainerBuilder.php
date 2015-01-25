@@ -719,9 +719,6 @@ class ContainerBuilder extends Nette\Object
 
 			} elseif ($val instanceof ServiceDefinition) {
 				$val = '@' . current(array_keys($that->definitions, $val, TRUE));
-
-			} elseif (is_string($val) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $val, $m)) {
-				$val = ContainerBuilder::literal(ltrim($val, ':'));
 			}
 
 			if (is_string($val) && substr($val, 0, 1) === '@') {
