@@ -15,7 +15,7 @@ use Nette;
  *
  * @author     David Grudl
  *
- * @method Statement setEntity(string|array|Nette\DI\Statement)
+ * @method Statement setEntity(string|array|Nette\DI\Statement|Nette\DI\ServiceDefinition|NULL)
  * @method string getEntity()
  */
 class Statement extends Nette\Object
@@ -27,9 +27,12 @@ class Statement extends Nette\Object
 	public $arguments;
 
 
+	/**
+	 * @param  string|array|Nette\DI\Statement|Nette\DI\ServiceDefinition|NULL
+	 */
 	public function __construct($entity, array $arguments = array())
 	{
-		$this->entity = $entity;
+		$this->setEntity($entity);
 		$this->arguments = $arguments;
 	}
 
