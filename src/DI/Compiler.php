@@ -190,7 +190,7 @@ class Compiler extends Nette\Object
 
 		foreach ($services as $origName => $def) {
 			if ((string) (int) $origName === (string) $origName) {
-				$name = count($builder->getDefinitions())
+				$name = (count($builder->getDefinitions()) + 1)
 					. preg_replace('#\W+#', '_', $def instanceof Statement ? ".$def->entity" : (is_scalar($def) ? ".$def" : ''));
 			} else {
 				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
