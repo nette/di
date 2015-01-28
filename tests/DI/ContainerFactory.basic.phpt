@@ -11,7 +11,7 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-$factory = new DI\ContainerFactory(TEMP_DIR);
+@$factory = new DI\ContainerFactory(TEMP_DIR);
 
 $container = $factory->create();
 Assert::type($factory->class, $container);
