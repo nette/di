@@ -21,7 +21,7 @@ class Service
 		return new self(array_slice(func_get_args(), 1));
 	}
 
-	function __construct()
+	function __construct($arg = null)
 	{
 		$this->methods[] = array(__FUNCTION__, func_get_args());
 	}
@@ -36,7 +36,7 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('Service');
+	->setClass('Service', array('@@string'));
 $builder->addDefinition('three')
 	->setClass('Service', array('a', 'b'));
 
@@ -67,7 +67,7 @@ Assert::false( $container->hasService('One') );
 Assert::false( $container->hasService('oNe') );
 
 Assert::same( array(
-	array('__construct', array())
+	array('__construct', array('@string'))
 ), $container->getService('one')->methods );
 
 Assert::type( 'Service', $container->getService('three') );
