@@ -45,9 +45,8 @@ class DIExtension extends Nette\DI\CompilerExtension
 	{
 		$initialize = $class->methods['initialize'];
 		$container = $this->getContainerBuilder();
-		$config = $this->getConfig();
 
-		if ($this->debugMode && $config['debugger']) {
+		if ($this->debugMode && $this->config['debugger']) {
 			$initialize->addBody($container->formatPhp('?;', array(
 				new Nette\DI\Statement('@Tracy\Bar::addPanel', array(new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')))
 			)));
@@ -57,7 +56,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 			$initialize->addBody('$this->getService(?);', array($name));
 		}
 
-		if (!empty($config['accessors'])) {
+		if (!empty($this->config['accessors'])) {
 			$definitions = $container->definitions;
 			ksort($definitions);
 			foreach ($definitions as $name => $def) {

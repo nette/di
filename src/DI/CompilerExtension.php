@@ -14,7 +14,7 @@ use Nette;
  * Configurator compiling extension.
  *
  * @author     David Grudl
- * @property-read array $config
+ * @property array $config
  * @property-read ContainerBuilder $containerBuilder
  */
 abstract class CompilerExtension extends Nette\Object
@@ -26,7 +26,7 @@ abstract class CompilerExtension extends Nette\Object
 	protected $name;
 
 	/** @var array */
-	private $config = array();
+	protected $config = array();
 
 
 	public function setCompiler(Compiler $compiler, $name)
