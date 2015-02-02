@@ -138,4 +138,4 @@ abstract class CompilerExtension extends Nette\Object
 	{
 	}
 
-		}
+}
