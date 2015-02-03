@@ -17,7 +17,7 @@ use Nette;
  */
 class Statement extends Nette\Object
 {
-	/** @var string|array|Statement|ServiceDefinition|NULL  class|method|$property */
+	/** @var string|array|ServiceDefinition|NULL  class|method|$property */
 	private $entity;
 
 	/** @var array */
@@ -25,7 +25,7 @@ class Statement extends Nette\Object
 
 
 	/**
-	 * @param  string|array|Statement|ServiceDefinition|NULL
+	 * @param  string|array|ServiceDefinition|NULL
 	 */
 	public function __construct($entity, array $arguments = array())
 	{
@@ -35,13 +35,13 @@ class Statement extends Nette\Object
 
 
 	/**
-	 * @param  string|array|Statement|ServiceDefinition|NULL
+	 * @param  string|array|ServiceDefinition|NULL
 	 * @return self
 	 */
 	public function setEntity($entity)
 	{
 		if (!is_string($entity) && !(is_array($entity) && isset($entity[0], $entity[1]))
-			&& !$entity instanceof Statement && !$entity instanceof ServiceDefinition && $entity !== NULL
+			&& !$entity instanceof ServiceDefinition && $entity !== NULL
 		) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}

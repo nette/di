@@ -637,9 +637,6 @@ class ContainerBuilder extends Nette\Object
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments);
 
-		} elseif ($entity instanceof Statement) {
-			return $this->formatPhp("call_user_func_array(?, ?)", array($entity, $arguments));
-
 		} elseif ($service = $this->getServiceName($entity)) { // factory calling
 			$params = array();
 			foreach ($this->definitions[$service]->parameters as $k => $v) {

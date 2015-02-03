@@ -51,9 +51,3 @@ services:
 	rich3: Factory::createLorem(1)::foo
 
 	rich4: Factory()::createLorem(1)::foo
-
-	rich5: Factory()(1)
-
-	rich6:
-		factory: Factory::getClass(1)(1)
-		class: Lorem

@@ -18,11 +18,6 @@ class Factory
 	{
 		return new Lorem(__METHOD__ . ' ' . $arg);
 	}
-
-	static function getClass()
-	{
-		return 'Factory::createLorem';
-	}
 }
 
 
