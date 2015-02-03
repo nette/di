@@ -15,8 +15,6 @@ use Nette,
  * Configuration file loader.
  *
  * @author     David Grudl
- *
- * @property-read array $dependencies
  */
 class Loader extends Nette\Object
 {

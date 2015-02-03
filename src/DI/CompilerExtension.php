@@ -14,8 +14,6 @@ use Nette;
  * Configurator compiling extension.
  *
  * @author     David Grudl
- * @property array $config
- * @property-read ContainerBuilder $containerBuilder
  */
 abstract class CompilerExtension extends Nette\Object
 {
