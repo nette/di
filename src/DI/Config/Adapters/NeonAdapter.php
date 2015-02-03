@@ -64,7 +64,7 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 					$tmp = NULL;
 					foreach ($this->process($val->attributes) as $st) {
 						$tmp = new Statement(
-							$tmp === NULL ? $st->entity : array($tmp, ltrim($st->entity, ':')),
+							$tmp === NULL ? $st->getEntity() : array($tmp, ltrim($st->getEntity(), ':')),
 							$st->arguments
 						);
 					}

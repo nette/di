@@ -14,23 +14,6 @@ use Nette;
  * Definition used by ContainerBuilder.
  *
  * @author     David Grudl
- *
- * @method string getClass()
- * @method Statement getFactory()
- * @method ServiceDefinition setSetup(Statement[])
- * @method Statement[] getSetup()
- * @method ServiceDefinition setParameters(array)
- * @method array getParameters()
- * @method ServiceDefinition setTags(array)
- * @method array getTags()
- * @method ServiceDefinition setAutowired(bool)
- * @method bool isAutowired()
- * @method ServiceDefinition setDynamic(bool)
- * @method bool isDynamic()
- * @method ServiceDefinition setImplement(string)
- * @method string getImplement()
- * @method ServiceDefinition setImplementType(string)
- * @method string getImplementType()
  */
 class ServiceDefinition extends Nette\Object
 {
@@ -62,6 +45,9 @@ class ServiceDefinition extends Nette\Object
 	private $implementType;
 
 
+	/**
+	 * @return self
+	 */
 	public function setClass($class, array $args = array())
 	{
 		$this->class = $class;
@@ -72,6 +58,18 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
+	/**
+	 * @return string
+	 */
+	public function getClass()
+	{
+		return $this->class;
+	}
+
+
+	/**
+	 * @return self
+	 */
 	public function setFactory($factory, array $args = array())
 	{
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
@@ -79,34 +77,203 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
+	/**
+	 * @return Statement|NULL
+	 */
+	public function getFactory()
+	{
+		return $this->factory;
+	}
+
+
+	public function getEntity()
+	{
+		return $this->factory ? $this->factory->getEntity() : NULL;
+	}
+
+
+	/**
+	 * @return self
+	 */
 	public function setArguments(array $args = array())
 	{
-		if ($this->factory) {
-			$this->factory->arguments = $args;
-		} else {
-			$this->setClass($this->class, $args);
+		if (!$this->factory) {
+			$this->factory = new Statement($this->class);
 		}
+		$this->factory->arguments = $args;
 		return $this;
 	}
 
 
-	public function addSetup($target, array $args = array())
+	/**
+	 * @param  Statement[]
+	 * @return self
+	 */
+	public function setSetup(array $setup)
 	{
-		$this->setup[] = $target instanceof Statement ? $target : new Statement($target, $args);
+		foreach ($setup as $v) {
+			if (!$v instanceof Statement) {
+				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Statement[].');
+			}
+		}
+		$this->setup = $setup;
 		return $this;
 	}
 
 
-	public function addTag($tag, $attrs = TRUE)
+	/**
+	 * @return Statement[]
+	 */
+	public function getSetup()
 	{
-		$this->tags[$tag] = $attrs;
+		return $this->setup;
+	}
+
+
+	/**
+	 * @return self
+	 */
+	public function addSetup($entity, array $args = array())
+	{
+		$this->setup[] = $entity instanceof Statement ? $entity : new Statement($entity, $args);
 		return $this;
 	}
 
 
+	/**
+	 * @return self
+	 */
+	public function setParameters(array $params)
+	{
+		$this->parameters = $params;
+		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getParameters()
+	{
+		return $this->parameters;
+	}
+
+
+	/**
+	 * @return self
+	 */
+	public function setTags(array $tags)
+	{
+		$this->tags = $tags;
+		return $this;
+	}
+
+
+	/**
+	 * @return array
+	 */
+	public function getTags()
+	{
+		return $this->tags;
+	}
+
+
+	/**
+	 * @return self
+	 */
+	public function addTag($tag, $attr = TRUE)
+	{
+		$this->tags[$tag] = $attr;
+		return $this;
+	}
+
+
+	/**
+	 * @return mixed
+	 */
 	public function getTag($tag)
 	{
 		return isset($this->tags[$tag]) ? $this->tags[$tag] : NULL;
+	}
+
+
+	/**
+	 * @param  bool
+	 * @return self
+	 */
+	public function setAutowired($on)
+	{
+		$this->autowired = (bool) $on;
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isAutowired()
+	{
+		return $this->autowired;
+	}
+
+
+	/**
+	 * @param  bool
+	 * @return self
+	 */
+	public function setDynamic($on)
+	{
+		$this->dynamic = (bool) $on;
+		return $this;
+	}
+
+
+	/**
+	 * @return bool
+	 */
+	public function isDynamic()
+	{
+		return $this->dynamic;
+	}
+
+
+	/**
+	 * @param  string
+	 * @return self
+	 */
+	public function setImplement($interface)
+	{
+		$this->implement = (string) $interface;
+		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getImplement()
+	{
+		return $this->implement;
+	}
+
+
+	/**
+	 * @param  string
+	 * @return self
+	 */
+	public function setImplementType($type)
+	{
+		$this->implementType = (string) $type;
+		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getImplementType()
+	{
+		return $this->implementType;
 	}
 
 

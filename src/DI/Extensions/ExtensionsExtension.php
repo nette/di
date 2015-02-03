@@ -22,7 +22,7 @@ class ExtensionsExtension extends Nette\DI\CompilerExtension
 	{
 		foreach ($this->getConfig() as $name => $class) {
 			if ($class instanceof Nette\DI\Statement) {
-				$rc = Nette\Reflection\ClassType::from($class->entity);
+				$rc = Nette\Reflection\ClassType::from($class->getEntity());
 				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->arguments));
 			} else {
 				$this->compiler->addExtension($name, new $class);

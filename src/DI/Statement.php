@@ -14,13 +14,10 @@ use Nette;
  * Assignment or calling statement.
  *
  * @author     David Grudl
- *
- * @method Statement setEntity(string|array|Nette\DI\Statement|Nette\DI\ServiceDefinition|NULL)
- * @method string getEntity()
  */
 class Statement extends Nette\Object
 {
-	/** @var string  class|method|$property */
+	/** @var string|array|Statement|ServiceDefinition  class|method|$property */
 	private $entity;
 
 	/** @var array */
@@ -28,12 +25,34 @@ class Statement extends Nette\Object
 
 
 	/**
-	 * @param  string|array|Nette\DI\Statement|Nette\DI\ServiceDefinition|NULL
+	 * @param  string|array|Statement|ServiceDefinition|NULL
 	 */
 	public function __construct($entity, array $arguments = array())
 	{
 		$this->setEntity($entity);
 		$this->arguments = $arguments;
+	}
+
+
+	/**
+	 * @param  string|array|Statement|ServiceDefinition|NULL
+	 * @return self
+	 */
+	public function setEntity($entity)
+	{
+		if (!is_string($entity) && !(is_array($entity) && isset($entity[0], $entity[1]))
+			&& !$entity instanceof Statement && !$entity instanceof ServiceDefinition && $entity !== NULL
+		) {
+			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
+		}
+		$this->entity = $entity;
+		return $this;
+	}
+
+
+	public function getEntity()
+	{
+		return $this->entity;
 	}
 
 }

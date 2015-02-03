@@ -61,7 +61,7 @@ $builder = $compiler->getContainerBuilder();
 
 Assert::same(
 	array('a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'b' => TRUE),
-	$builder->getDefinition('one')->tags
+	$builder->getDefinition('one')->getTags()
 );
 
 Assert::true( $builder->getDefinition('one')->getTag('inject') );

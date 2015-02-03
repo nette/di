@@ -24,7 +24,7 @@ class InjectExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if ($def->getTag(self::TAG_INJECT) && $def->class) {
+			if ($def->getTag(self::TAG_INJECT) && $def->getClass()) {
 				$this->updateDefinition($def);
 			}
 
@@ -35,28 +35,28 @@ class InjectExtension extends DI\CompilerExtension
 	private function updateDefinition($def)
 	{
 		$injects = array();
-		$properties = DI\Helpers::getInjectProperties(Nette\Reflection\ClassType::from($def->class), $this->getContainerBuilder());
+		$properties = DI\Helpers::getInjectProperties(Nette\Reflection\ClassType::from($def->getClass()), $this->getContainerBuilder());
 		foreach ($properties as $property => $type) {
 			$injects[] = new DI\Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
 		}
 
-		foreach (get_class_methods($def->class) as $method) {
+		foreach (get_class_methods($def->getClass()) as $method) {
 			if (substr($method, 0, 6) === 'inject') {
 				$injects[] = new DI\Statement($method);
 			}
 		}
 
-		$setups = $def->setup;
+		$setups = $def->getSetup();
 		foreach ($injects as $inject) {
 			foreach ($setups as $key => $setup) {
-				if ($setup->entity === $inject->entity) {
+				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;
 					unset($setups[$key]);
 				}
 			}
 			array_unshift($setups, $inject);
 		}
-		$def->setup = $setups;
+		$def->setSetup($setups);
 	}
 
 }
