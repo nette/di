@@ -18,8 +18,6 @@ use Nette,
  * Basic container builder.
  *
  * @author     David Grudl
- * @property-read ServiceDefinition[] $definitions
- * @property-read array $dependencies
  */
 class ContainerBuilder extends Nette\Object
 {

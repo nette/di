@@ -15,10 +15,6 @@ use Nette,
  * DI container compiler.
  *
  * @author     David Grudl
- *
- * @property-read CompilerExtension[] $extensions
- * @property-read ContainerBuilder $containerBuilder
- * @property-read array $config
  */
 class Compiler extends Nette\Object
 {
