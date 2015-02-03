@@ -17,10 +17,10 @@ use Nette;
  */
 class ServiceDefinition extends Nette\Object
 {
-	/** @var string  class or interface name */
+	/** @var string|NULL  class or interface name */
 	private $class;
 
-	/** @var Statement */
+	/** @var Statement|NULL */
 	private $factory;
 
 	/** @var Statement[] */
@@ -38,10 +38,10 @@ class ServiceDefinition extends Nette\Object
 	/** @var bool */
 	private $dynamic = FALSE;
 
-	/** @var string  interface name */
+	/** @var string|NULL  interface name */
 	private $implement;
 
-	/** @internal @var string  create | get */
+	/** @var string|NULL  create | get */
 	private $implementType;
 
 
@@ -201,9 +201,9 @@ class ServiceDefinition extends Nette\Object
 	 * @param  bool
 	 * @return self
 	 */
-	public function setAutowired($on)
+	public function setAutowired($state = TRUE)
 	{
-		$this->autowired = (bool) $on;
+		$this->autowired = (bool) $state;
 		return $this;
 	}
 
@@ -221,9 +221,9 @@ class ServiceDefinition extends Nette\Object
 	 * @param  bool
 	 * @return self
 	 */
-	public function setDynamic($on)
+	public function setDynamic($state = TRUE)
 	{
-		$this->dynamic = (bool) $on;
+		$this->dynamic = (bool) $state;
 		return $this;
 	}
 
@@ -294,10 +294,10 @@ class ServiceDefinition extends Nette\Object
 
 
 	/** @deprecated */
-	public function setInject($on)
+	public function setInject($state = TRUE)
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $on);
+		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $state);
 	}
 
 

@@ -17,7 +17,7 @@ use Nette;
  */
 class Statement extends Nette\Object
 {
-	/** @var string|array|Statement|ServiceDefinition  class|method|$property */
+	/** @var string|array|Statement|ServiceDefinition|NULL  class|method|$property */
 	private $entity;
 
 	/** @var array */

@@ -570,7 +570,7 @@ class ContainerBuilder extends Nette\Object
 			);
 		}
 
-		foreach ((array) $def->getSetup() as $setup) {
+		foreach ($def->getSetup() as $setup) {
 			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
 				$setup->setEntity(array('@self', $setup->getEntity()));
 			}

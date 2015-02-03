@@ -25,7 +25,7 @@ class Container extends Nette\Object
 	/** @var array  user parameters */
 	/*private*/public $parameters = array();
 
-	/** @var array  storage for shared objects */
+	/** @var object[]  storage for shared objects */
 	private $registry = array();
 
 	/** @var array[] */
