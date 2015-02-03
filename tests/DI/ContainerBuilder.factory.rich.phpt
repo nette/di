@@ -47,11 +47,11 @@ $two = $builder->addDefinition('two')
 
 $container = createContainer($builder);
 
-Assert::same( 'Obj', $one->class );
+Assert::same( 'Obj', $one->getClass() );
 Assert::type( 'Obj', $container->getService('one') );
 Assert::true( $container->getService('one')->mark );
 
-Assert::same( 'Obj', $two->class );
+Assert::same( 'Obj', $two->getClass() );
 Assert::type( 'Obj', $container->getService('two') );
 Assert::true( $container->getService('two')->mark );
 Assert::same( array(1, 2), $container->getService('two')->args );

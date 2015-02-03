@@ -191,7 +191,7 @@ class Compiler extends Nette\Object
 		foreach ($services as $origName => $def) {
 			if ((string) (int) $origName === (string) $origName) {
 				$name = (count($builder->getDefinitions()) + 1)
-					. preg_replace('#\W+#', '_', $def instanceof Statement ? ".$def->entity" : (is_scalar($def) ? ".$def" : ''));
+					. preg_replace('#\W+#', '_', $def instanceof Statement ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : ''));
 			} else {
 				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
 			}
@@ -223,7 +223,7 @@ class Compiler extends Nette\Object
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), NULL, $e);
 			}
 
-			if ($definition->class === 'self' || ($definition->factory && $definition->factory->entity === 'self')) {
+			if ($definition->getClass() === 'self' || ($definition->getFactory() && $definition->getFactory()->getEntity() === 'self')) {
 				throw new Nette\DeprecatedException("Replace service definition '$origName: self' with '- $origName'.");
 			}
 		}
@@ -242,8 +242,8 @@ class Compiler extends Nette\Object
 		} elseif (is_string($config) && interface_exists($config)) {
 			$config = array('class' => NULL, 'implement' => $config);
 
-		} elseif ($config instanceof Statement && is_string($config->entity) && interface_exists($config->entity)) {
-			$config = array('class' => NULL, 'implement' => $config->entity, 'factory' => array_shift($config->arguments));
+		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
+			$config = array('class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments));
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
 			$config = array('class' => NULL, 'create' => $config);
@@ -269,8 +269,8 @@ class Compiler extends Nette\Object
 		}
 
 		if (array_key_exists('class', $config) || array_key_exists('create', $config)) {
-			$definition->class = NULL;
-			$definition->factory = NULL;
+			$definition->setClass(NULL);
+			$definition->setFactory(NULL);
 		}
 
 		if (array_key_exists('class', $config)) {
@@ -288,7 +288,7 @@ class Compiler extends Nette\Object
 
 		if (isset($config['setup'])) {
 			if (Config\Helpers::takeParent($config['setup'])) {
-				$definition->setup = array();
+				$definition->setSetup(array());
 			}
 			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
@@ -330,7 +330,7 @@ class Compiler extends Nette\Object
 		if (isset($config['tags'])) {
 			Validators::assertField($config, 'tags', 'array');
 			if (Config\Helpers::takeParent($config['tags'])) {
-				$definition->tags = array();
+				$definition->setTags(array());
 			}
 			foreach ($config['tags'] as $tag => $attrs) {
 				if (is_int($tag) && is_string($attrs)) {
@@ -357,7 +357,7 @@ class Compiler extends Nette\Object
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments(array($v->entity));
+				$tmp = self::filterArguments(array($v->getEntity()));
 				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
 			}
 		}
