@@ -668,7 +668,11 @@ class ContainerBuilder extends Nette\Object
 			return $this->formatPhp("$entity[1](?*)", array($arguments));
 
 		} elseif ($entity[0] instanceof Statement) {
-			return $this->formatPhp("call_user_func_array(?, ?)", array($entity, $arguments));
+			$inner = $this->formatPhp('?', array($entity[0]));
+			if (substr($inner, 0, 4) === 'new ') {
+				$inner = PHP_VERSION_ID < 50400 ? "current(array($inner))" : "($inner)";
+			}
+			return $this->formatPhp("$inner->?(?*)", array($entity[1], $arguments));
 
 		} elseif (Strings::contains($entity[1], '$')) { // property setter
 			Validators::assert($arguments, 'list:1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
