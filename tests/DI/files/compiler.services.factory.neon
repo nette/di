@@ -39,6 +39,8 @@ services:
 
 	eight: @factory()
 
+	nine: [@three, foo]
+
 	stdClass: stdClass
 
 	factory: Lorem

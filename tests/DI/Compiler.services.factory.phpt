@@ -71,6 +71,10 @@ Assert::type( 'Lorem', $container->getService('seven') );
 
 Assert::type( 'Lorem', $container->getService('eight') );
 
+Assert::type( 'Lorem', $container->getService('nine') );
+Assert::same( 'Factory::createLorem 1', $container->getService('nine')->arg );
+Assert::same( array(), $container->getService('nine')->foo );
+
 Assert::type( 'Ipsum', $container->getService('referencedService') );
 Assert::same( $container->getService('one'), $container->getService('referencedService') );
 
