@@ -649,6 +649,9 @@ class ContainerBuilder extends Nette\Object
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', array($arguments[0]));
 
+		} elseif ($entity === 'raw') { // workaround for string that begins with @
+			return PhpHelpers::dump($arguments[0]);
+
 		} elseif (is_string($entity)) { // class name
 			if ($constructor = Reflection\ClassType::from($entity)->getConstructor()) {
 				$this->addDependency($constructor->getFileName());
