@@ -34,10 +34,10 @@ use Nette;
  */
 class ServiceDefinition extends Nette\Object
 {
-	/** @var string  class or interface name */
+	/** @var string|NULL  class or interface name */
 	private $class;
 
-	/** @var Statement */
+	/** @var Statement|NULL */
 	private $factory;
 
 	/** @var Statement[] */
@@ -55,10 +55,10 @@ class ServiceDefinition extends Nette\Object
 	/** @var bool */
 	public $inject = FALSE;
 
-	/** @var string  interface name */
+	/** @var string|NULL  interface name */
 	private $implement;
 
-	/** @internal @var string  create | get */
+	/** @var string|NULL  create | get */
 	private $implementType;
 
 

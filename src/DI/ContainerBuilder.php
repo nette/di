@@ -92,7 +92,7 @@ class ContainerBuilder extends Nette\Object
 
 	/**
 	 * Gets all service definitions.
-	 * @return array
+	 * @return ServiceDefinition[]
 	 */
 	public function getDefinitions()
 	{

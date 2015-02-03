@@ -17,7 +17,7 @@ use Nette;
  */
 class ContainerFactory extends Nette\Object
 {
-	/** @var array of function(ContainerFactory $factory, Compiler $compiler, $config); Occurs after the compiler is created */
+	/** @var callable[]  function(ContainerFactory $factory, Compiler $compiler, $config); Occurs after the compiler is created */
 	public $onCompile;
 
 	/** @var bool */

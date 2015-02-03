@@ -15,12 +15,12 @@ use Nette;
  *
  * @author     David Grudl
  *
- * @method Statement setEntity(string|array)
+ * @method Statement setEntity(string|array|Nette\DI\ServiceDefinition|NULL)
  * @method string getEntity()
  */
 class Statement extends Nette\Object
 {
-	/** @var string  class|method|$property */
+	/** @var string|array|ServiceDefinition|NULL  class|method|$property */
 	private $entity;
 
 	/** @var array */
