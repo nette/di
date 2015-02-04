@@ -582,7 +582,7 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		$factoryClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType;
-		$factoryClass->setName(str_replace(array('\\', '.'), '_', "{$this->generatedClasses[0]->name}_{$def->getImplement()}Impl_{$name}"))
+		$factoryClass->setName(str_replace(array('\\', '.'), '_', "{$this->generatedClasses[0]->getName()}_{$def->getImplement()}Impl_{$name}"))
 			->addImplement($def->getImplement())
 			->setFinal(TRUE);
 
@@ -598,7 +598,7 @@ class ContainerBuilder extends Nette\Object
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code));
 
-		return "return new {$factoryClass->name}(\$this);";
+		return "return new {$factoryClass->getName()}(\$this);";
 	}
 
 

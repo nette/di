@@ -43,7 +43,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
-		$initialize = $class->methods['initialize'];
+		$initialize = $class->getMethod('initialize');
 		$container = $this->getContainerBuilder();
 
 		if ($this->debugMode && $this->config['debugger']) {

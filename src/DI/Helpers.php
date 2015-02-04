@@ -167,5 +167,4 @@ class Helpers
 		return $res;
 	}
 
-
 }
