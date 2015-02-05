@@ -718,7 +718,13 @@ class ContainerBuilder extends Nette\Object
 				$val = '@' . current(array_keys($that->getDefinitions(), $val, TRUE));
 			}
 
-			if (is_string($val) && substr($val, 0, 1) === '@') {
+			if (!is_string($val)) {
+				return;
+
+			} elseif (substr($val, 0, 2) === '@@') {
+				$val = substr($val, 1);
+
+			} elseif (substr($val, 0, 1) === '@') {
 				$pair = explode('::', $val, 2);
 				$name = $that->getServiceName($pair[0]);
 				if (isset($pair[1]) && preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) {
