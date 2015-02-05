@@ -50,7 +50,7 @@ class ServiceDefinition extends Nette\Object
 	 */
 	public function setClass($class, array $args = array())
 	{
-		$this->class = $class;
+		$this->class = ltrim($class, '\\');
 		if ($args) {
 			$this->setFactory($class, $args);
 		}
@@ -243,7 +243,7 @@ class ServiceDefinition extends Nette\Object
 	 */
 	public function setImplement($interface)
 	{
-		$this->implement = (string) $interface;
+		$this->implement = ltrim($interface, '\\');
 		return $this;
 	}
 
@@ -263,7 +263,10 @@ class ServiceDefinition extends Nette\Object
 	 */
 	public function setImplementType($type)
 	{
-		$this->implementType = (string) $type;
+		if (!in_array($type, array('get', 'create'), TRUE)) {
+			throw new Nette\InvalidArgumentException('Argument must be get|create.');
+		}
+		$this->implementType = $type;
 		return $this;
 	}
 
