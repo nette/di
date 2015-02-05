@@ -503,9 +503,7 @@ class ContainerBuilder extends Nette\Object
 			->setValue(array(Container::TYPES => $this->classes));
 
 		foreach ($definitions as $name => $def) {
-			if ($def->getClass()) {
-				$meta->value[Container::SERVICES][$name] = $def->getClass();
-			}
+			$meta->value[Container::SERVICES][$name] = ($def->getImplement() ?: $def->getClass()) ?: NULL;
 			foreach ($def->getTags() as $tag => $value) {
 				$meta->value[Container::TAGS][$tag][$name] = $value;
 			}
