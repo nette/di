@@ -33,14 +33,14 @@ $builder->addDefinition('three')
 // compile-time
 $builder->prepareClassList();
 
-Assert::same( array('one'), $builder->findByType('service') );
-Assert::same( array('one'), $builder->findByType('service', FALSE) );
-Assert::same( array('two'), $builder->findByType('service2') );
-Assert::same( array('two', 'three'), $builder->findByType('service2', FALSE) );
+Assert::same( array('one'), $builder->findByType('Service') );
+Assert::same( array('one'), $builder->findByType('Service', FALSE) );
+Assert::same( array('two'), $builder->findByType('Service2') );
+Assert::same( array('two', 'three'), $builder->findByType('Service2', FALSE) );
 Assert::same( array(), $builder->findByType('unknown') );
 Assert::same( array(), $builder->findByType('unknown', FALSE) );
 
-Assert::same( 'one', $builder->getByType('service') );
+Assert::same( 'one', $builder->getByType('Service') );
 Assert::null( $builder->getByType('unknown') );
 Assert::exception(function() use ($builder) {
 	$builder->getByType('Nette\Object');
@@ -49,13 +49,13 @@ Assert::exception(function() use ($builder) {
 
 $container = createContainer($builder);
 
-Assert::type( 'Service', $container->getByType('service') );
+Assert::type( 'Service', $container->getByType('Service') );
 Assert::null( $container->getByType('unknown', FALSE) );
 
-Assert::same( array('one'), $container->findByType('service') );
-Assert::same( array('one'), $container->findByType('service', FALSE) );
-Assert::same( array('two'), $container->findByType('service2') );
-Assert::same( array('two', 'three'), $container->findByType('service2', FALSE) );
+Assert::same( array('one'), $container->findByType('Service') );
+Assert::same( array('one'), $container->findByType('Service', FALSE) );
+Assert::same( array('two'), $container->findByType('Service2') );
+Assert::same( array('two', 'three'), $container->findByType('Service2', FALSE) );
 Assert::same( array(), $container->findByType('unknown') );
 Assert::same( array(), $container->findByType('unknown', FALSE) );
 

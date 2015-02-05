@@ -19,13 +19,13 @@ interface StdClassFactory
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setImplement('stdClassFactory')
+	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
 	->addSetup('$a', array($builder::literal('$a')));
 
 $builder->addDefinition('two')
 	->setParameters(array('stdClass foo', 'array bar', 'foobar' => NULL))
-	->setImplement('stdClassFactory')
+	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
 	->addSetup('$a', array($builder::literal('$foo')));
 
