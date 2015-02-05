@@ -116,9 +116,8 @@ class Helpers
 					$optCount = 0;
 				}
 
-			} elseif ($parameter->isOptional()) {
-				// PDO::__construct has optional parameter without default value (and isArray() and allowsNull() returns FALSE)
-				$res[$num] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : NULL;
+			} elseif ($parameter->isDefaultValueAvailable()) {
+				$res[$num] = $parameter->getDefaultValue();
 				$optCount++;
 
 			} else {
