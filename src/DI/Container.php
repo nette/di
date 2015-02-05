@@ -177,15 +177,13 @@ class Container extends Nette\Object
 	 */
 	public function getByType($class, $need = TRUE)
 	{
-		$names = $this->findByType($class);
-		if (!$names) {
-			if ($need) {
-				throw new MissingServiceException("Service of type $class not found.");
-			}
+		$names = & $this->meta[self::TYPES][$class][TRUE];
+		if (count($names) === 1) {
+			return $this->getService($names[0]);
 		} elseif (count($names) > 1) {
 			throw new MissingServiceException("Multiple services of type $class found: " . implode(', ', $names) . '.');
-		} else {
-			return $this->getService($names[0]);
+		} elseif ($need) {
+			throw new MissingServiceException("Service of type $class not found.");
 		}
 	}
 
