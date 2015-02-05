@@ -98,8 +98,10 @@ class Container extends Nette\Object
 	 */
 	public function getService($name)
 	{
-		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		if (!isset($this->registry[$name])) {
+			if (isset($this->meta[self::ALIASES][$name])) {
+				return $this->getService($this->meta[self::ALIASES][$name]);
+			}
 			$this->registry[$name] = $this->createService($name);
 		}
 		return $this->registry[$name];
