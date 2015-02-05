@@ -3,7 +3,7 @@ services:
 	bar: Bar
 	baz: Baz
 
-	lorem: \ILoremFactory(Lorem)
+	lorem: ILoremFactory(Lorem)
 
 	finder: IFinderFactory
 
