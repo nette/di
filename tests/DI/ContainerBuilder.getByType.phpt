@@ -33,10 +33,6 @@ $three = $builder->addDefinition('three')
 // compile-time
 $builder->prepareClassList();
 
-Assert::same( array('one' => $one), $builder->findByType('\Service') );
-Assert::same( array('two' => $two, 'three' => $three), $builder->findByType('Service2') );
-Assert::same( array(), $builder->findByType('unknown') );
-
 Assert::same( 'one', $builder->getByType('\Service') );
 Assert::null( $builder->getByType('unknown') );
 Assert::exception(function() use ($builder) {
@@ -50,11 +46,8 @@ Assert::type( 'Service', $container->getByType('Service') );
 Assert::null( $container->getByType('unknown', FALSE) );
 
 Assert::same( array('one'), $container->findByType('Service') );
-Assert::same( array('one'), $container->findByType('Service', FALSE) );
-Assert::same( array('two'), $container->findByType('Service2') );
-Assert::same( array('two', 'three'), $container->findByType('Service2', FALSE) );
+Assert::same( array('two', 'three'), $container->findByType('Service2') );
 Assert::same( array(), $container->findByType('unknown') );
-Assert::same( array(), $container->findByType('unknown', FALSE) );
 
 Assert::exception(function() use ($container) {
 	$container->getByType('unknown');

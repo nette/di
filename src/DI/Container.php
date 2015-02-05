@@ -196,13 +196,13 @@ class Container extends Nette\Object
 	 * @param  string
 	 * @return string[]
 	 */
-	public function findByType($class, $autowired = TRUE)
+	public function findByType($class)
 	{
 		$class = ltrim($class, '\\');
 		$meta = & $this->meta[self::TYPES];
 		return array_merge(
 			isset($meta[$class][TRUE]) ? $meta[$class][TRUE] : array(),
-			!$autowired && isset($meta[$class][FALSE]) ? $meta[$class][FALSE] : array()
+			isset($meta[$class][FALSE]) ? $meta[$class][FALSE] : array()
 		);
 	}
 
