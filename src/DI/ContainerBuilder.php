@@ -164,15 +164,16 @@ class ContainerBuilder extends Nette\Object
 			return $this->currentService;
 		}
 
-		$lower = ltrim(strtolower($class), '\\');
-		if (!isset($this->classes[$lower][TRUE])) {
+		$class = ltrim($class, '\\');
+		if (!isset($this->classes[$class][TRUE])) {
+			self::checkCase($class);
 			return;
 
-		} elseif (count($this->classes[$lower][TRUE]) === 1) {
-			return $this->classes[$lower][TRUE][0];
+		} elseif (count($this->classes[$class][TRUE]) === 1) {
+			return $this->classes[$class][TRUE][0];
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$lower][TRUE]));
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$class][TRUE]));
 		}
 	}
 
@@ -184,7 +185,8 @@ class ContainerBuilder extends Nette\Object
 	 */
 	public function findByType($class, $autowired = TRUE)
 	{
-		$class = ltrim(strtolower($class), '\\');
+		$class = ltrim($class, '\\');
+		self::checkCase($class);
 		return array_merge(
 			isset($this->classes[$class][TRUE]) ? $this->classes[$class][TRUE] : array(),
 			!$autowired && isset($this->classes[$class][FALSE]) ? $this->classes[$class][FALSE] : array()
@@ -282,14 +284,14 @@ class ContainerBuilder extends Nette\Object
 		//  build auto-wiring list
 		$excludedClasses = array();
 		foreach ($this->excludedClasses as $class) {
-			$excludedClasses += array_change_key_case(class_parents($class) + class_implements($class) + array($class => $class));
+			self::checkCase($class);
+			$excludedClasses += class_parents($class) + class_implements($class) + array($class => $class);
 		}
 
 		$this->classes = array();
 		foreach ($this->definitions as $name => $def) {
 			if ($class = $def->getImplement() ?: $def->getClass()) {
 				foreach (class_parents($class) + class_implements($class) + array($class) as $parent) {
-					$parent = strtolower($parent);
 					$this->classes[$parent][$def->isAutowired() && empty($excludedClasses[$parent])][] = (string) $name;
 				}
 			}
@@ -303,16 +305,16 @@ class ContainerBuilder extends Nette\Object
 
 	private function resolveImplement(ServiceDefinition $def, $name)
 	{
-		$implement = $def->getImplement();
-		if (!interface_exists($implement)) {
-			throw new ServiceCreationException("Interface $implement used in service '$name' not found.");
+		$interface = $def->getImplement();
+		if (!interface_exists($interface)) {
+			throw new ServiceCreationException("Interface $interface used in service '$name' not found.");
 		}
-		$rc = Reflection\ClassType::from($implement);
+		self::checkCase($interface);
+		$rc = Reflection\ClassType::from($interface);
 		$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
 		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
-			throw new ServiceCreationException("Interface $implement used in service '$name' must have just one non-static method create() or get().");
+			throw new ServiceCreationException("Interface $interface used in service '$name' must have just one non-static method create() or get().");
 		}
-		$def->setImplement($rc->getName());
 		$def->setImplementType($rc->hasMethod('create') ? 'create' : 'get');
 
 		if (!$def->getClass() && !$def->getEntity()) {
@@ -386,7 +388,7 @@ class ContainerBuilder extends Nette\Object
 			if (!class_exists($class) && !interface_exists($class)) {
 				throw new ServiceCreationException("Class or interface $class used in service '$name' not found.");
 			}
-			$def->setClass(Reflection\ClassType::from($class)->getName());
+			self::checkCase($class);
 
 		} elseif ($def->isAutowired()) {
 			trigger_error("Type of service '$name' is unknown.", E_USER_NOTICE);
@@ -424,14 +426,14 @@ class ContainerBuilder extends Nette\Object
 			}
 
 			$class = preg_replace('#[|\s].*#', '', $reflection->getAnnotation('return'));
-			if ($class && $refClass) {
-				$class = Reflection\AnnotationsParser::expandClassName($class, $refClass);
+			if ($class) {
+				$class = $refClass ? Reflection\AnnotationsParser::expandClassName($class, $refClass) : ltrim($class, '\\');
 			}
 			return $class;
 
 		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
 			if (Strings::contains($service, '\\')) { // @\Class
-				return $service;
+				return ltrim($service, '\\');
 			}
 			return $this->definitions[$service]->getImplement() ?: $this->resolveServiceClass($service, $recursive);
 
@@ -440,7 +442,15 @@ class ContainerBuilder extends Nette\Object
 				$name = array_slice(array_keys($recursive), -1);
 				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found or is not instantiable.");
 			}
-			return $entity;
+			return ltrim($entity, '\\');
+		}
+	}
+
+
+	private function checkCase($class)
+	{
+		if (class_exists($class) && ($rc = new \ReflectionClass($class)) && $class !== $rc->getName()) {
+			throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '{$rc->getName()}'.");
 		}
 	}
 

@@ -42,14 +42,14 @@ $builder->addDefinition('service2')
 	->setFactory('stdClass');
 
 $builder->addDefinition('one')
-	->setImplement('stdClassAccessor')
+	->setImplement('StdClassAccessor')
 	->setClass('stdClass');
 
 $builder->addDefinition('two')
 	->setImplement('AnnotatedAccessor');
 
 $builder->addDefinition('three')
-	->setImplement('stdClassAccessor')
+	->setImplement('StdClassAccessor')
 	->setAutowired(FALSE)
 	->setFactory('@service2');
 

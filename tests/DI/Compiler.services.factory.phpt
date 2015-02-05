@@ -87,7 +87,7 @@ Assert::same( $container->getService('one'), $container->getService('calledServi
 Assert::type( 'Ipsum', $container->getService('calledServiceWithArgs') );
 Assert::notSame( $container->getService('one'), $container->getService('calledServiceWithArgs') );
 
-Assert::type( 'stdClass', $container->getByType('stdClass') );
+Assert::type( 'stdClass', $container->getByType('\stdClass') );
 
 
 Assert::type( 'Ipsum', $container->getService('serviceAsParam') );

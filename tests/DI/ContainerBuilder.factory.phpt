@@ -31,7 +31,7 @@ class FactoryReceiver
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setImplement('stdClassFactory')
+	->setImplement('StdClassFactory')
 	->setFactory('stdClass');
 
 $builder->addDefinition('two')

@@ -28,9 +28,9 @@ $prop->setAccessible(TRUE);
 
 Assert::same(array(
 	'types' => array(
-		'stdclass' => array(1 => array('lorem')),
-		'nette\\object' => array(1 => array('container')),
-		'nette\\di\\container' => array(1 => array('container')),
+		'stdClass' => array(1 => array('lorem')),
+		'Nette\\Object' => array(1 => array('container')),
+		'Nette\\DI\\Container' => array(1 => array('container')),
 	),
 	'services' => array('container' => 'Nette\\DI\\Container', 'lorem' => 'stdClass'),
 	'tags' => array(
