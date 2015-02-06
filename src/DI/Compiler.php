@@ -112,6 +112,8 @@ class Compiler extends Nette\Object
 				$this->config[$name] = $tmp = Helpers::expand($this->config[$name], $this->builder->parameters);
 				unset($tmp['services']);
 				$this->extensions[$name]->setConfig($tmp);
+			} else {
+				$this->extensions[$name]->setConfig(array());
 			}
 			$this->extensions[$name]->loadConfiguration();
 		}

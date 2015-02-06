@@ -24,7 +24,7 @@ abstract class CompilerExtension extends Nette\Object
 	protected $name;
 
 	/** @var array */
-	protected $config = array();
+	protected $config;
 
 
 	public function setCompiler(Compiler $compiler, $name)
@@ -48,6 +48,12 @@ abstract class CompilerExtension extends Nette\Object
 	 */
 	public function getConfig()
 	{
+		if ($this->config === NULL) {
+			//BC
+			$config = $this->compiler->getConfig();
+			$this->config = isset($config[$this->name]) ? $config[$this->name] : array();
+			unset($this->config['services']);
+		}
 		if (func_num_args()) { // deprecated
 			return Config\Helpers::merge($this->config, $this->getContainerBuilder()->expand(func_get_arg(0)));
 		}
