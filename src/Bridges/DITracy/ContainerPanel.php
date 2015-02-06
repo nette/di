@@ -47,17 +47,12 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 	 */
 	public function getPanel()
 	{
-		$services = array();
-		foreach (Nette\Reflection\ClassType::from($this->container)->getMethods() as $method) {
-			if (preg_match('#^createService_*(.+)\z#', $method->getName(), $m)) {
-				$services[str_replace('__', '.', strtolower(substr($m[1], 0, 1)) . substr($m[1], 1))] = $method->getAnnotation('return');
-			}
-		}
-		ksort($services);
 		$container = $this->container;
 		$registry = $this->getContainerProperty('registry');
 		$tags = array();
 		$meta = $this->getContainerProperty('meta');
+		$services = $meta[Container::SERVICES];
+		ksort($services);
 		if (isset($meta[Container::TAGS])) {
 			foreach ($meta[Container::TAGS] as $tag => $tmp) {
 				foreach ($tmp as $service => $val) {
