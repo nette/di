@@ -6,7 +6,7 @@
 
 use Nette\DI;
 use Tester\Assert;
-use Nette\Utils as NU;
+use Nette\DI\Config\Adapters as Adapt;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -36,7 +36,7 @@ class Lorem
 interface IFinderFactory
 {
 	/**
-	 * @return NU\Finder comment
+	 * @return Adapt\NeonAdapter comment
 	 */
 	function create();
 }
@@ -144,7 +144,7 @@ Assert::type( 'ILoremFactory', $container->getByType('ILoremFactory') );
 
 Assert::type( 'IFinderFactory', $container->getService('finder') );
 $finder = $container->getService('finder')->create();
-Assert::type( 'Nette\Utils\Finder', $finder );
+Assert::type( 'Nette\DI\Config\Adapters\NeonAdapter', $finder );
 
 
 Assert::type( 'IArticleFactory', $container->getService('article') );
@@ -237,4 +237,4 @@ Assert::exception(function() {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->generateClasses();
-}, 'Nette\InvalidStateException', "Type hint for \$bar in Bad1::__construct() doesn't match type hint for \$bar in Bad2::create()");
+}, 'Nette\InvalidStateException', 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');

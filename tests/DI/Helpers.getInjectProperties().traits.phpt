@@ -35,13 +35,12 @@ namespace C
 namespace
 {
 	use Nette\DI\Helpers;
-	use Nette\Reflection\ClassType;
 	use Tester\Assert;
 
 	require __DIR__ . '/../bootstrap.php';
 
 
-	$refC = ClassType::from('C\CClass');
+	$refC = new ReflectionClass('C\CClass');
 
 	Assert::same( array(
 		'varA' => 'A\AInjected',
