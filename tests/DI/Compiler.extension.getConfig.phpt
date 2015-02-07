@@ -19,8 +19,8 @@ class FooExtension extends \Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$ext = $this->compiler->getExtensions('BarExtension');
-		$this->barConfig = reset($ext)->getConfig();
+		$this->compiler->addExtension('bar', $ext = new BarExtension());
+		$this->barConfig = $ext->getConfig();
 	}
 
 }
@@ -34,7 +34,6 @@ class BarExtension extends \Nette\DI\CompilerExtension
 
 $compiler = new \Nette\DI\Compiler();
 $compiler->addExtension('foo', $foo = new FooExtension());
-$compiler->addExtension('bar', new BarExtension());
 createContainer($compiler, '
 bar:
 	lorem: ipsum
