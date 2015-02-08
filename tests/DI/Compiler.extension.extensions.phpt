@@ -36,7 +36,19 @@ class BarExtension extends DI\CompilerExtension
 }
 
 
+class FirstExtension extends DI\CompilerExtension
+{
+	private $param;
+
+	function loadConfiguration()
+	{
+		$this->getContainerBuilder()->parameters['first'] = array_keys($this->compiler->getExtensions());
+	}
+}
+
+
 $compiler = new DI\Compiler;
+$compiler->addExtension('first', new FirstExtension);
 $compiler->addExtension('extensions', new Nette\DI\Extensions\ExtensionsExtension);
 $container = createContainer($compiler, '
 parameters:
@@ -53,3 +65,4 @@ foo:
 
 Assert::same( 'hello', $container->parameters['foo'] );
 Assert::same( 'test', $container->parameters['bar'] );
+Assert::same( array('first', 'extensions', 'foo', 'bar'), $container->parameters['first'] );
