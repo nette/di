@@ -46,6 +46,11 @@ class Compiler extends Nette\Object
 		if (isset(self::$reserved[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is reserved.");
 		}
+		if (isset($this->config[$name])) {
+			$this->config[$name] = $tmp = Helpers::expand($this->config[$name], $this->builder->parameters);
+			unset($tmp['services']);
+			$extension->setConfig($tmp);
+		}
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
 		return $this;
 	}
@@ -106,13 +111,15 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processExtensions()
 	{
-		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
-			$name = key($slice);
+		foreach ($this->extensions as $name => $extension) {
 			if (isset($this->config[$name])) {
 				$this->config[$name] = $tmp = Helpers::expand($this->config[$name], $this->builder->parameters);
 				unset($tmp['services']);
 				$this->extensions[$name]->setConfig($tmp);
 			}
+		}
+		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
+			$name = key($slice);
 			$this->extensions[$name]->loadConfiguration();
 		}
 
