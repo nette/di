@@ -106,12 +106,13 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processExtensions()
 	{
+		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
+			+ array_intersect_key($this->config, self::$reserved);
+
 		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
 			$name = key($slice);
 			if (isset($this->config[$name])) {
-				$this->config[$name] = $tmp = Helpers::expand($this->config[$name], $this->builder->parameters);
-				unset($tmp['services']);
-				$this->extensions[$name]->setConfig($tmp);
+				$this->extensions[$name]->setConfig(array_diff_key($this->config[$name], self::$reserved));
 			}
 			$this->extensions[$name]->loadConfiguration();
 		}
