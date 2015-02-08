@@ -28,6 +28,14 @@ class PhpReflection
 	 */
 	public static function parseAnnotation(\Reflector $ref, $name)
 	{
+		static $ok;
+		if (!$ok) {
+			$rc = new \ReflectionMethod(__METHOD__);
+			if (!$rc->getDocComment()) {
+				throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
+			}
+			$ok = TRUE;
+		}
 		if (preg_match("#\\s@$name(?:\\s++([^@]\\S*))?#", $ref->getDocComment(), $m)) {
 			return isset($m[1]) ? $m[1] : TRUE;
 		}
