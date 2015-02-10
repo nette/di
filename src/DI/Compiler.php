@@ -109,15 +109,25 @@ class Compiler extends Nette\Object
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
 
-		for ($i = 0; $slice = array_slice($this->extensions, $i, 1, TRUE); $i++) {
-			$name = key($slice);
-			if (isset($this->config[$name])) {
-				$this->extensions[$name]->setConfig(array_diff_key($this->config[$name], self::$reserved));
-			}
-			$this->extensions[$name]->loadConfiguration();
+		foreach ($first = $this->getExtensions('Nette\DI\Extensions\ExtensionsExtension') as $name => $extension) {
+			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : array());
+			$extension->loadConfiguration();
 		}
 
-		if ($extra = array_diff_key($this->config, self::$reserved, $this->extensions)) {
+		$extensions = array_diff_key($this->extensions, $first);
+		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
+			$extension->setConfig(array_diff_key($this->config[$name], self::$reserved));
+		}
+
+		foreach ($extensions as $extension) {
+			$extension->loadConfiguration();
+		}
+
+		if ($extra = array_diff_key($this->extensions, $extensions, $first)) {
+			$extra = implode("', '", array_keys($extra));
+			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
+
+		} elseif ($extra = array_diff_key($this->config, self::$reserved, $this->extensions)) {
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\InvalidStateException("Found sections '$extra' in configuration, but corresponding extensions are missing.");
 		}
