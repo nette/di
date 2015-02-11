@@ -106,6 +106,9 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processExtensions()
 	{
+		$last = $this->getExtensions('Nette\DI\Extensions\InjectExtension');
+		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
+
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
 

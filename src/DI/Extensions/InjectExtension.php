@@ -27,7 +27,6 @@ class InjectExtension extends DI\CompilerExtension
 			if ($def->getTag(self::TAG_INJECT) && $def->getClass()) {
 				$this->updateDefinition($def);
 			}
-
 		}
 	}
 

@@ -296,7 +296,7 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
-	/** @deprecated */
+	/** @return self */
 	public function setInject($state = TRUE)
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
@@ -304,7 +304,7 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
-	/** @deprecated */
+	/** @return self */
 	public function getInject()
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);

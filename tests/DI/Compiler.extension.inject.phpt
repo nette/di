@@ -37,15 +37,27 @@ class Service extends ParentClass
 }
 
 
+
+class LastExtension extends DI\CompilerExtension
+{
+	private $param;
+
+	function beforeCompile()
+	{
+		// note that services should be added in loadConfiguration()
+		$this->getContainerBuilder()->addDefinition('one')
+			->setClass('Service')
+			->setInject(TRUE);
+	}
+}
+
+
 $compiler = new DI\Compiler;
 $compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
+$compiler->addExtension('last', new LastExtension);
 $container = createContainer($compiler, '
 services:
 	- stdClass
-	one:
-		class: Service
-		inject: true
-
 	two:
 		class: Service
 		inject: true
