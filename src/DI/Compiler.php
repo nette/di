@@ -116,7 +116,10 @@ class Compiler extends Nette\Object
 
 		$extensions = array_diff_key($this->extensions, $first);
 		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
-			$extension->setConfig(array_diff_key($this->config[$name], self::$reserved));
+			if (isset($this->config[$name]['services'])) {
+				trigger_error("Support for inner section 'services' inside extension was removed (used in '$name').", E_USER_DEPRECATED);
+			}
+			$extension->setConfig($this->config[$name]);
 		}
 
 		foreach ($extensions as $extension) {
@@ -138,12 +141,6 @@ class Compiler extends Nette\Object
 	public function processServices()
 	{
 		$this->parseServices($this->builder, $this->config);
-
-		foreach ($this->extensions as $name => $extension) {
-			if (isset($this->config[$name])) {
-				$this->parseServices($this->builder, $this->config[$name], $name);
-			}
-		}
 	}
 
 

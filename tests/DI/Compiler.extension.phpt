@@ -42,13 +42,6 @@ parameters:
 
 database:
 	foo: %bar%
-
-	services:
-		foo: stdClass
-
-
-services:
-	alias: @database.foo
 ');
 
 
@@ -57,9 +50,6 @@ Assert::same(array(
 	'DatabaseExtension::beforeCompile',
 	'DatabaseExtension::afterCompile',
 ), Notes::fetch());
-
-Assert::type( 'stdClass', $container->getService('database.foo') );
-Assert::same( $container->getService('database.foo'), $container->getService('alias') );
 
 
 Assert::same( 'database.', $extension->prefix('') );
