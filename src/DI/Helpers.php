@@ -153,7 +153,7 @@ class Helpers
 		$res = array();
 		foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
 			$type = PhpReflection::parseAnnotation($property, 'var');
-			if (!PhpReflection::parseAnnotation($property, 'inject')) {
+			if (PhpReflection::parseAnnotation($property, 'inject') === NULL) {
 				continue;
 
 			} elseif (!$type) {
