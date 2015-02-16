@@ -117,12 +117,10 @@ class Helpers
 					$optCount = 0;
 				}
 
-			} elseif ($parameter->isDefaultValueAvailable()) {
-				try {
-					$res[$num] = $parameter->getDefaultValue();
-				} catch (\ReflectionException $e) { // bug #62988 in PHP 5.3.16
-					$res[$num] = NULL;
-				}
+			} elseif ($parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+				// !optional + defaultAvailable = func($a = NULL, $b) since 5.3.17 & 5.4.7
+				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
+				$res[$num] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : NULL;
 				$optCount++;
 
 			} else {
