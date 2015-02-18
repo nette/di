@@ -27,6 +27,9 @@ class ContainerBuilder extends Nette\Object
 	/** @var array */
 	public $parameters = array();
 
+	/** @var string */
+	private $className = 'Container';
+
 	/** @var ServiceDefinition[] */
 	private $definitions = array();
 
@@ -146,6 +149,25 @@ class ContainerBuilder extends Nette\Object
 	public function getAliases()
 	{
 		return $this->aliases;
+	}
+
+
+	/**
+	 * @return self
+	 */
+	public function setClassName($name)
+	{
+		$this->className = (string) $name;
+		return $this;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public function getClassName()
+	{
+		return $this->className;
 	}
 
 
@@ -507,12 +529,13 @@ class ContainerBuilder extends Nette\Object
 	 * Generates PHP classes. First class is the container.
 	 * @return Nette\PhpGenerator\ClassType[]
 	 */
-	public function generateClasses($className = 'Container', $parentName = NULL)
+	public function generateClasses($className = NULL, $parentName = NULL)
 	{
 		$this->prepareClassList();
 
 		$this->generatedClasses = array();
-		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($className);
+		$this->className = $className ?: $this->className;
+		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($this->className);
 		$containerClass->setExtends($parentName ?: 'Nette\DI\Container');
 		$containerClass->addMethod('__construct')
 			->addBody('parent::__construct(?);', array($this->parameters));
@@ -602,7 +625,7 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		$factoryClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType;
-		$factoryClass->setName(str_replace(array('\\', '.'), '_', "{$this->generatedClasses[0]->getName()}_{$def->getImplement()}Impl_{$name}"))
+		$factoryClass->setName(str_replace(array('\\', '.'), '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"))
 			->addImplement($def->getImplement())
 			->setFinal(TRUE);
 
