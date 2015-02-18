@@ -33,7 +33,7 @@ class ContainerLoader extends Nette\Object
 
 	/**
 	 * @param  mixed
-	 * @param  callable  function(string $class): [code, files]
+	 * @param  callable  function(Nette\DI\Compiler $compiler): string|NULL
 	 * @return string
 	 */
 	public function load($key, $generator)
@@ -108,7 +108,11 @@ class ContainerLoader extends Nette\Object
 	 */
 	protected function generate($class, $generator)
 	{
-		list($code, $files) = call_user_func($generator, $class);
+		$compiler = new Compiler;
+		$compiler->getContainerBuilder()->setClassName($class);
+		$code = call_user_func_array($generator, array(& $compiler));
+		$code = $code ?: implode("\n\n\n", $compiler->compile());
+		$files = $compiler->getDependencies();
 		$files = $files ? array_combine($files, $files) : array(); // workaround for PHP 5.3 array_combine
 		return array(
 			"<?php\n$code",
