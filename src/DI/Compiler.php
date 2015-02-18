@@ -130,7 +130,7 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * @return string
+	 * @return Nette\PhpGenerator\ClassType[]
 	 */
 	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
 	{
@@ -138,7 +138,10 @@ class Compiler extends Nette\Object
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
-		return $this->generateCode($className, $parentName);
+		$classes = $this->generateCode($className, $parentName);
+		return func_num_args()
+			? implode("\n\n\n", $classes) // back compatiblity
+			: $classes;
 	}
 
 
@@ -213,7 +216,7 @@ class Compiler extends Nette\Object
 		foreach ($this->extensions as $extension) {
 			$extension->afterCompile($classes[0]);
 		}
-		return implode("\n\n\n", $classes);
+		return $classes;
 	}
 
 
