@@ -25,7 +25,7 @@ class Compiler extends Nette\Object
 	private $builder;
 
 	/** @var array */
-	private $config;
+	private $config = array();
 
 	/** @var string[] of file names */
 	private $dependencies = array();
@@ -75,6 +75,30 @@ class Compiler extends Nette\Object
 
 
 	/**
+	 * Adds new configuration.
+	 * @return self
+	 */
+	public function addConfig(array $config)
+	{
+		$this->config = Config\Helpers::merge($config, $this->config);
+		return $this;
+	}
+
+
+	/**
+	 * Adds new configuration from file.
+	 * @return self
+	 */
+	public function loadConfig($file)
+	{
+		$loader = new Config\Loader;
+		$this->addConfig($loader->load($file));
+		$this->addDependencies($loader->getDependencies());
+		return $this;
+	}
+
+
+	/**
 	 * Returns configuration.
 	 * @return array
 	 */
@@ -108,9 +132,9 @@ class Compiler extends Nette\Object
 	/**
 	 * @return string
 	 */
-	public function compile(array $config, $className, $parentName = NULL)
+	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
 	{
-		$this->config = $config;
+		$this->config = $config ?: $this->config;
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
