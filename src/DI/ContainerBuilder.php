@@ -480,6 +480,7 @@ class ContainerBuilder extends Nette\Object
 	/**
 	 * Adds a file to the list of dependencies.
 	 * @return self
+	 * @internal
 	 */
 	public function addDependency($file)
 	{

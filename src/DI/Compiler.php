@@ -27,6 +27,9 @@ class Compiler extends Nette\Object
 	/** @var array */
 	private $config;
 
+	/** @var string[] of file names */
+	private $dependencies = array();
+
 	/** @var array reserved section names */
 	private static $reserved = array('services' => 1, 'parameters' => 1);
 
@@ -78,6 +81,27 @@ class Compiler extends Nette\Object
 	public function getConfig()
 	{
 		return $this->config;
+	}
+
+
+	/**
+	 * Adds a files to the list of dependencies.
+	 * @return self
+	 */
+	public function addDependencies(array $files)
+	{
+		$this->dependencies = array_merge($this->dependencies, $files);
+		return $this;
+	}
+
+
+	/**
+	 * Returns the unique list of dependent files.
+	 * @return array
+	 */
+	public function getDependencies()
+	{
+		return array_values(array_unique(array_filter($this->dependencies)));
 	}
 
 
@@ -155,11 +179,12 @@ class Compiler extends Nette\Object
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
 			$rc = new \ReflectionClass($extension);
-			$this->builder->addDependency($rc->getFileName());
+			$this->dependencies[] = $rc->getFileName();
 		}
 
 		$classes = $this->builder->generateClasses($className, $parentName);
 		$classes[0]->addMethod('initialize');
+		$this->addDependencies($this->builder->getDependencies());
 
 		foreach ($this->extensions as $extension) {
 			$extension->afterCompile($classes[0]);

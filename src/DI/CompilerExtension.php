@@ -92,9 +92,7 @@ abstract class CompilerExtension extends Nette\Object
 	{
 		$loader = new Config\Loader;
 		$res = $loader->load($file);
-		foreach ($loader->getDependencies() as $file) {
-			$this->getContainerBuilder()->addDependency($file);
-		}
+		$this->compiler->addDependencies($loader->getDependencies());
 		return $res;
 	}
 
