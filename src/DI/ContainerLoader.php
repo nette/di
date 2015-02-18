@@ -75,11 +75,7 @@ class ContainerLoader extends Nette\Object
 		}
 
 		if (!is_file($file) || $this->isExpired($file)) {
-			list($code, $files) = call_user_func($generator, $class);
-
-			$files = $files ? array_combine($files, $files) : array();
-			$toWrite["$file.meta"] = serialize(@array_map('filemtime', $files)); // @ - file may not exist
-			$toWrite[$file] = "<?php\n$code";
+			list($toWrite[$file], $toWrite["$file.meta"]) = $this->generate($class, $generator);
 
 			foreach ($toWrite as $name => $content) {
 				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
@@ -104,6 +100,20 @@ class ContainerLoader extends Nette\Object
 			return $meta !== @array_map('filemtime', $files); // @ - files may not exist
 		}
 		return FALSE;
+	}
+
+
+	/**
+	 * @return array of (code, file[])
+	 */
+	protected function generate($class, $generator)
+	{
+		list($code, $files) = call_user_func($generator, $class);
+		$files = $files ? array_combine($files, $files) : array(); // workaround for PHP 5.3 array_combine
+		return array(
+			"<?php\n$code",
+			serialize(@array_map('filemtime', $files)) // @ - file may not exist
+		);
 	}
 
 }
