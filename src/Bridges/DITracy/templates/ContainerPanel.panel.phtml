@@ -3,6 +3,7 @@
 namespace Nette\Bridges\DITracy;
 
 use Nette,
+	Tracy\Helpers,
 	Tracy\Dumper;
 
 ?>
@@ -69,5 +70,7 @@ use Nette,
 	<div class="nette-ContainerPanel-parameters">
 		<?php echo Dumper::toHtml($container->parameters); ?>
 	</div>
+
+	<p>Source: <?php echo Helpers::editorLink($file) ?></p>
 </div>
 </div>

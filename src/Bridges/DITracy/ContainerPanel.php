@@ -49,6 +49,8 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 	{
 		$container = $this->container;
 		$registry = $this->getContainerProperty('registry');
+		$rc = new \ReflectionClass($container);
+		$file = $rc->getFileName();
 		$tags = array();
 		$meta = $this->getContainerProperty('meta');
 		$services = $meta[Container::SERVICES];
