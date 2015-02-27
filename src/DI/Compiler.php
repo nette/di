@@ -105,7 +105,7 @@ class Compiler
 	 */
 	public function loadConfig($file)
 	{
-		$loader = new Config\Loader;
+		$loader = $this->createLoader();
 		$this->addConfig($loader->load($file));
 		$this->dependencies->add($loader->getDependencies());
 		return $this;
@@ -241,6 +241,15 @@ class Compiler
 			$extension->afterCompile($classes[0]);
 		}
 		return $classes;
+	}
+
+
+	/**
+	 * @return Config\Loader
+	 */
+	protected function createLoader()
+	{
+		return new Config\Loader;
 	}
 
 

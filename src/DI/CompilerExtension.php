@@ -91,7 +91,7 @@ abstract class CompilerExtension
 	 */
 	public function loadFromFile($file)
 	{
-		$loader = new Config\Loader;
+		$loader = $this->createLoader();
 		$res = $loader->load($file);
 		$this->compiler->addDependencies($loader->getDependencies());
 		return $res;
@@ -106,6 +106,15 @@ abstract class CompilerExtension
 	public function prefix($id)
 	{
 		return substr_replace($id, $this->name . '.', substr($id, 0, 1) === '@' ? 1 : 0, 0);
+	}
+
+
+	/**
+	 * @return Config\Loader
+	 */
+	protected function createLoader()
+	{
+		return new Config\Loader;
 	}
 
 

@@ -60,6 +60,15 @@ class ContainerLoader
 
 
 	/**
+	 * @return Compiler
+	 */
+	protected function createCompiler()
+	{
+		return new Compiler;
+	}
+
+
+	/**
 	 * @return void
 	 */
 	private function loadFile($class, $generator)
@@ -113,7 +122,7 @@ class ContainerLoader
 	 */
 	protected function generate($class, $generator)
 	{
-		$compiler = new Compiler;
+		$compiler = $this->createCompiler();
 		$compiler->setClassName($class);
 		$code = call_user_func_array($generator, [& $compiler]) ?: $compiler->compile();
 		return [
