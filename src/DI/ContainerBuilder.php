@@ -635,7 +635,7 @@ class ContainerBuilder extends Nette\Object
 		$factoryClass->addMethod('__construct')
 			->addBody('$this->container = $container;')
 			->addParameter('container')
-				->setTypeHint('Nette\DI\Container');
+				->setTypeHint($this->className);
 
 		$factoryClass->addMethod($def->getImplementType())
 			->setParameters($this->convertParameters($def->parameters))
