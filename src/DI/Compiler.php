@@ -173,7 +173,7 @@ class Compiler extends Nette\Object
 			if (isset($this->config[$name]['services'])) {
 				trigger_error("Support for inner section 'services' inside extension was removed (used in '$name').", E_USER_DEPRECATED);
 			}
-			$extension->setConfig($this->config[$name]);
+			$extension->setConfig($this->config[$name] ?: array());
 		}
 
 		foreach ($extensions as $extension) {

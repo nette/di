@@ -31,10 +31,15 @@ class DatabaseExtension extends Nette\DI\CompilerExtension
 	}
 }
 
+class FooExtension extends Nette\DI\CompilerExtension
+{
+}
+
 
 $compiler = new DI\Compiler;
 $extension = new DatabaseExtension;
 $compiler->addExtension('database', $extension);
+$compiler->addExtension('foo', new FooExtension);
 $container = createContainer($compiler, '
 parameters:
 	bar: hello
@@ -42,6 +47,8 @@ parameters:
 
 database:
 	foo: %bar%
+
+foo:
 ');
 
 
