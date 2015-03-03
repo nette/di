@@ -46,8 +46,8 @@ class Compiler extends Nette\Object
 	 */
 	public function addExtension($name, CompilerExtension $extension)
 	{
-		if (isset(self::$reserved[$name])) {
-			throw new Nette\InvalidArgumentException("Name '$name' is reserved.");
+		if (isset($this->extensions[$name]) || isset(self::$reserved[$name])) {
+			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
 		}
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
 		return $this;

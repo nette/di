@@ -25,3 +25,10 @@ Assert::exception(function() {
 	$compiler->addExtension('foo', new FooExtension);
 	$container = createContainer($compiler);
 }, 'Nette\DeprecatedException', "Extensions 'bar' were added while container was being compiled.");
+
+
+Assert::exception(function() {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('foo', new FooExtension);
+	$compiler->addExtension('foo', new FooExtension);
+}, 'Nette\InvalidArgumentException', "Name 'foo' is already used or reserved.");
