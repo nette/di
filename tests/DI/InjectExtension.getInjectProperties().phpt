@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\Helpers::getInjectProperties()
+ * Test: Nette\DI\Extensions\InjectExtension::getInjectProperties()
  */
 
 namespace A
@@ -73,33 +73,29 @@ namespace C
 
 namespace
 {
-	use Nette\DI\Helpers;
+	use Nette\DI\Extensions\InjectExtension;
 	use Tester\Assert;
 
 	require __DIR__ . '/../bootstrap.php';
 
 
-	$refA = new ReflectionClass('A\AClass');
-	$refB = new ReflectionClass('A\B\BClass');
-	$refC = new ReflectionClass('C\CClass');
-
 	Assert::same( array(
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	), Helpers::getInjectProperties($refA) );
+	), InjectExtension::getInjectProperties('A\AClass') );
 
 	Assert::same( array(
 		'varF' => 'A\B\BInjected',
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	), Helpers::getInjectProperties($refB) );
+	), InjectExtension::getInjectProperties('A\B\BClass') );
 
 	Assert::same( array(
 		'var1' => 'A\AInjected',
 		'var2' => 'A\B\BInjected',
 		'var3' => 'C\CInjected',
 		'var4' => 'C\CInjected',
-	), Helpers::getInjectProperties($refC) );
+	), InjectExtension::getInjectProperties('C\CClass') );
 }

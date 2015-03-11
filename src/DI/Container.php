@@ -252,19 +252,7 @@ class Container extends Nette\Object
 	 */
 	public function callInjects($service)
 	{
-		if (!is_object($service)) {
-			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
-		}
-
-		foreach (array_reverse(get_class_methods($service)) as $method) {
-			if (substr($method, 0, 6) === 'inject') {
-				$this->callMethod(array($service, $method));
-			}
-		}
-
-		foreach (Helpers::getInjectProperties(new \ReflectionClass($service), $this) as $property => $type) {
-			$service->$property = $this->getByType($type);
-		}
+		Extensions\InjectExtension::callInjects($this, $service);
 	}
 
 

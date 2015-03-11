@@ -8,7 +8,8 @@
 namespace Nette\DI\Extensions;
 
 use Nette,
-	Nette\DI;
+	Nette\DI,
+	Nette\DI\PhpReflection;
 
 
 /**
@@ -33,16 +34,16 @@ class InjectExtension extends DI\CompilerExtension
 
 	private function updateDefinition($def)
 	{
+		$class = $def->getClass();
+		$builder = $this->getContainerBuilder();
 		$injects = array();
-		$properties = DI\Helpers::getInjectProperties(new \ReflectionClass($def->getClass()), $this->getContainerBuilder());
-		foreach ($properties as $property => $type) {
+		foreach (self::getInjectProperties($class) as $property => $type) {
+			self::checkType($class, $property, $type, $builder);
 			$injects[] = new DI\Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
 		}
 
-		foreach (get_class_methods($def->getClass()) as $method) {
-			if (substr($method, 0, 6) === 'inject') {
-				$injects[] = new DI\Statement($method);
-			}
+		foreach (self::getInjectMethods($def->getClass()) as $method) {
+			$injects[] = new DI\Statement($method);
 		}
 
 		$setups = $def->getSetup();
@@ -56,6 +57,76 @@ class InjectExtension extends DI\CompilerExtension
 			array_unshift($setups, $inject);
 		}
 		$def->setSetup($setups);
+	}
+
+
+	/**
+	 * Generates list of inject methods.
+	 * @return array
+	 * @internal
+	 */
+	public static function getInjectMethods($class)
+	{
+		return array_values(array_filter(get_class_methods($class), function($name) {
+			return substr($name, 0, 6) === 'inject';
+		}));
+	}
+
+
+	/**
+	 * Generates list of properties with annotation @inject.
+	 * @return array
+	 * @internal
+	 */
+	public static function getInjectProperties($class)
+	{
+		$res = array();
+		foreach (get_class_vars($class) as $name => $foo) {
+			$rp = new \ReflectionProperty($class, $name);
+			if (PhpReflection::parseAnnotation($rp, 'inject') !== NULL) {
+				if ($type = PhpReflection::parseAnnotation($rp, 'var')) {
+					$type = PhpReflection::expandClassName($type, PhpReflection::getDeclaringClass($rp));
+				}
+				$res[$name] = $type;
+			}
+		}
+		return $res;
+	}
+
+
+	/**
+	 * Calls all methods starting with with "inject" using autowiring.
+	 * @return void
+	 */
+	public static function callInjects(DI\Container $container, $service)
+	{
+		if (!is_object($service)) {
+			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
+		}
+
+		foreach (array_reverse(self::getInjectMethods($service)) as $method) {
+			$container->callMethod(array($service, $method));
+		}
+
+		foreach (self::getInjectProperties(get_class($service)) as $property => $type) {
+			self::checkType($service, $property, $type, $container);
+			$service->$property = $container->getByType($type);
+		}
+	}
+
+
+	/** @internal */
+	private static function checkType($class, $name, $type, $container)
+	{
+		$rc = PhpReflection::getDeclaringClass(new \ReflectionProperty($class, $name));
+		$fullname = $rc->getName() . '::$' . $name;
+		if (!$type) {
+			throw new Nette\InvalidStateException("Property $fullname has no @var annotation.");
+		} elseif (!class_exists($type) && !interface_exists($type)) {
+			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $fullname not found. Check annotation and 'use' statements.");
+		} elseif (!$container->getByType($type, FALSE)) {
+			throw new ServiceCreationException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
+		}
 	}
 
 }

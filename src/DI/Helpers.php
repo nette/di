@@ -141,32 +141,4 @@ class Helpers
 		return $optCount ? array_slice($res, 0, -$optCount) : $res;
 	}
 
-
-	/**
-	 * Generates list of properties with annotation @inject.
-	 * @return array
-	 */
-	public static function getInjectProperties(\ReflectionClass $class, $container = NULL)
-	{
-		$res = array();
-		foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
-			$type = PhpReflection::parseAnnotation($property, 'var');
-			if (PhpReflection::parseAnnotation($property, 'inject') === NULL) {
-				continue;
-
-			} elseif (!$type) {
-				throw new Nette\InvalidStateException("Property $property has no @var annotation.");
-			}
-
-			$type = PhpReflection::expandClassName($type, PhpReflection::getDeclaringClass($property));
-			if (!class_exists($type) && !interface_exists($type)) {
-				throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $property not found. Check annotation and 'use' statements.");
-			} elseif ($container && !$container->getByType($type, FALSE)) {
-				throw new ServiceCreationException("Service of type {$type} used in @var annotation at $property not found. Did you register it in configuration file?");
-			}
-			$res[$property->getName()] = $type;
-		}
-		return $res;
-	}
-
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\Helpers::getInjectProperties() with traits
+ * Test: Nette\DI\Extensions\InjectExtension::getInjectProperties() with traits
  * @phpversion 5.4
  */
 
@@ -34,15 +34,13 @@ namespace C
 
 namespace
 {
-	use Nette\DI\Helpers;
+	use Nette\DI\Extensions\InjectExtension;
 	use Tester\Assert;
 
 	require __DIR__ . '/../bootstrap.php';
 
 
-	$refC = new ReflectionClass('C\CClass');
-
 	Assert::same( array(
 		'varA' => 'A\AInjected',
-	), Helpers::getInjectProperties($refC) );
+	), InjectExtension::getInjectProperties('C\CClass') );
 }
