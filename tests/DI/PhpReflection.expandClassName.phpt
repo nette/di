@@ -115,3 +115,23 @@ foreach ($cases as $alias => $fqn) {
 	Assert::same($fqn[0], PhpReflection::expandClassName($alias, $rcFoo));
 	Assert::same($fqn[1], PhpReflection::expandClassName($alias, $rcBar));
 }
+
+
+Assert::same(
+	['C' => 'A\B'],
+	PhpReflection::getUseStatements(new ReflectionClass('Test'))
+);
+
+Assert::same(
+	[],
+	PhpReflection::getUseStatements(new ReflectionClass('Test\Space\Foo'))
+);
+
+Assert::same(
+	['AAA' => 'AAA', 'B' => 'BBB', 'DDD' => 'CCC\DDD', 'F' => 'EEE\FFF', 'G' => 'GGG'],
+	PhpReflection::getUseStatements(new ReflectionClass('Test\Space\Bar'))
+);
+Assert::same(
+	[],
+	PhpReflection::getUseStatements(new ReflectionClass('stdClass'))
+);

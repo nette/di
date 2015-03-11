@@ -18,10 +18,6 @@ class PhpReflection
 {
 	use Nette\StaticClass;
 
-	/** @var array  for expandClassName() */
-	private static $cache = [];
-
-
 	/**
 	 * Returns an annotation value.
 	 * @return string|NULL
@@ -127,11 +123,7 @@ class PhpReflection
 			return ltrim($name, '\\');
 		}
 
-		$uses = & self::$cache[$rc->getName()];
-		if ($uses === NULL) {
-			self::$cache = self::parseUseStatemenets(file_get_contents($rc->getFileName()), $rc->getName()) + self::$cache;
-			$uses = & self::$cache[$rc->getName()];
-		}
+		$uses = self::getUseStatements($rc);
 		$parts = explode('\\', $name, 2);
 		if (isset($uses[$parts[0]])) {
 			$parts[0] = $uses[$parts[0]];
@@ -147,9 +139,27 @@ class PhpReflection
 
 
 	/**
+	 * @return array of [alias => class]
+	 */
+	public static function getUseStatements(\ReflectionClass $class)
+	{
+		static $cache = [];
+		if (!isset($cache[$name = $class->getName()])) {
+			if ($class->isInternal()) {
+				$cache[$name] = [];
+			} else {
+				$code = file_get_contents($class->getFileName());
+				$cache = self::parseUseStatemenets($code, $name) + $cache;
+			}
+		}
+		return $cache[$name];
+	}
+
+
+	/**
 	 * Parses PHP code.
 	 * @param  string
-	 * @return array
+	 * @return array of [class => [alias => class, ...]]
 	 */
 	public static function parseUseStatemenets($code, $forClass = NULL)
 	{
