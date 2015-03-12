@@ -25,10 +25,14 @@ class DIExtension extends Nette\DI\CompilerExtension
 	/** @var bool */
 	private $debugMode;
 
+	/** @var int */
+	private $time;
+
 
 	public function __construct($debugMode = FALSE)
 	{
 		$this->debugMode = $debugMode;
+		$this->time = microtime(TRUE);
 	}
 
 
@@ -47,6 +51,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 		$container = $this->getContainerBuilder();
 
 		if ($this->debugMode && $this->config['debugger']) {
+			Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
 			$initialize->addBody($container->formatPhp('?;', array(
 				new Nette\DI\Statement('@Tracy\Bar::addPanel', array(new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')))
 			)));

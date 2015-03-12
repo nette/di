@@ -19,13 +19,20 @@ use Nette,
  */
 class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 {
+	/** @var int */
+	public static $compilationTime;
+
 	/** @var Nette\DI\Container */
 	private $container;
+
+	/** @var int|NULL */
+	private $elapsedTime;
 
 
 	public function __construct(Container $container)
 	{
 		$this->container = $container;
+		$this->elapsedTime = self::$compilationTime ? microtime(TRUE) - self::$compilationTime : NULL;
 	}
 
 
@@ -36,6 +43,7 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 	public function getTab()
 	{
 		ob_start();
+		$elapsedTime = $this->elapsedTime;
 		require __DIR__ . '/templates/ContainerPanel.tab.phtml';
 		return ob_get_clean();
 	}
