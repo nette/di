@@ -66,7 +66,6 @@ database:
 		password: devsecret
 		dbname: dbname
 
-
 timeout: 10
 display_errors: true
 html_errors: false
@@ -96,15 +95,12 @@ production:
 			password: secret
 			dbname: dbname
 
-
-
 development < production:
 	database:
 		params:
 			host: dev.example.com
 			username: devuser
 			password: devsecret
-
 
 	timeout: 10
 	display_errors: true
@@ -116,7 +112,6 @@ development < production:
 	php:
 		zlib.output_compression: true
 		date.timezone: Europe/Prague
-
 
 nothing: null
 EOD
