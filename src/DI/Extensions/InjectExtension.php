@@ -125,7 +125,7 @@ class InjectExtension extends DI\CompilerExtension
 		} elseif (!class_exists($type) && !interface_exists($type)) {
 			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $fullname not found. Check annotation and 'use' statements.");
 		} elseif (!$container->getByType($type, FALSE)) {
-			throw new ServiceCreationException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
+			throw new Nette\InvalidStateException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
 		}
 	}
 
