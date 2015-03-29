@@ -24,7 +24,7 @@ Assert::same('type', PhpReflection::parseAnnotation($rc, 'var'));
 Assert::same('bool|int', PhpReflection::parseAnnotation($rc, 'return'));
 
 
-/** @return */
+/** @return*/
 class TestClass2 {}
 
 $rc = new ReflectionClass('TestClass2');
