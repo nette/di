@@ -303,7 +303,11 @@ class Compiler extends Nette\Object
 			$config = array('class' => NULL, 'implement' => $config);
 
 		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
-			$config = array('class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments));
+			if (method_exists($config->getEntity(), 'create')) {
+				$config = array('class' => NULL, 'implement' => $config->getEntity(), 'arguments' => $config->arguments);
+			} else {
+				$config = array('class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments));
+			}
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
 			$config = array('class' => NULL, 'create' => $config);
