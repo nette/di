@@ -120,8 +120,8 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
-	 * @param string
-	 * @param string
+	 * @param  string
+	 * @param  string
 	 */
 	public function addAlias($alias, $service)
 	{
@@ -206,7 +206,7 @@ class ContainerBuilder extends Nette\Object
 
 	/**
 	 * Gets the service names and definitions of the specified type.
-	 * @param string
+	 * @param  string
 	 * @return ServiceDefinition[]
 	 */
 	public function findByType($class)
@@ -489,7 +489,7 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
-	 * @param string[]
+	 * @param  string[]
 	 * @return self
 	 */
 	public function addExcludedClasses(array $classes)

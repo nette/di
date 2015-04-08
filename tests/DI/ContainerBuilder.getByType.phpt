@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\ContainerBuilder and Container: getByType()
+ * Test: Nette\DI\ContainerBuilder::getByType() and findByType()
  */
 
 use Nette\DI,
@@ -30,7 +30,8 @@ $three = $builder->addDefinition('three')
 	->setAutowired(FALSE);
 
 
-// compile-time
+Assert::null( $builder->getByType('\Service') );
+	
 $builder->prepareClassList();
 
 Assert::same( 'one', $builder->getByType('\Service') );
@@ -40,19 +41,9 @@ Assert::exception(function() use ($builder) {
 }, 'Nette\DI\ServiceCreationException', 'Multiple services of type Nette\Object found: one, two, container');
 
 
-$container = createContainer($builder);
-
-Assert::type( 'Service', $container->getByType('Service') );
-Assert::null( $container->getByType('unknown', FALSE) );
-
-Assert::same( array('one'), $container->findByType('Service') );
-Assert::same( array('two', 'three'), $container->findByType('Service2') );
-Assert::same( array(), $container->findByType('unknown') );
-
-Assert::exception(function() use ($container) {
-	$container->getByType('unknown');
-}, 'Nette\DI\MissingServiceException', 'Service of type unknown not found.');
-
-Assert::exception(function() use ($container) {
-	$container->getByType('Nette\Object');
-}, 'Nette\DI\MissingServiceException', 'Multiple services of type Nette\Object found: one, two, container.');
+Assert::same( array('one' => $builder->getDefinition('one')), $builder->findByType('Service') );
+Assert::same(
+	array('two' => $builder->getDefinition('two'), 'three' => $builder->getDefinition('three')),
+	$builder->findByType('Service2')
+);
+Assert::same( array(), $builder->findByType('unknown') );
