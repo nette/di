@@ -31,7 +31,7 @@ $three = $builder->addDefinition('three')
 
 
 Assert::null( $builder->getByType('\Service') );
-	
+
 $builder->prepareClassList();
 
 Assert::same( 'one', $builder->getByType('\Service') );
