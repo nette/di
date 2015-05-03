@@ -3,7 +3,9 @@ services:
 	bar: Bar
 	baz: Baz
 
-	lorem: \ILoremFactory(Lorem)
+	lorem:
+		implement: ILoremFactory
+		class: Lorem
 
 	finder: IFinderFactory
 
@@ -28,6 +30,4 @@ services:
 
 	fooFactory4: IFooFactory
 
-	factory5:
-		implement: ITestClassFactory
-		arguments: ['foo']
+	factory5: ITestClassFactory('foo')
