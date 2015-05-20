@@ -73,7 +73,7 @@ Assert::type( 'Lorem', $container->getService('eight') );
 
 Assert::type( 'Lorem', $container->getService('nine') );
 Assert::same( 'Factory::createLorem 1', $container->getService('nine')->arg );
-Assert::same( array(), $container->getService('nine')->foo );
+Assert::same( [], $container->getService('nine')->foo );
 
 Assert::type( 'Ipsum', $container->getService('referencedService') );
 Assert::same( $container->getService('one'), $container->getService('referencedService') );
@@ -105,17 +105,17 @@ Assert::notSame( $container->getService('one'), $container->getService('calledSe
 
 Assert::type( 'Lorem', $container->getService('rich1') );
 Assert::same( 1, $container->getService('rich1')->arg );
-Assert::same( array(), $container->getService('rich1')->foo );
+Assert::same( [], $container->getService('rich1')->foo );
 
 Assert::type( 'Lorem', $container->getService('rich2') );
 Assert::type( 'Ipsum', $container->getService('rich2')->arg );
 Assert::same( $container->getService('one'), $container->getService('rich2')->arg->arg );
-Assert::same( array(1), $container->getService('rich2')->foo );
+Assert::same( [1], $container->getService('rich2')->foo );
 
 Assert::type( 'Lorem', $container->getService('rich3') );
 Assert::same( 'Factory::createLorem 1', $container->getService('rich3')->arg );
-Assert::same( array(), $container->getService('rich3')->foo );
+Assert::same( [], $container->getService('rich3')->foo );
 
 Assert::type( 'Lorem', $container->getService('rich4') );
 Assert::same( 'Factory::createLorem 1', $container->getService('rich4')->arg );
-Assert::same( array(), $container->getService('rich4')->foo );
+Assert::same( [], $container->getService('rich4')->foo );

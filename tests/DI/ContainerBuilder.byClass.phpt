@@ -22,7 +22,7 @@ class Factory implements IFactory
 
 	static function create()
 	{
-		self::$methods[] = array(__FUNCTION__, func_get_args());
+		self::$methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
 	}
 
@@ -35,7 +35,7 @@ class AnnotatedFactory
 	/** @return stdClass */
 	function create()
 	{
-		$this->methods[] = array(__FUNCTION__, func_get_args());
+		$this->methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
 	}
 
@@ -68,13 +68,13 @@ $builder->addDefinition('annotatedFactory')
 $builder->addDefinition('two')
 	->setClass('stdClass')
 	->setAutowired(FALSE)
-	->setFactory('@factory::create', array('@\Factory'))
-	->addSetup(array('@\Factory', 'create'), array('@\Factory'));
+	->setFactory('@factory::create', ['@\Factory'])
+	->addSetup(['@\Factory', 'create'], ['@\Factory']);
 
 $builder->addDefinition('three')
 	->setClass('stdClass')
 	->setAutowired(FALSE)
-	->setFactory('@\Factory::create', array('@\Factory'));
+	->setFactory('@\Factory::create', ['@\Factory']);
 
 $builder->addDefinition('four')
 	->setAutowired(FALSE)
@@ -100,24 +100,24 @@ $factory = $container->getService('factory');
 Assert::type( 'Factory', $factory );
 
 Assert::type( 'stdClass', $container->getService('two') );
-Assert::same(array(
-	array('create', array($factory)),
-	array('create', array($factory)),
-), Factory::$methods);
+Assert::same([
+	['create', [$factory]],
+	['create', [$factory]],
+], Factory::$methods);
 
 Factory::$methods = NULL;
 
 Assert::type( 'stdClass', $container->getService('three') );
-Assert::same(array(
-	array('create', array($factory)),
-), Factory::$methods);
+Assert::same([
+	['create', [$factory]],
+], Factory::$methods);
 
 $annotatedFactory = $container->getService('annotatedFactory');
 Assert::type( 'AnnotatedFactory', $annotatedFactory );
 
 Assert::type( 'stdClass', $container->getService('four') );
-Assert::same(array(
-	array('create', array()),
-), $annotatedFactory->methods);
+Assert::same([
+	['create', []],
+], $annotatedFactory->methods);
 
 Assert::type( 'stdClass', $container->getService('five') );

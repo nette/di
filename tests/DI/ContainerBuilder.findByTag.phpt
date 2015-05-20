@@ -22,39 +22,39 @@ $builder->addDefinition('three')
 	->addTag('component');
 $builder->addDefinition('five')
 	->setClass('stdClass')
-	->addTag('debugPanel', array(1, 2, 3))
+	->addTag('debugPanel', [1, 2, 3])
 	->addTag('typeHint', 'Service');
 
 
 test(function() use ($builder) { // compile-time
-	Assert::same( array(
+	Assert::same( [
 		'five' => 'Service',
-	), $builder->findByTag('typeHint') );
+	], $builder->findByTag('typeHint') );
 
-	Assert::same( array(
+	Assert::same( [
 		'two' => TRUE,
-		'five' => array(1, 2, 3),
-	), $builder->findByTag('debugPanel') );
+		'five' => [1, 2, 3],
+	], $builder->findByTag('debugPanel') );
 
-	Assert::same( array(
+	Assert::same( [
 		'three' => TRUE,
-	), $builder->findByTag('component') );
+	], $builder->findByTag('component') );
 
-	Assert::same( array(), $builder->findByTag('unknown') );
+	Assert::same( [], $builder->findByTag('unknown') );
 });
 
 
 test(function() use ($builder) { // run-time
 	$container = createContainer($builder);
 
-	Assert::same( array(
+	Assert::same( [
 		'five' => 'Service',
-	), $container->findByTag('typeHint') );
+	], $container->findByTag('typeHint') );
 
-	Assert::same( array(
-		'five' => array(1, 2, 3),
+	Assert::same( [
+		'five' => [1, 2, 3],
 		'two' => TRUE,
-	), $container->findByTag('debugPanel') );
+	], $container->findByTag('debugPanel') );
 
-	Assert::same( array(), $container->findByTag('unknown') );
+	Assert::same( [], $container->findByTag('unknown') );
 });

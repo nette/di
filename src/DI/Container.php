@@ -23,19 +23,19 @@ class Container extends Nette\Object
 	const ALIASES = 'aliases';
 
 	/** @var array  user parameters */
-	/*private*/public $parameters = array();
+	/*private*/public $parameters = [];
 
 	/** @var object[]  storage for shared objects */
-	private $registry = array();
+	private $registry = [];
 
 	/** @var array[] */
-	protected $meta = array();
+	protected $meta = [];
 
 	/** @var array circular reference detector */
 	private $creating;
 
 
-	public function __construct(array $params = array())
+	public function __construct(array $params = [])
 	{
 		$this->parameters = $params + $this->parameters;
 	}
@@ -143,7 +143,7 @@ class Container extends Nette\Object
 	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function createService($name, array $args = array())
+	public function createService($name, array $args = [])
 	{
 		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		$method = Container::getMethodName($name);
@@ -156,7 +156,7 @@ class Container extends Nette\Object
 
 		$this->creating[$name] = TRUE;
 		try {
-			$service = call_user_func_array(array($this, $method), $args);
+			$service = call_user_func_array([$this, $method], $args);
 		} catch (\Exception $e) {
 			unset($this->creating[$name]);
 			throw $e;
@@ -202,8 +202,8 @@ class Container extends Nette\Object
 		$class = ltrim($class, '\\');
 		$meta = & $this->meta[self::TYPES];
 		return array_merge(
-			isset($meta[$class][TRUE]) ? $meta[$class][TRUE] : array(),
-			isset($meta[$class][FALSE]) ? $meta[$class][FALSE] : array()
+			isset($meta[$class][TRUE]) ? $meta[$class][TRUE] : [],
+			isset($meta[$class][FALSE]) ? $meta[$class][FALSE] : []
 		);
 	}
 
@@ -215,7 +215,7 @@ class Container extends Nette\Object
 	 */
 	public function findByTag($tag)
 	{
-		return isset($this->meta[self::TAGS][$tag]) ? $this->meta[self::TAGS][$tag] : array();
+		return isset($this->meta[self::TAGS][$tag]) ? $this->meta[self::TAGS][$tag] : [];
 	}
 
 
@@ -229,7 +229,7 @@ class Container extends Nette\Object
 	 * @return object
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function createInstance($class, array $args = array())
+	public function createInstance($class, array $args = [])
 	{
 		$rc = new \ReflectionClass($class);
 		if (!$rc->isInstantiable()) {
@@ -262,7 +262,7 @@ class Container extends Nette\Object
 	 * @param  array   arguments
 	 * @return mixed
 	 */
-	public function callMethod($function, array $args = array())
+	public function callMethod($function, array $args = [])
 	{
 		return call_user_func_array(
 			$function,

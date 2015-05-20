@@ -30,81 +30,81 @@ Assert::same( 'Test\Space\Foo', PhpReflection::expandClassName('self', $rcFoo) )
 
 
 /*
-alias to expand => array(
+alias to expand => [
 	FQN for $rcFoo,
 	FQN for $rcBar
-)
+]
 */
-$cases = array(
-	'\Absolute' => array(
+$cases = [
+	'\Absolute' => [
 		'Absolute',
 		'Absolute'
-	),
-	'\Absolute\Foo' => array(
+	],
+	'\Absolute\Foo' => [
 		'Absolute\Foo',
 		'Absolute\Foo'
-	),
+	],
 
-	'AAA' => array(
+	'AAA' => [
 		'Test\Space\AAA',
 		'AAA'
-	),
-	'AAA\Foo' => array(
+	],
+	'AAA\Foo' => [
 		'Test\Space\AAA\Foo',
 		'AAA\Foo'
-	),
+	],
 
-	'B' => array(
+	'B' => [
 		'Test\Space\B',
 		'BBB'
-	),
-	'B\Foo' => array(
+	],
+	'B\Foo' => [
 		'Test\Space\B\Foo',
 		'BBB\Foo'
-	),
+	],
 
-	'DDD' => array(
+	'DDD' => [
 		'Test\Space\DDD',
 		'CCC\DDD'
-	),
-	'DDD\Foo' => array(
+	],
+	'DDD\Foo' => [
 		'Test\Space\DDD\Foo',
 		'CCC\DDD\Foo'
-	),
+	],
 
-	'F' => array(
+	'F' => [
 		'Test\Space\F',
 		'EEE\FFF'
-	),
-	'F\Foo' => array(
+	],
+	'F\Foo' => [
 		'Test\Space\F\Foo',
 		'EEE\FFF\Foo'
-	),
+	],
 
-	'HHH' => array(
+	'HHH' => [
 		'Test\Space\HHH',
 		'Test\Space\HHH'
-	),
+	],
 
-	'Notdef' => array(
+	'Notdef' => [
 		'Test\Space\Notdef',
 		'Test\Space\Notdef'
-	),
-	'Notdef\Foo' => array(
+	],
+	'Notdef\Foo' => [
 		'Test\Space\Notdef\Foo',
 		'Test\Space\Notdef\Foo'
-	),
+	],
 
 	// trim leading backslash
-	'G' => array(
+	'G' => [
 		'Test\Space\G',
 		'GGG'
-	),
-	'G\Foo' => array(
+	],
+	'G\Foo' => [
 		'Test\Space\G\Foo',
 		'GGG\Foo'
-	),
-);
+	],
+];
 foreach ($cases as $alias => $fqn) {
 	Assert::same( $fqn[0], PhpReflection::expandClassName($alias, $rcFoo) );
 	Assert::same( $fqn[1], PhpReflection::expandClassName($alias, $rcBar) );

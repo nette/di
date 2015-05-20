@@ -121,9 +121,9 @@ class TestExtension extends DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition('fooFactory2')
 			->setFactory('Foo')
-			->setParameters(array('Baz baz' => NULL))
+			->setParameters(['Baz baz' => NULL])
 			->setImplement('IFooFactory')
-			->setArguments(array(1 => $builder::literal('$baz')));
+			->setArguments([1 => $builder::literal('$baz')]);
 
 		// see definition by config in Compiler::parseService()
 	}

@@ -19,19 +19,19 @@ use Nette,
 class Compiler extends Nette\Object
 {
 	/** @var CompilerExtension[] */
-	private $extensions = array();
+	private $extensions = [];
 
 	/** @var ContainerBuilder */
 	private $builder;
 
 	/** @var array */
-	private $config = array();
+	private $config = [];
 
 	/** @var string[] of file names */
-	private $dependencies = array();
+	private $dependencies = [];
 
 	/** @var array reserved section names */
-	private static $reserved = array('services' => 1, 'parameters' => 1);
+	private static $reserved = ['services' => 1, 'parameters' => 1];
 
 
 	public function __construct(ContainerBuilder $builder = NULL)
@@ -164,7 +164,7 @@ class Compiler extends Nette\Object
 			+ array_intersect_key($this->config, self::$reserved);
 
 		foreach ($first = $this->getExtensions('Nette\DI\Extensions\ExtensionsExtension') as $name => $extension) {
-			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : array());
+			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : []);
 			$extension->loadConfiguration();
 		}
 
@@ -173,7 +173,7 @@ class Compiler extends Nette\Object
 			if (isset($this->config[$name]['services'])) {
 				trigger_error("Support for inner section 'services' inside extension was removed (used in '$name').", E_USER_DEPRECATED);
 			}
-			$extension->setConfig($this->config[$name] ?: array());
+			$extension->setConfig($this->config[$name] ?: []);
 		}
 
 		foreach ($extensions as $extension) {
@@ -233,13 +233,13 @@ class Compiler extends Nette\Object
 			throw new Nette\DeprecatedException("Section 'factories' is deprecated, move definitions to section 'services' and append key 'autowired: no'.");
 		}
 
-		$services = isset($config['services']) ? $config['services'] : array();
-		$depths = array();
+		$services = isset($config['services']) ? $config['services'] : [];
+		$depths = [];
 		foreach ($services as $name => $def) {
-			$path = array();
+			$path = [];
 			while (Config\Helpers::isInheriting($def)) {
 				$path[] = $def;
-				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : array();
+				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : [];
 				if (in_array($def, $path, TRUE)) {
 					throw new ServiceCreationException("Circular reference detected for service '$name'.");
 				}
@@ -300,13 +300,13 @@ class Compiler extends Nette\Object
 			return;
 
 		} elseif (is_string($config) && interface_exists($config)) {
-			$config = array('class' => NULL, 'implement' => $config);
+			$config = ['class' => NULL, 'implement' => $config];
 
 		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
-			$config = array('class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments));
+			$config = ['class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments)];
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
-			$config = array('class' => NULL, 'create' => $config);
+			$config = ['class' => NULL, 'create' => $config];
 		}
 
 		if (array_key_exists('factory', $config)) {
@@ -314,14 +314,14 @@ class Compiler extends Nette\Object
 			unset($config['factory']);
 		};
 
-		$known = array('class', 'create', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags');
+		$known = ['class', 'create', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			throw new Nette\InvalidStateException(sprintf("Unknown or deprecated key '%s' in definition of service.", implode("', '", $error)));
 		}
 
 		$config = Helpers::filterArguments($config);
 
-		$arguments = array();
+		$arguments = [];
 		if (array_key_exists('arguments', $config)) {
 			Validators::assertField($config, 'arguments', 'array');
 			$arguments = $config['arguments'];
@@ -348,7 +348,7 @@ class Compiler extends Nette\Object
 
 		if (isset($config['setup'])) {
 			if (Config\Helpers::takeParent($config['setup'])) {
-				$definition->setSetup(array());
+				$definition->setSetup([]);
 			}
 			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
@@ -390,7 +390,7 @@ class Compiler extends Nette\Object
 		if (isset($config['tags'])) {
 			Validators::assertField($config, 'tags', 'array');
 			if (Config\Helpers::takeParent($config['tags'])) {
-				$definition->setTags(array());
+				$definition->setTags([]);
 			}
 			foreach ($config['tags'] as $tag => $attrs) {
 				if (is_int($tag) && is_string($attrs)) {

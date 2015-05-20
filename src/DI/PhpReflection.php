@@ -121,13 +121,13 @@ class PhpReflection
 	{
 		$tokens = token_get_all($code);
 		$namespace = $class = $classLevel = $level = NULL;
-		$res = $uses = array();
+		$res = $uses = [];
 
 		while (list(, $token) = each($tokens)) {
 			switch (is_array($token) ? $token[0] : $token) {
 				case T_NAMESPACE:
-					$namespace = self::fetch($tokens, array(T_STRING, T_NS_SEPARATOR)) . '\\';
-					$uses = array();
+					$namespace = self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]) . '\\';
+					$uses = [];
 					break;
 
 				case T_CLASS:
@@ -144,7 +144,7 @@ class PhpReflection
 					break;
 
 				case T_USE:
-					while (!$class && ($name = self::fetch($tokens, array(T_STRING, T_NS_SEPARATOR)))) {
+					while (!$class && ($name = self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]))) {
 						if (self::fetch($tokens, T_AS)) {
 							$uses[self::fetch($tokens, T_STRING)] = ltrim($name, '\\');
 						} else {
@@ -179,10 +179,10 @@ class PhpReflection
 	{
 		$res = NULL;
 		while ($token = current($tokens)) {
-			list($token, $s) = is_array($token) ? $token : array($token, $token);
+			list($token, $s) = is_array($token) ? $token : [$token, $token];
 			if (in_array($token, (array) $take, TRUE)) {
 				$res .= $s;
-			} elseif (!in_array($token, array(T_DOC_COMMENT, T_WHITESPACE, T_COMMENT), TRUE)) {
+			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], TRUE)) {
 				break;
 			}
 			next($tokens);

@@ -39,11 +39,11 @@ services:
 Assert::true( $container->hasService('lorem') );
 Assert::true( method_exists($container, 'createServiceLorem') );
 
-$params = new ReflectionParameter(array($container, 'createServiceLorem'), 0);
+$params = new ReflectionParameter([$container, 'createServiceLorem'], 0);
 Assert::same( 'foo', $params->getName() );
 Assert::same( 'Ipsum', $params->getClass()->getName() );
 Assert::false( $params->isDefaultValueAvailable() );
 
-$params = new ReflectionParameter(array($container, 'createServiceLorem'), 1);
+$params = new ReflectionParameter([$container, 'createServiceLorem'], 1);
 Assert::same( 'bar', $params->getName() );
 Assert::false( $params->getDefaultValue() );

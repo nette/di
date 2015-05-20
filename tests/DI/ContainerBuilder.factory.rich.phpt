@@ -38,11 +38,11 @@ class Obj
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setFactory(array(new DI\Statement('Factory'), 'create'))
-	->addSetup(array(new DI\Statement('Factory'), 'mark'), array('@self'));
+	->setFactory([new DI\Statement('Factory'), 'create'])
+	->addSetup([new DI\Statement('Factory'), 'mark'], ['@self']);
 
 $two = $builder->addDefinition('two')
-	->setFactory(array(new DI\Statement(array($one, 'foo'), array(1)), 'foo'), array(2));
+	->setFactory([new DI\Statement([$one, 'foo'], [1]), 'foo'], [2]);
 
 
 $container = createContainer($builder);
@@ -54,4 +54,4 @@ Assert::true( $container->getService('one')->mark );
 Assert::same( 'Obj', $two->getClass() );
 Assert::type( 'Obj', $container->getService('two') );
 Assert::true( $container->getService('two')->mark );
-Assert::same( array(1, 2), $container->getService('two')->args );
+Assert::same( [1, 2], $container->getService('two')->args );

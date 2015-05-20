@@ -27,7 +27,7 @@ class Statement extends Nette\Object
 	/**
 	 * @param  string|array|ServiceDefinition|NULL
 	 */
-	public function __construct($entity, array $arguments = array())
+	public function __construct($entity, array $arguments = [])
 	{
 		$this->setEntity($entity);
 		$this->arguments = $arguments;

@@ -20,43 +20,43 @@ class MyExtension extends Nette\DI\CompilerExtension
 
 test(function() {
 	$ext = new MyExtension;
-	Assert::same(array(), $ext->validateConfig(array()));
-	Assert::same(array('a' => 2, 'b' => 1), $ext->validateConfig(array('a' => 1, 'b' => 1), array('a' => 2)));
+	Assert::same([], $ext->validateConfig([]));
+	Assert::same(['a' => 2, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], ['a' => 2]));
 });
 
 test(function() {
 	$ext = new MyExtension;
-	$ext->setConfig(array('a' => 2));
-	Assert::same(array('a' => 2, 'b' => 1), $ext->validateConfig(array('a' => 1, 'b' => 1)));
-	Assert::same(array('a' => 2, 'b' => 1), $ext->getConfig());
+	$ext->setConfig(['a' => 2]);
+	Assert::same(['a' => 2, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1]));
+	Assert::same(['a' => 2, 'b' => 1], $ext->getConfig());
 });
 
 test(function() {
 	$ext = new MyExtension;
-	$ext->setConfig(array('a' => 2));
-	Assert::same(array('a' => 3, 'b' => 1), $ext->validateConfig(array('a' => 1, 'b' => 1), array('a' => 3)));
-	Assert::same(array('a' => 2), $ext->getConfig());
+	$ext->setConfig(['a' => 2]);
+	Assert::same(['a' => 3, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], ['a' => 3]));
+	Assert::same(['a' => 2], $ext->getConfig());
 });
 
 test(function() {
 	$ext = new MyExtension;
-	$ext->setConfig(array('a' => 2));
-	Assert::same(array('a' => 1, 'b' => 1), $ext->validateConfig(array('a' => 1, 'b' => 1), NULL));
-	Assert::same(array('a' => 2), $ext->getConfig());
+	$ext->setConfig(['a' => 2]);
+	Assert::same(['a' => 1, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], NULL));
+	Assert::same(['a' => 2], $ext->getConfig());
 });
 
 Assert::exception(function() {
 	$ext = new MyExtension;
-	$ext->validateConfig(array('a' => 1, 'b' => 1), array('c' => 1));
+	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1]);
 }, 'Nette\InvalidStateException', 'Unknown configuration option my.c.');
 
 Assert::exception(function() {
 	$ext = new MyExtension;
-	$ext->validateConfig(array('a' => 1, 'b' => 1), array('c' => 1, 'd' => 1), 'name');
+	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1, 'd' => 1], 'name');
 }, 'Nette\InvalidStateException', 'Unknown configuration option name.c, name.d.');
 
 Assert::exception(function() {
 	$ext = new MyExtension;
-	$ext->setConfig(array('c' => 1, 'd' => 1));
-	$ext->validateConfig(array('a' => 1, 'b' => 1));
+	$ext->setConfig(['c' => 1, 'd' => 1]);
+	$ext->validateConfig(['a' => 1, 'b' => 1]);
 }, 'Nette\InvalidStateException', 'Unknown configuration option my.c, my.d.');

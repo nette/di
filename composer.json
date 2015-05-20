@@ -16,7 +16,7 @@
 	"require": {
 		"php": ">=5.4.4",
 		"nette/neon": "~2.3",
-		"nette/php-generator": "~2.3",
+		"nette/php-generator": "~2.4",
 		"nette/utils": "~2.3"
 	},
 	"require-dev": {

@@ -27,10 +27,10 @@ Assert::type($factory->class, $container);
 Assert::type($factory->parentClass, $container);
 
 $factory->class = 'My2';
-$factory->config = array('parameters' => array('foo' => 'a'));
-$factory->configFiles = array(
-	array(Tester\FileMock::create('parameters: {foo: b}', 'neon'), NULL),
-	array(array('parameters' => array('foo' => 'c')), NULL),
-);
+$factory->config = ['parameters' => ['foo' => 'a']];
+$factory->configFiles = [
+	[Tester\FileMock::create('parameters: {foo: b}', 'neon'), NULL],
+	[['parameters' => ['foo' => 'c']], NULL],
+];
 $container = $factory->create();
-Assert::same(array('foo' => 'c'), $container->parameters);
+Assert::same(['foo' => 'c'], $container->parameters);

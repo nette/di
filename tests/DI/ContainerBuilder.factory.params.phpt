@@ -21,23 +21,23 @@ $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
-	->addSetup('$a', array($builder::literal('$a')));
+	->addSetup('$a', [$builder::literal('$a')]);
 
 $builder->addDefinition('two')
-	->setParameters(array('stdClass foo', 'array bar', 'foobar' => NULL))
+	->setParameters(['stdClass foo', 'array bar', 'foobar' => NULL])
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
-	->addSetup('$a', array($builder::literal('$foo')));
+	->addSetup('$a', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')
 	->setClass('stdClass');
 
 $builder->addDefinition('four')
-	->setFactory('@one::create', array(1 => array(1)))
+	->setFactory('@one::create', [1 => [1]])
 	->setAutowired(FALSE);
 
 $builder->addDefinition('five')
-	->setFactory('@two::create', array(1 => array(1)))
+	->setFactory('@two::create', [1 => [1]])
 	->setAutowired(FALSE);
 
 

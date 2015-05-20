@@ -59,7 +59,7 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 		$registry = $this->getContainerProperty('registry');
 		$rc = new \ReflectionClass($container);
 		$file = $rc->getFileName();
-		$tags = array();
+		$tags = [];
 		$meta = $this->getContainerProperty('meta');
 		$services = $meta[Container::SERVICES];
 		ksort($services);

@@ -43,6 +43,6 @@ Assert::exception(function() use ($container) {
 }, 'Nette\DI\MissingServiceException', 'Multiple services of type Nette\Object found: one, two, container.');
 
 
-Assert::same( array('one'), $container->findByType('Service') );
-Assert::same( array('two', 'three'), $container->findByType('Service2') );
-Assert::same( array(), $container->findByType('unknown') );
+Assert::same( ['one'], $container->findByType('Service') );
+Assert::same( ['two', 'three'], $container->findByType('Service2') );
+Assert::same( [], $container->findByType('unknown') );

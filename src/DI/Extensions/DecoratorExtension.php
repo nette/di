@@ -18,11 +18,11 @@ use Nette,
  */
 class DecoratorExtension extends Nette\DI\CompilerExtension
 {
-	public $defaults = array(
-		'setup' => array(),
-		'tags' => array(),
+	public $defaults = [
+		'setup' => [],
+		'tags' => [],
 		'inject' => NULL,
-	);
+	];
 
 
 	public function beforeCompile()

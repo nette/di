@@ -21,15 +21,15 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('Service', array(new Nette\DI\Statement('@two', array('foo'))));
+	->setClass('Service', [new Nette\DI\Statement('@two', ['foo'])]);
 
 $two = $builder->addDefinition('two')
-	->setParameters(array('foo', 'bar' => FALSE, 'array foobar' => NULL))
+	->setParameters(['foo', 'bar' => FALSE, 'array foobar' => NULL])
 	->setClass('stdClass')
-	->addSetup('$foo', array($builder::literal('$foo')));
+	->addSetup('$foo', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')
-	->setFactory($two, array('hello'));
+	->setFactory($two, ['hello']);
 
 
 $container = createContainer($builder);

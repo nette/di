@@ -63,15 +63,15 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::same(
-	array('a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'Iface' => TRUE),
+	['a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'Iface' => TRUE],
 	$builder->getDefinition('one')->getTags()
 );
 
 Assert::true( $builder->getDefinition('one')->getTag('inject') );
 
-Assert::equal( array(
-	new Statement(array('@self', 'setup'), array('Service')),
-	new Statement(array('@self', 'setup'), array('Object')),
-	new Statement(array('@self', 'setup'), array('Iface')),
-	new Statement(array('@self', 'setup')),
-), $builder->getDefinition('one')->getSetup() );
+Assert::equal( [
+	new Statement(['@self', 'setup'], ['Service']),
+	new Statement(['@self', 'setup'], ['Object']),
+	new Statement(['@self', 'setup'], ['Iface']),
+	new Statement(['@self', 'setup']),
+], $builder->getDefinition('one')->getSetup() );

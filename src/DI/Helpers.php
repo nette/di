@@ -30,7 +30,7 @@ class Helpers
 	public static function expand($var, array $params, $recursive = FALSE)
 	{
 		if (is_array($var)) {
-			$res = array();
+			$res = [];
 			foreach ($var as $key => $val) {
 				$res[$key] = self::expand($val, $params, $recursive);
 			}
@@ -62,7 +62,7 @@ class Helpers
 					throw new Nette\InvalidArgumentException("Missing parameter '$part'.", 0, $e);
 				}
 				if ($recursive) {
-					$val = self::expand($val, $params, (is_array($recursive) ? $recursive : array()) + array($part => 1));
+					$val = self::expand($val, $params, (is_array($recursive) ? $recursive : []) + [$part => 1]);
 				}
 				if (strlen($part) + 2 === strlen($var)) {
 					return $val;
@@ -85,7 +85,7 @@ class Helpers
 	{
 		$optCount = 0;
 		$num = -1;
-		$res = array();
+		$res = [];
 		$methodName = ($method instanceof \ReflectionMethod ? $method->getDeclaringClass()->getName() . '::' : '')
 			. $method->getName() . '()';
 
@@ -156,7 +156,7 @@ class Helpers
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments(array($v->getEntity()));
+				$tmp = self::filterArguments([$v->getEntity()]);
 				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
 			}
 		}

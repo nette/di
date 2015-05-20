@@ -31,16 +31,16 @@ class ContainerFactory extends Nette\Object
 	public $parentClass = 'Nette\DI\Container';
 
 	/** @var array */
-	public $config = array();
+	public $config = [];
 
 	/** @var array [file|array, section] */
-	public $configFiles = array();
+	public $configFiles = [];
 
 	/** @var string */
 	public $tempDirectory;
 
 	/** @var array */
-	private $dependencies = array();
+	private $dependencies = [];
 
 
 	public function __construct($tempDirectory)
@@ -91,7 +91,7 @@ class ContainerFactory extends Nette\Object
 	 */
 	protected function generateConfig()
 	{
-		$config = array();
+		$config = [];
 		$loader = $this->createLoader();
 		foreach ($this->configFiles as $info) {
 			$info = is_scalar($info[0]) ? $loader->load($info[0], $info[1]) : $info[0];
@@ -108,7 +108,7 @@ class ContainerFactory extends Nette\Object
 	 */
 	private function loadClass()
 	{
-		$key = md5(serialize(array($this->config, $this->configFiles, $this->class, $this->parentClass)));
+		$key = md5(serialize([$this->config, $this->configFiles, $this->class, $this->parentClass]));
 		$file = "$this->tempDirectory/$key.php";
 		if (!$this->isExpired($file) && (@include $file) !== FALSE) {
 			return;
@@ -120,9 +120,9 @@ class ContainerFactory extends Nette\Object
 		}
 
 		if (!is_file($file) || $this->isExpired($file)) {
-			$this->dependencies = array();
+			$this->dependencies = [];
 			$toWrite[$file] = $this->generateCode();
-			$files = $this->dependencies ? array_combine($this->dependencies, $this->dependencies) : array();
+			$files = $this->dependencies ? array_combine($this->dependencies, $this->dependencies) : [];
 			$toWrite["$file.meta"] = serialize(@array_map('filemtime', $files)); // @ - file may not exist
 
 			foreach ($toWrite as $name => $content) {
@@ -144,7 +144,7 @@ class ContainerFactory extends Nette\Object
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize(file_get_contents("$file.meta")); // @ - files may not exist
-			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : array();
+			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : [];
 			return $meta !== @array_map('filemtime', $files); // @ - files may not exist
 		}
 		return FALSE;

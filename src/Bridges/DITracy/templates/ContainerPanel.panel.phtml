@@ -30,7 +30,7 @@ use Nette,
 </style>
 
 <div class="nette-ContainerPanel">
-<h1><?php echo get_class($container) ?></h1>
+<h1><?= get_class($container) ?></h1>
 
 <div class="tracy-inner">
 	<h2>Services</h2>
@@ -48,18 +48,18 @@ use Nette,
 		<?php foreach ($services as $name => $class): ?>
 		<?php $autowired = !empty($meta[Nette\DI\Container::TYPES][$class][TRUE]) && in_array($name, $meta[Nette\DI\Container::TYPES][$class][TRUE]) ?>
 		<tr>
-			<td class="<?php echo isset($registry[$name]) ? 'created' : '' ?>"><?php echo htmlSpecialChars($name) ?></td>
-			<td class="<?php echo $autowired ? 'yes' : '' ?>"><?php echo $autowired ? 'yes' : 'no' ?></td>
+			<td class="<?= isset($registry[$name]) ? 'created' : '' ?>"><?= htmlSpecialChars($name) ?></td>
+			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : 'no' ?></td>
 			<td>
 				<?php if (isset($registry[$name]) && !$registry[$name] instanceof Nette\DI\Container): ?>
-					<?php echo Dumper::toHtml($registry[$name], array(Dumper::COLLAPSE => TRUE, Dumper::LIVE => TRUE)); ?>
+					<?= Dumper::toHtml($registry[$name], [Dumper::COLLAPSE => TRUE, Dumper::LIVE => TRUE]); ?>
 				<?php elseif (isset($registry[$name])): ?>
-					<code><?php echo get_class($registry[$name]) ?></code>
+					<code><?= get_class($registry[$name]) ?></code>
 				<?php elseif (is_string($class)): ?>
-					<code><?php echo htmlSpecialChars($class) ?></code>
+					<code><?= htmlSpecialChars($class) ?></code>
 				<?php endif ?>
 			</td>
-			<td><?php if (isset($tags[$name])) { echo Dumper::toHtml($tags[$name], array(Dumper::COLLAPSE => TRUE)); } ?></td>
+			<td><?php if (isset($tags[$name])) { echo Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => TRUE]); } ?></td>
 		</tr>
 		<?php endforeach ?>
 		</tbody>
@@ -68,9 +68,9 @@ use Nette,
 	<h2>Parameters</h2>
 
 	<div class="nette-ContainerPanel-parameters">
-		<?php echo Dumper::toHtml($container->parameters); ?>
+		<?= Dumper::toHtml($container->parameters); ?>
 	</div>
 
-	<p>Source: <?php echo Helpers::editorLink($file) ?></p>
+	<p>Source: <?= Helpers::editorLink($file) ?></p>
 </div>
 </div>

@@ -41,9 +41,9 @@ Assert::exception(function() use ($builder) {
 }, 'Nette\DI\ServiceCreationException', 'Multiple services of type Nette\Object found: one, two, container');
 
 
-Assert::same( array('one' => $builder->getDefinition('one')), $builder->findByType('Service') );
+Assert::same( ['one' => $builder->getDefinition('one')], $builder->findByType('Service') );
 Assert::same(
-	array('two' => $builder->getDefinition('two'), 'three' => $builder->getDefinition('three')),
+	['two' => $builder->getDefinition('two'), 'three' => $builder->getDefinition('three')],
 	$builder->findByType('Service2')
 );
-Assert::same( array(), $builder->findByType('unknown') );
+Assert::same( [], $builder->findByType('unknown') );

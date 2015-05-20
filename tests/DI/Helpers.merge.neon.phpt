@@ -12,8 +12,8 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $obj = new stdClass;
-$arr1 = array('a' => 'b', 'x');
-$arr2 = array('c' => 'd', 'y');
+$arr1 = ['a' => 'b', 'x'];
+$arr2 = ['c' => 'd', 'y'];
 
 
 function merge($left, $right)
@@ -27,11 +27,11 @@ function merge($left, $right)
 
 
 // replace
-Assert::same( array('item' => array()), merge('item!:', 'item:') );
+Assert::same( ['item' => []], merge('item!:', 'item:') );
 
-Assert::same( array('item' => array()), merge('item!:', 'item: 123') );
+Assert::same( ['item' => []], merge('item!:', 'item: 123') );
 
-Assert::same( array('item' => array()), merge('item!: []', 'item: []') );
+Assert::same( ['item' => []], merge('item!: []', 'item: []') );
 
 Assert::exception(function() {
 	merge('item!: 231', 'item:');
@@ -43,7 +43,7 @@ Assert::exception(function() {
 
 
 // inherit
-Assert::same( array(
+Assert::same( [
 	'parent' => 1,
-	'child' => array(Config\Helpers::EXTENDS_KEY => 'parent')
-), merge('child < parent:', 'parent: 1') );
+	'child' => [Config\Helpers::EXTENDS_KEY => 'parent']
+], merge('child < parent:', 'parent: 1') );

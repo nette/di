@@ -18,11 +18,11 @@ $data = $adapter->load(Tester\FileMock::create('
 ', 'neon'));
 
 Assert::equal(
-	array(
-		new Statement('Class', array(
+	[
+		new Statement('Class', [
 			'arg1',
-			new Nette\DI\Statement('Class2', array('arg2', 'arg3')),
-		)),
-	),
+			new Nette\DI\Statement('Class2', ['arg2', 'arg3']),
+		]),
+	],
 	$data
 );

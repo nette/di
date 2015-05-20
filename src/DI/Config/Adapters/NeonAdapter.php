@@ -37,7 +37,7 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 
 	private function process(array $arr)
 	{
-		$res = array();
+		$res = [];
 		foreach ($arr as $key => $val) {
 			if (substr($key, -1) === self::PREVENT_MERGING) {
 				if (!is_array($val) && $val !== NULL) {
@@ -64,13 +64,13 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 					$tmp = NULL;
 					foreach ($this->process($val->attributes) as $st) {
 						$tmp = new Statement(
-							$tmp === NULL ? $st->getEntity() : array($tmp, ltrim($st->getEntity(), ':')),
+							$tmp === NULL ? $st->getEntity() : [$tmp, ltrim($st->getEntity(), ':')],
 							$st->arguments
 						);
 					}
 					$val = $tmp;
 				} else {
-					$tmp = $this->process(array($val->value));
+					$tmp = $this->process([$val->value]);
 					$val = new Statement($tmp[0], $this->process($val->attributes));
 				}
 			}
@@ -86,7 +86,7 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	 */
 	public function dump(array $data)
 	{
-		$tmp = array();
+		$tmp = [];
 		foreach ($data as $name => $secData) {
 			if ($parent = Helpers::takeParent($secData)) {
 				$name .= ' ' . self::INHERITING_SEPARATOR . ' ' . $parent;

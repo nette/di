@@ -96,7 +96,7 @@ class ContainerLoader extends Nette\Object
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize(file_get_contents("$file.meta")); // @ - files may not exist
-			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : array();
+			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : [];
 			return $meta !== @array_map('filemtime', $files); // @ - files may not exist
 		}
 		return FALSE;
@@ -110,14 +110,14 @@ class ContainerLoader extends Nette\Object
 	{
 		$compiler = new Compiler;
 		$compiler->getContainerBuilder()->setClassName($class);
-		$code = call_user_func_array($generator, array(& $compiler));
+		$code = call_user_func_array($generator, [& $compiler]);
 		$code = $code ?: implode("\n\n\n", $compiler->compile());
 		$files = $compiler->getDependencies();
-		$files = $files ? array_combine($files, $files) : array(); // workaround for PHP 5.3 array_combine
-		return array(
+		$files = $files ? array_combine($files, $files) : []; // workaround for PHP 5.3 array_combine
+		return [
 			"<?php\n$code",
 			serialize(@array_map('filemtime', $files)) // @ - file may not exist
-		);
+		];
 	}
 
 }

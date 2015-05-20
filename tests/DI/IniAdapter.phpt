@@ -15,41 +15,41 @@ define('TEMP_FILE', TEMP_DIR . '/cfg.ini');
 
 $config = new Config\Loader;
 $data = $config->load('files/iniAdapter.ini', 'production');
-Assert::same( array(
+Assert::same( [
 	'webname' => 'the example',
-	'database' => array(
+	'database' => [
 		'adapter' => 'pdo_mysql',
-		'params' => array(
+		'params' => [
 			'host' => 'db.example.com',
 			'username' => 'dbuser',
 			'password' => 'secret',
 			'dbname' => 'dbname',
-		),
-	),
-), $data );
+		],
+	],
+], $data );
 
 
 $data = $config->load('files/iniAdapter.ini', 'development');
-Assert::same( array(
+Assert::same( [
 	'webname' => 'the example',
-	'database' => array(
+	'database' => [
 		'adapter' => 'pdo_mysql',
-		'params' => array(
+		'params' => [
 			'host' => 'dev.example.com',
 			'username' => 'devuser',
 			'password' => 'devsecret',
 			'dbname' => 'dbname',
-		),
-	),
+		],
+	],
 	'timeout' => '10',
 	'display_errors' => '1',
 	'html_errors' => '',
-	'items' => array('10', '20'),
-	'php' => array(
+	'items' => ['10', '20'],
+	'php' => [
 		'zlib.output_compression' => '1',
 		'date.timezone' => 'Europe/Prague',
-	),
-), $data );
+	],
+], $data );
 
 
 $config->save($data, TEMP_FILE);

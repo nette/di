@@ -16,7 +16,7 @@ class DatabaseExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		Assert::same( array('foo' => 'hello'), $this->config );
+		Assert::same( ['foo' => 'hello'], $this->config );
 		Notes::add(__METHOD__);
 	}
 
@@ -52,11 +52,11 @@ foo:
 ');
 
 
-Assert::same(array(
+Assert::same([
 	'DatabaseExtension::loadConfiguration',
 	'DatabaseExtension::beforeCompile',
 	'DatabaseExtension::afterCompile',
-), Notes::fetch());
+], Notes::fetch());
 
 
 Assert::same( 'database.', $extension->prefix('') );
@@ -64,6 +64,6 @@ Assert::same( 'database.member', $extension->prefix('member') );
 Assert::same( '@database.member', $extension->prefix('@member') );
 
 
-Assert::same( array('foo' => 'hello'), $extension->getConfig() );
-Assert::same( array('foo' => 'hello'), $extension->getConfig(array('foo' => 'bar')) );
-Assert::same( array('foo2' => 'hello', 'foo' => 'hello'), $extension->getConfig(array('foo2' => '%bar%')) );
+Assert::same( ['foo' => 'hello'], $extension->getConfig() );
+Assert::same( ['foo' => 'hello'], $extension->getConfig(['foo' => 'bar']) );
+Assert::same( ['foo2' => 'hello', 'foo' => 'hello'], $extension->getConfig(['foo2' => '%bar%']) );

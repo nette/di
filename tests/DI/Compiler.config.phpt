@@ -13,19 +13,19 @@ require __DIR__ . '/../bootstrap.php';
 $compiler = new DI\Compiler;
 
 Assert::same(
-	array(),
+	[],
 	$compiler->getConfig()
 );
 
 
-$compiler->addConfig(array(
+$compiler->addConfig([
 	'item1' => 1,
-));
+]);
 
 Assert::same(
-	array(
+	[
 		'item1' => 1,
-	),
+	],
 	$compiler->getConfig()
 );
 
@@ -36,9 +36,9 @@ item2: 2
 ', 'neon'));
 
 Assert::same(
-	array(
+	[
 		'item1' => 11,
 		'item2' => 2,
-	),
+	],
 	$compiler->getConfig()
 );

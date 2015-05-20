@@ -72,10 +72,10 @@ services:
 
 Assert::type( 'Model', $container->getService('model') );
 
-Assert::same(array(
+Assert::same([
 	'Model::test',
 	'Model::test',
 	'Model::test',
 	'Lorem::test',
 	'Lorem::test',
-), Notes::fetch());
+], Notes::fetch());

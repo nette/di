@@ -24,13 +24,13 @@ class ServiceDefinition extends Nette\Object
 	private $factory;
 
 	/** @var Statement[] */
-	private $setup = array();
+	private $setup = [];
 
 	/** @var array */
-	public $parameters = array();
+	public $parameters = [];
 
 	/** @var array */
-	private $tags = array();
+	private $tags = [];
 
 	/** @var bool */
 	private $autowired = TRUE;
@@ -48,7 +48,7 @@ class ServiceDefinition extends Nette\Object
 	/**
 	 * @return self
 	 */
-	public function setClass($class, array $args = array())
+	public function setClass($class, array $args = [])
 	{
 		$this->class = ltrim($class, '\\');
 		if ($args) {
@@ -70,7 +70,7 @@ class ServiceDefinition extends Nette\Object
 	/**
 	 * @return self
 	 */
-	public function setFactory($factory, array $args = array())
+	public function setFactory($factory, array $args = [])
 	{
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
 		return $this;
@@ -95,7 +95,7 @@ class ServiceDefinition extends Nette\Object
 	/**
 	 * @return self
 	 */
-	public function setArguments(array $args = array())
+	public function setArguments(array $args = [])
 	{
 		if (!$this->factory) {
 			$this->factory = new Statement($this->class);
@@ -133,7 +133,7 @@ class ServiceDefinition extends Nette\Object
 	/**
 	 * @return self
 	 */
-	public function addSetup($entity, array $args = array())
+	public function addSetup($entity, array $args = [])
 	{
 		$this->setup[] = $entity instanceof Statement ? $entity : new Statement($entity, $args);
 		return $this;
@@ -263,7 +263,7 @@ class ServiceDefinition extends Nette\Object
 	 */
 	public function setImplementType($type)
 	{
-		if (!in_array($type, array('get', 'create'), TRUE)) {
+		if (!in_array($type, ['get', 'create'], TRUE)) {
 			throw new Nette\InvalidArgumentException('Argument must be get|create.');
 		}
 		$this->implementType = $type;

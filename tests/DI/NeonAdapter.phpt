@@ -16,41 +16,41 @@ define('TEMP_FILE', TEMP_DIR . '/cfg.neon');
 
 $config = new Config\Loader;
 $data = $config->load('files/neonAdapter.neon', 'production');
-Assert::same( array(
+Assert::same( [
 	'webname' => 'the example',
-	'database' => array(
+	'database' => [
 		'adapter' => 'pdo_mysql',
-		'params' => array(
+		'params' => [
 			'host' => 'db.example.com',
 			'username' => 'dbuser',
 			'password' => 'secret',
 			'dbname' => 'dbname',
-		),
-	),
-), $data );
+		],
+	],
+], $data );
 
 
 $data = $config->load('files/neonAdapter.neon', 'development');
-Assert::same( array(
+Assert::same( [
 	'webname' => 'the example',
-	'database' => array(
+	'database' => [
 		'adapter' => 'pdo_mysql',
-		'params' => array(
+		'params' => [
 			'host' => 'dev.example.com',
 			'username' => 'devuser',
 			'password' => 'devsecret',
 			'dbname' => 'dbname',
-		),
-	),
+		],
+	],
 	'timeout' => 10,
 	'display_errors' => TRUE,
 	'html_errors' => FALSE,
-	'items' => array(10, 20),
-	'php' => array(
+	'items' => [10, 20],
+	'php' => [
 		'zlib.output_compression' => TRUE,
 		'date.timezone' => 'Europe/Prague',
-	),
-), $data );
+	],
+], $data );
 
 
 $config->save($data, TEMP_FILE);
@@ -119,18 +119,18 @@ EOD
 
 
 $data = $config->load('files/neonAdapter.entity.neon');
-Assert::equal( array(
-	new Statement('ent', array(1)),
-	new Statement(array(
-			new Statement('ent', array(2)),
+Assert::equal( [
+	new Statement('ent', [1]),
+	new Statement([
+			new Statement('ent', [2]),
 			'inner',
-		),
-		array(3, 4)
+		],
+		[3, 4]
 	),
-	new Statement(array(
-			new Statement('ent', array(3)),
+	new Statement([
+			new Statement('ent', [3]),
 			'inner',
-		),
-		array(5)
+		],
+		[5]
 	),
-), $data );
+], $data );

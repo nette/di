@@ -57,29 +57,29 @@ Assert::error(function () use (& $container) {
 	");
 }, E_WARNING, "constant(): Couldn't find constant MY_FAILING_CONSTANT_TEST");
 
-$container->parameters = array('something');
+$container->parameters = ['something'];
 
 $lorem = $container->getService('lorem');
 $dolor = $container->getService('dolor');
 
 // constants
-Assert::same( array('one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'), $lorem->args[0] );
-Assert::same( array(NULL), $dolor->args[0] );
+Assert::same( ['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0] );
+Assert::same( [NULL], $dolor->args[0] );
 
 // services
-Assert::same( array($lorem, $lorem, $container), $lorem->args[1] );
+Assert::same( [$lorem, $lorem, $container], $lorem->args[1] );
 
 // statements
-Assert::same( array(3, array('x' => 'HELLO')), $lorem->args[2] );
+Assert::same( [3, ['x' => 'HELLO']], $lorem->args[2] );
 
 // non-statements
-Assert::same( array(array('Lorem', 'method'), 'Lorem::add', 'Lorem::add'), $lorem->args[3] );
+Assert::same( [['Lorem', 'method'], 'Lorem::add', 'Lorem::add'], $lorem->args[3] );
 
 // special
-Assert::same( array(FALSE), $lorem->args[4] );
+Assert::same( [FALSE], $lorem->args[4] );
 
 // service variables
-Assert::same( array($lorem->var, $lorem->var, $container->parameters), $lorem->args[5] );
+Assert::same( [$lorem->var, $lorem->var, $container->parameters], $lorem->args[5] );
 
 // service constant
-Assert::same( array(Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS), $lorem->args[6] );
+Assert::same( [Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS], $lorem->args[6] );

@@ -39,13 +39,13 @@ class IniAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 			throw new Nette\InvalidStateException("parse_ini_file(): $error[message]");
 		}
 
-		$data = array();
+		$data = [];
 		foreach ($ini as $secName => $secData) {
 			if (is_array($secData)) { // is section?
 				if (substr($secName, -1) === self::RAW_SECTION) {
 					$secName = substr($secName, 0, -1);
 				} else { // process key nesting separator (key1.key2.key3)
-					$tmp = array();
+					$tmp = [];
 					foreach ($secData as $key => $val) {
 						$cursor = & $tmp;
 						$key = str_replace(self::ESCAPED_KEY_SEPARATOR, "\xFF", $key);
@@ -95,10 +95,10 @@ class IniAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	 */
 	public function dump(array $data)
 	{
-		$output = array();
+		$output = [];
 		foreach ($data as $name => $secData) {
 			if (!is_array($secData)) {
-				$output = array();
+				$output = [];
 				self::build($data, $output, '');
 				break;
 			}

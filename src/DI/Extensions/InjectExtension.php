@@ -36,10 +36,10 @@ class InjectExtension extends DI\CompilerExtension
 	{
 		$class = $def->getClass();
 		$builder = $this->getContainerBuilder();
-		$injects = array();
+		$injects = [];
 		foreach (self::getInjectProperties($class) as $property => $type) {
 			self::checkType($class, $property, $type, $builder);
-			$injects[] = new DI\Statement('$' . $property, array('@\\' . ltrim($type, '\\')));
+			$injects[] = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
 		}
 
 		foreach (self::getInjectMethods($def->getClass()) as $method) {
@@ -80,7 +80,7 @@ class InjectExtension extends DI\CompilerExtension
 	 */
 	public static function getInjectProperties($class)
 	{
-		$res = array();
+		$res = [];
 		foreach (get_class_vars($class) as $name => $foo) {
 			$rp = new \ReflectionProperty($class, $name);
 			if (PhpReflection::parseAnnotation($rp, 'inject') !== NULL) {
@@ -105,7 +105,7 @@ class InjectExtension extends DI\CompilerExtension
 		}
 
 		foreach (array_reverse(self::getInjectMethods($service)) as $method) {
-			$container->callMethod(array($service, $method));
+			$container->callMethod([$service, $method]);
 		}
 
 		foreach (self::getInjectProperties(get_class($service)) as $property => $type) {

@@ -17,10 +17,10 @@ use Nette;
  */
 class DIExtension extends Nette\DI\CompilerExtension
 {
-	public $defaults = array(
+	public $defaults = [
 		'debugger' => FALSE,
 		'accessors' => FALSE,
-	);
+	];
 
 	/** @var bool */
 	private $debugMode;
@@ -52,13 +52,13 @@ class DIExtension extends Nette\DI\CompilerExtension
 
 		if ($this->debugMode && $this->config['debugger']) {
 			Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
-			$initialize->addBody($container->formatPhp('?;', array(
-				new Nette\DI\Statement('@Tracy\Bar::addPanel', array(new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')))
-			)));
+			$initialize->addBody($container->formatPhp('?;', [
+				new Nette\DI\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')])
+			]));
 		}
 
 		foreach (array_filter($container->findByTag('run')) as $name => $on) {
-			$initialize->addBody('$this->getService(?);', array($name));
+			$initialize->addBody('$this->getService(?);', [$name]);
 		}
 
 		if (!empty($this->config['accessors'])) {

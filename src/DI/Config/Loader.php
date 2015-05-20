@@ -21,13 +21,13 @@ class Loader extends Nette\Object
 	/** @internal */
 	const INCLUDES_KEY = 'includes';
 
-	private $adapters = array(
+	private $adapters = [
 		'php' => 'Nette\DI\Config\Adapters\PhpAdapter',
 		'ini' => 'Nette\DI\Config\Adapters\IniAdapter',
 		'neon' => 'Nette\DI\Config\Adapters\NeonAdapter',
-	);
+	];
 
-	private $dependencies = array();
+	private $dependencies = [];
 
 
 	/**
@@ -52,7 +52,7 @@ class Loader extends Nette\Object
 		}
 
 		// include child files
-		$merged = array();
+		$merged = [];
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
 			foreach ($data[self::INCLUDES_KEY] as $include) {

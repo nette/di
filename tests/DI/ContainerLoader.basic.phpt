@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $cache = new DI\ContainerLoader(TEMP_DIR . '/subdir');
 
-$key = array(1, 2);
+$key = [1, 2];
 $className = $cache->getClassName($key);
 Assert::match('Container%[\w]+%', $className);
 

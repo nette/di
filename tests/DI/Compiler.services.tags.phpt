@@ -26,20 +26,20 @@ services:
 $prop = $container->getReflection()->getProperty('meta');
 $prop->setAccessible(TRUE);
 
-Assert::same(array(
-	'types' => array(
-		'stdClass' => array(1 => array('lorem')),
-		'Nette\\Object' => array(1 => array('container')),
-		'Nette\\DI\\Container' => array(1 => array('container')),
-	),
-	'services' => array('container' => 'Nette\\DI\\Container', 'lorem' => 'stdClass'),
-	'tags' => array(
-		'a' => array('lorem' => TRUE),
-		'b' => array('lorem' => 'c'),
-		'd' => array('lorem' => array('e')),
-	),
-	'aliases' => array(),
-), $prop->getValue($container) );
+Assert::same([
+	'types' => [
+		'stdClass' => [1 => ['lorem']],
+		'Nette\\Object' => [1 => ['container']],
+		'Nette\\DI\\Container' => [1 => ['container']],
+	],
+	'services' => ['container' => 'Nette\\DI\\Container', 'lorem' => 'stdClass'],
+	'tags' => [
+		'a' => ['lorem' => TRUE],
+		'b' => ['lorem' => 'c'],
+		'd' => ['lorem' => ['e']],
+	],
+	'aliases' => [],
+], $prop->getValue($container) );
 
-Assert::same( array('lorem' => TRUE), $container->findByTag('a') );
-Assert::same( array(), $container->findByTag('x') );
+Assert::same( ['lorem' => TRUE], $container->findByTag('a') );
+Assert::same( [], $container->findByTag('x') );

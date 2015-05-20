@@ -41,7 +41,7 @@ $builder->addDefinition('three')
 	->setClass('FactoryReceiver');
 
 $builder->addDefinition('four')
-	->setFactory('FactoryReceiver', array('@one'));
+	->setFactory('FactoryReceiver', ['@one']);
 
 
 $container = createContainer($builder);

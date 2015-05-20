@@ -17,7 +17,7 @@ class Service
 
 $one = new Service;
 
-$container = new Container(array('container' => array('accessors' => TRUE)));
+$container = new Container(['container' => ['accessors' => TRUE]]);
 $container->one = $one;
 
 Assert::true( isset($container->one) );
