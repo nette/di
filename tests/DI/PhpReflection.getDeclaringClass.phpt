@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\PhpReflection::getDeclaringClass
- * @phpversion 5.4
  */
 
 use Nette\DI\PhpReflection,

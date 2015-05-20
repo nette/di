@@ -205,8 +205,7 @@ class Compiler extends Nette\Object
 
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
-			$rc = new \ReflectionClass($extension);
-			$this->dependencies[] = $rc->getFileName();
+			$this->dependencies[] = (new \ReflectionClass($extension))->getFileName();
 		}
 
 		$classes = $this->builder->generateClasses($className, $parentName);

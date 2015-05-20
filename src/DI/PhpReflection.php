@@ -30,8 +30,7 @@ class PhpReflection
 	{
 		static $ok;
 		if (!$ok) {
-			$rc = new \ReflectionMethod(__METHOD__);
-			if (!$rc->getDocComment()) {
+			if (!(new \ReflectionMethod(__METHOD__))->getDocComment()) {
 				throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
 			}
 			$ok = TRUE;
@@ -48,11 +47,9 @@ class PhpReflection
 	 */
 	public static function getDeclaringClass(\ReflectionProperty $prop)
 	{
-		if (PHP_VERSION_ID >= 50400) {
-			foreach ($prop->getDeclaringClass()->getTraits() as $trait) {
-				if ($trait->hasProperty($prop->getName())) {
-					return self::getDeclaringClass($trait->getProperty($prop->getName()));
-				}
+		foreach ($prop->getDeclaringClass()->getTraits() as $trait) {
+			if ($trait->hasProperty($prop->getName())) {
+				return self::getDeclaringClass($trait->getProperty($prop->getName()));
 			}
 		}
 		return $prop->getDeclaringClass();
@@ -132,7 +129,7 @@ class PhpReflection
 
 				case T_CLASS:
 				case T_INTERFACE:
-				case PHP_VERSION_ID < 50400 ? -1 : T_TRAIT:
+				case T_TRAIT:
 					if ($name = self::fetch($tokens, T_STRING)) {
 						$class = $namespace . $name;
 						$classLevel = $level + 1;

@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\ContainerBuilder and generated factories errors.
- * @phpversion 5.4
  */
 
 use Nette\DI,

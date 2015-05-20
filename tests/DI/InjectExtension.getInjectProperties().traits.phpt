@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\Extensions\InjectExtension::getInjectProperties() with traits
- * @phpversion 5.4
  */
 
 namespace A

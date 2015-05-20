@@ -113,10 +113,9 @@ class ContainerLoader extends Nette\Object
 		$code = call_user_func_array($generator, [& $compiler]);
 		$code = $code ?: implode("\n\n\n", $compiler->compile());
 		$files = $compiler->getDependencies();
-		$files = $files ? array_combine($files, $files) : []; // workaround for PHP 5.3 array_combine
 		return [
 			"<?php\n$code",
-			serialize(@array_map('filemtime', $files)) // @ - file may not exist
+			serialize(@array_map('filemtime', array_combine($files, $files))) // @ - file may not exist
 		];
 	}
 

@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\CompilerExtension::validateConfig()
- * @phpversion 5.4
  */
 
 use Nette\DI,
