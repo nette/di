@@ -319,7 +319,7 @@ class Compiler extends Nette\Object
 			throw new Nette\InvalidStateException(sprintf("Unknown or deprecated key '%s' in definition of service.", implode("', '", $error)));
 		}
 
-		$config = self::filterArguments($config);
+		$config = Helpers::filterArguments($config);
 
 		$arguments = array();
 		if (array_key_exists('arguments', $config)) {
@@ -404,24 +404,11 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * Removes ... and process constants recursively.
-	 * @return array
+	 * Use Helpers::filterArguments()
 	 */
 	public static function filterArguments(array $args)
 	{
-		foreach ($args as $k => $v) {
-			if ($v === '...') {
-				unset($args[$k]);
-			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
-				$args[$k] = constant(ltrim($v, ':'));
-			} elseif (is_array($v)) {
-				$args[$k] = self::filterArguments($v);
-			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments(array($v->getEntity()));
-				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
-			}
-		}
-		return $args;
+		return Helpers::filterArguments($args);
 	}
 
 }

@@ -141,4 +141,26 @@ class Helpers
 		return $optCount ? array_slice($res, 0, -$optCount) : $res;
 	}
 
+
+	/**
+	 * Removes ... and process constants recursively.
+	 * @return array
+	 */
+	public static function filterArguments(array $args)
+	{
+		foreach ($args as $k => $v) {
+			if ($v === '...') {
+				unset($args[$k]);
+			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
+				$args[$k] = constant(ltrim($v, ':'));
+			} elseif (is_array($v)) {
+				$args[$k] = self::filterArguments($v);
+			} elseif ($v instanceof Statement) {
+				$tmp = self::filterArguments(array($v->getEntity()));
+				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
+			}
+		}
+		return $args;
+	}
+
 }
