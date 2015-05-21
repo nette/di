@@ -13,11 +13,14 @@ require __DIR__ . '/../bootstrap.php';
 
 
 interface Iface
-{}
+{
+	const NAME = __CLASS__;
+}
 
 
 class Service extends Nette\Object implements Iface
 {
+
 	public $setup;
 
 	function setup($a = NULL)
@@ -38,9 +41,9 @@ decorator:
 
 	Iface:
 		setup:
-			- setup(Iface)
+			- setup(Iface::NAME)
 			- setup
-		tags: [b, tag: 1]
+		tags: [Iface::NAME, tag: 1]
 
 	spec1:
 		setup:
@@ -60,7 +63,7 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::same(
-	array('a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'b' => TRUE),
+	array('a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'Iface' => TRUE),
 	$builder->getDefinition('one')->getTags()
 );
 
