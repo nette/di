@@ -413,7 +413,7 @@ class Compiler extends Nette\Object
 			if ($v === '...') {
 				unset($args[$k]);
 			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
-				$args[$k] = ContainerBuilder::literal(ltrim($v, ':'));
+				$args[$k] = constant(ltrim($v, ':'));
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof Statement) {

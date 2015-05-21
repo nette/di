@@ -39,31 +39,32 @@ class Lorem
 define('MY_CONSTANT_TEST', "one");
 
 
-$container = createContainer(new DI\Compiler, "
-services:
-	lorem:
-		class: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
-		setup:
-			- method( @lorem, @self, @container )
-			- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
-			- method( [Lorem, method], 'Lorem::add', Lorem::add )
-			- method( not(TRUE) )
-			- method( @lorem::var, @self::var, @container::parameters )
-			- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
+Assert::error(function () use (& $container) {
+	$container = createContainer(new DI\Compiler, "
+	services:
+		lorem:
+			class: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
+			setup:
+				- method( @lorem, @self, @container )
+				- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
+				- method( [Lorem, method], 'Lorem::add', Lorem::add )
+				- method( not(TRUE) )
+				- method( @lorem::var, @self::var, @container::parameters )
+				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
 
-	dolor:
-		class: Lorem(::MY_FAILING_CONSTANT_TEST)
-");
+		dolor:
+			class: Lorem(::MY_FAILING_CONSTANT_TEST)
+	");
+}, E_WARNING, "constant(): Couldn't find constant MY_FAILING_CONSTANT_TEST");
+
 $container->parameters = array('something');
 
-
 $lorem = $container->getService('lorem');
+$dolor = $container->getService('dolor');
 
 // constants
 Assert::same( array('one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'), $lorem->args[0] );
-Assert::error(function () use ($container) {
-	$container->getService('dolor');
-}, E_NOTICE, "Use of undefined constant MY_FAILING_CONSTANT_TEST - assumed 'MY_FAILING_CONSTANT_TEST'");
+Assert::same( array(NULL), $dolor->args[0] );
 
 // services
 Assert::same( array($lorem, $lorem, $container), $lorem->args[1] );
