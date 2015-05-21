@@ -53,3 +53,5 @@ services:
 	rich3: Factory::createLorem(1)::foo
 
 	rich4: Factory()::createLorem(1)::foo
+
+	- Lorem(1)::foo

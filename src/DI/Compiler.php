@@ -250,8 +250,8 @@ class Compiler extends Nette\Object
 
 		foreach ($services as $origName => $def) {
 			if ((string) (int) $origName === (string) $origName) {
-				$name = (count($builder->getDefinitions()) + 1)
-					. preg_replace('#\W+#', '_', $def instanceof Statement ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : ''));
+				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
+				$name = (count($builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
 			} else {
 				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
 			}
