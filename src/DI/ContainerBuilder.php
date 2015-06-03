@@ -79,6 +79,14 @@ class ContainerBuilder extends Nette\Object
 	{
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		unset($this->definitions[$name]);
+
+		if ($this->classes) {
+			foreach ($this->classes as & $tmp) {
+				foreach ($tmp as & $names) {
+					$names = array_diff($names, array($name));
+				}
+			}
+		}
 	}
 
 
