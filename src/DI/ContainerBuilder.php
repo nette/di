@@ -78,7 +78,19 @@ class ContainerBuilder extends Nette\Object
 	public function removeDefinition($name)
 	{
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
-		unset($this->definitions[$name]);
+
+		if (isset($this->definitions[$name])) {
+			$class = $this->definitions[$name]->getClass();
+			if (isset($this->classes[$class][TRUE])) {
+				foreach ($this->classes[$class][TRUE] as $key => $definitionName) {
+					if ($name === $definitionName) {
+						unset($this->classes[$class][TRUE][$key]);
+					}
+				}
+			}
+
+			unset($this->definitions[$name]);
+		}
 	}
 
 
