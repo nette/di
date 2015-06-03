@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\Compiler: multiple service inhertance
+ * Test: Nette\DI\Compiler: multiple service inheritance
  * @package    Nette\DI
  */
 
