@@ -280,22 +280,6 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
-	/** @deprecated */
-	public function setShared($on)
-	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		$this->autowired = $on ? $this->autowired : FALSE;
-		return $this;
-	}
-
-
-	/** @deprecated */
-	public function isShared()
-	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-	}
-
-
 	/** @return self */
 	public function setInject($state = TRUE)
 	{

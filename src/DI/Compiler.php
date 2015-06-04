@@ -170,9 +170,6 @@ class Compiler extends Nette\Object
 
 		$extensions = array_diff_key($this->extensions, $first);
 		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
-			if (isset($this->config[$name]['services'])) {
-				trigger_error("Support for inner section 'services' inside extension was removed (used in '$name').", E_USER_DEPRECATED);
-			}
 			$extension->setConfig($this->config[$name] ?: []);
 		}
 
@@ -228,10 +225,6 @@ class Compiler extends Nette\Object
 	 */
 	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
 	{
-		if (!empty($config['factories'])) {
-			throw new Nette\DeprecatedException("Section 'factories' is deprecated, move definitions to section 'services' and append key 'autowired: no'.");
-		}
-
 		$services = isset($config['services']) ? $config['services'] : [];
 		$depths = [];
 		foreach ($services as $name => $def) {
@@ -280,10 +273,6 @@ class Compiler extends Nette\Object
 				static::parseService($definition, $def);
 			} catch (\Exception $e) {
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), NULL, $e);
-			}
-
-			if ($definition->getClass() === 'self' || ($definition->getFactory() && $definition->getFactory()->getEntity() === 'self')) {
-				throw new Nette\DeprecatedException("Replace service definition '$origName: self' with '- $origName'.");
 			}
 		}
 	}
