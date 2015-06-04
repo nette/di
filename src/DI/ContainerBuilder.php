@@ -78,7 +78,22 @@ class ContainerBuilder extends Nette\Object
 	public function removeDefinition($name)
 	{
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
-		unset($this->definitions[$name]);
+
+		if (isset($this->definitions[$name])) {
+			if ($this->classes) {
+				foreach ($this->classes as $class => $tmp) {
+					foreach ($tmp as $mode => $serviceNames) {
+						foreach ($serviceNames as $key => $serviceName) {
+							if ($name === $serviceName) {
+								unset($this->classes[$class][$mode][$key]);
+							}
+						}
+					}
+				}
+			}
+
+			unset($this->definitions[$name]);
+		}
 	}
 
 
@@ -858,6 +873,24 @@ class ContainerBuilder extends Nette\Object
 			throw new ServiceCreationException("Reference to missing service '$service'.");
 		}
 		return $service;
+	}
+
+
+	/**
+	 * @param string $name
+	 * @param string $class
+	 */
+	private function removeClassFromReference($name, $class)
+	{
+		foreach ([TRUE, FALSE] as $mode) {
+			if (isset($this->classes[$class][$mode])) {
+				foreach ($this->classes[$class][$mode] as $key => $definitionName) {
+					if ($name === $definitionName) {
+						unset($this->classes[$class][$mode][$key]);
+					}
+				}
+			}
+		}
 	}
 
 }
