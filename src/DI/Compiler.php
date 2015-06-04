@@ -240,12 +240,12 @@ class Compiler extends Nette\Object
 		}
 		array_multisort($depths, $services);
 
-		foreach ($services as $origName => $def) {
-			if ((string) (int) $origName === (string) $origName) {
+		foreach ($services as $name => $def) {
+			if ((string) (int) $name === (string) $name) {
 				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
 				$name = (count($builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
-			} else {
-				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
+			} elseif ($namespace) {
+				$name = $namespace . '.' . $name;
 			}
 
 			$params = $builder->parameters;
