@@ -80,13 +80,16 @@ class ContainerBuilder extends Nette\Object
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 
 		if (isset($this->definitions[$name])) {
-			$class = $this->definitions[$name]->getClass();
-			$this->removeClassFromReference($name, $class);
-
-			$reflectionClass = new ReflectionClass($class);
-			while ($parentClass = $reflectionClass->getParentClass()) {
-				$this->removeClassFromReference($name, $parentClass->getName());
-				$reflectionClass = new ReflectionClass($parentClass->getName());
+			if ($this->classes) {
+				foreach ($this->classes as $class => $tmp) {
+					foreach ($tmp as $mode => $serviceNames) {
+						foreach ($serviceNames as $key => $serviceName) {
+							if ($name === $serviceName) {
+								unset($this->classes[$class][$mode][$key]);
+							}
+						}
+					}
+				}
 			}
 
 			unset($this->definitions[$name]);

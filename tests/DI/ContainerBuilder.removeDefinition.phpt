@@ -11,9 +11,11 @@ use Nette\DI,
 require __DIR__ . '/../bootstrap.php';
 
 
-class B extends stdClass {}
+class B extends stdClass
+{}
 
-class A extends B {}
+class A extends B
+{}
 
 
 $builder = new DI\ContainerBuilder;
@@ -29,7 +31,7 @@ $builder->addDefinition('three')
 	->setAutowired(FALSE);
 
 $builder->addDefinition('four')
-	->setClass('B');
+	->setClass('A');
 
 $builder->prepareClassList();
 
