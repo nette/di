@@ -83,7 +83,7 @@ class ContainerBuilder extends Nette\Object
 		if ($this->classes) {
 			foreach ($this->classes as & $tmp) {
 				foreach ($tmp as & $names) {
-					$names = array_diff($names, array($name));
+					$names = array_values(array_diff($names, array($name)));
 				}
 			}
 		}
