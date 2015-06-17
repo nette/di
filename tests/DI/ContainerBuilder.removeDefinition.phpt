@@ -42,10 +42,10 @@ Assert::exception(function () use ($builder) {
 Assert::count( 4, $builder->findByType('stdClass') );
 
 
-$builder->removeDefinition('two');
+$builder->removeDefinition('one');
 $builder->removeDefinition('four');
 
-Assert::same( 'one', $builder->getByType('stdClass') );
+Assert::same( 'two', $builder->getByType('stdClass') );
 
 Assert::count( 2, $builder->findByType('stdClass') );
 
