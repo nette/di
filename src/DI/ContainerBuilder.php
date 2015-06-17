@@ -204,7 +204,7 @@ class ContainerBuilder extends Nette\Object
 			return;
 
 		} elseif (count($this->classes[$class][TRUE]) === 1) {
-			return $this->classes[$class][TRUE][0];
+			return reset($this->classes[$class][TRUE]);
 
 		} else {
 			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$class][TRUE]));
