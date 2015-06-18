@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler: services setup.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -58,7 +58,7 @@ $container = createContainer(new DI\Compiler, 'files/compiler.services.setup.neo
 Assert::same(array(
 ), Notes::fetch());
 
-Assert::type( 'Lorem', $container->getService('lorem') );
+Assert::type('Lorem', $container->getService('lorem'));
 
 Assert::same(array(
 	'Lorem::test 2',
@@ -71,9 +71,9 @@ Assert::same(array(
 	'Ipsum::test 10 b',
 ), Notes::fetch());
 
-Assert::same( 8, $container->getService('lorem')->test );
-Assert::same( 9, Ipsum::$staticTest );
-Assert::equal( new Lorem, $container->getService('ipsum')->test );
+Assert::same(8, $container->getService('lorem')->test);
+Assert::same(9, Ipsum::$staticTest);
+Assert::equal(new Lorem, $container->getService('ipsum')->test);
 
-Assert::count( 4, Ipsum::$instances );
-Assert::same( $container->getService('lorem'), Ipsum::$instances[3]->arg );
+Assert::count(4, Ipsum::$instances);
+Assert::same($container->getService('lorem'), Ipsum::$instances[3]->arg);

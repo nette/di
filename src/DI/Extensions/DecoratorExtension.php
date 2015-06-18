@@ -7,8 +7,8 @@
 
 namespace Nette\DI\Extensions;
 
-use Nette,
-	Nette\DI\Statement;
+use Nette;
+use Nette\DI\Statement;
 
 
 /**
@@ -60,7 +60,7 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 	private function findByType($type)
 	{
 		$type = ltrim($type, '\\');
-		return array_filter($this->getContainerBuilder()->getDefinitions(), function($def) use ($type) {
+		return array_filter($this->getContainerBuilder()->getDefinitions(), function ($def) use ($type) {
 			return $def->getClass() === $type
 				|| is_subclass_of($def->getClass(), $type)
 				|| (PHP_VERSION_ID < 50307 && array_key_exists($type, class_implements($def->getClass())));

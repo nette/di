@@ -4,9 +4,9 @@
  * Test: Nette\DI\Compiler: service decorators.
  */
 
-use Nette\DI,
-	Nette\DI\Statement,
-	Tester\Assert;
+use Nette\DI;
+use Nette\DI\Statement;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -64,11 +64,11 @@ Assert::same(
 	$builder->getDefinition('one')->getTags()
 );
 
-Assert::true( $builder->getDefinition('one')->getTag('inject') );
+Assert::true($builder->getDefinition('one')->getTag('inject'));
 
-Assert::equal( array(
+Assert::equal(array(
 	new Statement(array('@self', 'setup'), array('Service')),
 	new Statement(array('@self', 'setup'), array('Object')),
 	new Statement(array('@self', 'setup'), array('Iface')),
 	new Statement(array('@self', 'setup')),
-), $builder->getDefinition('one')->getSetup() );
+), $builder->getDefinition('one')->getSetup());

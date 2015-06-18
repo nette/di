@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler and dynamic services.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -24,6 +24,6 @@ services:
 ');
 
 
-Assert::exception(function() use ($container) {
+Assert::exception(function () use ($container) {
 	$container->getService('one');
 }, 'Nette\DI\ServiceCreationException', "Unable to create dynamic service 'one', it must be added using addService()");

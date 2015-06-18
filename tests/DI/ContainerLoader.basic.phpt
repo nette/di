@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerLoader basic usage.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -17,7 +17,7 @@ $key = array(1, 2);
 $className = $cache->getClassName($key);
 Assert::match('Container%[\w]+%', $className);
 
-$container = $cache->load($key, function() use ($className) {
+$container = $cache->load($key, function () use ($className) {
 	return "class $className {}";
 });
 Assert::type($className, new $container);

@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and rich syntax.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -47,11 +47,11 @@ $two = $builder->addDefinition('two')
 
 $container = createContainer($builder);
 
-Assert::same( 'Obj', $one->getClass() );
-Assert::type( 'Obj', $container->getService('one') );
-Assert::true( $container->getService('one')->mark );
+Assert::same('Obj', $one->getClass());
+Assert::type('Obj', $container->getService('one'));
+Assert::true($container->getService('one')->mark);
 
-Assert::same( 'Obj', $two->getClass() );
-Assert::type( 'Obj', $container->getService('two') );
-Assert::true( $container->getService('two')->mark );
-Assert::same( array(1, 2), $container->getService('two')->args );
+Assert::same('Obj', $two->getClass());
+Assert::type('Obj', $container->getService('two'));
+Assert::true($container->getService('two')->mark);
+Assert::same(array(1, 2), $container->getService('two')->args);

@@ -40,7 +40,7 @@ namespace
 	require __DIR__ . '/../bootstrap.php';
 
 
-	Assert::same( array(
+	Assert::same(array(
 		'varA' => 'A\AInjected',
-	), InjectExtension::getInjectProperties('C\CClass') );
+	), InjectExtension::getInjectProperties('C\CClass'));
 }

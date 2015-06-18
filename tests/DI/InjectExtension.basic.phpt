@@ -4,9 +4,9 @@
  * Test: Nette\DI\Compiler: inject.
  */
 
-use Nette\DI,
-	Nette\DI\Statement,
-	Tester\Assert;
+use Nette\DI;
+use Nette\DI\Statement;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -68,20 +68,20 @@ services:
 
 $builder = $compiler->getContainerBuilder();
 
-Assert::equal( array(
+Assert::equal(array(
 	new Statement(array('@self', 'injectB')),
 	new Statement(array('@self', 'injectA')),
 	new Statement(array('@self', 'injectD')),
 	new Statement(array('@self', 'injectC')),
 	new Statement(array('@self', '$a'), array('@\\stdClass')),
 	new Statement(array('@self', '$c'), array('@\\stdClass')),
-), $builder->getDefinition('one')->getSetup() );
+), $builder->getDefinition('one')->getSetup());
 
-Assert::equal( array(
+Assert::equal(array(
 	new Statement(array('@self', 'injectB'), array(1)),
 	new Statement(array('@self', 'injectA')),
 	new Statement(array('@self', 'injectD')),
 	new Statement(array('@self', 'injectC')),
 	new Statement(array('@self', '$a'), array('@\\stdClass')),
 	new Statement(array('@self', '$c'), array('@\\stdClass')),
-), $builder->getDefinition('two')->getSetup() );
+), $builder->getDefinition('two')->getSetup());

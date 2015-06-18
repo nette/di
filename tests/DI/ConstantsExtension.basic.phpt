@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler: constants in config.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -20,5 +20,5 @@ constants:
 ');
 $container->initialize();
 
-Assert::same( "hello", a );
-Assert::same( "WORLD", A );
+Assert::same('hello', a);
+Assert::same('WORLD', A);

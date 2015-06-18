@@ -4,8 +4,8 @@
  * Test: Nette\DI\Container::getByType() and findByType()
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -31,18 +31,18 @@ $three = $builder->addDefinition('three')
 
 $container = createContainer($builder);
 
-Assert::type( 'Service', $container->getByType('Service') );
-Assert::null( $container->getByType('unknown', FALSE) );
+Assert::type('Service', $container->getByType('Service'));
+Assert::null($container->getByType('unknown', FALSE));
 
-Assert::exception(function() use ($container) {
+Assert::exception(function () use ($container) {
 	$container->getByType('unknown');
 }, 'Nette\DI\MissingServiceException', 'Service of type unknown not found.');
 
-Assert::exception(function() use ($container) {
+Assert::exception(function () use ($container) {
 	$container->getByType('Nette\Object');
 }, 'Nette\DI\MissingServiceException', 'Multiple services of type Nette\Object found: one, two, container.');
 
 
-Assert::same( array('one'), $container->findByType('Service') );
-Assert::same( array('two', 'three'), $container->findByType('Service2') );
-Assert::same( array(), $container->findByType('unknown') );
+Assert::same(array('one'), $container->findByType('Service'));
+Assert::same(array('two', 'three'), $container->findByType('Service2'));
+Assert::same(array(), $container->findByType('unknown'));
