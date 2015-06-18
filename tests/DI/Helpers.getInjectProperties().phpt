@@ -84,23 +84,23 @@ namespace
 	$refB = ClassType::from('A\B\BClass');
 	$refC = ClassType::from('C\CClass');
 
-	Assert::same( array(
+	Assert::same(array(
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	), Helpers::getInjectProperties($refA) );
+	), Helpers::getInjectProperties($refA));
 
-	Assert::same( array(
+	Assert::same(array(
 		'varF' => 'A\B\BInjected',
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	), Helpers::getInjectProperties($refB) );
+	), Helpers::getInjectProperties($refB));
 
-	Assert::same( array(
+	Assert::same(array(
 		'var1' => 'A\AInjected',
 		'var2' => 'A\B\BInjected',
 		'var3' => 'C\CInjected',
 		'var4' => 'C\CInjected',
-	), Helpers::getInjectProperties($refC) );
+	), Helpers::getInjectProperties($refC));
 }

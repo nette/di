@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and inject methods.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -49,4 +49,4 @@ $builder->addDefinition('ipsum')
 
 $container = createContainer($builder);
 
-Assert::same( array('Lorem::injectOptional', 'Lorem::inject 123', 'Lorem::injectIpsum'), $container->getService('lorem')->injects );
+Assert::same(array('Lorem::injectOptional', 'Lorem::inject 123', 'Lorem::injectIpsum'), $container->getService('lorem')->injects);

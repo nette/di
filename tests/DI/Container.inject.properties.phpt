@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and injection into properties.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -51,7 +51,7 @@ $container = createContainer($builder);
 
 $test = new Test2;
 $container->callInjects($test);
-Assert::type( 'stdClass', $test->varA );
-Assert::type( 'stdClass', $test->varB );
-Assert::type( 'stdClass', $test->varC );
-Assert::type( 'Foo', $test->varD );
+Assert::type('stdClass', $test->varA);
+Assert::type('stdClass', $test->varB);
+Assert::type('stdClass', $test->varC);
+Assert::type('Foo', $test->varD);

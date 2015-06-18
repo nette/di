@@ -4,89 +4,89 @@
  * Test: ServiceDefinition
  */
 
-use Nette\DI\ServiceDefinition,
-	Nette\DI\Statement,
-	Tester\Assert;
+use Nette\DI\ServiceDefinition;
+use Nette\DI\Statement;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setClass('Class');
-	Assert::same( 'Class', $def->getClass() );
-	Assert::null( $def->getFactory() );
+	Assert::same('Class', $def->getClass());
+	Assert::null($def->getFactory());
 
 	$def->setArguments(array(1, 2));
-	Assert::same( 'Class', $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::same('Class', $def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setClass('Class', array());
-	Assert::same( 'Class', $def->getClass() );
-	Assert::null( $def->getFactory() );
+	Assert::same('Class', $def->getClass());
+	Assert::null($def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setClass('Class', array(1, 2));
-	Assert::same( 'Class', $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::same('Class', $def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory('Class');
-	Assert::null( $def->getClass() );
-	Assert::equal( new Statement('Class', array()), $def->getFactory() );
+	Assert::null($def->getClass());
+	Assert::equal(new Statement('Class', array()), $def->getFactory());
 
 	$def->setArguments(array(1, 2));
-	Assert::null( $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::null($def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory('Class', array(1, 2));
-	Assert::null( $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::null($def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory(new Statement('Class', array(1, 2)));
-	Assert::null( $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::null($def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory(new Statement('Class', array(1, 2)), array(99)); // 99 is ignored
-	Assert::null( $def->getClass() );
-	Assert::equal( new Statement('Class', array(1, 2)), $def->getFactory() );
+	Assert::null($def->getClass());
+	Assert::equal(new Statement('Class', array(1, 2)), $def->getFactory());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->addSetup('Class', array(1, 2));
-	Assert::equal( array(
+	Assert::equal(array(
 		new Statement('Class', array(1, 2)),
-	), $def->getSetup() );
+	), $def->getSetup());
 });
 
-test(function(){
+test(function () {
 	$def = new ServiceDefinition;
 	$def->addTag('tag1');
 	$def->addTag('tag2', array(1, 2));
-	Assert::equal( array(
+	Assert::equal(array(
 		'tag1' => TRUE,
 		'tag2' => array(1, 2),
-	), $def->getTags() );
+	), $def->getTags());
 
-	Assert::equal( TRUE, $def->getTag('tag1') );
-	Assert::equal( array(1, 2), $def->getTag('tag2') );
-	Assert::equal( NULL, $def->getTag('tag3') );
+	Assert::equal(TRUE, $def->getTag('tag1'));
+	Assert::equal(array(1, 2), $def->getTag('tag2'));
+	Assert::equal(NULL, $def->getTag('tag3'));
 });

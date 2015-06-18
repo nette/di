@@ -113,7 +113,7 @@ class Container extends Nette\Object
 	public function hasService($name)
 	{
 		return isset($this->registry[$name])
-			|| method_exists($this, $method = Container::getMethodName($name)) && $this->getReflection()->getMethod($method)->getName() === $method;
+			|| method_exists($this, $method = self::getMethodName($name)) && $this->getReflection()->getMethod($method)->getName() === $method;
 	}
 
 
@@ -139,7 +139,7 @@ class Container extends Nette\Object
 	 */
 	public function createService($name, array $args = array())
 	{
-		$method = Container::getMethodName($name);
+		$method = self::getMethodName($name);
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
 

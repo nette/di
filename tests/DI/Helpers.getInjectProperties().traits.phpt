@@ -43,7 +43,7 @@ namespace
 
 	$refC = ClassType::from('C\CClass');
 
-	Assert::same( array(
+	Assert::same(array(
 		'varA' => 'A\AInjected',
-	), Helpers::getInjectProperties($refC) );
+	), Helpers::getInjectProperties($refC));
 }

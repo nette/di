@@ -7,11 +7,11 @@
 
 namespace Nette\DI;
 
-use Nette,
-	Nette\Utils\Validators,
-	Nette\Utils\Strings,
-	Nette\Reflection,
-	Nette\PhpGenerator\Helpers as PhpHelpers;
+use Nette;
+use Nette\Utils\Validators;
+use Nette\Utils\Strings;
+use Nette\Reflection;
+use Nette\PhpGenerator\Helpers as PhpHelpers;
 
 
 /**
@@ -456,7 +456,7 @@ class ContainerBuilder extends Nette\Object
 		$entity = $def->factory->entity;
 		$serviceRef = $this->getServiceName($entity);
 		$factory = $serviceRef && !$def->factory->arguments && !$def->setup && $def->implementType !== 'create'
-			? new Statement(array('@' . ContainerBuilder::THIS_CONTAINER, 'getService'), array($serviceRef))
+			? new Statement(array('@' . self::THIS_CONTAINER, 'getService'), array($serviceRef))
 			: $def->factory;
 
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
@@ -624,7 +624,7 @@ class ContainerBuilder extends Nette\Object
 	public function formatPhp($statement, $args)
 	{
 		$that = $this;
-		array_walk_recursive($args, function(& $val) use ($that) {
+		array_walk_recursive($args, function (& $val) use ($that) {
 			if ($val instanceof Statement) {
 				$val = ContainerBuilder::literal($that->formatStatement($val));
 
@@ -693,7 +693,7 @@ class ContainerBuilder extends Nette\Object
 			$entity = '@' . current(array_keys($this->definitions, $entity, TRUE));
 
 		} elseif (is_array($entity) && $entity[0] === $this) { // [$this, ...] -> [@container, ...]
-			$entity[0] = '@' . ContainerBuilder::THIS_CONTAINER;
+			$entity[0] = '@' . self::THIS_CONTAINER;
 		}
 		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc]
 	}
