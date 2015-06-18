@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler: services tags.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -39,7 +39,7 @@ Assert::same([
 		'd' => ['lorem' => ['e']],
 	],
 	'aliases' => [],
-], $prop->getValue($container) );
+], $prop->getValue($container));
 
-Assert::same( ['lorem' => TRUE], $container->findByTag('a') );
-Assert::same( [], $container->findByTag('x') );
+Assert::same(['lorem' => TRUE], $container->findByTag('a'));
+Assert::same([], $container->findByTag('x'));

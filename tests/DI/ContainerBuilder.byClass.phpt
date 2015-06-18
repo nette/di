@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder code generator.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -97,9 +97,9 @@ $builder->addDefinition('six')
 $container = createContainer($builder);
 
 $factory = $container->getService('factory');
-Assert::type( 'Factory', $factory );
+Assert::type('Factory', $factory);
 
-Assert::type( 'stdClass', $container->getService('two') );
+Assert::type('stdClass', $container->getService('two'));
 Assert::same([
 	['create', [$factory]],
 	['create', [$factory]],
@@ -107,17 +107,17 @@ Assert::same([
 
 Factory::$methods = NULL;
 
-Assert::type( 'stdClass', $container->getService('three') );
+Assert::type('stdClass', $container->getService('three'));
 Assert::same([
 	['create', [$factory]],
 ], Factory::$methods);
 
 $annotatedFactory = $container->getService('annotatedFactory');
-Assert::type( 'AnnotatedFactory', $annotatedFactory );
+Assert::type('AnnotatedFactory', $annotatedFactory);
 
-Assert::type( 'stdClass', $container->getService('four') );
+Assert::type('stdClass', $container->getService('four'));
 Assert::same([
 	['create', []],
 ], $annotatedFactory->methods);
 
-Assert::type( 'stdClass', $container->getService('five') );
+Assert::type('stdClass', $container->getService('five'));

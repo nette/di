@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler and autowiring.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -70,7 +70,7 @@ services:
 ');
 
 
-Assert::type( 'Model', $container->getService('model') );
+Assert::type('Model', $container->getService('model'));
 
 Assert::same([
 	'Model::test',

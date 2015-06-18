@@ -4,8 +4,8 @@
  * Test: Expanding class alias to FQN.
  */
 
-use Nette\DI\PhpReflection,
-	Tester\Assert;
+use Nette\DI\PhpReflection;
+use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -18,15 +18,15 @@ $rcFoo = new \ReflectionClass('Test\Space\Foo');
 $rcBar = new \ReflectionClass('Test\Space\Bar');
 
 
-Assert::exception( function() use ($rcTest) {
+Assert::exception(function () use ($rcTest) {
 	PhpReflection::expandClassName('', $rcTest);
-}, 'Nette\InvalidArgumentException', 'Class name must not be empty.' );
+}, 'Nette\InvalidArgumentException', 'Class name must not be empty.');
 
 
-Assert::same( 'A', PhpReflection::expandClassName('A', $rcTest) );
-Assert::same( 'A\B', PhpReflection::expandClassName('C', $rcTest) );
+Assert::same('A', PhpReflection::expandClassName('A', $rcTest));
+Assert::same('A\B', PhpReflection::expandClassName('C', $rcTest));
 
-Assert::same( 'Test\Space\Foo', PhpReflection::expandClassName('self', $rcFoo) );
+Assert::same('Test\Space\Foo', PhpReflection::expandClassName('self', $rcFoo));
 
 
 /*
@@ -38,74 +38,74 @@ alias to expand => [
 $cases = [
 	'\Absolute' => [
 		'Absolute',
-		'Absolute'
+		'Absolute',
 	],
 	'\Absolute\Foo' => [
 		'Absolute\Foo',
-		'Absolute\Foo'
+		'Absolute\Foo',
 	],
 
 	'AAA' => [
 		'Test\Space\AAA',
-		'AAA'
+		'AAA',
 	],
 	'AAA\Foo' => [
 		'Test\Space\AAA\Foo',
-		'AAA\Foo'
+		'AAA\Foo',
 	],
 
 	'B' => [
 		'Test\Space\B',
-		'BBB'
+		'BBB',
 	],
 	'B\Foo' => [
 		'Test\Space\B\Foo',
-		'BBB\Foo'
+		'BBB\Foo',
 	],
 
 	'DDD' => [
 		'Test\Space\DDD',
-		'CCC\DDD'
+		'CCC\DDD',
 	],
 	'DDD\Foo' => [
 		'Test\Space\DDD\Foo',
-		'CCC\DDD\Foo'
+		'CCC\DDD\Foo',
 	],
 
 	'F' => [
 		'Test\Space\F',
-		'EEE\FFF'
+		'EEE\FFF',
 	],
 	'F\Foo' => [
 		'Test\Space\F\Foo',
-		'EEE\FFF\Foo'
+		'EEE\FFF\Foo',
 	],
 
 	'HHH' => [
 		'Test\Space\HHH',
-		'Test\Space\HHH'
+		'Test\Space\HHH',
 	],
 
 	'Notdef' => [
 		'Test\Space\Notdef',
-		'Test\Space\Notdef'
+		'Test\Space\Notdef',
 	],
 	'Notdef\Foo' => [
 		'Test\Space\Notdef\Foo',
-		'Test\Space\Notdef\Foo'
+		'Test\Space\Notdef\Foo',
 	],
 
 	// trim leading backslash
 	'G' => [
 		'Test\Space\G',
-		'GGG'
+		'GGG',
 	],
 	'G\Foo' => [
 		'Test\Space\G\Foo',
-		'GGG\Foo'
+		'GGG\Foo',
 	],
 ];
 foreach ($cases as $alias => $fqn) {
-	Assert::same( $fqn[0], PhpReflection::expandClassName($alias, $rcFoo) );
-	Assert::same( $fqn[1], PhpReflection::expandClassName($alias, $rcBar) );
+	Assert::same($fqn[0], PhpReflection::expandClassName($alias, $rcFoo));
+	Assert::same($fqn[1], PhpReflection::expandClassName($alias, $rcBar));
 }

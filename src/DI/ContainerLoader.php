@@ -33,7 +33,7 @@ class ContainerLoader extends Nette\Object
 
 	/**
 	 * @param  mixed
-	 * @param  callable  function(Nette\DI\Compiler $compiler): string|NULL
+	 * @param  callable  function (Nette\DI\Compiler $compiler): string|NULL
 	 * @return string
 	 */
 	public function load($key, $generator)

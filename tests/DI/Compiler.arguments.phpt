@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler: arguments in config.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -26,7 +26,7 @@ class Lorem
 
 	function method()
 	{
-		$this->args[]  = func_get_args();
+		$this->args[] = func_get_args();
 	}
 
 	function add($a, $b)
@@ -36,7 +36,7 @@ class Lorem
 
 }
 
-define('MY_CONSTANT_TEST', "one");
+define('MY_CONSTANT_TEST', 'one');
 
 
 Assert::error(function () use (& $container) {
@@ -63,23 +63,23 @@ $lorem = $container->getService('lorem');
 $dolor = $container->getService('dolor');
 
 // constants
-Assert::same( ['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0] );
-Assert::same( [NULL], $dolor->args[0] );
+Assert::same(['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0]);
+Assert::same([NULL], $dolor->args[0]);
 
 // services
-Assert::same( [$lorem, $lorem, $container], $lorem->args[1] );
+Assert::same([$lorem, $lorem, $container], $lorem->args[1]);
 
 // statements
-Assert::same( [3, ['x' => 'HELLO']], $lorem->args[2] );
+Assert::same([3, ['x' => 'HELLO']], $lorem->args[2]);
 
 // non-statements
-Assert::same( [['Lorem', 'method'], 'Lorem::add', 'Lorem::add'], $lorem->args[3] );
+Assert::same([['Lorem', 'method'], 'Lorem::add', 'Lorem::add'], $lorem->args[3]);
 
 // special
-Assert::same( [FALSE], $lorem->args[4] );
+Assert::same([FALSE], $lorem->args[4]);
 
 // service variables
-Assert::same( [$lorem->var, $lorem->var, $container->parameters], $lorem->args[5] );
+Assert::same([$lorem->var, $lorem->var, $container->parameters], $lorem->args[5]);
 
 // service constant
-Assert::same( [Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS], $lorem->args[6] );
+Assert::same([Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS], $lorem->args[6]);

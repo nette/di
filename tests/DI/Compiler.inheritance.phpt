@@ -2,11 +2,10 @@
 
 /**
  * Test: Nette\DI\Compiler: multiple service inhertance
- * @package    Nette\DI
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -17,13 +16,16 @@ class BaseService
 {
 	private $private;
 
-	function setPrivate($private) {
+	function setPrivate($private)
+	{
 		$this->private = $private;
 	}
 
-	function getPrivate() {
+	function getPrivate()
+	{
 		return $this->private;
 	}
+
 }
 
 
@@ -54,7 +56,7 @@ services:
 	base:
 		factory: BaseService()
 		setup:
-			- setPrivate( ::PRIVATE_VALUE )
+			- setPrivate(::PRIVATE_VALUE)
 
 	child < base:
 		factory: ChildService()

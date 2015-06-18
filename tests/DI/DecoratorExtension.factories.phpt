@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler: service decorators && generated factories
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -38,4 +38,4 @@ services:
 
 $builder = $compiler->getContainerBuilder();
 
-Assert::true( $builder->getDefinition('foo')->getTag('inject') );
+Assert::true($builder->getDefinition('foo')->getTag('inject'));

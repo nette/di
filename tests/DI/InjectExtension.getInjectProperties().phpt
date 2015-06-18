@@ -79,23 +79,23 @@ namespace
 	require __DIR__ . '/../bootstrap.php';
 
 
-	Assert::same( [
+	Assert::same([
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	], InjectExtension::getInjectProperties('A\AClass') );
+	], InjectExtension::getInjectProperties('A\AClass'));
 
-	Assert::same( [
+	Assert::same([
 		'varF' => 'A\B\BInjected',
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
-	], InjectExtension::getInjectProperties('A\B\BClass') );
+	], InjectExtension::getInjectProperties('A\B\BClass'));
 
-	Assert::same( [
+	Assert::same([
 		'var1' => 'A\AInjected',
 		'var2' => 'A\B\BInjected',
 		'var3' => 'C\CInjected',
 		'var4' => 'C\CInjected',
-	], InjectExtension::getInjectProperties('C\CClass') );
+	], InjectExtension::getInjectProperties('C\CClass'));
 }

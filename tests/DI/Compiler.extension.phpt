@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler and user extension.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -16,7 +16,7 @@ class DatabaseExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		Assert::same( ['foo' => 'hello'], $this->config );
+		Assert::same(['foo' => 'hello'], $this->config);
 		Notes::add(__METHOD__);
 	}
 
@@ -59,11 +59,11 @@ Assert::same([
 ], Notes::fetch());
 
 
-Assert::same( 'database.', $extension->prefix('') );
-Assert::same( 'database.member', $extension->prefix('member') );
-Assert::same( '@database.member', $extension->prefix('@member') );
+Assert::same('database.', $extension->prefix(''));
+Assert::same('database.member', $extension->prefix('member'));
+Assert::same('@database.member', $extension->prefix('@member'));
 
 
-Assert::same( ['foo' => 'hello'], $extension->getConfig() );
-Assert::same( ['foo' => 'hello'], $extension->getConfig(['foo' => 'bar']) );
-Assert::same( ['foo2' => 'hello', 'foo' => 'hello'], $extension->getConfig(['foo2' => '%bar%']) );
+Assert::same(['foo' => 'hello'], $extension->getConfig());
+Assert::same(['foo' => 'hello'], $extension->getConfig(['foo' => 'bar']));
+Assert::same(['foo2' => 'hello', 'foo' => 'hello'], $extension->getConfig(['foo2' => '%bar%']));

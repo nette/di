@@ -4,8 +4,8 @@
  * Test: Nette\DI\Config\Helpers::merge() with NeonAdapter
  */
 
-use Nette\DI\Config,
-	Tester\Assert;
+use Nette\DI\Config;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -27,23 +27,23 @@ function merge($left, $right)
 
 
 // replace
-Assert::same( ['item' => []], merge('item!:', 'item:') );
+Assert::same(['item' => []], merge('item!:', 'item:'));
 
-Assert::same( ['item' => []], merge('item!:', 'item: 123') );
+Assert::same(['item' => []], merge('item!:', 'item: 123'));
 
-Assert::same( ['item' => []], merge('item!: []', 'item: []') );
+Assert::same(['item' => []], merge('item!: []', 'item: []'));
 
-Assert::exception(function() {
+Assert::exception(function () {
 	merge('item!: 231', 'item:');
 }, 'Nette\InvalidStateException');
 
-Assert::exception(function() {
+Assert::exception(function () {
 	merge('item!: 231', 'item: 231');
 }, 'Nette\InvalidStateException');
 
 
 // inherit
-Assert::same( [
+Assert::same([
 	'parent' => 1,
 	'child' => [Config\Helpers::EXTENDS_KEY => 'parent']
-], merge('child < parent:', 'parent: 1') );
+], merge('child < parent:', 'parent: 1'));

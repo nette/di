@@ -4,8 +4,8 @@
  * Test: Nette\DI\Compiler and addExtension on loadConfiguration stage.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -20,14 +20,14 @@ class FooExtension extends DI\CompilerExtension
 }
 
 
-Assert::exception(function() {
+Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$container = createContainer($compiler);
 }, 'Nette\DeprecatedException', "Extensions 'bar' were added while container was being compiled.");
 
 
-Assert::exception(function() {
+Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->addExtension('foo', new FooExtension);

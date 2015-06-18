@@ -4,9 +4,9 @@
  * Test: DIExtension auto run.
  */
 
-use Nette\DI,
-	Nette\DI\Extensions\DIExtension,
-	Tester\Assert;
+use Nette\DI;
+use Nette\DI\Extensions\DIExtension;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';

@@ -37,4 +37,4 @@ bar:
 	lorem: ipsum
 ');
 
-Assert::same( ['lorem' => 'ipsum'], $foo->barConfig );
+Assert::same(['lorem' => 'ipsum'], $foo->barConfig);

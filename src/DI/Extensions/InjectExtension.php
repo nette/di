@@ -7,9 +7,9 @@
 
 namespace Nette\DI\Extensions;
 
-use Nette,
-	Nette\DI,
-	Nette\DI\PhpReflection;
+use Nette;
+use Nette\DI;
+use Nette\DI\PhpReflection;
 
 
 /**
@@ -67,7 +67,7 @@ class InjectExtension extends DI\CompilerExtension
 	 */
 	public static function getInjectMethods($class)
 	{
-		return array_values(array_filter(get_class_methods($class), function($name) {
+		return array_values(array_filter(get_class_methods($class), function ($name) {
 			return substr($name, 0, 6) === 'inject';
 		}));
 	}

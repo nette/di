@@ -53,7 +53,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 		if ($this->debugMode && $this->config['debugger']) {
 			Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
 			$initialize->addBody($container->formatPhp('?;', [
-				new Nette\DI\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')])
+				new Nette\DI\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Statement('Nette\Bridges\DITracy\ContainerPanel')]),
 			]));
 		}
 

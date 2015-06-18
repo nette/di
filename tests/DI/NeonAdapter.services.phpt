@@ -4,9 +4,9 @@
  * Test: Nette\DI\Config\Adapters\NeonAdapter
  */
 
-use Nette\DI\Config\Adapters\NeonAdapter,
-	Nette\DI\Statement,
-	Tester\Assert;
+use Nette\DI\Config\Adapters\NeonAdapter;
+use Nette\DI\Statement;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';

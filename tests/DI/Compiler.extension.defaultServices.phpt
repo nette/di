@@ -4,8 +4,8 @@
  * Test: Working with user defined services in CompilerExtension.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -81,9 +81,9 @@ services:
 ');
 
 
-Assert::type( 'Foo', $container->getService('one') );
-Assert::type( 'Bar', $container->getService('two') );
-Assert::type( 'Lorem', $container->getService('three') );
-Assert::type( 'IIpsumFactory', $container->getService('four') );
+Assert::type('Foo', $container->getService('one'));
+Assert::type('Bar', $container->getService('two'));
+Assert::type('Lorem', $container->getService('three'));
+Assert::type('IIpsumFactory', $container->getService('four'));
 
-Assert::type( 'FooBar', $container->getByType('IFooBar') );
+Assert::type('FooBar', $container->getByType('IFooBar'));

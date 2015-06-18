@@ -7,9 +7,9 @@
 
 namespace Nette\Bridges\DITracy;
 
-use Nette,
-	Nette\DI\Container,
-	Tracy;
+use Nette;
+use Nette\DI\Container;
+use Tracy;
 
 
 /**

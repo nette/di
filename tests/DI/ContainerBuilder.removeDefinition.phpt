@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and removeDefinition.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -39,17 +39,17 @@ Assert::exception(function () use ($builder) {
 	$builder->getByType('stdClass');
 }, 'Nette\DI\ServiceCreationException', 'Multiple services of type stdClass found: one, two, four');
 
-Assert::count( 4, $builder->findByType('stdClass') );
+Assert::count(4, $builder->findByType('stdClass'));
 
 
 $builder->removeDefinition('one');
 $builder->removeDefinition('four');
 
-Assert::same( 'two', $builder->getByType('stdClass') );
+Assert::same('two', $builder->getByType('stdClass'));
 
-Assert::count( 2, $builder->findByType('stdClass') );
+Assert::count(2, $builder->findByType('stdClass'));
 
 
 $builder->removeDefinition('three');
 
-Assert::count( 1, $builder->findByType('stdClass') );
+Assert::count(1, $builder->findByType('stdClass'));

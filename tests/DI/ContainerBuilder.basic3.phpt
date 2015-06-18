@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder.
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -25,4 +25,4 @@ $builder->addDefinition('one')
 
 $container = createContainer($builder);
 
-Assert::type( 'stdClass', $container->getService('one') );
+Assert::type('stdClass', $container->getService('one'));

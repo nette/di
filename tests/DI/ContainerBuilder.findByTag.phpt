@@ -4,8 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and Container: findByTag()
  */
 
-use Nette\DI,
-	Tester\Assert;
+use Nette\DI;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -26,35 +26,35 @@ $builder->addDefinition('five')
 	->addTag('typeHint', 'Service');
 
 
-test(function() use ($builder) { // compile-time
-	Assert::same( [
+test(function () use ($builder) { // compile-time
+	Assert::same([
 		'five' => 'Service',
-	], $builder->findByTag('typeHint') );
+	], $builder->findByTag('typeHint'));
 
-	Assert::same( [
+	Assert::same([
 		'two' => TRUE,
 		'five' => [1, 2, 3],
-	], $builder->findByTag('debugPanel') );
+	], $builder->findByTag('debugPanel'));
 
-	Assert::same( [
+	Assert::same([
 		'three' => TRUE,
-	], $builder->findByTag('component') );
+	], $builder->findByTag('component'));
 
-	Assert::same( [], $builder->findByTag('unknown') );
+	Assert::same([], $builder->findByTag('unknown'));
 });
 
 
-test(function() use ($builder) { // run-time
+test(function () use ($builder) { // run-time
 	$container = createContainer($builder);
 
-	Assert::same( [
+	Assert::same([
 		'five' => 'Service',
-	], $container->findByTag('typeHint') );
+	], $container->findByTag('typeHint'));
 
-	Assert::same( [
+	Assert::same([
 		'five' => [1, 2, 3],
 		'two' => TRUE,
-	], $container->findByTag('debugPanel') );
+	], $container->findByTag('debugPanel'));
 
-	Assert::same( [], $container->findByTag('unknown') );
+	Assert::same([], $container->findByTag('unknown'));
 });
