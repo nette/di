@@ -3,6 +3,8 @@ Nette Dependency Injection (DI)
 
 [![Downloads this Month](https://img.shields.io/packagist/dm/nette/di.svg)](https://packagist.org/packages/nette/di)
 [![Build Status](https://travis-ci.org/nette/di.svg?branch=master)](https://travis-ci.org/nette/di)
+[![Latest Stable Version](https://poser.pugx.org/nette/di/v/stable)](https://github.com/nette/di/releases)
+[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/nette/di/blob/master/license.md)
 
 Purpose of the Dependecy Injection (DI) is to free classes from the responsibility for obtaining objects that they need for its operation (these objects are called **services**). To pass them these services on their instantiation instead.
 
