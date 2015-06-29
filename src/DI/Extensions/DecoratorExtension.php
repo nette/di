@@ -8,7 +8,6 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\Statement;
 
 
 /**
