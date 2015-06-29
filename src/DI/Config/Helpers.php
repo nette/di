@@ -7,8 +7,6 @@
 
 namespace Nette\DI\Config;
 
-use Nette;
-
 
 /**
  * Configuration helpers.
