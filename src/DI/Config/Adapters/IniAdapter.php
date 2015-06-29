@@ -13,8 +13,6 @@ use Nette\DI\Config\Helpers;
 
 /**
  * Reading and generating INI files.
- *
- * @author     David Grudl
  */
 class IniAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 {

@@ -15,8 +15,6 @@ use Nette\Neon;
 
 /**
  * Reading and generating NEON files.
- *
- * @author     David Grudl
  */
 class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 {

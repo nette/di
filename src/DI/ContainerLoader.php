@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * DI container loader.
- *
- * @author     David Grudl
  */
 class ContainerLoader extends Nette\Object
 {

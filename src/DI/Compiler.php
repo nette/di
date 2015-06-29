@@ -13,8 +13,6 @@ use Nette\Utils\Validators;
 
 /**
  * DI container compiler.
- *
- * @author     David Grudl
  */
 class Compiler extends Nette\Object
 {

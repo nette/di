@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Adapter for reading and writing configuration files.
- *
- * @author     David Grudl
  */
 interface IAdapter
 {

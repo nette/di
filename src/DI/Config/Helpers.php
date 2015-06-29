@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Configuration helpers.
- *
- * @author     David Grudl
  */
 class Helpers
 {

@@ -16,8 +16,6 @@ use ReflectionClass;
 
 /**
  * Basic container builder.
- *
- * @author     David Grudl
  */
 class ContainerBuilder extends Nette\Object
 {

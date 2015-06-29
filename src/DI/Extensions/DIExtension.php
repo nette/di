@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * DI extension.
- *
- * @author     David Grudl
  */
 class DIExtension extends Nette\DI\CompilerExtension
 {
