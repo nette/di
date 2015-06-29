@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Definition used by ContainerBuilder.
- *
- * @author     David Grudl
  */
 class ServiceDefinition extends Nette\Object
 {

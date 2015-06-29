@@ -14,8 +14,6 @@ use Nette\DI\PhpReflection;
 
 /**
  * Calls inject methods and fills @inject properties.
- *
- * @author     David Grudl
  */
 class InjectExtension extends DI\CompilerExtension
 {

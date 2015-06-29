@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Configurator compiling extension.
- *
- * @author     David Grudl
  */
 abstract class CompilerExtension extends Nette\Object
 {

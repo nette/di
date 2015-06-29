@@ -14,8 +14,6 @@ use Tracy;
 
 /**
  * Dependency injection container panel for Debugger Bar.
- *
- * @author     Patrik Votoček
  */
 class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 {

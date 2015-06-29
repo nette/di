@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * The dependency injection container default implementation.
- *
- * @author     David Grudl
  */
 class Container extends Nette\Object
 {

@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Enables registration of other extensions in $config file
- *
- * @author  Vojtech Dobes
  */
 class ExtensionsExtension extends Nette\DI\CompilerExtension
 {

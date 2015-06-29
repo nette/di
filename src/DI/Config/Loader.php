@@ -13,8 +13,6 @@ use Nette\Utils\Validators;
 
 /**
  * Configuration file loader.
- *
- * @author     David Grudl
  */
 class Loader extends Nette\Object
 {

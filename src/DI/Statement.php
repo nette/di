@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * Assignment or calling statement.
- *
- * @author     David Grudl
  */
 class Statement extends Nette\Object
 {

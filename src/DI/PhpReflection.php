@@ -12,8 +12,6 @@ use Nette;
 
 /**
  * PHP reflection helpers.
- *
- * @author     David Grudl
  * @internal
  */
 class PhpReflection

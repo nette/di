@@ -13,8 +13,6 @@ use Nette\DI\Statement;
 
 /**
  * Decorators for services.
- *
- * @author     David Grudl
  */
 class DecoratorExtension extends Nette\DI\CompilerExtension
 {
