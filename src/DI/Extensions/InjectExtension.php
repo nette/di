@@ -88,6 +88,7 @@ class InjectExtension extends DI\CompilerExtension
 				$res[$name] = $type;
 			}
 		}
+		ksort($res);
 		return $res;
 	}
 

@@ -73,8 +73,8 @@ Assert::equal([
 	new Statement(['@self', 'injectA']),
 	new Statement(['@self', 'injectD']),
 	new Statement(['@self', 'injectC']),
-	new Statement(['@self', '$a'], ['@\\stdClass']),
 	new Statement(['@self', '$c'], ['@\\stdClass']),
+	new Statement(['@self', '$a'], ['@\\stdClass']),
 ], $builder->getDefinition('one')->getSetup());
 
 Assert::equal([
@@ -82,6 +82,6 @@ Assert::equal([
 	new Statement(['@self', 'injectA']),
 	new Statement(['@self', 'injectD']),
 	new Statement(['@self', 'injectC']),
-	new Statement(['@self', '$a'], ['@\\stdClass']),
 	new Statement(['@self', '$c'], ['@\\stdClass']),
+	new Statement(['@self', '$a'], ['@\\stdClass']),
 ], $builder->getDefinition('two')->getSetup());

@@ -86,10 +86,10 @@ namespace
 	], InjectExtension::getInjectProperties('A\AClass'));
 
 	Assert::same([
-		'varF' => 'A\B\BInjected',
 		'varA' => 'A\AInjected',
 		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
+		'varF' => 'A\B\BInjected',
 	], InjectExtension::getInjectProperties('A\B\BClass'));
 
 	Assert::same([
