@@ -55,7 +55,7 @@ Assert::error(function () use (& $container) {
 		dolor:
 			class: Lorem(::MY_FAILING_CONSTANT_TEST)
 	");
-}, E_WARNING, "constant(): Couldn't find constant MY_FAILING_CONSTANT_TEST");
+}, E_WARNING, "%a?%Couldn't find constant MY_FAILING_CONSTANT_TEST");
 
 $container->parameters = ['something'];
 
