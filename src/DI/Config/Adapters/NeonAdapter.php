@@ -98,10 +98,10 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 					if(\is_array($val->entity)) {
 						$val = new Neon\Entity(
 							Neon\Neon::CHAIN,
-							array(
+							[
 								new Neon\Entity($val->entity[0]->entity, $val->entity[0]->arguments),
 								new Neon\Entity($val->entity[1], $val->arguments)
-							)
+							]
 						);
 					} else {
 						$val = new Neon\Entity($val->entity, $val->arguments);
