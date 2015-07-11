@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0">
+<scalar>10</scalar>
+
+<scalar extends="parent">
+	<date>timezone = "Europe/Paris"</date>
+</scalar>
+</config>

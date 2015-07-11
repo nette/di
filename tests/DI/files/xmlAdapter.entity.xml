@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0" array="numeric">
+<e statement="ent(1)" />
+<e statement="statement">
+	<s>
+		<ent>ent</ent>
+		<args><a number="2" /></args>
+	</s>
+	<s>
+		<ent>inner</ent>
+		<args array="string">3,4</args>
+	</s>
+</e>
+<e statement="statement">
+	<s>
+		<ent>ent</ent>
+		<args>3</args>
+	</s>
+	<s>
+		<ent>inner</ent>
+		<args array="string" delimiter=";">5; 6</args>
+	</s>
+</e>
+</config>

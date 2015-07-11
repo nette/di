@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0" array="numeric">
+<service statement="Class(arg1, Class2(arg2, arg3))" />
+<service statement="statement">
+	<s>
+		<ent>Class</ent>
+		<args>
+			<a>arg1</a>
+			<a statement="statement">
+					<s>
+						<ent>Class2</ent>
+						<args>
+							<a>arg2</a>
+							<a>arg3</a>
+						</args>
+					</s>
+			</a>
+		</args>
+	</s>
+</service>
+</config>
+
