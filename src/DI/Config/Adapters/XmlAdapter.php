@@ -26,10 +26,10 @@ class XmlAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	 */
 	public function load($file)
 	{
-		$opt = LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_NOENT | LIBXML_NSCLEAN; // | LIBXML_PEDANTIC ?
+		$options = LIBXML_NOBLANKS | LIBXML_NOCDATA | LIBXML_NOENT | LIBXML_NSCLEAN; // | LIBXML_PEDANTIC ?
 		$parserClass = "\\Nette\\DI\\Config\\Adapters\\XMLElementParser";
-		$doc = simplexml_load_file($file, $parserClass, $opt, self::NS);
-		return $doc->parse();
+		$document = simplexml_load_file($file, $parserClass, $options, self::NS);
+		return $document->parse();
 	}
 
 	/**
@@ -38,11 +38,11 @@ class XmlAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	 */
 	public function dump(array $data)
 	{
-		$writter = new XmlElementWritter('<config/>', 0, false, self::NS, "nc");
-		$writter->addAttribute('xmlns:xmlns:nc', self::NS);
-		$writter->addAttribute('xmlns', self::NS);
-		$writter->addConfig($data);
-		return $writter->asXML();
+		$writer = new XmlElementWriter('<config/>', LIBXML_NOEMPTYTAG, false, self::NS, "nc");
+		$writer->addAttribute('xmlns:xmlns:nc', self::NS);
+		$writer->addAttribute('xmlns', self::NS);
+		$writer->addConfig($data);
+		return $writer->asXML();
 	}
 
 }
@@ -183,7 +183,7 @@ class XMLElementParser extends \SimpleXMLElement
 			if (!$res) {
 				$res = new Statement($entity, $arguments);
 			} else {
-				$res = new Statement(array($res, $entity), $arguments);
+				$res = new Statement([$res, $entity], $arguments);
 			}
 		}
 
@@ -208,7 +208,7 @@ class XMLElementParser extends \SimpleXMLElement
 
 		$argsElement = $child->args;
 		if (empty($argsElement)) {
-			return array($entity, NULL);
+			return [$entity, NULL];
 		}
 		$arrayAttr = $argsElement[0]->getAttribute(self::ATTR_ARRAY);
 		if (is_null($arrayAttr)) {
@@ -217,9 +217,9 @@ class XMLElementParser extends \SimpleXMLElement
 
 		$attributes = $argsElement[0]->parseChildren();
 		if (!is_array($attributes)) {
-			$attributes = array($attributes);
+			$attributes = [$attributes];
 		}
-		return array($entity, $attributes);
+		return [$entity, $attributes];
 	}
 
 	/**
@@ -247,7 +247,7 @@ class XMLElementParser extends \SimpleXMLElement
 			return $res;
 		}
 
-		$res = array();
+		$res = [];
 		switch ($arrayType) {
 			default:
 			case self::ATTR_ARRAY_ASSOCIATIVE:
@@ -306,7 +306,7 @@ class XMLElementParser extends \SimpleXMLElement
 
 		$value = $this->getValue();
 		if (is_null($value)) {
-			return array();
+			return [];
 		}
 
 		$delimiter = $this->getAttribute(self::ATTR_DELIMITER, self::DEFAULT_DELIMITER);
@@ -319,7 +319,7 @@ class XMLElementParser extends \SimpleXMLElement
  * This class helps to save array into XML configuration
  * @internal
  */
-class XMLElementWritter extends \SimpleXMLElement
+class XMLElementWriter extends \SimpleXMLElement
 {
 	/** Entity names */
 	const ENT_ITEM = 'item',

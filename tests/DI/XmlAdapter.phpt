@@ -63,12 +63,13 @@ EOD
 
 $data = $config->load('files/xmlAdapter.xml');
 $config->save($data, TEMP_FILE);
+$actual = file_get_contents(TEMP_FILE);
+$actual = preg_replace('/\<(\w+)\s*\/\s*\>/i', '<$1></$1>', $actual);
 Assert::match(<<<EOD
 <?xml version="1.0"?>
-<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0"><production><webname>the example</webname><database><adapter>pdo_mysql</adapter><params><host>db.example.com</host><username>dbuser</username><password>secret </password><dbname>dbname</dbname></params></database></production><development extends="production"><database><params><host>dev.example.com</host><username>devuser</username><password>devsecret</password></params></database><timeout number="10"/><display_errors bool="1"/><html_errors bool="0"/><items array="numeric"><item number="10"/><item number="20"/></items><php><zlib.output_compression bool="1"/><date.timezone>Europe/Prague</date.timezone></php></development><nothing/></config>
+<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0"><production><webname>the example</webname><database><adapter>pdo_mysql</adapter><params><host>db.example.com</host><username>dbuser</username><password>secret </password><dbname>dbname</dbname></params></database></production><development extends="production"><database><params><host>dev.example.com</host><username>devuser</username><password>devsecret</password></params></database><timeout number="10"/><display_errors bool="1"/><html_errors bool="0"/><items array="numeric"><item number="10"/><item number="20"/></items><php><zlib.output_compression bool="1"/><date.timezone>Europe/Prague</date.timezone></php></development><nothing></nothing></config>
 EOD
-, file_get_contents(TEMP_FILE));
-
+, $actual);
 
 $data = $config->load('files/xmlAdapter.entity.xml');
 Assert::equal([
