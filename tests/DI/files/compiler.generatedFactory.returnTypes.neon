@@ -1,0 +1,11 @@
+services:
+
+	article:
+		create: Article(%title%)
+		implement: IArticleFactory
+		parameters: [title]
+
+	article2:
+		implement: IArticleFactory
+		arguments: [%title%]
+		parameters: [title]
