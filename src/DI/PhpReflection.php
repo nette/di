@@ -59,7 +59,9 @@ class PhpReflection
 	 */
 	public static function getParameterType(\ReflectionParameter $param)
 	{
-		if ($param->isArray() || $param->isCallable()) {
+		if (PHP_VERSION_ID >= 70000) {
+			return $param->hasType() ? (string) $param->getType() : NULL;
+		} elseif ($param->isArray() || $param->isCallable()) {
 			return $param->isArray() ? 'array' : 'callable';
 		} else {
 			try {
@@ -79,6 +81,9 @@ class PhpReflection
 	 */
 	public static function getReturnType(\ReflectionFunctionAbstract $func)
 	{
+		if (PHP_VERSION_ID >= 70000 && $func->hasReturnType()) {
+			return (string) $func->getReturnType();
+		}
 		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
 		if ($type) {
 			return $func instanceof \ReflectionMethod

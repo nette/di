@@ -421,7 +421,7 @@ class ContainerBuilder extends Nette\Object
 		if ($class = $def->getClass() ?: $class) {
 			$def->setClass($class);
 			if (!class_exists($class) && !interface_exists($class)) {
-				throw new ServiceCreationException("Class or interface $class used in service '$name' not found.");
+				throw new ServiceCreationException("Type $class used in service '$name' not found or is not class or interface.");
 			}
 			self::checkCase($class);
 
@@ -638,7 +638,8 @@ class ContainerBuilder extends Nette\Object
 
 		$factoryClass->addMethod($def->getImplementType())
 			->setParameters($this->convertParameters($def->parameters))
-			->setBody(str_replace('$this', '$this->container', $code));
+			->setBody(str_replace('$this', '$this->container', $code))
+			->setReturnType(PHP_VERSION_ID >= 70000 ? $def->getClass() : NULL);
 
 		return "return new {$factoryClass->getName()}(\$this);";
 	}
