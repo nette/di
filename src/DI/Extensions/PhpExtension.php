@@ -20,7 +20,10 @@ class PhpExtension extends Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 		foreach ($this->getConfig() as $name => $value) {
-			if (!is_scalar($value)) {
+			if ($value === NULL) {
+				continue;
+
+			} elseif (!is_scalar($value)) {
 				throw new Nette\InvalidStateException("Configuration value for directive '$name' is not scalar.");
 
 			} elseif ($name === 'include_path') {
