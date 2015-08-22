@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:nc="http://www.nette.org/xmlns/nette/config/1.0" xmlns="http://www.nette.org/xmlns/nette/config/1.0">
+<production>
+	<webname>the example</webname>
+	<database>
+		<adapter>pdo_mysql </adapter>
+		<params>
+			<host>db.example.com</host>
+			<username>dbuser</username>
+			<password space="preserve">secret </password>
+			<dbname>dbname</dbname>
+		</params>
+	</database>
+</production>
+<!-- inherits from production and overrides values as necessary -->
+<development extends="production">
+	<database>
+		<params>
+			<host>dev.example.com</host>
+			<username>devuser</username>
+			<password>devsecret</password>
+		</params>
+	</database>
+	<timeout number="10" />
+	<display_errors bool="true" />
+	<html_errors bool="no"/>
+	<items array="numeric"><i number="10"/><i number="20"/></items>
+	<php>
+		<zlib.output_compression bool="true" />
+		<date.timezone>Europe/Prague</date.timezone>
+	</php>
+</development>
+<nothing />
+</config>

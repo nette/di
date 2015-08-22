@@ -23,6 +23,7 @@ class Loader extends Nette\Object
 		'php' => 'Nette\DI\Config\Adapters\PhpAdapter',
 		'ini' => 'Nette\DI\Config\Adapters\IniAdapter',
 		'neon' => 'Nette\DI\Config\Adapters\NeonAdapter',
+		'xml' => 'Nette\DI\Config\Adapters\XmlAdapter'
 	];
 
 	private $dependencies = [];
@@ -69,7 +70,7 @@ class Loader extends Nette\Object
 	 * @param  string  file
 	 * @return void
 	 */
-	public function save($data, $file)
+	public function save(array $data, $file)
 	{
 		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === FALSE) {
 			throw new Nette\IOException("Cannot write file '$file'.");
