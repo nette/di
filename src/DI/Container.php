@@ -154,7 +154,7 @@ class Container extends Nette\Object
 
 		try {
 			$this->creating[$name] = TRUE;
-			$service = call_user_func_array([$this, $method], $args);
+			$service = $this->$method(...$args);
 
 		} finally {
 			unset($this->creating[$name]);
@@ -259,10 +259,7 @@ class Container extends Nette\Object
 	 */
 	public function callMethod(callable $function, array $args = [])
 	{
-		return call_user_func_array(
-			$function,
-			Helpers::autowireArguments(Nette\Utils\Callback::toReflection($function), $args, $this)
-		);
+		return $function(...Helpers::autowireArguments(Nette\Utils\Callback::toReflection($function), $args, $this));
 	}
 
 
