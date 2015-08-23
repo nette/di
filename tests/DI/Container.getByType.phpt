@@ -36,11 +36,11 @@ Assert::null($container->getByType('unknown', FALSE));
 
 Assert::exception(function () use ($container) {
 	$container->getByType('unknown');
-}, 'Nette\DI\MissingServiceException', 'Service of type unknown not found.');
+}, Nette\DI\MissingServiceException::class, 'Service of type unknown not found.');
 
 Assert::exception(function () use ($container) {
-	$container->getByType('Nette\Object');
-}, 'Nette\DI\MissingServiceException', 'Multiple services of type Nette\Object found: one, two, container.');
+	$container->getByType(Nette\Object::class);
+}, Nette\DI\MissingServiceException::class, 'Multiple services of type Nette\Object found: one, two, container.');
 
 
 Assert::same(['one'], $container->findByType('Service'));

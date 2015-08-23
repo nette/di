@@ -35,11 +35,11 @@ Assert::same(['item' => []], merge('item!: []', 'item: []'));
 
 Assert::exception(function () {
 	merge('item!: 231', 'item:');
-}, 'Nette\InvalidStateException');
+}, Nette\InvalidStateException::class);
 
 Assert::exception(function () {
 	merge('item!: 231', 'item: 231');
-}, 'Nette\InvalidStateException');
+}, Nette\InvalidStateException::class);
 
 
 // inherit

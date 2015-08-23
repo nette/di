@@ -56,7 +56,7 @@ function createContainer($source, $config = NULL)
 			$loader = new Nette\DI\Config\Loader;
 			$config = $loader->load(is_file($config) ? $config : Tester\FileMock::create($config, 'neon'));
 		}
-		$code = $source->compile((array) $config, $class, 'Nette\DI\Container');
+		$code = $source->compile((array) $config, $class, Nette\DI\Container::class);
 	} else {
 		return;
 	}

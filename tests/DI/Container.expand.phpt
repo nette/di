@@ -22,13 +22,13 @@ Assert::same(['cache' => '/temp'], $container->expand('%dirs%'));
 
 Assert::exception(function () use ($container) {
 	$container->expand('%bar%');
-}, 'Nette\InvalidArgumentException', "Missing parameter 'bar'.");
+}, Nette\InvalidArgumentException::class, "Missing parameter 'bar'.");
 
 Assert::exception(function () use ($container) {
 	$container->expand('%foo.bar%');
-}, 'Nette\InvalidArgumentException', "Missing parameter 'foo.bar'.");
+}, Nette\InvalidArgumentException::class, "Missing parameter 'foo.bar'.");
 
 Assert::exception(function () use ($container) {
 	$container->parameters['bar'] = [];
 	$container->expand('foo%bar%');
-}, 'Nette\InvalidArgumentException', "Unable to concatenate non-scalar parameter 'bar' into 'foo%bar%'.");
+}, Nette\InvalidArgumentException::class, "Unable to concatenate non-scalar parameter 'bar' into 'foo%bar%'.");

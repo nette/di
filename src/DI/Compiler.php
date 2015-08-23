@@ -155,13 +155,13 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processExtensions()
 	{
-		$last = $this->getExtensions('Nette\DI\Extensions\InjectExtension');
+		$last = $this->getExtensions(Extensions\InjectExtension::class);
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
 
-		foreach ($first = $this->getExtensions('Nette\DI\Extensions\ExtensionsExtension') as $name => $extension) {
+		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
 			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : []);
 			$extension->loadConfiguration();
 		}

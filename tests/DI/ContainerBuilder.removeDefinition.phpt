@@ -37,7 +37,7 @@ $builder->prepareClassList();
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType('stdClass');
-}, 'Nette\DI\ServiceCreationException', 'Multiple services of type stdClass found: one, two, four');
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: one, two, four');
 
 Assert::count(4, $builder->findByType('stdClass'));
 

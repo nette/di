@@ -20,9 +20,9 @@ class Loader extends Nette\Object
 	const INCLUDES_KEY = 'includes';
 
 	private $adapters = [
-		'php' => 'Nette\DI\Config\Adapters\PhpAdapter',
-		'ini' => 'Nette\DI\Config\Adapters\IniAdapter',
-		'neon' => 'Nette\DI\Config\Adapters\NeonAdapter',
+		'php' => Nette\DI\Config\Adapters\PhpAdapter::class,
+		'ini' => Nette\DI\Config\Adapters\IniAdapter::class,
+		'neon' => Nette\DI\Config\Adapters\NeonAdapter::class,
 	];
 
 	private $dependencies = [];

@@ -39,12 +39,12 @@ Assert::type('Bar', $container->getByType('Bar'));
 
 Assert::exception(function () use ($container) {
 	$container->getByType('IBar');
-}, '\Nette\DI\MissingServiceException');
+}, DI\MissingServiceException::class);
 
 Assert::exception(function () use ($container) {
 	$container->getByType('Foo');
-}, '\Nette\DI\MissingServiceException');
+}, DI\MissingServiceException::class);
 
 Assert::exception(function () use ($container) {
 	$container->getByType('IFoo');
-}, '\Nette\DI\MissingServiceException');
+}, DI\MissingServiceException::class);

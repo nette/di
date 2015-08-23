@@ -37,8 +37,8 @@ $builder->prepareClassList();
 Assert::same('one', $builder->getByType('\Service'));
 Assert::null($builder->getByType('unknown'));
 Assert::exception(function () use ($builder) {
-	$builder->getByType('Nette\Object');
-}, 'Nette\DI\ServiceCreationException', 'Multiple services of type Nette\Object found: one, two, container');
+	$builder->getByType(Nette\Object::class);
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type Nette\Object found: one, two, container');
 
 
 Assert::same(['one' => $builder->getDefinition('one')], $builder->findByType('Service'));

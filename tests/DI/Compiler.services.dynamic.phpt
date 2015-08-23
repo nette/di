@@ -26,4 +26,4 @@ services:
 
 Assert::exception(function () use ($container) {
 	$container->getService('one');
-}, 'Nette\DI\ServiceCreationException', "Unable to create dynamic service 'one', it must be added using addService()");
+}, Nette\DI\ServiceCreationException::class, "Unable to create dynamic service 'one', it must be added using addService()");
