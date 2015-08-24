@@ -152,14 +152,13 @@ class Container extends Nette\Object
 			throw new MissingServiceException("Service '$name' not found.");
 		}
 
-		$this->creating[$name] = TRUE;
 		try {
+			$this->creating[$name] = TRUE;
 			$service = call_user_func_array([$this, $method], $args);
-		} catch (\Exception $e) {
+
+		} finally {
 			unset($this->creating[$name]);
-			throw $e;
 		}
-		unset($this->creating[$name]);
 
 		if (!is_object($service)) {
 			throw new Nette\UnexpectedValueException("Unable to create service '$name', value returned by method $method() is not object.");
