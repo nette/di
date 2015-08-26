@@ -18,7 +18,7 @@ $builder->addDefinition('one')
 
 Assert::exception(function () use ($builder) {
 	$builder->generateClasses();
-}, 'Nette\InvalidStateException', "Service 'one': Expected function, method or property name, '1234' given.");
+}, Nette\InvalidStateException::class, "Service 'one': Expected function, method or property name, '1234' given.");
 
 
 
@@ -28,4 +28,4 @@ $builder->addDefinition('one')
 
 Assert::exception(function () use ($builder) {
 	$builder->generateClasses();
-}, 'Nette\InvalidStateException', "Case mismatch on class name 'stdclass', correct name is 'stdClass'.");
+}, Nette\InvalidStateException::class, "Case mismatch on class name 'stdclass', correct name is 'stdClass'.");

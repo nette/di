@@ -16,17 +16,17 @@ $container = new Container;
 
 Assert::exception(function () use ($container, $service) {
 	$container->addService(NULL, $service);
-}, 'Nette\InvalidArgumentException', 'Service name must be a non-empty string, NULL given.');
+}, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string, NULL given.');
 
 Assert::exception(function () use ($container) {
 	$container->addService('one', NULL);
-}, 'Nette\InvalidArgumentException', "Service 'one' must be a object, NULL given.");
+}, Nette\InvalidArgumentException::class, "Service 'one' must be a object, NULL given.");
 
 Assert::exception(function () use ($container) {
 	$container->getService('one');
-}, 'Nette\DI\MissingServiceException', "Service 'one' not found.");
+}, Nette\DI\MissingServiceException::class, "Service 'one' not found.");
 
 Assert::exception(function () use ($container, $service) {
 	$container->addService('one', $service);
 	$container->addService('one', $service);
-}, 'Nette\InvalidStateException', "Service 'one' already exists.");
+}, Nette\InvalidStateException::class, "Service 'one' already exists.");

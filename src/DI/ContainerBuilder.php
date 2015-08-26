@@ -279,7 +279,7 @@ class ContainerBuilder extends Nette\Object
 	public function prepareClassList()
 	{
 		unset($this->definitions[self::THIS_CONTAINER]);
-		$this->addDefinition(self::THIS_CONTAINER)->setClass('Nette\DI\Container');
+		$this->addDefinition(self::THIS_CONTAINER)->setClass(Container::class);
 
 		$this->classes = FALSE;
 
@@ -541,7 +541,7 @@ class ContainerBuilder extends Nette\Object
 		$this->generatedClasses = [];
 		$this->className = $className ?: $this->className;
 		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($this->className);
-		$containerClass->setExtends($parentName ?: 'Nette\DI\Container');
+		$containerClass->setExtends($parentName ?: Container::class);
 		$containerClass->addMethod('__construct')
 			->addBody('parent::__construct(?);', [$this->parameters]);
 

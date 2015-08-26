@@ -144,7 +144,7 @@ Assert::type('ILoremFactory', $container->getByType('ILoremFactory'));
 
 Assert::type('IFinderFactory', $container->getService('finder'));
 $finder = $container->getService('finder')->create();
-Assert::type('Nette\DI\Config\Adapters\NeonAdapter', $finder);
+Assert::type(Nette\DI\Config\Adapters\NeonAdapter::class, $finder);
 
 
 Assert::type('IArticleFactory', $container->getService('article'));
@@ -237,4 +237,4 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->generateClasses();
-}, 'Nette\InvalidStateException', 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');
+}, Nette\InvalidStateException::class, 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');

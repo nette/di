@@ -38,12 +38,12 @@ Assert::false($container->isCreated('one'));
 
 Assert::exception(function () use ($container) {
 	$container->getService('one');
-}, 'Nette\DI\ServiceCreationException', "Unable to create dynamic service 'one', it must be added using addService()");
+}, Nette\DI\ServiceCreationException::class, "Unable to create dynamic service 'one', it must be added using addService()");
 
 
 Assert::exception(function () use ($container) {
 	$container->addService('one', new stdClass);
-}, 'Nette\InvalidArgumentException', "Service 'one' must be instance of ParentClass, stdClass given.");
+}, Nette\InvalidArgumentException::class, "Service 'one' must be instance of ParentClass, stdClass given.");
 
 $container->addService('one', $obj = new Service);
 Assert::same($obj, $container->getService('one'));

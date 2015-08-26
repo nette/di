@@ -31,12 +31,12 @@ Assert::same(
 
 Assert::exception(function () {
 	Helpers::expand('%missing%', []);
-}, 'Nette\InvalidArgumentException', "Missing parameter 'missing'.");
+}, Nette\InvalidArgumentException::class, "Missing parameter 'missing'.");
 
 Assert::exception(function () {
 	Helpers::expand('%key1%a', ['key1' => ['key2' => 123]]);
-}, 'Nette\InvalidArgumentException', "Unable to concatenate non-scalar parameter 'key1' into '%key1%a'.");
+}, Nette\InvalidArgumentException::class, "Unable to concatenate non-scalar parameter 'key1' into '%key1%a'.");
 
 Assert::exception(function () {
 	Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], TRUE);
-}, 'Nette\InvalidArgumentException', 'Circular reference detected for variables: key1, key2.');
+}, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: key1, key2.');

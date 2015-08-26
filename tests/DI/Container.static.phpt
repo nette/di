@@ -38,4 +38,4 @@ Assert::same($container->getService('one'), $container->getService('one')); // s
 // bad method
 Assert::exception(function () use ($container) {
 	$container->getService('two');
-}, 'Nette\UnexpectedValueException', "Unable to create service 'two', value returned by method createServiceTwo() is not object.");
+}, Nette\UnexpectedValueException::class, "Unable to create service 'two', value returned by method createServiceTwo() is not object.");

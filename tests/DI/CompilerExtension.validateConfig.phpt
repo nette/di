@@ -47,15 +47,15 @@ test(function () {
 Assert::exception(function () {
 	$ext = new MyExtension;
 	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1]);
-}, 'Nette\InvalidStateException', 'Unknown configuration option my.c.');
+}, Nette\InvalidStateException::class, 'Unknown configuration option my.c.');
 
 Assert::exception(function () {
 	$ext = new MyExtension;
 	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1, 'd' => 1], 'name');
-}, 'Nette\InvalidStateException', 'Unknown configuration option name.c, name.d.');
+}, Nette\InvalidStateException::class, 'Unknown configuration option name.c, name.d.');
 
 Assert::exception(function () {
 	$ext = new MyExtension;
 	$ext->setConfig(['c' => 1, 'd' => 1]);
 	$ext->validateConfig(['a' => 1, 'b' => 1]);
-}, 'Nette\InvalidStateException', 'Unknown configuration option my.c, my.d.');
+}, Nette\InvalidStateException::class, 'Unknown configuration option my.c, my.d.');
