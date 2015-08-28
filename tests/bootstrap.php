@@ -47,7 +47,7 @@ class Notes
 
 function createContainer($source, $config = NULL)
 {
-	$class = 'Container' . md5(lcg_value());
+	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {
 		$code = implode('', $source->generateClasses($class));
 

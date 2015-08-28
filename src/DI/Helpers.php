@@ -21,7 +21,7 @@ class Helpers
 	 * Expands %placeholders%.
 	 * @param  mixed
 	 * @param  array
-	 * @param  bool
+	 * @param  bool|array
 	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */

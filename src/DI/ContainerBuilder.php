@@ -183,7 +183,7 @@ class ContainerBuilder extends Nette\Object
 	/**
 	 * Resolves service name by type.
 	 * @param  string  class or interface
-	 * @return string  service name or NULL
+	 * @return string|NULL  service name or NULL
 	 * @throws ServiceCreationException
 	 */
 	public function getByType($class)
@@ -266,7 +266,7 @@ class ContainerBuilder extends Nette\Object
 		if (!$rm->isPublic()) {
 			throw new ServiceCreationException("$class::$method() is not callable.");
 		}
-		$this->addDependency($rm->getFileName());
+		$this->addDependency((string) $rm->getFileName());
 		return Helpers::autowireArguments($rm, $arguments, $this);
 	}
 
@@ -335,7 +335,8 @@ class ContainerBuilder extends Nette\Object
 		}
 
 		foreach ($this->classes as $class => $foo) {
-			$this->addDependency((new ReflectionClass($class))->getFileName());
+			$rc = new ReflectionClass($class);
+			$this->addDependency((string) $rc->getFileName());
 		}
 	}
 
@@ -564,7 +565,7 @@ class ContainerBuilder extends Nette\Object
 					->setBody($name === self::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), NULL, $e);
+				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 			}
 		}
 
@@ -623,9 +624,8 @@ class ContainerBuilder extends Nette\Object
 			return $code;
 		}
 
-		$factoryClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType;
-		$factoryClass->setName(str_replace(['\\', '.'], '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"))
-			->addImplement($def->getImplement())
+		$factoryClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType(str_replace(['\\', '.'], '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"));
+		$factoryClass->addImplement($def->getImplement())
 			->setFinal(TRUE);
 
 		$factoryClass->addProperty('container')
@@ -693,7 +693,7 @@ class ContainerBuilder extends Nette\Object
 
 		} elseif (is_string($entity)) { // class name
 			if ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-				$this->addDependency($constructor->getFileName());
+				$this->addDependency((string) $constructor->getFileName());
 				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
 			} elseif ($arguments) {
 				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
