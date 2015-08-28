@@ -48,7 +48,7 @@ class ServiceDefinition extends Nette\Object
 	 */
 	public function setClass($class, array $args = [])
 	{
-		$this->class = ltrim($class, '\\');
+		$this->class = $class ? ltrim($class, '\\') : NULL;
 		if ($args) {
 			$this->setFactory($class, $args);
 		}

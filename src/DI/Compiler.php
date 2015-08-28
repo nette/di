@@ -128,7 +128,7 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * @return Nette\PhpGenerator\ClassType[]
+	 * @return Nette\PhpGenerator\ClassType[]|string
 	 */
 	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
 	{
@@ -270,7 +270,7 @@ class Compiler extends Nette\Object
 			try {
 				static::parseService($definition, $def);
 			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), NULL, $e);
+				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 			}
 		}
 	}

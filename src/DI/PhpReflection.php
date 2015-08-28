@@ -17,7 +17,7 @@ use Nette;
 class PhpReflection
 {
 	/** @var array  for expandClassName() */
-	private static $cache;
+	private static $cache = [];
 
 
 	/**
@@ -33,7 +33,7 @@ class PhpReflection
 			}
 			$ok = TRUE;
 		}
-		if (preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
+		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
 			return isset($m[1]) ? $m[1] : '';
 		}
 	}

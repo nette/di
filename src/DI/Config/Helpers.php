@@ -19,7 +19,7 @@ class Helpers
 
 	/**
 	 * Merges configurations. Left has higher priority than right one.
-	 * @return array
+	 * @return array|string
 	 */
 	public static function merge($left, $right)
 	{
