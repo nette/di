@@ -59,13 +59,17 @@ class PhpReflection
 	 */
 	public static function getParameterType(\ReflectionParameter $param)
 	{
-		try {
-			return ($ref = $param->getClass()) ? $ref->getName() : NULL;
-		} catch (\ReflectionException $e) {
-			if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
-				return $m[1];
+		if ($param->isArray() || $param->isCallable()) {
+			return $param->isArray() ? 'array' : 'callable';
+		} else {
+			try {
+				return ($ref = $param->getClass()) ? $ref->getName() : NULL;
+			} catch (\ReflectionException $e) {
+				if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
+					return $m[1];
+				}
+				throw $e;
 			}
-			throw $e;
 		}
 	}
 
