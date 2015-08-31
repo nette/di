@@ -356,13 +356,10 @@ class ContainerBuilder extends Nette\Object
 		$def->setImplementType($methodName = $rc->hasMethod('create') ? 'create' : 'get');
 
 		if (!$def->getClass() && !$def->getEntity()) {
-			$returnType = PhpReflection::parseAnnotation($method, 'return');
+			$returnType = PhpReflection::getReturnType($method);
 			if (!$returnType) {
 				throw new ServiceCreationException("Method $interface::$methodName() used in service '$name' has no @return annotation.");
-			}
-
-			$returnType = PhpReflection::expandClassName(preg_replace('#[|\s].*#', '', $returnType), $rc);
-			if (!class_exists($returnType)) {
+			} elseif (!class_exists($returnType)) {
 				throw new ServiceCreationException("Please check a @return annotation of the $interface::$methodName() method used in service '$name'. Class '$returnType' cannot be found.");
 			}
 			$def->setClass($returnType);
@@ -464,11 +461,7 @@ class ContainerBuilder extends Nette\Object
 				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $name[0]));
 			}
 
-			$class = preg_replace('#[|\s].*#', '', PhpReflection::parseAnnotation($reflection, 'return'));
-			if ($class) {
-				$class = $refClass ? PhpReflection::expandClassName($class, $refClass) : ltrim($class, '\\');
-			}
-			return $class;
+			return PhpReflection::getReturnType($reflection);
 
 		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
 			if (Strings::contains($service, '\\')) { // @\Class
