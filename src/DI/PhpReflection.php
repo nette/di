@@ -78,10 +78,14 @@ class PhpReflection
 	 */
 	public static function expandClassName($name, \ReflectionClass $rc)
 	{
+		$lower = strtolower($name);
 		if (empty($name)) {
 			throw new Nette\InvalidArgumentException('Class name must not be empty.');
 
-		} elseif ($name === 'self') {
+		} elseif (in_array($lower, ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE)) {
+			return $lower;
+
+		} elseif ($lower === 'self') {
 			return $rc->getName();
 
 		} elseif ($name[0] === '\\') { // fully qualified name
