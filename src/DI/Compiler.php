@@ -128,7 +128,7 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * @return Nette\PhpGenerator\ClassType[]
+	 * @return Nette\PhpGenerator\ClassType[]|string
 	 */
 	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
 	{

@@ -183,7 +183,7 @@ class ContainerBuilder extends Nette\Object
 	/**
 	 * Resolves service name by type.
 	 * @param  string  class or interface
-	 * @return string  service name or NULL
+	 * @return string|NULL  service name or NULL
 	 * @throws ServiceCreationException
 	 */
 	public function getByType($class)
