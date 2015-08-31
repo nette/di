@@ -57,7 +57,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function getClass()
 	{
@@ -84,6 +84,9 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
+	/**
+	 * @return string|array|ServiceDefinition|NULL
+	 */
 	public function getEntity()
 	{
 		return $this->factory ? $this->factory->getEntity() : NULL;
@@ -247,7 +250,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function getImplement()
 	{
@@ -270,7 +273,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
 	public function getImplementType()
 	{
@@ -286,7 +289,7 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
-	/** @return self */
+	/** @return bool|NULL */
 	public function getInject()
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);

@@ -20,9 +20,9 @@ class Loader extends Nette\Object
 	const INCLUDES_KEY = 'includes';
 
 	private $adapters = [
-		'php' => Nette\DI\Config\Adapters\PhpAdapter::class,
-		'ini' => Nette\DI\Config\Adapters\IniAdapter::class,
-		'neon' => Nette\DI\Config\Adapters\NeonAdapter::class,
+		'php' => Adapters\PhpAdapter::class,
+		'ini' => Adapters\IniAdapter::class,
+		'neon' => Adapters\NeonAdapter::class,
 	];
 
 	private $dependencies = [];
@@ -90,7 +90,7 @@ class Loader extends Nette\Object
 	/**
 	 * Registers adapter for given file extension.
 	 * @param  string  file extension
-	 * @param  string|Nette\DI\Config\IAdapter
+	 * @param  string|IAdapter
 	 * @return self
 	 */
 	public function addAdapter($extension, $adapter)
