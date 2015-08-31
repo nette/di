@@ -98,7 +98,7 @@ class Helpers
 				unset($arguments[$parameter->getName()]);
 				$optCount = 0;
 
-			} elseif ($class = PhpReflection::getPropertyType($parameter)) { // has object type hint
+			} elseif ($class = PhpReflection::getParameterType($parameter)) { // has object type hint
 				$res[$num] = $container->getByType($class, FALSE);
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {

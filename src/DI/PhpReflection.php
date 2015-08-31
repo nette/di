@@ -55,12 +55,12 @@ class PhpReflection
 
 
 	/**
-	 * @return string
+	 * @return string|NULL
 	 */
-	public static function getPropertyType(\ReflectionParameter $prop)
+	public static function getParameterType(\ReflectionParameter $param)
 	{
 		try {
-			return ($ref = $prop->getClass()) ? $ref->getName() : NULL;
+			return ($ref = $param->getClass()) ? $ref->getName() : NULL;
 		} catch (\ReflectionException $e) {
 			if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
 				return $m[1];
