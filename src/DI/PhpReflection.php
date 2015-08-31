@@ -75,6 +75,20 @@ class PhpReflection
 
 
 	/**
+	 * @return string|NULL
+	 */
+	public static function getReturnType(\ReflectionFunctionAbstract $func)
+	{
+		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
+		if ($type) {
+			return $func instanceof \ReflectionMethod
+				? self::expandClassName($type, $func->getDeclaringClass())
+				: ltrim($type, '\\');
+		}
+	}
+
+
+	/**
 	 * Expands class name into full name.
 	 * @param  string
 	 * @return string  full name
