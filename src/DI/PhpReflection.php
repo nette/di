@@ -108,7 +108,7 @@ class PhpReflection
 		} elseif (in_array($lower, ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE)) {
 			return $lower;
 
-		} elseif ($lower === 'self') {
+		} elseif ($lower === 'self' || $lower === 'static') {
 			return $rc->getName();
 
 		} elseif ($name[0] === '\\') { // fully qualified name

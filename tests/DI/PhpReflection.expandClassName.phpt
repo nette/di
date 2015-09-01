@@ -28,6 +28,7 @@ Assert::same('A\B', PhpReflection::expandClassName('C', $rcTest));
 
 Assert::same('Test\Space\Foo', PhpReflection::expandClassName('self', $rcFoo));
 Assert::same('Test\Space\Foo', PhpReflection::expandClassName('Self', $rcFoo));
+Assert::same('Test\Space\Foo', PhpReflection::expandClassName('static', $rcFoo));
 
 foreach (['String', 'string', 'int', 'float', 'bool', 'array', 'callable'] as $type) {
 	Assert::same(strtolower($type), PhpReflection::expandClassName($type, $rcFoo));
