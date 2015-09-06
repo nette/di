@@ -99,7 +99,7 @@ class Helpers
 				unset($arguments[$parameter->getName()]);
 				$optCount = 0;
 
-			} elseif ($class !== NULL && !in_array(strtolower($class), ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE)) { // has object type hint
+			} elseif ($class !== NULL && !PhpReflection::isBuiltinType($class)) { // has object type hint
 				$res[$num] = $container->getByType($class, FALSE);
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {
