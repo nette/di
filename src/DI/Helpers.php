@@ -88,6 +88,7 @@ class Helpers
 			. $method->getName() . '()';
 
 		foreach ($method->getParameters() as $num => $parameter) {
+			$class = PhpReflection::getParameterType($parameter);
 			if (array_key_exists($num, $arguments)) {
 				$res[$num] = $arguments[$num];
 				unset($arguments[$num]);
@@ -98,7 +99,7 @@ class Helpers
 				unset($arguments[$parameter->getName()]);
 				$optCount = 0;
 
-			} elseif ($class = PhpReflection::getParameterType($parameter)) { // has object type hint
+			} elseif ($class !== NULL && !PhpReflection::isBuiltinType($class)) { // has object type hint
 				$res[$num] = $container->getByType($class, FALSE);
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {

@@ -94,6 +94,17 @@ class PhpReflection
 
 
 	/**
+	 * @param string
+	 *
+	 * @return bool
+	 */
+	public static function isBuiltinType($type)
+	{
+		return in_array(strtolower($type), ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE);
+	}
+
+
+	/**
 	 * Expands class name into full name.
 	 * @param  string
 	 * @return string  full name
@@ -105,7 +116,7 @@ class PhpReflection
 		if (empty($name)) {
 			throw new Nette\InvalidArgumentException('Class name must not be empty.');
 
-		} elseif (in_array($lower, ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE)) {
+		} elseif (self::isBuiltinType($lower)) {
 			return $lower;
 
 		} elseif ($lower === 'self') {
