@@ -122,7 +122,7 @@ class Helpers
 				$optCount++;
 
 			} else {
-				throw new ServiceCreationException("Parameter \${$parameter->getName()} in $methodName has no type hint, so its value must be specified.");
+				throw new ServiceCreationException("Parameter \${$parameter->getName()} in $methodName has no class type hint or default value, so its value must be specified.");
 			}
 		}
 
