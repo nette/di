@@ -256,8 +256,6 @@ class Container extends Nette\Object
 
 	/**
 	 * Calls method using autowiring.
-	 * @param  mixed   class, object, function, callable
-	 * @param  array   arguments
 	 * @return mixed
 	 */
 	public function callMethod($function, array $args = array())

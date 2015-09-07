@@ -59,7 +59,7 @@ class ContainerLoader extends Nette\Object
 	private function loadFile($class, $generator)
 	{
 		$file = "$this->tempDirectory/$class.php";
-		if (!$this->isExpired($file) && (@include $file) !== FALSE) {
+		if (!$this->isExpired($file) && (@include $file) !== FALSE) { // @ file may not exist
 			return;
 		}
 
@@ -93,7 +93,7 @@ class ContainerLoader extends Nette\Object
 	private function isExpired($file)
 	{
 		if ($this->autoRebuild) {
-			$meta = @unserialize(file_get_contents("$file.meta")); // @ - files may not exist
+			$meta = @unserialize(file_get_contents("$file.meta")); // @ - file may not exist
 			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : array();
 			return $meta !== @array_map('filemtime', $files); // @ - files may not exist
 		}

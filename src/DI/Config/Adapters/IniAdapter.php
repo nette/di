@@ -31,7 +31,7 @@ class IniAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 	 */
 	public function load($file)
 	{
-		$ini = @parse_ini_file($file, TRUE); // intentionally @
+		$ini = @parse_ini_file($file, TRUE); // @ escalated to exception
 		if ($ini === FALSE) {
 			$error = error_get_last();
 			throw new Nette\InvalidStateException("parse_ini_file(): $error[message]");
