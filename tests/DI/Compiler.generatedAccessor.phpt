@@ -37,17 +37,17 @@ services:
 ');
 
 
-Assert::type('Lorem', $container->getService('lorem'));
+Assert::type(Lorem::class, $container->getService('lorem'));
 Assert::notSame($container->getService('lorem'), $container->getService('lorem2'));
 
-Assert::type('ILoremAccessor', $container->getService('one'));
+Assert::type(ILoremAccessor::class, $container->getService('one'));
 Assert::same($container->getService('one')->get(), $container->getService('lorem'));
 
-Assert::type('ILoremAccessor', $container->getService('two'));
+Assert::type(ILoremAccessor::class, $container->getService('two'));
 Assert::same($container->getService('two')->get(), $container->getService('lorem'));
 
-Assert::type('ILoremAccessor', $container->getService('three'));
+Assert::type(ILoremAccessor::class, $container->getService('three'));
 Assert::same($container->getService('three')->get(), $container->getService('lorem2'));
 
-Assert::type('ILoremAccessor', $container->getService('four'));
+Assert::type(ILoremAccessor::class, $container->getService('four'));
 Assert::same($container->getService('four')->get(), $container->getService('lorem'));

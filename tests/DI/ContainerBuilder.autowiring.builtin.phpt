@@ -34,5 +34,5 @@ $builder->addDefinition('bar')
 
 $container = createContainer($builder);
 
-Assert::type('Foo', $container->getService('foo'));
-Assert::type('Bar', $container->getService('bar'));
+Assert::type(Foo::class, $container->getService('foo'));
+Assert::type(Bar::class, $container->getService('bar'));

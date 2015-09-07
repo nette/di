@@ -31,4 +31,4 @@ $builder->addDefinition('one')
 
 $container = createContainer($builder);
 
-Assert::type('Factory', $container->getService('one'));
+Assert::type(Factory::class, $container->getService('one'));

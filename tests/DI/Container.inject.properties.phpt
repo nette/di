@@ -51,7 +51,7 @@ $container = createContainer($builder);
 
 $test = new Test2;
 $container->callInjects($test);
-Assert::type('stdClass', $test->varA);
-Assert::type('stdClass', $test->varB);
-Assert::type('stdClass', $test->varC);
-Assert::type('Foo', $test->varD);
+Assert::type(stdClass::class, $test->varA);
+Assert::type(stdClass::class, $test->varB);
+Assert::type(stdClass::class, $test->varC);
+Assert::type(Foo::class, $test->varD);

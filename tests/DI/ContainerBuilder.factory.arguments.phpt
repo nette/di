@@ -38,6 +38,6 @@ $builder->addDefinition('fooFactory')
 
 $container = createContainer($builder);
 
-Assert::type('FooFactory', $container->getService('fooFactory'));
-Assert::type('Foo', $foo = $container->getService('fooFactory')->create());
+Assert::type(FooFactory::class, $container->getService('fooFactory'));
+Assert::type(Foo::class, $foo = $container->getService('fooFactory')->create());
 Assert::same('bar', $foo->value);

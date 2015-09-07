@@ -62,7 +62,7 @@ $builder->addDefinition('seven')
 
 $container = createContainer($builder);
 
-Assert::type('Service', $container->getService('one'));
+Assert::type(Service::class, $container->getService('one'));
 Assert::false($container->hasService('One'));
 Assert::false($container->hasService('oNe'));
 
@@ -70,12 +70,12 @@ Assert::same([
 	['__construct', ['@string']],
 ], $container->getService('one')->methods);
 
-Assert::type('Service', $container->getService('three'));
+Assert::type(Service::class, $container->getService('three'));
 Assert::same([
 	['__construct', ['a', 'b']],
 ], $container->getService('three')->methods);
 
-Assert::type('Service', $container->getService('four'));
+Assert::type(Service::class, $container->getService('four'));
 Assert::same([
 	['__construct', ['a', 'b']],
 	['methodA', ['a', 'b']],
@@ -84,18 +84,18 @@ Assert::same([
 	['methodD', [$container->getService('one')]],
 ], $container->getService('four')->methods);
 
-Assert::type('Service', $container->getService('five'));
+Assert::type(Service::class, $container->getService('five'));
 Assert::same([
 	['__construct', [[]]],
 ], $container->getService('five')->methods);
 
-Assert::type('Service', $container->getService('six'));
+Assert::type(Service::class, $container->getService('six'));
 Assert::same([
 	['__construct', [['a', 'b']]],
 	['methodA', ['a', 'b']],
 ], $container->getService('six')->methods);
 
-Assert::type('Service', $container->getService('seven'));
+Assert::type(Service::class, $container->getService('seven'));
 Assert::same([
 	['__construct', [['a', 'b']]],
 	['methodA', ['a', 'b']],

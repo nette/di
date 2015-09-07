@@ -42,9 +42,9 @@ services:
 ');
 
 
-Assert::type('Lorem', $container->getService('one'));
-Assert::type('Ipsum', $container->getService('two'));
-Assert::type('Lorem', $container->getService('three'));
+Assert::type(Lorem::class, $container->getService('one'));
+Assert::type(Ipsum::class, $container->getService('two'));
+Assert::type(Lorem::class, $container->getService('three'));
 Assert::same($container->getService('one'), $container->getService('three'));
-Assert::type('Lorem', $container->getService('four'));
+Assert::type(Lorem::class, $container->getService('four'));
 Assert::same($container->getService('one'), $container->getService('four'));

@@ -46,14 +46,14 @@ $builder->addDefinition('four')
 
 $container = createContainer($builder);
 
-Assert::type('StdClassFactory', $container->getService('one'));
-Assert::type('stdClass', $container->getService('one')->create());
+Assert::type(StdClassFactory::class, $container->getService('one'));
+Assert::type(stdClass::class, $container->getService('one')->create());
 Assert::notSame($container->getService('one')->create(), $container->getService('one')->create());
 
-Assert::type('AnnotatedFactory', $container->getService('two'));
-Assert::type('stdClass', $container->getService('two')->create());
+Assert::type(AnnotatedFactory::class, $container->getService('two'));
+Assert::type(stdClass::class, $container->getService('two')->create());
 Assert::notSame($container->getService('two')->create(), $container->getService('two')->create());
 
-Assert::type('FactoryReceiver', $container->getService('three'));
+Assert::type(FactoryReceiver::class, $container->getService('three'));
 
-Assert::type('FactoryReceiver', $container->getService('four'));
+Assert::type(FactoryReceiver::class, $container->getService('four'));

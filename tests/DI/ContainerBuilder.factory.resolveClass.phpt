@@ -81,16 +81,16 @@ namespace
 
 	$container = createContainer($builder);
 
-	Assert::type('StdClassFactory', $container->getService('one'));
+	Assert::type(StdClassFactory::class, $container->getService('one'));
 
-	Assert::type('StdClassFactory', $container->getService('two'));
-	Assert::type('StdClassFactory', $container->getService('two')->create());
+	Assert::type(StdClassFactory::class, $container->getService('two'));
+	Assert::type(StdClassFactory::class, $container->getService('two')->create());
 	Assert::notSame($container->getService('two')->create(), $container->getService('two')->create());
 
-	Assert::type('StdClassFactory', $container->getService('three'));
-	Assert::type('stdClass', $container->getService('three')->create());
+	Assert::type(StdClassFactory::class, $container->getService('three'));
+	Assert::type(stdClass::class, $container->getService('three')->create());
 	Assert::notSame($container->getService('three')->create(), $container->getService('three')->create());
 
-	Assert::type('A\Foo', $container->getByType('A\Foo'));
-	Assert::type('B\Bar', $container->getByType('B\Bar'));
+	Assert::type(A\Foo::class, $container->getByType('A\Foo'));
+	Assert::type(B\Bar::class, $container->getByType('B\Bar'));
 }

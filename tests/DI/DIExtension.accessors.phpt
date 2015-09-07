@@ -26,7 +26,7 @@ services:
 eval($compiler->compile($config, 'Container1'));
 
 $container = new Container1;
-Assert::type('stdClass', $container->std);
+Assert::type(stdClass::class, $container->std);
 
 $rc = new ReflectionClass($container);
 Assert::truthy(strpos($rc->getDocComment(), '@property stdClass $std'));

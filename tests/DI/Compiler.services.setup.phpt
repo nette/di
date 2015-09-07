@@ -58,7 +58,7 @@ $container = createContainer(new DI\Compiler, 'files/compiler.services.setup.neo
 Assert::same([
 ], Notes::fetch());
 
-Assert::type('Lorem', $container->getService('lorem'));
+Assert::type(Lorem::class, $container->getService('lorem'));
 
 Assert::same([
 	'Lorem::test 2',

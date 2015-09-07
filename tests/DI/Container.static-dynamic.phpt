@@ -30,5 +30,5 @@ $container->addService('one', new stdClass);
 
 Assert::true($container->hasService('one'));
 
-Assert::type('stdClass', $container->getService('one'));
+Assert::type(stdClass::class, $container->getService('one'));
 Assert::same($container->getService('one'), $container->getService('one')); // shared

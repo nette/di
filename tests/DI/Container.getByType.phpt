@@ -31,7 +31,7 @@ $three = $builder->addDefinition('three')
 
 $container = createContainer($builder);
 
-Assert::type('Service', $container->getByType('Service'));
+Assert::type(Service::class, $container->getByType('Service'));
 Assert::null($container->getByType('unknown', FALSE));
 
 Assert::exception(function () use ($container) {

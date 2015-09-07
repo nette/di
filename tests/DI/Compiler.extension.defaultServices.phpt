@@ -81,9 +81,9 @@ services:
 ');
 
 
-Assert::type('Foo', $container->getService('one'));
-Assert::type('Bar', $container->getService('two'));
-Assert::type('Lorem', $container->getService('three'));
-Assert::type('IIpsumFactory', $container->getService('four'));
+Assert::type(Foo::class, $container->getService('one'));
+Assert::type(Bar::class, $container->getService('two'));
+Assert::type(Lorem::class, $container->getService('three'));
+Assert::type(IIpsumFactory::class, $container->getService('four'));
 
-Assert::type('FooBar', $container->getByType('IFooBar'));
+Assert::type(FooBar::class, $container->getByType('IFooBar'));

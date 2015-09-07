@@ -32,17 +32,17 @@ class Article
 $compiler = new DI\Compiler;
 $container = createContainer($compiler, 'files/compiler.generatedFactory.scalarParameters.neon');
 
-Assert::type('IArticleFactory', $container->getService('article'));
+Assert::type(IArticleFactory::class, $container->getService('article'));
 $article = $container->getService('article')->create('lorem-ipsum');
-Assert::type('Article', $article);
+Assert::type(Article::class, $article);
 Assert::same('lorem-ipsum', $article->title);
 
-Assert::type('IArticleFactory', $container->getService('article2'));
+Assert::type(IArticleFactory::class, $container->getService('article2'));
 $article = $container->getService('article2')->create('lorem-ipsum');
-Assert::type('Article', $article);
+Assert::type(Article::class, $article);
 Assert::same('lorem-ipsum', $article->title);
 
-Assert::type('IArticleFactory', $container->getService('article3'));
+Assert::type(IArticleFactory::class, $container->getService('article3'));
 $article = $container->getService('article3')->create('lorem-ipsum');
-Assert::type('Article', $article);
+Assert::type(Article::class, $article);
 Assert::same('lorem-ipsum', $article->title);

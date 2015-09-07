@@ -35,7 +35,7 @@ $builder->addExcludedClasses(['Foo', 'IBar']);
 
 $container = createContainer($builder);
 
-Assert::type('Bar', $container->getByType('Bar'));
+Assert::type(Bar::class, $container->getByType('Bar'));
 
 Assert::exception(function () use ($container) {
 	$container->getByType('IBar');

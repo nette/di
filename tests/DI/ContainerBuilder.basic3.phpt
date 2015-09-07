@@ -25,4 +25,4 @@ $builder->addDefinition('one')
 
 $container = createContainer($builder);
 
-Assert::type('stdClass', $container->getService('one'));
+Assert::type(stdClass::class, $container->getService('one'));

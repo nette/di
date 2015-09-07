@@ -117,109 +117,109 @@ $compiler->addExtension('database', $extension);
 $container = createContainer($compiler, 'files/compiler.extensionOverride.neon');
 
 
-Assert::type('Ipsum', $container->getService('one1'));
+Assert::type(Ipsum::class, $container->getService('one1'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('one2'));
+Assert::type(Ipsum::class, $container->getService('one2'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('one3'));
+Assert::type(Ipsum::class, $container->getService('one3'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Lorem', $container->getService('one4'));
+Assert::type(Lorem::class, $container->getService('one4'));
 Assert::same([
 	'Lorem::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('one5'));
+Assert::type(Ipsum::class, $container->getService('one5'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('one6'));
+Assert::type(Ipsum::class, $container->getService('one6'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('one7'));
+Assert::type(Ipsum::class, $container->getService('one7'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
 
-Assert::type('Ipsum', $container->getService('two1'));
+Assert::type(Ipsum::class, $container->getService('two1'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('two2'));
+Assert::type(Ipsum::class, $container->getService('two2'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('two3'));
+Assert::type(Ipsum::class, $container->getService('two3'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Lorem', $container->getService('two4'));
+Assert::type(Lorem::class, $container->getService('two4'));
 Assert::same([
 	'Lorem::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('two5'));
+Assert::type(Ipsum::class, $container->getService('two5'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('two6'));
+Assert::type(Ipsum::class, $container->getService('two6'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('two7'));
+Assert::type(Ipsum::class, $container->getService('two7'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
 
-Assert::type('Ipsum', $container->getService('three1'));
+Assert::type(Ipsum::class, $container->getService('three1'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('three2'));
+Assert::type(Ipsum::class, $container->getService('three2'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('three3'));
+Assert::type(Ipsum::class, $container->getService('three3'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Lorem', $container->getService('three4'));
+Assert::type(Lorem::class, $container->getService('three4'));
 Assert::same([
 	'Lorem::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('three5'));
+Assert::type(Ipsum::class, $container->getService('three5'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('three6'));
+Assert::type(Ipsum::class, $container->getService('three6'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::type('Ipsum', $container->getService('three7'));
+Assert::type(Ipsum::class, $container->getService('three7'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());

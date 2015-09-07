@@ -49,5 +49,5 @@ namespace
 
 	$container = createContainer($builder);
 
-	Assert::type('B\Bar', $container->getByType('B\Bar'));
+	Assert::type(B\Bar::class, $container->getByType('B\Bar'));
 }

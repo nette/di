@@ -70,7 +70,7 @@ services:
 ');
 
 
-Assert::type('Model', $container->getService('model'));
+Assert::type(Model::class, $container->getService('model'));
 
 Assert::same([
 	'Model::test',

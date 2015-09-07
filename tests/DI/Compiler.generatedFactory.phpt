@@ -134,88 +134,88 @@ $compiler->addExtension('test', new TestExtension);
 $container = createContainer($compiler, 'files/compiler.generatedFactory.neon');
 
 
-Assert::type('ILoremFactory', $container->getService('lorem'));
+Assert::type(ILoremFactory::class, $container->getService('lorem'));
 $lorem = $container->getService('lorem')->create();
-Assert::type('Lorem', $lorem);
-Assert::type('Ipsum', $lorem->ipsum);
+Assert::type(Lorem::class, $lorem);
+Assert::type(Ipsum::class, $lorem->ipsum);
 Assert::same($container->getService('ipsum'), $lorem->ipsum);
 
-Assert::type('ILoremFactory', $container->getByType('ILoremFactory'));
+Assert::type(ILoremFactory::class, $container->getByType('ILoremFactory'));
 
-Assert::type('IFinderFactory', $container->getService('finder'));
+Assert::type(IFinderFactory::class, $container->getService('finder'));
 $finder = $container->getService('finder')->create();
 Assert::type(Nette\DI\Config\Adapters\NeonAdapter::class, $finder);
 
 
-Assert::type('IArticleFactory', $container->getService('article'));
+Assert::type(IArticleFactory::class, $container->getService('article'));
 $article = $container->getService('article')->create('nemam');
-Assert::type('Article', $article);
+Assert::type(Article::class, $article);
 Assert::same('nemam', $article->title);
 
 
-Assert::type('IFooFactory', $container->getService('fooFactory1'));
+Assert::type(IFooFactory::class, $container->getService('fooFactory1'));
 $foo = $container->getService('fooFactory1')->create($container->getService('baz'));
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
-Assert::type('Baz', $foo->baz);
+Assert::type(Baz::class, $foo->baz);
 Assert::same($container->getService('baz'), $foo->baz);
 $foo = $container->getService('fooFactory1')->create();
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null($foo->baz);
 
 
-Assert::type('IFooFactory', $container->getService('fooFactory2'));
+Assert::type(IFooFactory::class, $container->getService('fooFactory2'));
 $foo = $container->getService('fooFactory2')->create($container->getService('baz'));
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
-Assert::type('Baz', $foo->baz);
+Assert::type(Baz::class, $foo->baz);
 Assert::same($container->getService('baz'), $foo->baz);
 $foo = $container->getService('fooFactory2')->create();
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null($foo->baz);
 
 
-Assert::type('IArticleFactory', $container->getService('article2'));
+Assert::type(IArticleFactory::class, $container->getService('article2'));
 $article = $container->getService('article2')->create('nemam');
-Assert::type('Article', $article);
+Assert::type(Article::class, $article);
 Assert::same('nemam', $article->title);
 
 
-Assert::type('IFooFactory', $container->getService('fooFactory3'));
+Assert::type(IFooFactory::class, $container->getService('fooFactory3'));
 $foo = $container->getService('fooFactory3')->create($container->getService('baz'));
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
-Assert::type('Baz', $foo->baz);
+Assert::type(Baz::class, $foo->baz);
 Assert::same($container->getService('baz'), $foo->baz);
 $foo = $container->getService('fooFactory3')->create();
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null($foo->baz);
 
 
-Assert::type('IFooFactory', $container->getService('fooFactory4'));
+Assert::type(IFooFactory::class, $container->getService('fooFactory4'));
 $foo = $container->getService('fooFactory4')->create($container->getService('baz'));
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
-Assert::type('Baz', $foo->baz);
+Assert::type(Baz::class, $foo->baz);
 Assert::same($container->getService('baz'), $foo->baz);
 $foo = $container->getService('fooFactory4')->create();
-Assert::type('Foo', $foo);
-Assert::type('Bar', $foo->bar);
+Assert::type(Foo::class, $foo);
+Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null($foo->baz);
 
 
-Assert::type('ITestClassFactory', $container->getService('factory5'));
+Assert::type(ITestClassFactory::class, $container->getService('factory5'));
 $obj = $container->getService('factory5')->create('bar');
 Assert::same('foo', $obj->foo);
 Assert::same('bar', $obj->bar);

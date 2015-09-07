@@ -59,13 +59,13 @@ $builder->addDefinition('four')
 
 $container = createContainer($builder);
 
-Assert::type('StdClassAccessor', $container->getService('one'));
+Assert::type(StdClassAccessor::class, $container->getService('one'));
 Assert::same($container->getService('one')->get(), $container->getService('service'));
 
-Assert::type('AnnotatedAccessor', $container->getService('two'));
+Assert::type(AnnotatedAccessor::class, $container->getService('two'));
 Assert::same($container->getService('two')->get(), $container->getService('service'));
 
-Assert::type('StdClassAccessor', $container->getService('three'));
+Assert::type(StdClassAccessor::class, $container->getService('three'));
 Assert::same($container->getService('three')->get(), $container->getService('service2'));
 
-Assert::type('AccessorReceiver', $container->getService('four'));
+Assert::type(AccessorReceiver::class, $container->getService('four'));

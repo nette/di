@@ -22,9 +22,9 @@ $one = $container->getService('one');
 $a = $container->createService('one');
 $b = $container->createService('one');
 
-Assert::type('stdClass', $one);
-Assert::type('stdClass', $a);
-Assert::type('stdClass', $b);
+Assert::type(stdClass::class, $one);
+Assert::type(stdClass::class, $a);
+Assert::type(stdClass::class, $b);
 
 Assert::notSame($one, $a);
 Assert::notSame($one, $b);

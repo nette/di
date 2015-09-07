@@ -36,7 +36,7 @@ $builder->addDefinition('one')
 $container = createContainer($builder);
 
 $test = $container->createInstance('Test');
-Assert::type('Test', $test);
+Assert::type(Test::class, $test);
 Assert::same($container, $test->container);
 Assert::false($container->callMethod([$test, 'method']));
 Assert::true($container->callMethod([$test, 'method'], [(object) ['prop' => TRUE]]));

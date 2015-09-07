@@ -43,11 +43,11 @@ $builder->addDefinition('five')
 
 $container = createContainer($builder);
 
-Assert::type('StdClassFactory', $container->getService('one'));
-Assert::type('StdClassFactory', $container->getService('two'));
+Assert::type(StdClassFactory::class, $container->getService('one'));
+Assert::type(StdClassFactory::class, $container->getService('two'));
 
-Assert::type('stdClass', $container->getService('four'));
+Assert::type(stdClass::class, $container->getService('four'));
 Assert::same($container->getService('four')->a, $container->getService('three'));
 
-Assert::type('stdClass', $container->getService('five'));
+Assert::type(stdClass::class, $container->getService('five'));
 Assert::same($container->getService('five')->a, $container->getService('three'));

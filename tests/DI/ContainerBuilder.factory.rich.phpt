@@ -48,10 +48,10 @@ $two = $builder->addDefinition('two')
 $container = createContainer($builder);
 
 Assert::same('Obj', $one->getClass());
-Assert::type('Obj', $container->getService('one'));
+Assert::type(Obj::class, $container->getService('one'));
 Assert::true($container->getService('one')->mark);
 
 Assert::same('Obj', $two->getClass());
-Assert::type('Obj', $container->getService('two'));
+Assert::type(Obj::class, $container->getService('two'));
 Assert::true($container->getService('two')->mark);
 Assert::same([1, 2], $container->getService('two')->args);
