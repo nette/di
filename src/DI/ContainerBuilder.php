@@ -191,13 +191,13 @@ class ContainerBuilder extends Nette\Object
 		$class = ltrim($class, '\\');
 
 		if ($this->currentService !== NULL) {
-			$rc = new ReflectionClass($this->definitions[$this->currentService]->getClass());
-			if ($class === $rc->getName() || $rc->isSubclassOf($class)) {
+			$curClass = $this->definitions[$this->currentService]->getClass();
+			if ($curClass === $class || is_subclass_of($curClass, $class)) {
 				return $this->currentService;
 			}
 		}
 
-		if (!isset($this->classes[$class][TRUE])) {
+		if (empty($this->classes[$class][TRUE])) {
 			self::checkCase($class);
 			return;
 
@@ -220,11 +220,9 @@ class ContainerBuilder extends Nette\Object
 		$class = ltrim($class, '\\');
 		self::checkCase($class);
 		$found = [];
-		foreach ([TRUE, FALSE] as $mode) {
-			if (!empty($this->classes[$class][$mode])) {
-				foreach ($this->classes[$class][$mode] as $name) {
-					$found[$name] = $this->definitions[$name];
-				}
+		if (!empty($this->classes[$class])) {
+			foreach (array_merge(...array_values($this->classes[$class])) as $name) {
+				$found[$name] = $this->definitions[$name];
 			}
 		}
 		return $found;
@@ -348,7 +346,10 @@ class ContainerBuilder extends Nette\Object
 		}
 		self::checkCase($interface);
 		$rc = new ReflectionClass($interface);
-		$method = $rc->hasMethod('create') ? $rc->getMethod('create') : ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
+		$method = $rc->hasMethod('create')
+			? $rc->getMethod('create')
+			: ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
+
 		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
 			throw new ServiceCreationException("Interface $interface used in service '$name' must have just one non-static method create() or get().");
 		}
@@ -541,7 +542,7 @@ class ContainerBuilder extends Nette\Object
 		$definitions = $this->definitions;
 		ksort($definitions);
 
-		$meta = $containerClass->addProperty('meta', [])
+		$meta = $containerClass->addProperty('meta')
 			->setVisibility('protected')
 			->setValue([Container::TYPES => $this->classes]);
 

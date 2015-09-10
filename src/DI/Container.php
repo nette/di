@@ -178,11 +178,12 @@ class Container extends Nette\Object
 	public function getByType($class, $need = TRUE)
 	{
 		$class = ltrim($class, '\\');
-		$names = & $this->meta[self::TYPES][$class][TRUE];
-		if (count($names) === 1) {
-			return $this->getService($names[0]);
-		} elseif (count($names) > 1) {
+		if (!empty($this->meta[self::TYPES][$class][TRUE])) {
+			if (count($names = $this->meta[self::TYPES][$class][TRUE]) === 1) {
+				return $this->getService($names[0]);
+			}
 			throw new MissingServiceException("Multiple services of type $class found: " . implode(', ', $names) . '.');
+
 		} elseif ($need) {
 			throw new MissingServiceException("Service of type $class not found.");
 		}
@@ -197,11 +198,9 @@ class Container extends Nette\Object
 	public function findByType($class)
 	{
 		$class = ltrim($class, '\\');
-		$meta = & $this->meta[self::TYPES];
-		return array_merge(
-			isset($meta[$class][TRUE]) ? $meta[$class][TRUE] : [],
-			isset($meta[$class][FALSE]) ? $meta[$class][FALSE] : []
-		);
+		return empty($this->meta[self::TYPES][$class])
+			? []
+			: array_merge(...array_values($this->meta[self::TYPES][$class]));
 	}
 
 
