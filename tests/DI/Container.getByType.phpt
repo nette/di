@@ -15,6 +15,10 @@ class Service extends Nette\Object
 {
 }
 
+class Child extends Service
+{
+}
+
 class Service2 extends Nette\Object
 {
 }
@@ -23,6 +27,9 @@ class Service2 extends Nette\Object
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
 	->setClass('Service');
+$child = $builder->addDefinition('child')
+	->setClass('Child')
+	->setAutowired(FALSE);
 $two = $builder->addDefinition('two')
 	->setClass('Service2');
 $three = $builder->addDefinition('three')
@@ -31,18 +38,25 @@ $three = $builder->addDefinition('three')
 
 $container = createContainer($builder);
 
+
 Assert::type(Service::class, $container->getByType('Service'));
+
+Assert::null($container->getByType('Child', FALSE));
+
+Assert::type(Service2::class, $container->getByType('Service2'));
+
+Assert::exception(function () use ($container) {
+	$container->getByType(Nette\Object::class);
+}, Nette\DI\MissingServiceException::class, 'Multiple services of type Nette\Object found: one, two, container.');
+
 Assert::null($container->getByType('unknown', FALSE));
 
 Assert::exception(function () use ($container) {
 	$container->getByType('unknown');
 }, Nette\DI\MissingServiceException::class, 'Service of type unknown not found.');
 
-Assert::exception(function () use ($container) {
-	$container->getByType(Nette\Object::class);
-}, Nette\DI\MissingServiceException::class, 'Multiple services of type Nette\Object found: one, two, container.');
 
-
-Assert::same(['one'], $container->findByType('Service'));
+Assert::same(['one', 'child'], $container->findByType('Service'));
+Assert::same(['child'], $container->findByType('Child'));
 Assert::same(['two', 'three'], $container->findByType('Service2'));
 Assert::same([], $container->findByType('unknown'));
