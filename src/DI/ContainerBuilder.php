@@ -348,19 +348,11 @@ class ContainerBuilder
 		}
 
 		//  build auto-wiring list
-		$excludedClasses = [];
-		foreach ($this->excludedClasses as $class) {
-			if (class_exists($class) || interface_exists($class)) {
-				self::checkCase($class);
-				$excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
-			}
-		}
-
 		$this->classList = [];
 		foreach ($this->definitions as $name => $def) {
 			if ($class = $def->getImplement() ?: $def->getClass()) {
 				foreach (class_parents($class) + class_implements($class) + [$class] as $parent) {
-					$this->classList[$parent][$def->isAutowired() && empty($excludedClasses[$parent])][] = (string) $name;
+					$this->classList[$parent][$def->isAutowired() && empty($this->excludedClasses[$parent])][] = (string) $name;
 				}
 			}
 		}
@@ -534,7 +526,12 @@ class ContainerBuilder
 	 */
 	public function addExcludedClasses(array $classes)
 	{
-		$this->excludedClasses = array_merge($this->excludedClasses, $classes);
+		foreach ($classes as $class) {
+			if (class_exists($class) || interface_exists($class)) {
+				self::checkCase($class);
+				$this->excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
+			}
+		}
 		return $this;
 	}
 
