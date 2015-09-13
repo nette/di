@@ -255,6 +255,9 @@ class Compiler
 				$builder->removeDefinition($name);
 				continue;
 			}
+			if ($namespace) {
+				$def = Helpers::prefixServiceName($def, $namespace);
+			}
 
 			$params = $builder->parameters;
 			if (is_array($def) && isset($def['parameters'])) {
