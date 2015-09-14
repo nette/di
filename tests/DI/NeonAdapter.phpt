@@ -77,7 +77,7 @@ php:
 	zlib.output_compression: true
 	date.timezone: Europe/Prague
 EOD
-, preg_replace('#(\t*\n){3,}#', "\n\n", file_get_contents(TEMP_FILE)));
+, file_get_contents(TEMP_FILE));
 
 
 $data = $config->load('files/neonAdapter.neon');
@@ -115,7 +115,7 @@ development < production:
 
 nothing: null
 EOD
-, preg_replace('#(\t*\n){3,}#', "\n\n", file_get_contents(TEMP_FILE)));
+, file_get_contents(TEMP_FILE));
 
 
 $data = $config->load('files/neonAdapter.entity.neon');
