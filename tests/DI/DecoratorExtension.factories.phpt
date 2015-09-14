@@ -31,6 +31,8 @@ $container = createContainer($compiler, '
 decorator:
 	Foo:
 		inject: yes
+	FooFactory:
+		tags: [a]
 services:
 	foo: {implement: FooFactory}
 ');
@@ -39,3 +41,5 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::true($builder->getDefinition('foo')->getTag('inject'));
+
+Assert::true($builder->getDefinition('foo')->getTag('a'));
