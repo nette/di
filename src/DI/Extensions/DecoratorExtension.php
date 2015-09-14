@@ -58,9 +58,10 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 	{
 		$type = ltrim($type, '\\');
 		return array_filter($this->getContainerBuilder()->getDefinitions(), function ($def) use ($type) {
-			return $def->getClass() === $type
-				|| is_subclass_of($def->getClass(), $type)
-				|| (PHP_VERSION_ID < 50307 && array_key_exists($type, class_implements($def->getClass())));
+			return $def->getClass() === $type || is_subclass_of($def->getClass(), $type)
+				|| (PHP_VERSION_ID < 50307 && array_key_exists($type, class_implements($def->getClass())))
+				|| $def->getImplement() === $type || is_subclass_of($def->getImplement(), $type)
+				|| (PHP_VERSION_ID < 50307 && $def->getImplement() && array_key_exists($type, class_implements($def->getImplement())));
 		});
 	}
 
