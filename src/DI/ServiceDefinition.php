@@ -19,6 +19,10 @@ use Nette;
  */
 class ServiceDefinition
 {
+	const
+		IMPLEMENT_MODE_CREATE = 'create',
+		IMPLEMENT_MODE_GET = 'get';
+
 	use Nette\SmartObject;
 
 	/** @var string|NULL  class or interface name */
@@ -46,7 +50,7 @@ class ServiceDefinition
 	private $implement;
 
 	/** @var string|NULL  create | get */
-	private $implementType;
+	private $implementMode;
 
 	/** @var callable */
 	private $notifier = 'pi'; // = noop
@@ -284,12 +288,12 @@ class ServiceDefinition
 	 * @param  string
 	 * @return self
 	 */
-	public function setImplementType($type)
+	public function setImplementMode($mode)
 	{
-		if (!in_array($type, ['get', 'create'], TRUE)) {
+		if (!in_array($mode, [self::IMPLEMENT_MODE_CREATE, self::IMPLEMENT_MODE_GET], TRUE)) {
 			throw new Nette\InvalidArgumentException('Argument must be get|create.');
 		}
-		$this->implementType = $type;
+		$this->implementMode = $mode;
 		return $this;
 	}
 
@@ -297,9 +301,25 @@ class ServiceDefinition
 	/**
 	 * @return string|NULL
 	 */
+	public function getImplementMode()
+	{
+		return $this->implementMode;
+	}
+
+
+	/** @deprecated */
+	public function setImplementType($type)
+	{
+		trigger_error(__METHOD__ . '() is deprecated, use setImplementMode()', E_USER_DEPRECATED);
+		return $this->setImplementMode($type);
+	}
+
+
+	/** @deprecated */
 	public function getImplementType()
 	{
-		return $this->implementType;
+		trigger_error(__METHOD__ . '() is deprecated, use getImplementMode()', E_USER_DEPRECATED);
+		return $this->implementMode;
 	}
 
 
