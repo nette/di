@@ -13,9 +13,9 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/files/expandClass.noNamespace.php';
 require __DIR__ . '/files/expandClass.inNamespace.php';
 
-$rcTest = new \ReflectionClass('Test');
-$rcFoo = new \ReflectionClass('Test\Space\Foo');
-$rcBar = new \ReflectionClass('Test\Space\Bar');
+$rcTest = new \ReflectionClass(Test::class);
+$rcFoo = new \ReflectionClass(Test\Space\Foo::class);
+$rcBar = new \ReflectionClass(Test\Space\Bar::class);
 
 
 Assert::exception(function () use ($rcTest) {

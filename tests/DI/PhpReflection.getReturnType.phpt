@@ -40,14 +40,14 @@ namespace
 	require __DIR__ . '/../bootstrap.php';
 
 
-	Assert::null(PhpReflection::getReturnType(new \ReflectionMethod('NS\A', 'noType')));
+	Assert::null(PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'noType')));
 
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod('NS\A', 'annotationSingle')));
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSingle')));
 
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod('NS\A', 'annotationComplex')));
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationComplex')));
 
-	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod('NS\A', 'nativeType')));
+	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'nativeType')));
 
 	// class name expanding is NOT supported for global functions
-	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction('NS\classType')));
+	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction(NS\classType::class)));
 }
