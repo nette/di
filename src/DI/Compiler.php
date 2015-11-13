@@ -179,9 +179,12 @@ class Compiler extends Nette\Object
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
-		} elseif ($extra = array_diff_key($this->config, self::$reserved, $this->extensions)) {
-			$extra = implode("', '", array_keys($extra));
-			throw new Nette\InvalidStateException("Found sections '$extra' in configuration, but corresponding extensions are missing.");
+		} elseif ($extra = key(array_diff_key($this->config, self::$reserved, $this->extensions))) {
+			$hint = Nette\Utils\ObjectMixin::getSuggestion(array_keys(self::$reserved + $this->extensions), $extra);
+			throw new Nette\InvalidStateException(
+				"Found section '$extra' in configuration, but corresponding extension is missing"
+				. ($hint ? ", did you mean '$hint'?" : '.')
+			);
 		}
 	}
 
