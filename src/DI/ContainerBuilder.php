@@ -205,7 +205,11 @@ class ContainerBuilder extends Nette\Object
 			return $this->classes[$class][TRUE][0];
 
 		} else {
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $this->classes[$class][TRUE]));
+			$list = $this->classes[$class][TRUE];
+			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
+				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
+				: '';
+			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $list) . $hint);
 		}
 	}
 

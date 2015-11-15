@@ -29,3 +29,16 @@ $builder->addDefinition('one')
 Assert::exception(function () use ($builder) {
 	$builder->generateClasses();
 }, Nette\InvalidStateException::class, "Case mismatch on class name 'stdclass', correct name is 'stdClass'.");
+
+
+
+$builder = new DI\ContainerBuilder;
+$builder->addDefinition('extension.one')
+	->setClass('stdClass');
+$builder->addDefinition('25_service')
+	->setClass('stdClass');
+$builder->prepareClassList();
+
+Assert::exception(function () use ($builder) {
+	$builder->getByType(stdClass::class);
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: extension.one, 25_service. If you want to overwrite service extension.one, give it proper name.');
