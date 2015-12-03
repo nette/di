@@ -482,7 +482,7 @@ class ContainerBuilder extends Nette\Object
 
 	private function checkCase($class)
 	{
-		if (class_exists($class) && ($rc = new ReflectionClass($class)) && $class !== $rc->getName()) {
+		if ((class_exists($class) || interface_exists($class)) && ($rc = new ReflectionClass($class)) && $class !== $rc->getName()) {
 			throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '{$rc->getName()}'.");
 		}
 	}
