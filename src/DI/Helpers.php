@@ -104,6 +104,9 @@ class Helpers
 					if ($parameter->allowsNull()) {
 						$optCount++;
 					} elseif (class_exists($class) || interface_exists($class)) {
+						if ($class !== ($hint = (new \ReflectionClass($class))->getName())) {
+							throw new ServiceCreationException("Service of type {$class} needed by $methodName not found, did you mean $hint?");
+						}
 						throw new ServiceCreationException("Service of type {$class} needed by $methodName not found. Did you register it in configuration file?");
 					} else {
 						throw new ServiceCreationException("Class {$class} needed by $methodName not found. Check type hint and 'use' statements.");
