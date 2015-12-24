@@ -149,6 +149,16 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
+	 * Removes the specified alias.
+	 * @return void
+	 */
+	public function removeAlias($alias)
+	{
+		unset($this->aliases[$alias]);
+	}
+
+
+	/**
 	 * Gets all service aliases.
 	 * @return array
 	 */
