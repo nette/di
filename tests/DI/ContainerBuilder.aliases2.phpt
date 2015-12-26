@@ -41,6 +41,22 @@ $builder->addDefinition('service')
 $builder->addAlias('aliased.service', 'service');
 $builder->addAlias('aliased.serviceFactory', 'serviceFactory');
 $builder->addAlias('aliased.serviceFactoryViaClass', 'serviceFactoryViaClass');
+$builder->addAlias('aliased.serviceToRemove', 'service');
+
+Assert::same([
+	'aliased.service' => 'service',
+	'aliased.serviceFactory' => 'serviceFactory',
+	'aliased.serviceFactoryViaClass' => 'serviceFactoryViaClass',
+	'aliased.serviceToRemove' => 'service',
+], $builder->getAliases());
+
+$builder->removeAlias('aliased.serviceToRemove');
+
+Assert::same([
+	'aliased.service' => 'service',
+	'aliased.serviceFactory' => 'serviceFactory',
+	'aliased.serviceFactoryViaClass' => 'serviceFactoryViaClass',
+], $builder->getAliases());
 
 // Access to service definition using alias
 Assert::true($builder->hasDefinition('aliased.service'));
