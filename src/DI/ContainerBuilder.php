@@ -780,7 +780,7 @@ class ContainerBuilder extends Nette\Object
 			} elseif (substr($val, 0, 2) === '@@') {
 				$val = substr($val, 1);
 
-			} elseif (substr($val, 0, 1) === '@') {
+			} elseif (substr($val, 0, 1) === '@' && strlen($val) > 1) {
 				$pair = explode('::', $val, 2);
 				$name = $that->getServiceName($pair[0]);
 				if (isset($pair[1]) && preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) {
