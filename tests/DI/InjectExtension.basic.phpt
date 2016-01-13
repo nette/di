@@ -45,7 +45,7 @@ class LastExtension extends DI\CompilerExtension
 	function beforeCompile()
 	{
 		// note that services should be added in loadConfiguration()
-		$this->getContainerBuilder()->addDefinition('one')
+		$this->getContainerBuilder()->addDefinition($this->prefix('one'))
 			->setClass('Service')
 			->setInject(TRUE);
 	}
@@ -54,8 +54,12 @@ class LastExtension extends DI\CompilerExtension
 
 $compiler = new DI\Compiler;
 $compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
+$compiler->addExtension('extensions', new Nette\DI\Extensions\ExtensionsExtension);
 $compiler->addExtension('last', new LastExtension);
 $container = createContainer($compiler, '
+extensions:
+	ext: LastExtension
+
 services:
 	- stdClass
 	two:
@@ -75,7 +79,16 @@ Assert::equal([
 	new Statement(['@self', 'injectC']),
 	new Statement(['@self', '$c'], ['@\\stdClass']),
 	new Statement(['@self', '$a'], ['@\\stdClass']),
-], $builder->getDefinition('one')->getSetup());
+], $builder->getDefinition('last.one')->getSetup());
+
+Assert::equal([
+	new Statement(['@self', 'injectB']),
+	new Statement(['@self', 'injectA']),
+	new Statement(['@self', 'injectD']),
+	new Statement(['@self', 'injectC']),
+	new Statement(['@self', '$c'], ['@\\stdClass']),
+	new Statement(['@self', '$a'], ['@\\stdClass']),
+], $builder->getDefinition('ext.one')->getSetup());
 
 Assert::equal([
 	new Statement(['@self', 'injectB'], [1]),
