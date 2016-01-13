@@ -155,9 +155,6 @@ class Compiler extends Nette\Object
 	/** @internal */
 	public function processExtensions()
 	{
-		$last = $this->getExtensions('Nette\DI\Extensions\InjectExtension');
-		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
-
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
 
@@ -165,6 +162,9 @@ class Compiler extends Nette\Object
 			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : array());
 			$extension->loadConfiguration();
 		}
+
+		$last = $this->getExtensions('Nette\DI\Extensions\InjectExtension');
+		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$extensions = array_diff_key($this->extensions, $first);
 		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
