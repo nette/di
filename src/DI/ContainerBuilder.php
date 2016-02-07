@@ -35,7 +35,7 @@ class ContainerBuilder extends Nette\Object
 	private $aliases = [];
 
 	/** @var array for auto-wiring */
-	private $classes;
+	private $classes = FALSE;
 
 	/** @var string[] of classes excluded from auto-wiring */
 	private $excludedClasses = [];
@@ -77,14 +77,6 @@ class ContainerBuilder extends Nette\Object
 	{
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		unset($this->definitions[$name]);
-
-		if ($this->classes) {
-			foreach ($this->classes as & $tmp) {
-				foreach ($tmp as & $names) {
-					$names = array_values(array_diff($names, [$name]));
-				}
-			}
-		}
 	}
 
 
@@ -207,15 +199,16 @@ class ContainerBuilder extends Nette\Object
 			}
 		}
 
-		if (empty($this->classes[$class][TRUE])) {
+		$classes = $this->getClassList();
+		if (empty($classes[$class][TRUE])) {
 			self::checkCase($class);
 			return;
 
-		} elseif (count($this->classes[$class][TRUE]) === 1) {
-			return $this->classes[$class][TRUE][0];
+		} elseif (count($classes[$class][TRUE]) === 1) {
+			return $classes[$class][TRUE][0];
 
 		} else {
-			$list = $this->classes[$class][TRUE];
+			$list = $classes[$class][TRUE];
 			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
 				: '';
@@ -234,8 +227,9 @@ class ContainerBuilder extends Nette\Object
 		$class = ltrim($class, '\\');
 		self::checkCase($class);
 		$found = [];
-		if (!empty($this->classes[$class])) {
-			foreach (array_merge(...array_values($this->classes[$class])) as $name) {
+		$classes = $this->getClassList();
+		if (!empty($classes[$class])) {
+			foreach (array_merge(...array_values($classes[$class])) as $name) {
 				$found[$name] = $this->definitions[$name];
 			}
 		}
@@ -257,6 +251,17 @@ class ContainerBuilder extends Nette\Object
 			}
 		}
 		return $found;
+	}
+
+
+	private function getClassList()
+	{
+		static $prev;
+		if ($this->classes !== FALSE && $prev !== serialize($this->definitions)) {
+			$this->prepareClassList();
+			$prev = serialize($this->definitions);
+		}
+		return $this->classes ?: [];
 	}
 
 
