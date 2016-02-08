@@ -53,3 +53,9 @@ Assert::count(2, $builder->findByType('stdClass'));
 $builder->removeDefinition('three');
 
 Assert::count(1, $builder->findByType('stdClass'));
+
+
+$builder->addDefinition('one')
+	->setClass('stdClass');
+
+Assert::count(2, $builder->findByType('stdClass'));
