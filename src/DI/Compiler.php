@@ -203,11 +203,16 @@ class Compiler extends Nette\Object
 	public function generateCode($className, $parentName = NULL)
 	{
 		$this->builder->prepareClassList();
+		$state = serialize($this->builder->getDefinitions());
 
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
 			$rc = new \ReflectionClass($extension);
 			$this->dependencies[] = $rc->getFileName();
+			if ($state !== serialize($this->builder->getDefinitions())) {
+				$this->builder->prepareClassList();
+				$state = serialize($this->builder->getDefinitions());
+			}
 		}
 
 		$classes = $this->builder->generateClasses($className, $parentName);
