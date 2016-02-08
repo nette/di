@@ -40,7 +40,7 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 	 */
 	public function getTab()
 	{
-		ob_start(NULL, 0, PHP_OUTPUT_HANDLER_REMOVABLE);
+		ob_start();
 		$elapsedTime = $this->elapsedTime;
 		require __DIR__ . '/templates/ContainerPanel.tab.phtml';
 		return ob_get_clean();
@@ -68,7 +68,7 @@ class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
 			}
 		}
 
-		ob_start(NULL, 0, PHP_OUTPUT_HANDLER_REMOVABLE);
+		ob_start();
 		require __DIR__ . '/templates/ContainerPanel.panel.phtml';
 		return ob_get_clean();
 	}
