@@ -59,18 +59,21 @@ class ContainerLoader
 	private function loadFile(string $class, callable $generator): void
 	{
 		$file = "$this->tempDirectory/$class.php";
+
+		$lock = null;
+		if (defined('PHP_WINDOWS_VERSION_BUILD') && ($lock = @fopen("$file.lock", 'c'))) { // @ - file may not exist
+			flock($lock, LOCK_SH);
+		}
+
 		if (!$this->isExpired($file) && (@include $file) !== false) { // @ file may not exist
 			return;
 		}
 
 		Nette\Utils\FileSystem::createDir($this->tempDirectory);
 
-		$handle = @fopen("$file.lock", 'c+'); // @ is escalated to exception
-		if (!$handle) {
-			throw new Nette\IOException(sprintf("Unable to create file '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
-		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
-			// the lock will automatically be freed when $handle goes out of scope
-			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
+		$lock = $lock ?: fopen("$file.lock", 'c');
+		if (!$lock || !flock($lock, LOCK_EX)) {
+			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'.");
 		}
 
 		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
