@@ -5,7 +5,7 @@ namespace Test\Space;
 
 class Foo {}
 
-use AAA;
+use \AAA;
 use BBB as B;
 use CCC\DDD;
 use EEE\FFF as F;

@@ -177,8 +177,9 @@ class PhpReflection
 
 				case T_USE:
 					while (!$class && ($name = self::fetch($tokens, [T_STRING, T_NS_SEPARATOR]))) {
+						$name = ltrim($name, '\\');
 						if (self::fetch($tokens, T_AS)) {
-							$uses[self::fetch($tokens, T_STRING)] = ltrim($name, '\\');
+							$uses[self::fetch($tokens, T_STRING)] = $name;
 						} else {
 							$tmp = explode('\\', $name);
 							$uses[end($tmp)] = $name;
