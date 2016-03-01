@@ -238,3 +238,21 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->generateClasses();
 }, Nette\InvalidStateException::class, 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');
+
+class WrongNameParameter1
+{
+	public function __construct(Bar $bar)
+	{
+	}
+}
+
+interface WrongNameParameter2
+{
+	public function create(Bar $bars);
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('WrongNameParameter2')->setFactory('WrongNameParameter1');
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, 'Parameter $bars in WrongNameParameter2::create() should be renamed to $bar.');
