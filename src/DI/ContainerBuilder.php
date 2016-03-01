@@ -416,6 +416,12 @@ class ContainerBuilder extends Nette\Object
 						throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::$methodName() doesn't match type hint in $class constructor.");
 					}
 					$def->getFactory()->arguments[$arg->getPosition()] = self::literal('$' . $arg->getName());
+				} else if (class_exists($hint)) {
+					foreach ($ctorParams as $ref) {
+						if ($hint === PhpReflection::getParameterType($ref)) {
+							throw new ServiceCreationException("Parameter \${$param->getName()} in $interface::$methodName() should be renamed to \${$ref->getName()}.");
+						}
+					}
 				}
 				$paramDef = $hint . ' ' . $param->getName();
 				if ($param->isOptional()) {
