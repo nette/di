@@ -177,7 +177,7 @@ $container = new $class;
 and then use container to create object `NewsletterManager` and we can send e-mails:
 
 ```php
-$manager = $container->getByType('NewsletterManager');
+$manager = $container->getByType(NewsletterManager::class);
 $manager->distribute(['john@example.com', ...]);
 ```
 
