@@ -262,6 +262,11 @@ class Compiler extends Nette\Object
 				$name = ($namespace ? $namespace . '.' : '') . strtr($origName, '\\', '_');
 			}
 
+			if ($def === FALSE) {
+				$builder->removeDefinition($name);
+				continue;
+			}
+
 			$params = $builder->parameters;
 			if (is_array($def) && isset($def['parameters'])) {
 				foreach ((array) $def['parameters'] as $k => $v) {
