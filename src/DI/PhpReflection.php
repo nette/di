@@ -118,7 +118,7 @@ class PhpReflection
 		} elseif (self::isBuiltinType($lower)) {
 			return $lower;
 
-		} elseif ($lower === 'self' || $lower === 'static') {
+		} elseif ($lower === 'self' || $lower === 'static' || $lower === '$this') {
 			return $rc->getName();
 
 		} elseif ($name[0] === '\\') { // fully qualified name
