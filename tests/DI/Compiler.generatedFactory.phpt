@@ -238,3 +238,43 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->generateClasses();
 }, Nette\InvalidStateException::class, 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');
+
+
+
+class Bad3
+{
+	public function __construct($bar)
+	{
+	}
+}
+
+interface Bad4
+{
+	public function create($baz);
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('Bad4')->setFactory('Bad3');
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad4::create(), did you mean $bar?');
+
+
+
+class Bad5
+{
+	public function __construct($xxx)
+	{
+	}
+}
+
+interface Bad6
+{
+	public function create($baz);
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setImplement('Bad6')->setFactory('Bad5');
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad6::create().');
