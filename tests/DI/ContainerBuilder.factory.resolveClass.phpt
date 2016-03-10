@@ -40,6 +40,27 @@ namespace B
 
 }
 
+namespace C
+{
+	class SelfFactory
+	{
+		/** @return self */
+		static function create()
+		{
+			return new self;
+		}
+	}
+
+	class ThisFactory
+	{
+		/** @return $this */
+		static function create()
+		{
+			return new self;
+		}
+	}
+}
+
 namespace
 {
 	use Nette\DI;
@@ -78,6 +99,12 @@ namespace
 	$builder->addDefinition('six')
 		->setFactory('@four::createBar');
 
+	$builder->addDefinition('seven')
+		->setFactory('C\SelfFactory::create');
+
+	$builder->addDefinition('eight')
+		->setFactory('C\ThisFactory::create');
+
 
 	$container = createContainer($builder);
 
@@ -93,4 +120,7 @@ namespace
 
 	Assert::type('A\Foo', $container->getByType('A\Foo'));
 	Assert::type('B\Bar', $container->getByType('B\Bar'));
+
+	Assert::type('C\SelfFactory', $container->getByType('C\SelfFactory'));
+	Assert::type('C\ThisFactory', $container->getByType('C\ThisFactory'));
 }
