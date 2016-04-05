@@ -16,6 +16,7 @@ use Nette;
  */
 class Helpers
 {
+	use Nette\StaticClass;
 
 	/**
 	 * Expands %placeholders%.

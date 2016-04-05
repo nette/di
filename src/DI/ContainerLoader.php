@@ -13,8 +13,10 @@ use Nette;
 /**
  * DI container loader.
  */
-class ContainerLoader extends Nette\Object
+class ContainerLoader
 {
+	use Nette\SmartObject;
+
 	/** @var bool */
 	private $autoRebuild = FALSE;
 

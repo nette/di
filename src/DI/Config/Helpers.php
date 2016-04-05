@@ -7,15 +7,19 @@
 
 namespace Nette\DI\Config;
 
+use Nette;
+
 
 /**
  * Configuration helpers.
  */
 class Helpers
 {
-	const EXTENDS_KEY = '_extends',
-		OVERWRITE = TRUE;
+	use Nette\StaticClass;
 
+	const
+		EXTENDS_KEY = '_extends',
+		OVERWRITE = TRUE;
 
 	/**
 	 * Merges configurations. Left has higher priority than right one.

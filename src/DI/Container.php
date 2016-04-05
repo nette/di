@@ -13,8 +13,10 @@ use Nette;
 /**
  * The dependency injection container default implementation.
  */
-class Container extends Nette\Object
+class Container
 {
+	use Nette\SmartObject;
+
 	const TAGS = 'tags';
 	const TYPES = 'types';
 	const SERVICES = 'services';

@@ -17,8 +17,10 @@ use ReflectionClass;
 /**
  * Basic container builder.
  */
-class ContainerBuilder extends Nette\Object
+class ContainerBuilder
 {
+	use Nette\SmartObject;
+
 	const THIS_SERVICE = 'self',
 		THIS_CONTAINER = 'container';
 

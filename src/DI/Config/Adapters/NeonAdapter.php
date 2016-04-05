@@ -16,8 +16,10 @@ use Nette\Neon;
 /**
  * Reading and generating NEON files.
  */
-class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
+class NeonAdapter implements Nette\DI\Config\IAdapter
 {
+	use Nette\SmartObject;
+
 	/** @internal */
 	const INHERITING_SEPARATOR = '<', // child < parent
 		PREVENT_MERGING = '!';

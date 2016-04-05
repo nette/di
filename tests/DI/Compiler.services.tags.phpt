@@ -29,7 +29,6 @@ $prop->setAccessible(TRUE);
 Assert::same([
 	'types' => [
 		'stdClass' => [1 => ['lorem']],
-		Nette\Object::class => [1 => ['container']],
 		Nette\DI\Container::class => [1 => ['container']],
 	],
 	'services' => ['container' => Nette\DI\Container::class, 'lorem' => 'stdClass'],

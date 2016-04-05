@@ -13,8 +13,10 @@ use Nette;
 /**
  * Definition used by ContainerBuilder.
  */
-class ServiceDefinition extends Nette\Object
+class ServiceDefinition
 {
+	use Nette\SmartObject;
+
 	/** @var string|NULL  class or interface name */
 	private $class;
 

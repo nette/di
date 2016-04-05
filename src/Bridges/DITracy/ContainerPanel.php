@@ -15,8 +15,10 @@ use Tracy;
 /**
  * Dependency injection container panel for Debugger Bar.
  */
-class ContainerPanel extends Nette\Object implements Tracy\IBarPanel
+class ContainerPanel implements Tracy\IBarPanel
 {
+	use Nette\SmartObject;
+
 	/** @var int */
 	public static $compilationTime;
 

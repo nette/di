@@ -13,8 +13,10 @@ use Nette;
 /**
  * Configurator compiling extension.
  */
-abstract class CompilerExtension extends Nette\Object
+abstract class CompilerExtension
 {
+	use Nette\SmartObject;
+
 	/** @var Compiler */
 	protected $compiler;
 

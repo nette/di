@@ -16,6 +16,8 @@ use Nette;
  */
 class PhpReflection
 {
+	use Nette\StaticClass;
+
 	/** @var array  for expandClassName() */
 	private static $cache = [];
 

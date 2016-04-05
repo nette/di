@@ -14,8 +14,10 @@ use Nette\Utils\Validators;
 /**
  * DI container compiler.
  */
-class Compiler extends Nette\Object
+class Compiler
 {
+	use Nette\SmartObject;
+
 	/** @var CompilerExtension[] */
 	private $extensions = [];
 

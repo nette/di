@@ -13,8 +13,10 @@ use Nette;
 /**
  * Assignment or calling statement.
  */
-class Statement extends Nette\Object
+class Statement
 {
+	use Nette\SmartObject;
+
 	/** @var string|array|ServiceDefinition|NULL  class|method|$property */
 	private $entity;
 
