@@ -11,7 +11,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-class Service extends Nette\Object
+class Service
 {
 }
 

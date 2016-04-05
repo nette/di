@@ -117,16 +117,16 @@ class NeonAdapter extends Nette\Object implements Nette\DI\Config\IAdapter
 				}
 			}
 		);
-		if (is_array($val->entity) && $val->entity[0] instanceof Statement) {
+		if (is_array($val->getEntity()) && $val->getEntity()[0] instanceof Statement) {
 			return new Neon\Entity(
 				Neon\Neon::CHAIN,
 				[
-					self::statementToEntity($val->entity[0]),
-					new Neon\Entity('::' . $val->entity[1], $val->arguments)
+					self::statementToEntity($val->getEntity()[0]),
+					new Neon\Entity('::' . $val->getEntity()[1], $val->arguments)
 				]
 			);
 		} else {
-			return new Neon\Entity($val->entity, $val->arguments);
+			return new Neon\Entity($val->getEntity(), $val->arguments);
 		}
 	}
 

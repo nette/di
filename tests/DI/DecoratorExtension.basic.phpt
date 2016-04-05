@@ -18,7 +18,7 @@ interface Iface
 }
 
 
-class Service extends Nette\Object implements Iface
+class Service extends stdClass implements Iface
 {
 
 	public $setup;
@@ -34,7 +34,7 @@ $compiler = new DI\Compiler;
 $compiler->addExtension('decorator', new Nette\DI\Extensions\DecoratorExtension);
 $container = createContainer($compiler, '
 decorator:
-	Nette\Object:
+	stdClass:
 		setup:
 			- setup(Object)
 		inject: yes

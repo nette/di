@@ -23,7 +23,7 @@ services:
 ');
 
 
-$prop = $container->getReflection()->getProperty('meta');
+$prop = (new ReflectionClass($container))->getProperty('meta');
 $prop->setAccessible(TRUE);
 
 Assert::same([

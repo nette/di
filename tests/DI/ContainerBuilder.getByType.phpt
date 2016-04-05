@@ -11,7 +11,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-class Service extends Nette\Object
+class Service extends stdClass
 {
 }
 
@@ -19,7 +19,7 @@ class Child extends Service
 {
 }
 
-class Service2 extends Nette\Object
+class Service2 extends stdClass
 {
 }
 
@@ -49,8 +49,8 @@ Assert::null($builder->getByType('Child'));
 Assert::same('two', $builder->getByType('Service2'));
 
 Assert::exception(function () use ($builder) {
-	$builder->getByType(Nette\Object::class);
-}, Nette\DI\ServiceCreationException::class, 'Multiple services of type Nette\Object found: one, two, container');
+	$builder->getByType(stdClass::class);
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: one, two');
 
 Assert::null($builder->getByType('unknown'));
 
