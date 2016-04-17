@@ -12,6 +12,10 @@ use Nette;
 
 /**
  * Definition used by ContainerBuilder.
+ *
+ * @property $class
+ * @property $factory
+ * @property-read $entity
  */
 class ServiceDefinition
 {
