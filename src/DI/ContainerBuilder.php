@@ -494,9 +494,14 @@ class ContainerBuilder
 			return $this->definitions[$service]->getImplement() ?: $this->resolveServiceClass($service, $recursive);
 
 		} elseif (is_string($entity)) {
-			if (!class_exists($entity) || !(new ReflectionClass($entity))->isInstantiable()) {
-				$name = array_slice(array_keys($recursive), -1);
-				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found or is not instantiable.");
+			$name = array_slice(array_keys($recursive), -1);
+			if (!class_exists($entity)) {
+				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found.");
+			} elseif ((new ReflectionClass($entity))->isAbstract()) {
+				throw new ServiceCreationException("Class $entity used in service '$name[0]' is abstract.");
+			} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== NULL && !$rm->isPublic()) {
+				$visibility = $rm->isProtected() ? 'protected' : 'private';
+				throw new ServiceCreationException("Class $entity used in service '$name[0]' has $visibility constructor.");
 			}
 			return ltrim($entity, '\\');
 		}

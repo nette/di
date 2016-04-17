@@ -15,7 +15,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setClass('X')->setFactory('Unknown');
 	$builder->generateClasses();
-}, Nette\InvalidStateException::class, "Class Unknown used in service 'one' not found or is not instantiable.");
+}, Nette\InvalidStateException::class, "Class Unknown used in service 'one' not found.");
 
 
 Assert::exception(function () {
@@ -23,7 +23,7 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setFactory('@two');
 	$builder->addDefinition('two')->setFactory('Unknown');
 	$builder->generateClasses();
-}, Nette\InvalidStateException::class, "Class Unknown used in service 'two' not found or is not instantiable.");
+}, Nette\InvalidStateException::class, "Class Unknown used in service 'two' not found.");
 
 
 Assert::exception(function () {
@@ -132,3 +132,29 @@ Assert::error(function () {
 	$builder->addDefinition('one')->setFactory('Bad7::create');
 	$builder->generateClasses();
 }, E_USER_NOTICE, "Type of service 'one' is unknown.");
+
+
+class Bad8
+{
+	private function __construct()
+	{}
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setClass('Bad8');
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, "Class Bad8 used in service 'one' has private constructor.");
+
+
+abstract class Bad9
+{
+	protected function __construct()
+	{}
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setClass('Bad9');
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, "Class Bad9 used in service 'one' is abstract.");
