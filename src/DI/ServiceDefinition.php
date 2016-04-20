@@ -12,6 +12,10 @@ use Nette;
 
 /**
  * Definition used by ContainerBuilder.
+ *
+ * @property string|NULL $class
+ * @property Statement|NULL $factory
+ * @property Statement[] $setup
  */
 class ServiceDefinition
 {

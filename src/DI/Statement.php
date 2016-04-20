@@ -12,6 +12,8 @@ use Nette;
 
 /**
  * Assignment or calling statement.
+ *
+ * @property string|array|ServiceDefinition|NULL $entity
  */
 class Statement
 {
