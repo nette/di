@@ -48,7 +48,7 @@ define('PRIVATE_VALUE', 'foo.bar');
 $compiler = new DI\Compiler;
 $compiler->getContainerBuilder()->addDefinition('outer')->setClass('stdClass');
 
-$container = createContainer($compiler, '
+$container = @createContainer($compiler, '
 services:
 	subchild < child:
 		factory: SubChildService()

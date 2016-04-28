@@ -266,6 +266,7 @@ class Compiler
 			$def = Helpers::expand($def, $params);
 
 			if (($parent = Config\Helpers::takeParent($def)) && $parent !== $name) {
+				trigger_error("Section inheritance $name < $parent is deprecated.", E_USER_DEPRECATED);
 				$builder->removeDefinition($name);
 				$definition = $builder->addDefinition(
 					$name,
