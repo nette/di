@@ -165,4 +165,28 @@ class Helpers
 		return $args;
 	}
 
+
+	/**
+	 * Replaces @extension with real extension name in service definition.
+	 * @param  mixed
+	 * @param  string
+	 * @return mixed
+	 */
+	public static function prefixServiceName($config, $namespace)
+	{
+		if (is_string($config)) {
+			if (strncmp($config, '@extension.', 10) === 0) {
+				$config = '@' . $namespace . '.' . substr($config, 11);
+			}
+		} elseif ($config instanceof Statement) {
+			$config->setEntity(self::prefixServiceName($config->getEntity(), $namespace));
+			$config->arguments = self::prefixServiceName($config->arguments, $namespace);
+		} elseif (is_array($config)) {
+			foreach ($config as $key => &$val) {
+				$val = self::prefixServiceName($val, $namespace);
+			}
+		}
+		return $config;
+	}
+
 }
