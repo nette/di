@@ -94,3 +94,15 @@ test(function () {
 	Assert::equal([1, 2], $def->getTag('tag2'));
 	Assert::equal(NULL, $def->getTag('tag3'));
 });
+
+test(function () { // deep clone
+	$def = new ServiceDefinition;
+	$def->setFactory(new Statement('Class', [1, 2]));
+	$def->addSetup(new Statement('Class', [1, 2]));
+
+	$dolly = clone $def;
+	Assert::notSame($dolly->getFactory(), $def->getFactory());
+	Assert::equal($dolly->getFactory(), $def->getFactory());
+	Assert::notSame($dolly->getSetup(), $def->getSetup());
+	Assert::equal($dolly->getSetup(), $def->getSetup());
+});
