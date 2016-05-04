@@ -302,4 +302,11 @@ class ServiceDefinition
 		return $this->getTag(Extensions\InjectExtension::TAG_INJECT);
 	}
 
+
+	public function __clone()
+	{
+		$this->factory = unserialize(serialize($this->factory));
+		$this->setup = unserialize(serialize($this->setup));
+	}
+
 }

@@ -273,7 +273,7 @@ class Compiler
 				$builder->removeDefinition($name);
 				$definition = $builder->addDefinition(
 					$name,
-					$parent === Config\Helpers::OVERWRITE ? NULL : unserialize(serialize($builder->getDefinition($parent))) // deep clone
+					$parent === Config\Helpers::OVERWRITE ? NULL : clone $builder->getDefinition($parent)
 				);
 			} elseif ($builder->hasDefinition($name)) {
 				$definition = $builder->getDefinition($name);
