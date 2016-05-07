@@ -18,6 +18,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 	public $defaults = [
 		'debugger' => FALSE,
 		'accessors' => FALSE,
+		'excluded' => [],
 	];
 
 	/** @var bool */
@@ -37,9 +38,11 @@ class DIExtension extends Nette\DI\CompilerExtension
 	public function loadConfiguration()
 	{
 		$config = $this->validateConfig($this->defaults);
+		$builder = $this->getContainerBuilder();
 		if ($config['accessors']) {
-			$this->getContainerBuilder()->parameters['container']['accessors'] = TRUE;
+			$builder->parameters['container']['accessors'] = TRUE;
 		}
+		$builder->addExcludedClasses($config['excluded']);
 	}
 
 

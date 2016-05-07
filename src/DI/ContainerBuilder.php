@@ -340,8 +340,10 @@ class ContainerBuilder
 		//  build auto-wiring list
 		$excludedClasses = [];
 		foreach ($this->excludedClasses as $class) {
-			self::checkCase($class);
-			$excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
+			if (class_exists($class) || interface_exists($class)) {
+				self::checkCase($class);
+				$excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
+			}
 		}
 
 		$this->classes = [];
