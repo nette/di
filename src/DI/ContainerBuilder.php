@@ -641,12 +641,14 @@ class ContainerBuilder
 			);
 		}
 
-		foreach ($def->getSetup() as $setup) {
+		$setups = $def->getSetup();
+		foreach ($setups as & $setup) {
 			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
-				$setup->setEntity(['@self', $setup->getEntity()]);
+				$setup = new Statement(['@self', $setup->getEntity()], $setup->arguments);
 			}
 			$code .= $this->formatStatement($setup) . ";\n";
 		}
+		$def->setSetup($setups);
 		$this->currentService = NULL;
 
 		$code .= 'return $service;';
