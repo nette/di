@@ -349,11 +349,38 @@ class ContainerBuilder
 		}
 
 		//  build auto-wiring list
-		$this->classList = [];
+		$this->classList = $preferred = [];
 		foreach ($this->definitions as $name => $def) {
 			if ($class = $def->getImplement() ?: $def->getClass()) {
+				$defAutowired = $def->getAutowired();
+				if (is_array($defAutowired)) {
+					foreach ($defAutowired as $k => $aclass) {
+						if ($aclass === self::THIS_SERVICE) {
+							$defAutowired[$k] = $class;
+						} elseif (!is_a($class, $aclass, TRUE)) {
+							throw new ServiceCreationException("Incompatible class $aclass in autowiring definition of service '$name'.");
+						}
+					}
+				}
+
 				foreach (class_parents($class) + class_implements($class) + [$class] as $parent) {
-					$this->classList[$parent][$def->isAutowired() && empty($this->excludedClasses[$parent])][] = (string) $name;
+					$autowired = $defAutowired && empty($this->excludedClasses[$parent]);
+					if ($autowired && is_array($defAutowired)) {
+						$autowired = FALSE;
+						foreach ($defAutowired as $aclass) {
+							if (is_a($parent, $aclass, TRUE)) {
+								if (empty($preferred[$parent]) && isset($this->classList[$parent][TRUE])) {
+									$this->classList[$parent][FALSE] = array_merge(...$this->classList[$parent]);
+									$this->classList[$parent][TRUE] = [];
+								}
+								$preferred[$parent] = $autowired = TRUE;
+								break;
+							}
+						}
+					} elseif (isset($preferred[$parent])) {
+						$autowired = FALSE;
+					}
+					$this->classList[$parent][$autowired][] = (string) $name;
 				}
 			}
 		}
@@ -455,7 +482,7 @@ class ContainerBuilder
 			}
 			self::checkCase($class);
 
-		} elseif ($def->isAutowired()) {
+		} elseif ($def->getAutowired()) {
 			trigger_error("Type of service '$name' is unknown.", E_USER_NOTICE);
 		}
 		return $class;
