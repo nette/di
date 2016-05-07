@@ -179,10 +179,12 @@ class Helpers
 				$config = '@' . $namespace . '.' . substr($config, 11);
 			}
 		} elseif ($config instanceof Statement) {
-			$config->setEntity(self::prefixServiceName($config->getEntity(), $namespace));
-			$config->arguments = self::prefixServiceName($config->arguments, $namespace);
+			return new Statement(
+				self::prefixServiceName($config->getEntity(), $namespace),
+				self::prefixServiceName($config->arguments, $namespace)
+			);
 		} elseif (is_array($config)) {
-			foreach ($config as $key => &$val) {
+			foreach ($config as & $val) {
 				$val = self::prefixServiceName($val, $namespace);
 			}
 		}

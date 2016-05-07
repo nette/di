@@ -70,8 +70,8 @@ Assert::same(
 Assert::true($builder->getDefinition('one')->getTag('inject'));
 
 Assert::equal([
-	new Statement(['@self', 'setup'], ['Service']),
-	new Statement(['@self', 'setup'], ['Object']),
-	new Statement(['@self', 'setup'], ['Iface']),
-	new Statement(['@self', 'setup']),
+	new Statement('setup', ['Service']),
+	new Statement('setup', ['Object']),
+	new Statement('setup', ['Iface']),
+	new Statement('setup'),
 ], $builder->getDefinition('one')->getSetup());

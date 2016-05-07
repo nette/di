@@ -643,7 +643,7 @@ class ContainerBuilder
 
 		foreach ($def->getSetup() as $setup) {
 			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
-				$setup->setEntity(['@self', $setup->getEntity()]);
+				$setup = new Statement(['@self', $setup->getEntity()], $setup->arguments);
 			}
 			$code .= $this->formatStatement($setup) . ";\n";
 		}

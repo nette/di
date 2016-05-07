@@ -73,28 +73,28 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
-	new Statement(['@self', 'injectB']),
-	new Statement(['@self', 'injectA']),
-	new Statement(['@self', 'injectD']),
-	new Statement(['@self', 'injectC']),
-	new Statement(['@self', '$c'], ['@\\stdClass']),
-	new Statement(['@self', '$a'], ['@\\stdClass']),
+	new Statement('injectB'),
+	new Statement('injectA'),
+	new Statement('injectD'),
+	new Statement('injectC'),
+	new Statement('$c', ['@\\stdClass']),
+	new Statement('$a', ['@\\stdClass']),
 ], $builder->getDefinition('last.one')->getSetup());
 
 Assert::equal([
-	new Statement(['@self', 'injectB']),
-	new Statement(['@self', 'injectA']),
-	new Statement(['@self', 'injectD']),
-	new Statement(['@self', 'injectC']),
-	new Statement(['@self', '$c'], ['@\\stdClass']),
-	new Statement(['@self', '$a'], ['@\\stdClass']),
+	new Statement('injectB'),
+	new Statement('injectA'),
+	new Statement('injectD'),
+	new Statement('injectC'),
+	new Statement('$c', ['@\\stdClass']),
+	new Statement('$a', ['@\\stdClass']),
 ], $builder->getDefinition('ext.one')->getSetup());
 
 Assert::equal([
-	new Statement(['@self', 'injectB'], [1]),
-	new Statement(['@self', 'injectA']),
-	new Statement(['@self', 'injectD']),
-	new Statement(['@self', 'injectC']),
-	new Statement(['@self', '$c'], ['@\\stdClass']),
-	new Statement(['@self', '$a'], ['@\\stdClass']),
+	new Statement('injectB', [1]),
+	new Statement('injectA'),
+	new Statement('injectD'),
+	new Statement('injectC'),
+	new Statement('$c', ['@\\stdClass']),
+	new Statement('$a', ['@\\stdClass']),
 ], $builder->getDefinition('two')->getSetup());
