@@ -48,12 +48,17 @@ class ServiceDefinition
 	/** @var string|NULL  create | get */
 	private $implementType;
 
+	/** @var ContainerBuilder */
+	private $containerBuilder;
 
 	/**
 	 * @return self
 	 */
 	public function setClass($class, array $args = [])
 	{
+		if ($this->containerBuilder) {
+			$this->containerBuilder->invalidateClassList();
+		}
 		$this->class = $class ? ltrim($class, '\\') : NULL;
 		if ($args) {
 			$this->setFactory($class, $args);
@@ -76,6 +81,9 @@ class ServiceDefinition
 	 */
 	public function setFactory($factory, array $args = [])
 	{
+		if ($this->containerBuilder) {
+			$this->containerBuilder->invalidateClassList();
+		}
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
 		return $this;
 	}
@@ -210,6 +218,9 @@ class ServiceDefinition
 	 */
 	public function setAutowired($state = TRUE)
 	{
+		if ($this->containerBuilder) {
+			$this->containerBuilder->invalidateClassList();
+		}
 		$this->autowired = (bool) $state;
 		return $this;
 	}
@@ -250,6 +261,9 @@ class ServiceDefinition
 	 */
 	public function setImplement($interface)
 	{
+		if ($this->containerBuilder) {
+			$this->containerBuilder->invalidateClassList();
+		}
 		$this->implement = ltrim($interface, '\\');
 		return $this;
 	}
@@ -300,6 +314,16 @@ class ServiceDefinition
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		return $this->getTag(Extensions\InjectExtension::TAG_INJECT);
+	}
+
+
+	/**
+	 * @param ContainerBuilder
+	 * @internal
+	 */
+	public function setContainerBuilder(ContainerBuilder $containerBuilder)
+	{
+		$this->containerBuilder = $containerBuilder;
 	}
 
 

@@ -33,6 +33,9 @@ class ContainerBuilder
 	/** @var ServiceDefinition[] */
 	private $definitions = [];
 
+	/** @var bool */
+	private $classListObsolete = TRUE;
+
 	/** @var array of alias => service */
 	private $aliases = [];
 
@@ -59,6 +62,7 @@ class ContainerBuilder
 	 */
 	public function addDefinition($name, ServiceDefinition $definition = NULL)
 	{
+		$this->classListObsolete = TRUE;
 		if (!is_string($name) || !$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
@@ -66,7 +70,11 @@ class ContainerBuilder
 		if (isset($this->definitions[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' has already been added.");
 		}
-		return $this->definitions[$name] = $definition ?: new ServiceDefinition;
+		if (!$definition) {
+			$definition = new ServiceDefinition();
+		}
+		$definition->setContainerBuilder($this);
+		return $this->definitions[$name] = $definition ;
 	}
 
 
@@ -77,6 +85,7 @@ class ContainerBuilder
 	 */
 	public function removeDefinition($name)
 	{
+		$this->classListObsolete = TRUE;
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		unset($this->definitions[$name]);
 	}
@@ -258,10 +267,9 @@ class ContainerBuilder
 
 	private function getClassList()
 	{
-		static $prev;
-		if ($this->classes !== FALSE && $prev !== serialize($this->definitions)) {
+		if ($this->classes !== FALSE && $this->classListObsolete) {
 			$this->prepareClassList();
-			$prev = serialize($this->definitions);
+			$this->classListObsolete = FALSE;
 		}
 		return $this->classes ?: [];
 	}
@@ -890,6 +898,15 @@ class ContainerBuilder
 			throw new ServiceCreationException("Reference to missing service '$service'.");
 		}
 		return $service;
+	}
+
+
+	/**
+	 * @internal
+	 */
+	public function invalidateClassList()
+	{
+		$this->classListObsolete = TRUE;
 	}
 
 }
