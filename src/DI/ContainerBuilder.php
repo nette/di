@@ -39,6 +39,9 @@ class ContainerBuilder
 	/** @var array for auto-wiring */
 	private $classList = FALSE;
 
+	/** @var bool */
+	private $classListNeedsRefresh = TRUE;
+
 	/** @var string[] of classes excluded from auto-wiring */
 	private $excludedClasses = [];
 
@@ -59,6 +62,7 @@ class ContainerBuilder
 	 */
 	public function addDefinition($name, ServiceDefinition $definition = NULL)
 	{
+		$this->classListNeedsRefresh = TRUE;
 		if (!is_string($name) || !$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
@@ -66,7 +70,13 @@ class ContainerBuilder
 		if (isset($this->definitions[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' has already been added.");
 		}
-		return $this->definitions[$name] = $definition ?: new ServiceDefinition;
+		if (!$definition) {
+			$definition = new ServiceDefinition;
+		}
+		$definition->setNotifier(function () {
+			$this->classListNeedsRefresh = TRUE;
+		});
+		return $this->definitions[$name] = $definition;
 	}
 
 
@@ -77,6 +87,7 @@ class ContainerBuilder
 	 */
 	public function removeDefinition($name)
 	{
+		$this->classListNeedsRefresh = TRUE;
 		$name = isset($this->aliases[$name]) ? $this->aliases[$name] : $name;
 		unset($this->definitions[$name]);
 	}
@@ -258,10 +269,9 @@ class ContainerBuilder
 
 	private function getClassList()
 	{
-		static $prev;
-		if ($this->classList !== FALSE && $prev !== serialize($this->definitions)) {
+		if ($this->classList !== FALSE && $this->classListNeedsRefresh) {
 			$this->prepareClassList();
-			$prev = serialize($this->definitions);
+			$this->classListNeedsRefresh = FALSE;
 		}
 		return $this->classList ?: [];
 	}

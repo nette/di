@@ -48,12 +48,16 @@ class ServiceDefinition
 	/** @var string|NULL  create | get */
 	private $implementType;
 
+	/** @var callable */
+	private $notifier = 'pi'; // = noop
+
 
 	/**
 	 * @return self
 	 */
 	public function setClass($class, array $args = [])
 	{
+		call_user_func($this->notifier);
 		$this->class = $class ? ltrim($class, '\\') : NULL;
 		if ($args) {
 			$this->setFactory($class, $args);
@@ -76,6 +80,7 @@ class ServiceDefinition
 	 */
 	public function setFactory($factory, array $args = [])
 	{
+		call_user_func($this->notifier);
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
 		return $this;
 	}
@@ -210,6 +215,7 @@ class ServiceDefinition
 	 */
 	public function setAutowired($state = TRUE)
 	{
+		call_user_func($this->notifier);
 		$this->autowired = (bool) $state;
 		return $this;
 	}
@@ -250,6 +256,7 @@ class ServiceDefinition
 	 */
 	public function setImplement($interface)
 	{
+		call_user_func($this->notifier);
 		$this->implement = ltrim($interface, '\\');
 		return $this;
 	}
@@ -303,10 +310,20 @@ class ServiceDefinition
 	}
 
 
+	/**
+	 * @internal
+	 */
+	public function setNotifier(callable $notifier)
+	{
+		$this->notifier = $notifier;
+	}
+
+
 	public function __clone()
 	{
 		$this->factory = unserialize(serialize($this->factory));
 		$this->setup = unserialize(serialize($this->setup));
+		$this->notifier = 'pi';
 	}
 
 }
