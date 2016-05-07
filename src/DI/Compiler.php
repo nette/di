@@ -384,6 +384,7 @@ class Compiler
 		}
 
 		if (isset($config['run'])) {
+			trigger_error("Option 'run' is deprecated, use 'run' as tag.", E_USER_DEPRECATED);
 			$config['tags']['run'] = (bool) $config['run'];
 		}
 
