@@ -31,23 +31,21 @@ class Statement
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
-		$this->setEntity($entity);
-		$this->arguments = $arguments;
-	}
-
-
-	/**
-	 * @param  string|array|ServiceDefinition|NULL
-	 * @return self
-	 */
-	public function setEntity($entity)
-	{
 		if (!is_string($entity) && !(is_array($entity) && isset($entity[0], $entity[1]))
 			&& !$entity instanceof ServiceDefinition && $entity !== NULL
 		) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}
 		$this->entity = $entity;
+		$this->arguments = $arguments;
+	}
+
+
+	/** @deprecated */
+	public function setEntity($entity)
+	{
+		trigger_error(__METHOD__ . ' is deprecated, change Statement object itself.', E_USER_DEPRECATED);
+		$this->__construct($entity, $this->arguments);
 		return $this;
 	}
 
