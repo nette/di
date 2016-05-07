@@ -53,58 +53,58 @@ class FooExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$container = $this->getContainerBuilder();
+		$builder = $this->getContainerBuilder();
 
-		$container->addDefinition('one1')
+		$builder->addDefinition('one1')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one2')
+		$builder->addDefinition('one2')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one3')
+		$builder->addDefinition('one3')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one4')
+		$builder->addDefinition('one4')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one5')
+		$builder->addDefinition('one5')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one6')
+		$builder->addDefinition('one6')
 			->setClass('Lorem', [1]);
-		$container->addDefinition('one7')
+		$builder->addDefinition('one7')
 			->setClass('Lorem', [1]);
 
-		$container->addDefinition('two1')
+		$builder->addDefinition('two1')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two2')
+		$builder->addDefinition('two2')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two3')
+		$builder->addDefinition('two3')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two4')
+		$builder->addDefinition('two4')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two5')
+		$builder->addDefinition('two5')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two6')
+		$builder->addDefinition('two6')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('two7')
+		$builder->addDefinition('two7')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 
-		$container->addDefinition('three1')
+		$builder->addDefinition('three1')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three2')
+		$builder->addDefinition('three2')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three3')
+		$builder->addDefinition('three3')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three4')
+		$builder->addDefinition('three4')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three5')
+		$builder->addDefinition('three5')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three6')
+		$builder->addDefinition('three6')
 			->setFactory('Factory::createLorem', [1]);
-		$container->addDefinition('three7')
+		$builder->addDefinition('three7')
 			->setFactory('Factory::createLorem', [1]);
 	}
 

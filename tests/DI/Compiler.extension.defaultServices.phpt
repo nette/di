@@ -42,23 +42,23 @@ class FooExtension extends Nette\DI\CompilerExtension
 
 	public function beforeCompile()
 	{
-		$container = $this->getContainerBuilder();
+		$builder = $this->getContainerBuilder();
 
-		if (!$container->getByType('Foo')) {
+		if (!$builder->getByType('Foo')) {
 			Assert::fail('Foo service should be defined.');
 		}
-		if (!$container->getByType('IBar')) {
+		if (!$builder->getByType('IBar')) {
 			Assert::fail('IBar service should be defined.');
 		}
-		if (!$container->getByType('Lorem')) {
+		if (!$builder->getByType('Lorem')) {
 			Assert::fail('Lorem service should be defined.');
 		}
-		if (!$container->getByType('IIpsumFactory')) {
+		if (!$builder->getByType('IIpsumFactory')) {
 			Assert::fail('IIpsumFactory service should be defined.');
 		}
 
-		if (!$container->getByType('FooBar')) {
-			$container->addDefinition('five')->setClass('FooBar');
+		if (!$builder->getByType('FooBar')) {
+			$builder->addDefinition('five')->setClass('FooBar');
 		}
 	}
 
