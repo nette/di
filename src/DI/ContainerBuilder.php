@@ -37,7 +37,7 @@ class ContainerBuilder
 	private $aliases = [];
 
 	/** @var array for auto-wiring */
-	private $classes = FALSE;
+	private $classList = FALSE;
 
 	/** @var string[] of classes excluded from auto-wiring */
 	private $excludedClasses = [];
@@ -259,11 +259,11 @@ class ContainerBuilder
 	private function getClassList()
 	{
 		static $prev;
-		if ($this->classes !== FALSE && $prev !== serialize($this->definitions)) {
+		if ($this->classList !== FALSE && $prev !== serialize($this->definitions)) {
 			$this->prepareClassList();
 			$prev = serialize($this->definitions);
 		}
-		return $this->classes ?: [];
+		return $this->classList ?: [];
 	}
 
 
@@ -300,7 +300,7 @@ class ContainerBuilder
 		unset($this->definitions[self::THIS_CONTAINER]);
 		$this->addDefinition(self::THIS_CONTAINER)->setClass(Container::class);
 
-		$this->classes = FALSE;
+		$this->classList = FALSE;
 
 		foreach ($this->definitions as $name => $def) {
 			// prepare generated factories
@@ -346,16 +346,16 @@ class ContainerBuilder
 			}
 		}
 
-		$this->classes = [];
+		$this->classList = [];
 		foreach ($this->definitions as $name => $def) {
 			if ($class = $def->getImplement() ?: $def->getClass()) {
 				foreach (class_parents($class) + class_implements($class) + [$class] as $parent) {
-					$this->classes[$parent][$def->isAutowired() && empty($excludedClasses[$parent])][] = (string) $name;
+					$this->classList[$parent][$def->isAutowired() && empty($excludedClasses[$parent])][] = (string) $name;
 				}
 			}
 		}
 
-		foreach ($this->classes as $class => $foo) {
+		foreach ($this->classList as $class => $foo) {
 			$this->addDependency((string) (new ReflectionClass($class))->getFileName());
 		}
 	}
@@ -575,7 +575,7 @@ class ContainerBuilder
 
 		$meta = $containerClass->addProperty('meta')
 			->setVisibility('protected')
-			->setValue([Container::TYPES => $this->classes]);
+			->setValue([Container::TYPES => $this->classList]);
 
 		foreach ($definitions as $name => $def) {
 			$meta->value[Container::SERVICES][$name] = $def->getClass() ?: NULL;
@@ -878,7 +878,7 @@ class ContainerBuilder
 			$service = $this->currentService;
 		}
 		if (Strings::contains($service, '\\')) {
-			if ($this->classes === FALSE) { // may be disabled by prepareClassList
+			if ($this->classList === FALSE) { // may be disabled by prepareClassList
 				return $service;
 			}
 			$res = $this->getByType($service);
