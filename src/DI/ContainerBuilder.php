@@ -205,11 +205,10 @@ class ContainerBuilder
 	{
 		$class = ltrim($class, '\\');
 
-		if ($this->currentService !== NULL) {
-			$curClass = $this->definitions[$this->currentService]->getClass();
-			if ($curClass === $class || is_subclass_of($curClass, $class)) {
-				return $this->currentService;
-			}
+		if ($this->currentService !== NULL
+			&& is_a($this->definitions[$this->currentService]->getClass(), $class, TRUE)
+		) {
+			return $this->currentService;
 		}
 
 		$classes = $this->getClassList();
@@ -758,13 +757,16 @@ class ContainerBuilder
 			}
 			return $this->formatPhp("$inner->?(?*)", [$entity[1], $arguments]);
 
-		} elseif (Strings::contains($entity[1], '$')) { // property setter
-			Validators::assert($arguments, 'list:1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+		} elseif ($entity[1][0] === '$') { // property getter or setter
+			Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
 			if ($this->getServiceName($entity[0])) {
-				return $this->formatPhp('?->? = ?', [$entity[0], substr($entity[1], 1), $arguments[0]]);
+				$prop = $this->formatPhp('?->?', [$entity[0], substr($entity[1], 1)]);
 			} else {
-				return $this->formatPhp($entity[0] . '::$? = ?', [substr($entity[1], 1), $arguments[0]]);
+				$prop = $this->formatPhp($entity[0] . '::$?', [substr($entity[1], 1)]);
 			}
+			return $arguments
+				? $this->formatPhp("$prop = ?", [$arguments[0]])
+				: $prop;
 
 		} elseif ($service = $this->getServiceName($entity[0])) { // service method
 			$class = $this->definitions[$service]->getImplement();
@@ -810,8 +812,10 @@ class ContainerBuilder
 			} elseif (substr($val, 0, 1) === '@' && strlen($val) > 1) {
 				$pair = explode('::', $val, 2);
 				$name = $this->getServiceName($pair[0]);
-				if (isset($pair[1]) && preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) {
+				if (isset($pair[1]) && preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1])) {
 					$val = $this->getDefinition($name)->getClass() . '::' . $pair[1];
+				} elseif (isset($pair[1])) {
+					$val = $this->formatStatement(new Statement(['@' . $name, '$' . $pair[1]]));
 				} else {
 					if ($name === self::THIS_CONTAINER) {
 						$val = '$this';
@@ -820,7 +824,6 @@ class ContainerBuilder
 					} else {
 						$val = $this->formatStatement(new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$name]));
 					}
-					$val .= (isset($pair[1]) ? PhpHelpers::formatArgs('->?', [$pair[1]]) : '');
 				}
 				$val = self::literal($val);
 			}
@@ -876,8 +879,7 @@ class ContainerBuilder
 	 */
 	public function getServiceName($arg)
 	{
-		$arg = $this->normalizeEntity($arg);
-		if (!is_string($arg) || !preg_match('#^@[\w\\\\.].*\z#', $arg)) {
+		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
 			return FALSE;
 		}
 		$service = substr($arg, 1);
