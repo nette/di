@@ -37,7 +37,7 @@ class ContainerBuilder
 	private $aliases = [];
 
 	/** @var array for auto-wiring */
-	private $classList = FALSE;
+	private $classList = [];
 
 	/** @var bool */
 	private $classListNeedsRefresh = TRUE;

@@ -27,7 +27,6 @@ $builder->addDefinition('one')
 
 
 // compile-time
-$builder->prepareClassList();
 
 Assert::same('one', $builder->getByType('ParentClass'));
 

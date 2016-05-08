@@ -37,7 +37,6 @@ $builder->addDefinition('extension.one')
 	->setClass('stdClass');
 $builder->addDefinition('25_service')
 	->setClass('stdClass');
-$builder->prepareClassList();
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType(stdClass::class);

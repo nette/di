@@ -33,7 +33,6 @@ $builder->addDefinition('bar')
 		->setClass('Bar');
 $builder->addExcludedClasses(['Foo', 'IBar']);
 
-$builder->prepareClassList();
 
 Assert::same('bar', $builder->getByType('Bar'));
 Assert::null($builder->getByType('IBar'));

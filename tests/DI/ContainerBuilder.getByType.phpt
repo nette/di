@@ -37,9 +37,6 @@ $three = $builder->addDefinition('three')
 	->setAutowired(FALSE);
 
 
-Assert::null($builder->getByType('\Service'));
-
-$builder->prepareClassList();
 
 
 Assert::same('one', $builder->getByType('\Service'));

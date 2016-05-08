@@ -33,7 +33,6 @@ $builder->addDefinition('three')
 $builder->addDefinition('four')
 	->setClass('A');
 
-$builder->prepareClassList();
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType('stdClass');
