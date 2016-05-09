@@ -540,6 +540,140 @@ class ContainerBuilder
 	}
 
 
+	/**
+	 * @return void
+	 */
+	public function complete()
+	{
+		$this->prepareClassList();
+
+		foreach ($this->definitions as $name => $def) {
+			if ($def->isDynamic()) {
+				continue;
+			}
+
+			$this->currentService = NULL;
+			$entity = $def->getFactory()->getEntity();
+			$serviceRef = $this->getServiceName($entity);
+			$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementType() !== 'create'
+				? new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$serviceRef])
+				: $def->getFactory();
+
+			try {
+				$def->setFactory($this->completeStatement($factory));
+				$this->classListNeedsRefresh = FALSE;
+
+				$this->currentService = $name;
+				$setups = $def->getSetup();
+				foreach ($setups as & $setup) {
+					if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
+						$setup = new Statement(['@' . $name, $setup->getEntity()], $setup->arguments);
+					}
+					$setup = $this->completeStatement($setup);
+				}
+				$def->setSetup($setups);
+
+			} catch (\Exception $e) {
+				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+
+			} finally {
+				$this->currentService = NULL;
+			}
+		}
+	}
+
+
+	/**
+	 * @return void
+	 */
+	public function completeStatement(Statement $statement)
+	{
+		$entity = $this->normalizeEntity($statement->getEntity());
+		$arguments = $statement->arguments;
+
+		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
+
+		} elseif ($service = $this->getServiceName($entity)) { // factory calling
+			$params = [];
+			foreach ($this->definitions[$service]->parameters as $k => $v) {
+				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
+			}
+			$rm = new \ReflectionFunction(create_function(implode(', ', $params), ''));
+			$arguments = Helpers::autowireArguments($rm, $arguments, $this);
+			$entity = '@' . $service;
+
+		} elseif ($entity === 'not') { // operator
+
+		} elseif (is_string($entity)) { // class name
+			if ($constructor = (new ReflectionClass($entity))->getConstructor()) {
+				$this->addDependency((string) $constructor->getFileName());
+				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
+			} elseif ($arguments) {
+				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
+			}
+
+		} elseif (!Nette\Utils\Arrays::isList($entity) || count($entity) !== 2) {
+			throw new ServiceCreationException(sprintf('Expected class, method or property, %s given.', PhpHelpers::dump($entity)));
+
+		} elseif (!preg_match('#^\$?' . PhpHelpers::PHP_IDENT . '(\[\])?\z#', $entity[1])) {
+			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
+
+		} elseif ($entity[0] === '') { // globalFunc
+
+		} elseif ($entity[0] instanceof Statement) {
+			$entity[0] = $this->completeStatement($entity[0]);
+
+		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
+			Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+			if (!$arguments && substr($entity[1], -2) === '[]') {
+				throw new ServiceCreationException("Missing argument for $entity[1].");
+			}
+			if ($service = $this->getServiceName($entity[0])) {
+				$entity[0] = '@' . $service;
+			}
+
+		} elseif ($service = $this->getServiceName($entity[0])) { // service method
+			$class = $this->definitions[$service]->getImplement();
+			if (!$class || !method_exists($class, $entity[1])) {
+				$class = $this->definitions[$service]->getClass();
+			}
+			if ($class) {
+				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
+			}
+			$entity[0] = '@' . $service;
+
+		} else { // static method
+			$arguments = $this->autowireArguments($entity[0], $entity[1], $arguments);
+		}
+
+		array_walk_recursive($arguments, function (& $val) {
+			if ($val instanceof Statement) {
+				$val = $this->completeStatement($val);
+
+			} elseif ($val === $this) {
+				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
+				$val = self::literal('$this');
+
+			} elseif ($val instanceof ServiceDefinition) {
+				$val = '@' . current(array_keys($this->getDefinitions(), $val, TRUE));
+
+			} elseif (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
+				$pair = explode('::', $val, 2);
+				$name = $this->getServiceName($pair[0]);
+				if (!isset($pair[1])) { // @service
+					$val = '@' . $name;
+				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
+					$val = self::literal($this->getDefinition($name)->getClass() . '::' . $pair[1]);
+				} else { // @service::property
+					$val = new Statement(['@' . $name, '$' . $pair[1]]);
+				}
+			}
+		});
+
+		return new Statement($entity, $arguments);
+	}
+
+
 	private function checkCase($class)
 	{
 		if ((class_exists($class) || interface_exists($class)) && $class !== ($name = (new ReflectionClass($class))->getName())) {
@@ -596,7 +730,7 @@ class ContainerBuilder
 	 */
 	public function generateClasses($className = NULL, $parentName = NULL)
 	{
-		$this->prepareClassList();
+		$this->complete();
 
 		$this->generatedClasses = [];
 		$this->className = $className ?: $this->className;
@@ -676,14 +810,9 @@ class ContainerBuilder
 			);
 		}
 
-		$setups = $def->getSetup();
-		foreach ($setups as & $setup) {
-			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
-				$setup = new Statement(['@self', $setup->getEntity()], $setup->arguments);
-			}
+		foreach ($def->getSetup() as $setup) {
 			$code .= $this->formatStatement($setup) . ";\n";
 		}
-		$def->setSetup($setups);
 		$this->currentService = NULL;
 
 		$code .= 'return $service;';
@@ -743,38 +872,20 @@ class ContainerBuilder
 	 */
 	public function formatStatement(Statement $statement)
 	{
-		$entity = $this->normalizeEntity($statement->getEntity());
+		$entity = $statement->getEntity();
 		$arguments = $statement->arguments;
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments);
 
 		} elseif ($service = $this->getServiceName($entity)) { // factory calling
-			$params = [];
-			foreach ($this->definitions[$service]->parameters as $k => $v) {
-				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
-			}
-			$rm = new \ReflectionFunction(create_function(implode(', ', $params), ''));
-			$arguments = Helpers::autowireArguments($rm, $arguments, $this);
 			return $this->formatPhp('$this->?(?*)', [Container::getMethodName($service), $arguments]);
 
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', [$arguments[0]]);
 
 		} elseif (is_string($entity)) { // class name
-			if ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-				$this->addDependency((string) $constructor->getFileName());
-				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
-			} elseif ($arguments) {
-				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
-			}
 			return $this->formatPhp("new $entity" . ($arguments ? '(?*)' : ''), [$arguments]);
-
-		} elseif (!Nette\Utils\Arrays::isList($entity) || count($entity) !== 2) {
-			throw new ServiceCreationException(sprintf('Expected class, method or property, %s given.', PhpHelpers::dump($entity)));
-
-		} elseif (!preg_match('#^\$?' . PhpHelpers::PHP_IDENT . '(\[\])?\z#', $entity[1])) {
-			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
 
 		} elseif ($entity[0] === '') { // globalFunc
 			return $this->formatPhp("$entity[1](?*)", [$arguments]);
@@ -787,12 +898,8 @@ class ContainerBuilder
 			return $this->formatPhp("$inner->?(?*)", [$entity[1], $arguments]);
 
 		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
-			Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
 			$name = substr($entity[1], 1);
 			if ($append = (substr($name, -2) === '[]')) {
-				if (!$arguments) {
-					throw new ServiceCreationException("Missing argument for $entity[1].");
-				}
 				$name = substr($name, 0, -2);
 			}
 			if ($this->getServiceName($entity[0])) {
@@ -805,17 +912,9 @@ class ContainerBuilder
 				: $prop;
 
 		} elseif ($service = $this->getServiceName($entity[0])) { // service method
-			$class = $this->definitions[$service]->getImplement();
-			if (!$class || !method_exists($class, $entity[1])) {
-				$class = $this->definitions[$service]->getClass();
-			}
-			if ($class) {
-				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
-			}
 			return $this->formatPhp('?->?(?*)', [$entity[0], $entity[1], $arguments]);
 
 		} else { // static method
-			$arguments = $this->autowireArguments($entity[0], $entity[1], $arguments);
 			return $this->formatPhp("$entity[0]::$entity[1](?*)", [$arguments]);
 		}
 	}
@@ -832,37 +931,18 @@ class ContainerBuilder
 			if ($val instanceof Statement) {
 				$val = self::literal($this->formatStatement($val));
 
-			} elseif ($val === $this) {
-				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
-				$val = self::literal('$this');
-
-			} elseif ($val instanceof ServiceDefinition) {
-				$val = '@' . current(array_keys($this->getDefinitions(), $val, TRUE));
-			}
-
-			if (!is_string($val)) {
-				return;
-
-			} elseif (substr($val, 0, 2) === '@@') {
+			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
 				$val = substr($val, 1);
 
-			} elseif (substr($val, 0, 1) === '@' && strlen($val) > 1) {
-				$pair = explode('::', $val, 2);
-				$name = $this->getServiceName($pair[0]);
-				if (isset($pair[1]) && preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1])) {
-					$val = $this->getDefinition($name)->getClass() . '::' . $pair[1];
-				} elseif (isset($pair[1])) {
-					$val = $this->formatStatement(new Statement(['@' . $name, '$' . $pair[1]]));
+			} elseif (is_string($val) && substr($val, 0, 1) === '@' && strlen($val) > 1) { // service reference
+				$name = substr($val, 1);
+				if ($name === self::THIS_CONTAINER) {
+					$val = self::literal('$this');
+				} elseif ($name === $this->currentService) {
+					$val = self::literal('$service');
 				} else {
-					if ($name === self::THIS_CONTAINER) {
-						$val = '$this';
-					} elseif ($name === $this->currentService) {
-						$val = '$service';
-					} else {
-						$val = $this->formatStatement(new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$name]));
-					}
+					$val = self::literal($this->formatStatement(new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$name])));
 				}
-				$val = self::literal($val);
 			}
 		});
 		return PhpHelpers::formatArgs($statement, $args);
