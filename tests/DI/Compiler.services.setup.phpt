@@ -74,6 +74,7 @@ Assert::same([
 Assert::same(8, $container->getService('lorem')->test);
 Assert::same(9, Ipsum::$staticTest);
 Assert::equal(new Lorem, $container->getService('ipsum')->test);
+Assert::same([1, 2], $container->getService('lorem')->arr);
 
 Assert::count(4, Ipsum::$instances);
 Assert::same($container->getService('lorem'), Ipsum::$instances[3]->arg);

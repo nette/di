@@ -744,7 +744,7 @@ class ContainerBuilder
 		} elseif (!Nette\Utils\Arrays::isList($entity) || count($entity) !== 2) {
 			throw new ServiceCreationException(sprintf('Expected class, method or property, %s given.', PhpHelpers::dump($entity)));
 
-		} elseif (!preg_match('#^\$?' . PhpHelpers::PHP_IDENT . '\z#', $entity[1])) {
+		} elseif (!preg_match('#^\$?' . PhpHelpers::PHP_IDENT . '(\[\])?\z#', $entity[1])) {
 			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
 
 		} elseif ($entity[0] === '') { // globalFunc
@@ -757,15 +757,22 @@ class ContainerBuilder
 			}
 			return $this->formatPhp("$inner->?(?*)", [$entity[1], $arguments]);
 
-		} elseif ($entity[1][0] === '$') { // property getter or setter
+		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
 			Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+			$name = substr($entity[1], 1);
+			if ($append = (substr($name, -2) === '[]')) {
+				if (!$arguments) {
+					throw new ServiceCreationException("Missing argument for $entity[1].");
+				}
+				$name = substr($name, 0, -2);
+			}
 			if ($this->getServiceName($entity[0])) {
-				$prop = $this->formatPhp('?->?', [$entity[0], substr($entity[1], 1)]);
+				$prop = $this->formatPhp('?->?', [$entity[0], $name]);
 			} else {
-				$prop = $this->formatPhp($entity[0] . '::$?', [substr($entity[1], 1)]);
+				$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
 			}
 			return $arguments
-				? $this->formatPhp("$prop = ?", [$arguments[0]])
+				? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
 				: $prop;
 
 		} elseif ($service = $this->getServiceName($entity[0])) { // service method

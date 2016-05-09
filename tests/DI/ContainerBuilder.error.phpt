@@ -41,3 +41,14 @@ $builder->addDefinition('25_service')
 Assert::exception(function () use ($builder) {
 	$builder->getByType(stdClass::class);
 }, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: extension.one, 25_service. If you want to overwrite service extension.one, give it proper name.');
+
+
+
+$builder = new DI\ContainerBuilder;
+$builder->addDefinition('one')
+	->setClass('stdClass')
+	->addSetup('$prop[]');
+
+Assert::exception(function () use ($builder) {
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, "Service 'one': Missing argument for \$prop[].");
