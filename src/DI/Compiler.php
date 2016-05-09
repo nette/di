@@ -352,7 +352,10 @@ class Compiler
 			}
 			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
-				Validators::assert($setup, 'callable|Nette\DI\Statement', "setup item #$id");
+				Validators::assert($setup, 'callable|Nette\DI\Statement|array:1', "setup item #$id");
+				if (is_array($setup)) {
+					$setup = new Statement(key($setup), array_values($setup));
+				}
 				$definition->addSetup($setup);
 			}
 		}

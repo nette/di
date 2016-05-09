@@ -20,9 +20,9 @@ services:
 			- ::globtest(7)
 
 			# local properties
-			- @lorem::$test(null)
+			- @lorem::$test=null
 			- [@self, $test](true)
-			- $test(false)
+			- $test = false
 			- $%property%(8)
 
 			# static class property
