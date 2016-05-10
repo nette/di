@@ -52,7 +52,7 @@ function createContainer($source, $config = NULL)
 {
 	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {
-		$code = implode('', $source->generateClasses($class));
+		$code = implode('', (new Nette\DI\PhpGenerator($source))->generate($class));
 
 	} elseif ($source instanceof Nette\DI\Compiler) {
 		if (is_string($config)) {
