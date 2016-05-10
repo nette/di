@@ -523,17 +523,14 @@ class ContainerBuilder
 			if (Strings::contains($service, '\\')) { // @\Class
 				return ltrim($service, '\\');
 			}
-			return $this->definitions[$service]->getImplement() ?: $this->resolveServiceClass($service, $recursive);
+			return $this->definitions[$service]->getImplement()
+				?: $this->definitions[$service]->getClass()
+				?: $this->resolveServiceClass($service, $recursive);
 
 		} elseif (is_string($entity)) {
 			$name = array_slice(array_keys($recursive), -1);
 			if (!class_exists($entity)) {
 				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found.");
-			} elseif ((new ReflectionClass($entity))->isAbstract()) {
-				throw new ServiceCreationException("Class $entity used in service '$name[0]' is abstract.");
-			} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== NULL && !$rm->isPublic()) {
-				$visibility = $rm->isProtected() ? 'protected' : 'private';
-				throw new ServiceCreationException("Class $entity used in service '$name[0]' has $visibility constructor.");
 			}
 			return ltrim($entity, '\\');
 		}
@@ -605,7 +602,14 @@ class ContainerBuilder
 		} elseif ($entity === 'not') { // operator
 
 		} elseif (is_string($entity)) { // class name
-			if ($constructor = (new ReflectionClass($entity))->getConstructor()) {
+			if (!class_exists($entity)) {
+				throw new ServiceCreationException("Class $entity not found.");
+			} elseif ((new ReflectionClass($entity))->isAbstract()) {
+				throw new ServiceCreationException("Class $entity is abstract.");
+			} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== NULL && !$rm->isPublic()) {
+				$visibility = $rm->isProtected() ? 'protected' : 'private';
+				throw new ServiceCreationException("Class $entity has $visibility constructor.");
+			} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
 				$this->addDependency((string) $constructor->getFileName());
 				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
 			} elseif ($arguments) {
@@ -619,31 +623,32 @@ class ContainerBuilder
 			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
 
 		} elseif ($entity[0] === '') { // globalFunc
-
-		} elseif ($entity[0] instanceof Statement) {
-			$entity[0] = $this->completeStatement($entity[0]);
-
-		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
-			Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
-			if (!$arguments && substr($entity[1], -2) === '[]') {
-				throw new ServiceCreationException("Missing argument for $entity[1].");
+			if (!Nette\Utils\Arrays::isList($arguments)) {
+				throw new ServiceCreationException("Unable to pass specified arguments to $entity[0].");
+			} elseif (!function_exists($entity[1])) {
+				throw new ServiceCreationException("Function $entity[1] doesn't exist.");
 			}
-			if ($service = $this->getServiceName($entity[0])) {
+
+			$rf = new \ReflectionFunction($entity[1]);
+			$this->addDependency((string) $rf->getFileName());
+			$arguments = Helpers::autowireArguments($rf, $arguments, $this);
+
+		} else {
+			if ($entity[0] instanceof Statement) {
+				$entity[0] = $this->completeStatement($entity[0]);
+			} elseif ($service = $this->getServiceName($entity[0])) { // service method
 				$entity[0] = '@' . $service;
 			}
 
-		} elseif ($service = $this->getServiceName($entity[0])) { // service method
-			$class = $this->definitions[$service]->getImplement();
-			if (!$class || !method_exists($class, $entity[1])) {
-				$class = $this->definitions[$service]->getClass();
-			}
-			if ($class) {
+			if ($entity[1][0] === '$') { // property getter, setter or appender
+				Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+				if (!$arguments && substr($entity[1], -2) === '[]') {
+					throw new ServiceCreationException("Missing argument for $entity[1].");
+				}
+			} else {
+				$class = $this->resolveEntityClass($entity[0]);
 				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
 			}
-			$entity[0] = '@' . $service;
-
-		} else { // static method
-			$arguments = $this->autowireArguments($entity[0], $entity[1], $arguments);
 		}
 
 		array_walk_recursive($arguments, function (& $val) {

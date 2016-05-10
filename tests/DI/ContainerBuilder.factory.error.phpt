@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Statement;
 use Tester\Assert;
 
 
@@ -144,7 +145,26 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setClass('Bad8');
 	$builder->generateClasses();
-}, Nette\InvalidStateException::class, "Class Bad8 used in service 'one' has private constructor.");
+}, Nette\InvalidStateException::class, "Service 'one': Class Bad8 has private constructor.");
+
+
+class Good
+{
+	function __construct()
+	{}
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad')]);
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, "Service 'one': Class Bad not found.");
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad8')]);
+	$builder->generateClasses();
+}, Nette\InvalidStateException::class, "Service 'one': Class Bad8 has private constructor.");
 
 
 abstract class Bad9
@@ -157,4 +177,4 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setClass('Bad9');
 	$builder->generateClasses();
-}, Nette\InvalidStateException::class, "Class Bad9 used in service 'one' is abstract.");
+}, Nette\InvalidStateException::class, "Service 'one': Class Bad9 is abstract.");
