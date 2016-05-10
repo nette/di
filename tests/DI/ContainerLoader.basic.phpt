@@ -21,3 +21,8 @@ $container = $cache->load($key, function () use ($className) {
 	return "class $className {}";
 });
 Assert::type($className, new $container);
+
+$container = $cache->load(function () use ($className) {
+	return "class $className {}";
+}, $key);
+Assert::type($className, new $container);

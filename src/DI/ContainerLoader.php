@@ -36,6 +36,9 @@ class ContainerLoader extends Nette\Object
 	 */
 	public function load($key, $generator)
 	{
+		if (!is_callable($generator)) { // compatiblity with 2.4
+			list($generator, $key) = array($key, $generator);
+		}
 		$class = $this->getClassName($key);
 		if (!class_exists($class, FALSE)) {
 			$this->loadFile($class, $generator);
