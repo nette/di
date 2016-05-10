@@ -17,7 +17,7 @@ $key = [1, 2];
 $className = $cache->getClassName($key);
 Assert::match('Container%[\w]+%', $className);
 
-$container = $cache->load($key, function () use ($className) {
+$container = $cache->load(function () use ($className) {
 	return "class $className {}";
-});
+}, $key);
 Assert::type($className, new $container);
