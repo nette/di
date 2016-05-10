@@ -55,7 +55,7 @@ $six = $builder->addDefinition('six')
 	->addSetup(['@six', 'methodA'], ['a', 'b']);
 
 $builder->addDefinition('seven')
-	->setFactory([$six, 'create'], [$builder, $six])
+	->setFactory([$six, 'create'], ['@container', $six])
 	->addSetup([$six, 'methodA'])
 	->addSetup('$service->methodA(?)', ['a']);
 

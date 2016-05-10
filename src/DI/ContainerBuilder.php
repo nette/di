@@ -806,6 +806,7 @@ class ContainerBuilder
 				$val = self::literal($this->formatStatement($val));
 
 			} elseif ($val === $this) {
+				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
 				$val = self::literal('$this');
 
 			} elseif ($val instanceof ServiceDefinition) {
@@ -875,6 +876,7 @@ class ContainerBuilder
 			$entity = '@' . current(array_keys($this->definitions, $entity, TRUE));
 
 		} elseif (is_array($entity) && $entity[0] === $this) { // [$this, ...] -> [@container, ...]
+			trigger_error("Replace object ContainerBuilder in Statement entity with '@container'.", E_USER_DEPRECATED);
 			$entity[0] = '@' . self::THIS_CONTAINER;
 		}
 		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc], Statement
