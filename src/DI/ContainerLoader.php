@@ -109,7 +109,7 @@ class ContainerLoader
 	protected function generate($class, $generator)
 	{
 		$compiler = new Compiler;
-		$compiler->getContainerBuilder()->setClassName($class);
+		$compiler->setClassName($class);
 		$code = call_user_func_array($generator, [& $compiler]);
 		$code = $code ?: implode("\n\n\n", $compiler->compile());
 		$files = $compiler->getDependencies();

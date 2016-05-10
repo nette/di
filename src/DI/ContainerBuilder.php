@@ -28,7 +28,7 @@ class ContainerBuilder
 	public $parameters = [];
 
 	/** @var string */
-	private $className = 'Container';
+	private $className;
 
 	/** @var ServiceDefinition[] */
 	private $definitions = [];
@@ -174,20 +174,22 @@ class ContainerBuilder
 
 
 	/**
-	 * @return self
+	 * @deprecated
 	 */
 	public function setClassName($name)
 	{
+		trigger_error(__METHOD__ . ' has been deprecated', E_USER_DEPRECATED);
 		$this->className = (string) $name;
 		return $this;
 	}
 
 
 	/**
-	 * @return string
+	 * @deprecated
 	 */
 	public function getClassName()
 	{
+		trigger_error(__METHOD__ . ' has been deprecated', E_USER_DEPRECATED);
 		return $this->className;
 	}
 
