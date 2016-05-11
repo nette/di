@@ -23,7 +23,7 @@ services:
 	std: stdClass
 ', 'neon'));
 
-eval($compiler->compile($config, 'Container1'));
+eval($compiler->addConfig($config)->setClassName('Container1')->compile());
 
 $container = new Container1;
 Assert::type(stdClass::class, $container->std);

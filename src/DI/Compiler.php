@@ -143,18 +143,20 @@ class Compiler
 
 
 	/**
-	 * @return Nette\PhpGenerator\ClassType[]|string
+	 * @return string
 	 */
 	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
 	{
-		$this->config = $config ?: $this->config;
+		if (func_num_args()) {
+			trigger_error(__METHOD__ . ' arguments are deprecated, use Compiler::addConfig() and Compiler::setClassName().', E_USER_DEPRECATED);
+			$this->config = func_get_arg(0) ?: $this->config;
+			$this->className = @func_get_arg(1) ?: $this->className;
+		}
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
-		$classes = $this->generateCode($className ?: $this->className, $parentName);
-		return func_num_args()
-			? implode("\n\n\n", $classes) // back compatiblity
-			: $classes;
+		$classes = $this->generateCode();
+		return implode("\n\n\n", $classes);
 	}
 
 
@@ -212,8 +214,13 @@ class Compiler
 
 
 	/** @internal */
-	public function generateCode($className, $parentName = NULL)
+	public function generateCode()
 	{
+		if (func_num_args()) {
+			trigger_error(__METHOD__ . ' arguments are deprecated, use Compiler::setClassName().', E_USER_DEPRECATED);
+			$this->className = func_get_arg(0) ?: $this->className;
+		}
+
 		$this->builder->prepareClassList();
 
 		foreach ($this->extensions as $extension) {
@@ -221,7 +228,7 @@ class Compiler
 			$this->dependencies[] = (new \ReflectionClass($extension))->getFileName();
 		}
 
-		$classes = $this->builder->generateClasses($className, $parentName);
+		$classes = $this->builder->generateClasses($this->className);
 		$classes[0]->addMethod('initialize');
 		$this->addDependencies($this->builder->getDependencies());
 

@@ -20,7 +20,7 @@ services:
 	std: {class: stdClass, tags: [run]}
 ', 'neon'));
 
-eval($compiler->compile($config, 'Container1'));
+eval($compiler->addConfig($config)->setClassName('Container1')->compile());
 
 $container = new Container1;
 Assert::false($container->isCreated('std'));
