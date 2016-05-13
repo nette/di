@@ -336,7 +336,11 @@ class Compiler
 
 		$known = ['class', 'create', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
 		if ($error = array_diff(array_keys($config), $known)) {
-			throw new Nette\InvalidStateException(sprintf("Unknown or deprecated key '%s' in definition of service.", implode("', '", $error)));
+			$hints = array_filter(array_map(function ($error) use ($known) {
+				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
+			}, $error));
+			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
+			throw new Nette\InvalidStateException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
 		}
 
 		$config = Helpers::filterArguments($config);
