@@ -20,7 +20,7 @@
 		"nette/utils": "^2.4"
 	},
 	"require-dev": {
-		"nette/tester": "^1.6",
+		"nette/tester": "~2.0",
 		"tracy/tracy": "^2.3"
 	},
 	"conflict": {
