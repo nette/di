@@ -28,6 +28,9 @@ class Compiler extends Nette\Object
 	/** @var string[] of file names */
 	private $dependencies = array();
 
+	/** @var string */
+	private $className;
+
 	/** @var array reserved section names */
 	private static $reserved = array('services' => 1, 'parameters' => 1);
 
@@ -69,6 +72,16 @@ class Compiler extends Nette\Object
 	public function getContainerBuilder()
 	{
 		return $this->builder;
+	}
+
+
+	/**
+	 * @return self
+	 */
+	public function setClassName($className)
+	{
+		$this->className = $className;
+		return $this;
 	}
 
 
@@ -136,7 +149,7 @@ class Compiler extends Nette\Object
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
-		$classes = $this->generateCode($className, $parentName);
+		$classes = $this->generateCode($className ?: $this->className, $parentName);
 		return func_num_args()
 			? implode("\n\n\n", $classes) // back compatiblity
 			: $classes;
