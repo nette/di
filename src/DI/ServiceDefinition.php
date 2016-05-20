@@ -36,7 +36,7 @@ class ServiceDefinition
 	/** @var array */
 	private $tags = [];
 
-	/** @var bool */
+	/** @var bool|string[] */
 	private $autowired = TRUE;
 
 	/** @var bool */
@@ -210,21 +210,30 @@ class ServiceDefinition
 
 
 	/**
-	 * @param  bool
+	 * @param  bool|string|string[]
 	 * @return self
 	 */
 	public function setAutowired($state = TRUE)
 	{
 		call_user_func($this->notifier);
-		$this->autowired = (bool) $state;
+		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
 		return $this;
 	}
 
 
 	/**
-	 * @return bool
+	 * @return bool|string[]
 	 */
 	public function isAutowired()
+	{
+		return $this->autowired;
+	}
+
+
+	/**
+	 * @return bool|string[]
+	 */
+	public function getAutowired()
 	{
 		return $this->autowired;
 	}

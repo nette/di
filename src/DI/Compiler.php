@@ -396,7 +396,7 @@ class Compiler
 		}
 
 		if (isset($config['autowired'])) {
-			Validators::assertField($config, 'autowired', 'bool');
+			Validators::assertField($config, 'autowired', 'bool|string|array');
 			$definition->setAutowired($config['autowired']);
 		}
 
