@@ -581,7 +581,7 @@ class ContainerBuilder
 
 
 	/**
-	 * @return void
+	 * @return Statement
 	 */
 	public function completeStatement(Statement $statement)
 	{
@@ -934,9 +934,17 @@ class ContainerBuilder
 	{
 		array_walk_recursive($args, function (& $val) {
 			if ($val instanceof Statement) {
-				$val = self::literal($this->formatStatement($val));
+				$val = self::literal($this->formatStatement($this->completeStatement($val)));
 
-			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
+			} elseif ($val === $this) {
+				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
+				$val = self::literal('$this');
+
+			} elseif ($val instanceof ServiceDefinition) {
+				$val = '@' . current(array_keys($this->getDefinitions(), $val, TRUE));
+			}
+
+			if (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
 				$val = substr($val, 1);
 
 			} elseif (is_string($val) && substr($val, 0, 1) === '@' && strlen($val) > 1) { // service reference
