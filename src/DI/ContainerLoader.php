@@ -100,8 +100,7 @@ class ContainerLoader
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize(file_get_contents("$file.meta")); // @ - file may not exist
-			$files = $meta ? array_combine($tmp = array_keys($meta), $tmp) : [];
-			return $meta !== @array_map('filemtime', $files); // @ - files may not exist
+			return empty($meta[0]) || DependencyChecker::isExpired($meta);
 		}
 		return FALSE;
 	}
@@ -116,10 +115,9 @@ class ContainerLoader
 		$compiler->setClassName($class);
 		$code = call_user_func_array($generator, [& $compiler]);
 		$code = $code ?: implode("\n\n\n", $compiler->compile());
-		$files = $compiler->getDependencies();
 		return [
 			"<?php\n$code",
-			serialize(@array_map('filemtime', array_combine($files, $files))) // @ - file may not exist
+			serialize($compiler->exportDependencies())
 		];
 	}
 
