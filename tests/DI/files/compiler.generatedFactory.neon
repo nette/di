@@ -8,7 +8,7 @@ services:
 	finder: IFinderFactory
 
 	article:
-		create: Article(%title%)
+		factory: Article(%title%)
 		implement: IArticleFactory
 		parameters: [title]
 
@@ -18,12 +18,12 @@ services:
 		parameters: [title]
 
 	fooFactory1:
-		create: Foo(..., %baz%)
+		factory: Foo(..., %baz%)
 		implement: IFooFactory
 		parameters: [Baz baz = NULL]
 
 	fooFactory3:
-		create: Foo
+		class: Foo
 		implement: IFooFactory
 
 	fooFactory4: IFooFactory

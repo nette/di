@@ -76,7 +76,7 @@ services:
 	two: Bar
 	three: Factory::createLorem()
 	four:
-		create: Ipsum
+		class: Ipsum
 		implement: IIpsumFactory
 ');
 

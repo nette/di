@@ -3,7 +3,7 @@ parameters:
 
 services:
 	lorem:
-		create: Lorem
+		class: Lorem
 		setup:
 			# local methods
 			- test(2)

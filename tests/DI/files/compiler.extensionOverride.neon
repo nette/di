@@ -9,12 +9,12 @@ services:
 	one4:
 		arguments: [2]
 	one5:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 	one6:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 		arguments: [2]
 	one7:
-		create: IpsumFactory::create(2)
+		factory: IpsumFactory::create(2)
 
 	two1:
 		class: Ipsum
@@ -26,12 +26,12 @@ services:
 	two4:
 		arguments: [2]
 	two5:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 	two6:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 		arguments: [2]
 	two7:
-		create: IpsumFactory::create(2)
+		factory: IpsumFactory::create(2)
 
 	three1:
 		class: Ipsum
@@ -43,9 +43,9 @@ services:
 	three4:
 		arguments: [2]
 	three5:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 	three6:
-		create: IpsumFactory::create
+		factory: IpsumFactory::create
 		arguments: [2]
 	three7:
-		create: IpsumFactory::create(2)
+		factory: IpsumFactory::create(2)

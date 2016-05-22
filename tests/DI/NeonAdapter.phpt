@@ -178,15 +178,15 @@ services:
 
 	three:
 		class: Lorem
-		create: Factory::createLorem
+		factory: Factory::createLorem
 		arguments:
 			- 1
 
 	four:
-		create: Factory::createLorem(1)
+		factory: Factory::createLorem(1)
 
 	five:
-		create: [Factory, createLorem](1)
+		factory: [Factory, createLorem](1)
 
 	six: Factory::createLorem(1)
 	seven: @factory
@@ -199,7 +199,7 @@ services:
 	factory: Lorem
 	rich1: Lorem(1)::foo()
 	rich2:
-		create: Lorem(Ipsum(@one))::foo(1)
+		factory: Lorem(Ipsum(@one))::foo(1)
 
 	rich3: Factory::createLorem(1)::foo()
 	rich4: Factory()::createLorem(1)::foo()
