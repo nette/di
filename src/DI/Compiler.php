@@ -27,8 +27,8 @@ class Compiler
 	/** @var array */
 	private $config = [];
 
-	/** @var string[] of file names */
-	private $dependencies = [];
+	/** @var CacheDependencies */
+	private $dependencies;
 
 	/** @var string */
 	private $className = 'Container';
@@ -40,6 +40,7 @@ class Compiler
 	public function __construct(ContainerBuilder $builder = NULL)
 	{
 		$this->builder = $builder ?: new ContainerBuilder;
+		$this->dependencies = new CacheDependencies;
 	}
 
 
@@ -106,7 +107,7 @@ class Compiler
 	{
 		$loader = new Config\Loader;
 		$this->addConfig($loader->load($file));
-		$this->addDependencies($loader->getDependencies());
+		$this->dependencies->add($loader->getDependencies());
 		return $this;
 	}
 
@@ -127,18 +128,18 @@ class Compiler
 	 */
 	public function addDependencies(array $files)
 	{
-		$this->dependencies = array_merge($this->dependencies, $files);
+		$this->dependencies->add($files);
 		return $this;
 	}
 
 
 	/**
-	 * Returns the unique list of dependent files.
+	 * Exports dependencies.
 	 * @return array
 	 */
-	public function getDependencies()
+	public function exportDependencies()
 	{
-		return array_values(array_unique(array_filter($this->dependencies)));
+		return $this->dependencies->export();
 	}
 
 
@@ -225,12 +226,12 @@ class Compiler
 
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
-			$this->dependencies[] = (new \ReflectionClass($extension))->getFileName();
+			$this->dependencies->add([(new \ReflectionClass($extension))->getFileName()]);
 		}
 
 		$classes = $this->builder->generateClasses($this->className);
 		$classes[0]->addMethod('initialize');
-		$this->addDependencies($this->builder->getDependencies());
+		$this->dependencies->add($this->builder->getDependencies());
 
 		foreach ($this->extensions as $extension) {
 			$extension->afterCompile($classes[0]);
