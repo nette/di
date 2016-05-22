@@ -100,7 +100,7 @@ class ContainerLoader
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize(file_get_contents("$file.meta")); // @ - file may not exist
-			return empty($meta[0]) || CacheDependencies::isExpired($meta);
+			return empty($meta[0]) || CacheDependencies::isExpired(...$meta);
 		}
 		return FALSE;
 	}

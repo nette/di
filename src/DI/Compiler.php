@@ -123,12 +123,13 @@ class Compiler
 
 
 	/**
-	 * Adds a files to the list of dependencies.
+	 * Adds dependencies to the list.
+	 * @param  array of ReflectionClass|\ReflectionFunctionAbstract|string
 	 * @return self
 	 */
-	public function addDependencies(array $files)
+	public function addDependencies(array $deps)
 	{
-		$this->dependencies->add($files);
+		$this->dependencies->add(array_filter($deps));
 		return $this;
 	}
 
