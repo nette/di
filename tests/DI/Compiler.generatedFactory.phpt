@@ -236,7 +236,7 @@ interface Bad2
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');
 
 
@@ -256,7 +256,7 @@ interface Bad4
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad4')->setFactory('Bad3');
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad4::create(), did you mean $bar?');
 
 
@@ -276,5 +276,5 @@ interface Bad6
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad6')->setFactory('Bad5');
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad6::create().');

@@ -17,7 +17,7 @@ $builder->addDefinition('one')
 	->addSetup('::1234');
 
 Assert::exception(function () use ($builder) {
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Expected function, method or property name, '1234' given.");
 
 
@@ -27,7 +27,7 @@ $builder->addDefinition('one')
 	->setClass('stdclass');
 
 Assert::exception(function () use ($builder) {
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, "Case mismatch on class name 'stdclass', correct name is 'stdClass'.");
 
 
@@ -50,5 +50,5 @@ $builder->addDefinition('one')
 	->addSetup('$prop[]');
 
 Assert::exception(function () use ($builder) {
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Missing argument for \$prop[].");

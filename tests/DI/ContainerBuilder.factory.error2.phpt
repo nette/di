@@ -19,5 +19,5 @@ trait Bad1
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad1::method');
-	$builder->generateClasses();
+	$builder->complete();
 }, Nette\InvalidStateException::class, "Factory 'Bad1::method' used in service 'one' is not callable.");
