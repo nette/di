@@ -102,6 +102,27 @@ class PhpReflection
 
 
 	/**
+	 * Returns class and all its descendants.
+	 * @return string[]
+	 */
+	public static function getClassTree(\ReflectionClass $class)
+	{
+		$getTraits = function ($type) use (& $getTraits) {
+			return array_reduce(class_uses($type) + class_parents($type), function ($carry, $type) use (& $getTraits) {
+				return array_merge($carry, $getTraits($type), trait_exists($type) ? [$type] : []);
+			}, []);
+		};
+		$class = $class->getName();
+		return array_merge(
+			[$class],
+			array_values(class_parents($class)),
+			array_values(class_implements($class)),
+			$getTraits($class)
+		);
+	}
+
+
+	/**
 	 * Expands class name into full name.
 	 * @param  string
 	 * @return string  full name
