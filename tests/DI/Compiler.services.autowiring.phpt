@@ -47,7 +47,7 @@ class Ipsum
 $container = createContainer(new DI\Compiler, '
 services:
 	model:
-		create: Factory()::createModel
+		factory: Factory()::createModel
 		setup:
 			# local methods
 			- test(...)
