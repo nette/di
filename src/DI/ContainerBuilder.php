@@ -45,7 +45,7 @@ class ContainerBuilder
 	/** @var string[] of classes excluded from auto-wiring */
 	private $excludedClasses = [];
 
-	/** @var array of file names */
+	/** @var array */
 	private $dependencies = [];
 
 	/** @var Nette\PhpGenerator\ClassType[] */
@@ -296,7 +296,7 @@ class ContainerBuilder
 		if (!$rm->isPublic()) {
 			throw new ServiceCreationException("$class::$method() is not callable.");
 		}
-		$this->addDependency((string) $rm->getFileName());
+		$this->addDependency($rm);
 		return Helpers::autowireArguments($rm, $arguments, $this);
 	}
 
@@ -384,10 +384,6 @@ class ContainerBuilder
 				}
 			}
 		}
-
-		foreach ($this->classList as $class => $foo) {
-			$this->addDependency((string) (new ReflectionClass($class))->getFileName());
-		}
 	}
 
 
@@ -399,6 +395,7 @@ class ContainerBuilder
 		}
 		self::checkCase($interface);
 		$rc = new ReflectionClass($interface);
+		$this->addDependency($rc);
 		$method = $rc->hasMethod('create')
 			? $rc->getMethod('create')
 			: ($rc->hasMethod('get') ? $rc->getMethod('get') : NULL);
@@ -474,13 +471,16 @@ class ContainerBuilder
 		$recursive[$name] = TRUE;
 
 		$def = $this->definitions[$name];
-		$class = $def->getFactory() ? $this->resolveEntityClass($def->getFactory()->getEntity(), $recursive) : NULL; // call always to check entities
-		if ($class = $def->getClass() ?: $class) {
+		$factoryClass = $def->getFactory() ? $this->resolveEntityClass($def->getFactory()->getEntity(), $recursive) : NULL; // call always to check entities
+		if ($class = $def->getClass() ?: $factoryClass) {
 			$def->setClass($class);
 			if (!class_exists($class) && !interface_exists($class)) {
 				throw new ServiceCreationException("Type $class used in service '$name' not found or is not class or interface.");
 			}
 			self::checkCase($class);
+			if (count($recursive) === 1) {
+				$this->addDependency(new ReflectionClass($factoryClass ?: $class));
+			}
 
 		} elseif ($def->getAutowired()) {
 			trigger_error("Type of service '$name' is unknown.", E_USER_NOTICE);
@@ -517,6 +517,7 @@ class ContainerBuilder
 				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $name[0]));
 			}
 
+			$this->addDependency($reflection);
 			return PhpReflection::getReturnType($reflection);
 
 		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
@@ -610,7 +611,7 @@ class ContainerBuilder
 				$visibility = $rm->isProtected() ? 'protected' : 'private';
 				throw new ServiceCreationException("Class $entity has $visibility constructor.");
 			} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-				$this->addDependency((string) $constructor->getFileName());
+				$this->addDependency($constructor);
 				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
 			} elseif ($arguments) {
 				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
@@ -630,7 +631,7 @@ class ContainerBuilder
 			}
 
 			$rf = new \ReflectionFunction($entity[1]);
-			$this->addDependency((string) $rf->getFileName());
+			$this->addDependency($rf);
 			$arguments = Helpers::autowireArguments($rf, $arguments, $this);
 
 		} else {
@@ -704,25 +705,25 @@ class ContainerBuilder
 
 
 	/**
-	 * Adds a file to the list of dependencies.
+	 * Adds item to the list of dependencies.
+	 * @param  ReflectionClass|\ReflectionFunctionAbstract|string
 	 * @return self
 	 * @internal
 	 */
-	public function addDependency($file)
+	public function addDependency($dep)
 	{
-		$this->dependencies[$file] = TRUE;
+		$this->dependencies[] = $dep;
 		return $this;
 	}
 
 
 	/**
-	 * Returns the list of dependent files.
+	 * Returns the list of dependencies.
 	 * @return array
 	 */
 	public function getDependencies()
 	{
-		unset($this->dependencies[FALSE]);
-		return array_keys($this->dependencies);
+		return $this->dependencies;
 	}
 
 
