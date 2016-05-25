@@ -16,7 +16,7 @@ use Nette;
 class DIExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
-		'debugger' => FALSE,
+		'debugger' => TRUE,
 		'accessors' => FALSE,
 		'excluded' => [],
 	];
