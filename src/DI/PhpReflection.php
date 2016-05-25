@@ -80,7 +80,8 @@ class PhpReflection
 	public static function getReturnType(\ReflectionFunctionAbstract $func)
 	{
 		if (PHP_VERSION_ID >= 70000 && $func->hasReturnType()) {
-			return (string) $func->getReturnType();
+			$type = (string) $func->getReturnType();
+			return strtolower($type) === 'self' ? $func->getDeclaringClass()->getName() : $type;
 		}
 		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
 		if ($type) {
