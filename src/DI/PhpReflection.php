@@ -108,18 +108,14 @@ class PhpReflection
 	 */
 	public static function getClassTree(\ReflectionClass $class)
 	{
-		$getTraits = function ($type) use (& $getTraits) {
-			return array_reduce(class_uses($type) + class_parents($type), function ($carry, $type) use (& $getTraits) {
-				return array_merge($carry, $getTraits($type), trait_exists($type) ? [$type] : []);
-			}, []);
+		$addTraits = function ($types) use (& $addTraits) {
+			if ($traits = array_merge(...array_map('class_uses', array_values($types)))) {
+				$types += $traits + $addTraits($traits);
+			}
+			return $types;
 		};
 		$class = $class->getName();
-		return array_merge(
-			[$class],
-			array_values(class_parents($class)),
-			array_values(class_implements($class)),
-			$getTraits($class)
-		);
+		return array_values($addTraits([$class] + class_parents($class) + class_implements($class)));
 	}
 
 
