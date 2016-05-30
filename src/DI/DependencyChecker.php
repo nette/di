@@ -42,16 +42,17 @@ class DependencyChecker
 	 */
 	public function export()
 	{
-		$deps = array_unique($this->dependencies, SORT_REGULAR);
 		$files = $phpFiles = $classes = $functions = [];
-		foreach ($deps as $dep) {
+		foreach ($this->dependencies as $dep) {
 			if (is_string($dep)) {
 				$files[] = $dep;
 
 			} elseif ($dep instanceof ReflectionClass) {
-				foreach (PhpReflection::getClassTree($dep) as $item) {
-					$phpFiles[] = (new ReflectionClass($item))->getFileName();
-					$classes[] = $item;
+				if (empty($classes[$dep->getName()])) {
+					foreach (PhpReflection::getClassTree($dep) as $item) {
+						$phpFiles[] = (new ReflectionClass($item))->getFileName();
+						$classes[$item] = TRUE;
+					}
 				}
 
 			} elseif ($dep instanceof \ReflectionFunctionAbstract) {
@@ -63,7 +64,7 @@ class DependencyChecker
 			}
 		}
 
-		$classes = array_unique($classes);
+		$classes = array_keys($classes);
 		$functions = array_unique($functions, SORT_REGULAR);
 		$hash = self::calculateHash($classes, $functions);
 		$files = @array_map('filemtime', array_combine($files, $files)); // @ - file may not exist
