@@ -328,15 +328,16 @@ class Compiler
 			$config = ['class' => NULL, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments)];
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
-			$config = ['class' => NULL, 'create' => $config];
+			$config = ['class' => NULL, 'factory' => $config];
 		}
 
-		if (array_key_exists('factory', $config)) {
-			$config['create'] = $config['factory'];
-			unset($config['factory']);
+		if (array_key_exists('create', $config)) {
+			trigger_error("Key 'create' is deprecated, use 'factory' in configuration.", E_USER_DEPRECATED);
+			$config['factory'] = $config['create'];
+			unset($config['create']);
 		};
 
-		$known = ['class', 'create', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
+		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
@@ -354,7 +355,7 @@ class Compiler
 			$definition->setArguments($arguments);
 		}
 
-		if (array_key_exists('class', $config) || array_key_exists('create', $config)) {
+		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
 			$definition->setClass(NULL);
 			$definition->setFactory(NULL);
 		}
@@ -367,9 +368,9 @@ class Compiler
 			$definition->setFactory($config['class'], $arguments);
 		}
 
-		if (array_key_exists('create', $config)) {
-			Validators::assertField($config, 'create', 'callable|Nette\DI\Statement|null');
-			$definition->setFactory($config['create'], $arguments);
+		if (array_key_exists('factory', $config)) {
+			Validators::assertField($config, 'factory', 'callable|Nette\DI\Statement|null');
+			$definition->setFactory($config['factory'], $arguments);
 		}
 
 		if (isset($config['setup'])) {
