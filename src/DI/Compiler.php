@@ -76,7 +76,7 @@ class Compiler
 	 */
 	public function getExtension($class, $need = true)
 	{
-		$extensions = $this->compiler->getExtensions($class);
+		$extensions = $this->getExtensions($class);
 		$count = count($extensions);
 		if ($count > 1) {
 			throw new \Nette\Utils\AssertionException("Extension '$class' is installed $count times.");
