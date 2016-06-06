@@ -769,7 +769,7 @@ class ContainerBuilder
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
 				$containerClass->addMethod($methodName)
-					->addDocument('@return ' . ($def->getImplement() ?: $def->getClass()))
+					->addComment('@return ' . ($def->getImplement() ?: $def->getClass()))
 					->setBody($name === self::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
