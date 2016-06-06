@@ -65,7 +65,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 			foreach ($definitions as $name => $def) {
 				if (Nette\PhpGenerator\Helpers::isIdentifier($name)) {
 					$type = $def->getImplement() ?: $def->getClass();
-					$class->addDocument("@property $type \$$name");
+					$class->addComment("@property $type \$$name");
 				}
 			}
 		}
