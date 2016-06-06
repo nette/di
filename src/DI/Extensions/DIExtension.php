@@ -39,9 +39,6 @@ class DIExtension extends Nette\DI\CompilerExtension
 	{
 		$config = $this->validateConfig($this->defaults);
 		$builder = $this->getContainerBuilder();
-		if ($config['accessors']) {
-			$builder->parameters['container']['accessors'] = TRUE;
-		}
 		$builder->addExcludedClasses($config['excluded']);
 	}
 
@@ -60,17 +57,6 @@ class DIExtension extends Nette\DI\CompilerExtension
 
 		foreach (array_filter($builder->findByTag('run')) as $name => $on) {
 			$initialize->addBody('$this->getService(?);', [$name]);
-		}
-
-		if (!empty($this->config['accessors'])) {
-			$definitions = $builder->getDefinitions();
-			ksort($definitions);
-			foreach ($definitions as $name => $def) {
-				if (Nette\PhpGenerator\Helpers::isIdentifier($name)) {
-					$type = $def->getImplement() ?: $def->getClass();
-					$class->addDocument("@property $type \$$name");
-				}
-			}
 		}
 	}
 

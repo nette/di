@@ -302,7 +302,7 @@ class Container
 	/** @deprecated */
 	public function &__get($name)
 	{
-		$this->error(__METHOD__, 'getService');
+		trigger_error(__METHOD__ . ' is deprecated; use getService().', E_USER_DEPRECATED);
 		$tmp = $this->getService($name);
 		return $tmp;
 	}
@@ -311,7 +311,7 @@ class Container
 	/** @deprecated */
 	public function __set($name, $service)
 	{
-		$this->error(__METHOD__, 'addService');
+		trigger_error(__METHOD__ . ' is deprecated; use addService().', E_USER_DEPRECATED);
 		$this->addService($name, $service);
 	}
 
@@ -319,7 +319,7 @@ class Container
 	/** @deprecated */
 	public function __isset($name)
 	{
-		$this->error(__METHOD__, 'hasService');
+		trigger_error(__METHOD__ . ' is deprecated; use hasService().', E_USER_DEPRECATED);
 		return $this->hasService($name);
 	}
 
@@ -327,16 +327,8 @@ class Container
 	/** @deprecated */
 	public function __unset($name)
 	{
-		$this->error(__METHOD__, 'removeService');
+		trigger_error(__METHOD__ . ' is deprecated; use removeService().', E_USER_DEPRECATED);
 		$this->removeService($name);
-	}
-
-
-	private function error($oldName, $newName)
-	{
-		if (empty($this->parameters['container']['accessors'])) {
-			trigger_error("$oldName() is deprecated; use $newName() or enable di.accessors in configuration.", E_USER_DEPRECATED);
-		}
 	}
 
 
