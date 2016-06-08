@@ -483,7 +483,7 @@ class ContainerBuilder
 			}
 
 		} elseif ($def->getAutowired()) {
-			trigger_error("Type of service '$name' is unknown.", E_USER_NOTICE);
+			throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
 		}
 		return $class;
 	}
