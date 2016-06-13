@@ -167,7 +167,7 @@ class PhpReflection
 				$cache[$name] = [];
 			} else {
 				$code = file_get_contents($class->getFileName());
-				$cache = self::parseUseStatemenets($code, $name) + $cache;
+				$cache = self::parseUseStatements($code, $name) + $cache;
 			}
 		}
 		return $cache[$name];
@@ -179,7 +179,7 @@ class PhpReflection
 	 * @param  string
 	 * @return array of [class => [alias => class, ...]]
 	 */
-	public static function parseUseStatemenets($code, $forClass = NULL)
+	public static function parseUseStatements($code, $forClass = NULL)
 	{
 		$tokens = token_get_all($code);
 		$namespace = $class = $classLevel = $level = NULL;
