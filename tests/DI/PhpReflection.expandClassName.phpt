@@ -11,9 +11,11 @@ require __DIR__ . '/../bootstrap.php';
 
 
 require __DIR__ . '/files/expandClass.noNamespace.php';
+require __DIR__ . '/files/expandClass.inBracketedNamespace.php';
 require __DIR__ . '/files/expandClass.inNamespace.php';
 
 $rcTest = new \ReflectionClass('Test');
+$rcBTest = new \ReflectionClass('BTest');
 $rcFoo = new \ReflectionClass('Test\Space\Foo');
 $rcBar = new \ReflectionClass('Test\Space\Bar');
 
@@ -25,6 +27,8 @@ Assert::exception(function () use ($rcTest) {
 
 Assert::same('A', PhpReflection::expandClassName('A', $rcTest));
 Assert::same('A\B', PhpReflection::expandClassName('C', $rcTest));
+
+Assert::same('BTest', PhpReflection::expandClassName('BTest', $rcBTest));
 
 Assert::same('Test\Space\Foo', PhpReflection::expandClassName('self', $rcFoo));
 Assert::same('Test\Space\Foo', PhpReflection::expandClassName('Self', $rcFoo));
