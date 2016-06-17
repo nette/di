@@ -211,7 +211,9 @@ class Compiler
 	/** @internal */
 	public function processServices()
 	{
-		$this->parseServices($this->builder, $this->config);
+		if (isset($this->config['services'])) {
+			self::loadDefinitions($this->builder, $this->config['services']);
+		}
 	}
 
 
@@ -246,12 +248,11 @@ class Compiler
 
 
 	/**
-	 * Parses section 'services' from (unexpanded) configuration file.
+	 * Adds service definitions from configuration.
 	 * @return void
 	 */
-	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
+	public static function loadDefinitions(ContainerBuilder $builder, array $services, $namespace = NULL)
 	{
-		$services = isset($config['services']) ? $config['services'] : [];
 		$depths = [];
 		foreach ($services as $name => $def) {
 			$path = [];
@@ -305,7 +306,7 @@ class Compiler
 			}
 
 			try {
-				static::parseService($definition, $def);
+				static::loadDefinition($definition, $def);
 			} catch (\Exception $e) {
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 			}
@@ -314,10 +315,10 @@ class Compiler
 
 
 	/**
-	 * Parses single service from configuration file.
+	 * Parses single service definition from configuration.
 	 * @return void
 	 */
-	public static function parseService(ServiceDefinition $definition, $config)
+	public static function loadDefinition(ServiceDefinition $definition, $config)
 	{
 		if ($config === NULL) {
 			return;
@@ -435,12 +436,24 @@ class Compiler
 	}
 
 
-	/**
-	 * Use Helpers::filterArguments()
-	 */
+	/** @deprecated */
 	public static function filterArguments(array $args)
 	{
 		return Helpers::filterArguments($args);
+	}
+
+
+	/** @deprecated */
+	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
+	{
+		self::loadDefinitions($builder, isset($config['services']) ? $config['services'] : [], $namespace);
+	}
+
+
+	/** @deprecated */
+	public static function parseService(ServiceDefinition $definition, $config)
+	{
+		self::loadDefinition($definition, $config);
 	}
 
 }
