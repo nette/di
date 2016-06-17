@@ -85,6 +85,8 @@ class ContainerLoader
 				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
 					@unlink("$name.tmp"); // @ - file may not exist
 					throw new Nette\IOException("Unable to create file '$name'.");
+				} elseif (function_exists('opcache_invalidate')) {
+					@opcache_invalidate($name, TRUE); // @ can be restricted
 				}
 			}
 		}
