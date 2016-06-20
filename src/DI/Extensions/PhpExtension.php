@@ -7,6 +7,8 @@
 
 namespace Nette\DI\Extensions;
 
+use DateTime;
+use DateTimeZone;
 use Nette;
 
 
@@ -19,6 +21,7 @@ class PhpExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->getMethod('initialize');
+		$timezone = null;
 		foreach ($this->getConfig() as $name => $value) {
 			if ($value === NULL) {
 				continue;
@@ -36,6 +39,7 @@ class PhpExtension extends Nette\DI\CompilerExtension
 				$initialize->addBody('set_time_limit(?);', [$value]);
 
 			} elseif ($name === 'date.timezone') {
+				$timezone = new DateTimeZone($value);
 				$initialize->addBody('date_default_timezone_set(?);', [$value]);
 
 			} elseif (function_exists('ini_set')) {
@@ -45,6 +49,19 @@ class PhpExtension extends Nette\DI\CompilerExtension
 				throw new Nette\NotSupportedException('Required function ini_set() is disabled.');
 			}
 		}
+		// Fix all incorrect DateTime object when timezone was specified
+		if ($timezone) {
+			array_walk_recursive($this->getContainerBuilder()->parameters, function (&$value) use ($timezone) {
+				if ($value instanceof DateTime) {
+					$value = $this->recreateDateTime($value, $timezone);
+				}
+			});
+		}
+	}
+
+	private function recreateDateTime(DateTime $value, DateTimeZone $timezone)
+	{
+		return new DateTime($value->format('Y-m-d H:i:s.u'), $timezone); // forgot timezone and recreate in proper one
 	}
 
 }
