@@ -28,9 +28,9 @@ class Factory
 class Obj
 {
 	/** @return Obj */
-	function foo($arg)
+	function foo(...$args)
 	{
-		$this->args[] = $arg;
+		$this->args[] = $args;
 		return $this;
 	}
 }
@@ -54,4 +54,4 @@ Assert::true($container->getService('one')->mark);
 Assert::same('Obj', $two->getClass());
 Assert::type(Obj::class, $container->getService('two'));
 Assert::true($container->getService('two')->mark);
-Assert::same([1, 2], $container->getService('two')->args);
+Assert::same([[1], [2]], $container->getService('two')->args);

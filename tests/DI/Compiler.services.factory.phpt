@@ -16,7 +16,7 @@ class Factory
 	/** @return Lorem */
 	static function createLorem($arg)
 	{
-		return new Lorem(__METHOD__ . ' ' . $arg);
+		return new Lorem(__METHOD__ . ' ' . implode(' ', func_get_args()));
 	}
 }
 
@@ -29,9 +29,9 @@ class Lorem
 	}
 
 	/** @return Lorem */
-	function foo()
+	function foo(...$args)
 	{
-		$this->foo = func_get_args();
+		$this->foo = $args;
 		return $this;
 	}
 

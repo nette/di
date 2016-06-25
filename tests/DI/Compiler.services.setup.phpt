@@ -13,9 +13,9 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
-	function test($arg)
+	function test(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg);
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
 }
 
@@ -28,27 +28,27 @@ class Ipsum
 
 	public $test;
 
-	function __construct($arg = NULL)
+	function __construct(...$args)
 	{
-		$this->arg = $arg;
+		$this->args = $args;
 		self::$instances[] = $this;
 	}
 
-	function test($arg = NULL)
+	function test(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg . ' ' . $this->arg);
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args) . ' ' . implode(' ', $this->args));
 	}
 
-	static function staticTest($arg = NULL)
+	static function staticTest(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg);
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
 }
 
 
-function globtest($arg)
+function globtest(...$args)
 {
-	Notes::add(__METHOD__ . ' ' . $arg);
+	Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 }
 
 
@@ -77,4 +77,4 @@ Assert::equal(new Lorem, $container->getService('ipsum')->test);
 Assert::same([1, 2], $container->getService('lorem')->arr);
 
 Assert::count(4, Ipsum::$instances);
-Assert::same($container->getService('lorem'), Ipsum::$instances[3]->arg);
+Assert::same([$container->getService('lorem')], Ipsum::$instances[3]->args);

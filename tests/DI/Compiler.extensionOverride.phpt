@@ -14,9 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	/** @return Lorem */
-	static function createLorem($arg = NULL)
+	static function createLorem(...$args)
 	{
-		return new Lorem($arg);
+		return new Lorem(...$args);
 	}
 }
 
@@ -24,26 +24,26 @@ class Factory
 class IpsumFactory
 {
 	/** @return Ipsum */
-	static function create($arg = NULL)
+	static function create(...$args)
 	{
-		return new Ipsum($arg);
+		return new Ipsum(...$args);
 	}
 }
 
 
 class Lorem
 {
-	function __construct($arg = NULL)
+	function __construct(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg);
+		Notes::add(__METHOD__ . ' ' . implode(' ' , $args));
 	}
 }
 
 class Ipsum
 {
-	function __construct($arg = NULL)
+	function __construct(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . $arg);
+		Notes::add(__METHOD__ . ' ' . implode(' ' , $args));
 	}
 }
 
@@ -81,13 +81,13 @@ class FooExtension extends Nette\DI\CompilerExtension
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two4')
 			->setClass('Lorem')
-			->setFactory('Factory::createLorem', [1]);
+			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two5')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two6')
 			->setClass('Lorem')
-			->setFactory('Factory::createLorem', [1]);
+			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two7')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
