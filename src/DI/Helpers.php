@@ -89,14 +89,14 @@ class Helpers
 			. $method->getName() . '()';
 
 		foreach ($method->getParameters() as $num => $parameter) {
-			if (array_key_exists($num, $arguments)) {
-				$res[$num] = $arguments[$num];
-				unset($arguments[$num]);
+			if (!$parameter->isVariadic() && array_key_exists($parameter->getName(), $arguments)) {
+				$res[$num] = $arguments[$parameter->getName()];
+				unset($arguments[$parameter->getName()], $arguments[$num]);
 				$optCount = 0;
 
-			} elseif (array_key_exists($parameter->getName(), $arguments)) {
-				$res[$num] = $arguments[$parameter->getName()];
-				unset($arguments[$parameter->getName()]);
+			} elseif (array_key_exists($num, $arguments)) {
+				$res[$num] = $arguments[$num];
+				unset($arguments[$num]);
 				$optCount = 0;
 
 			} elseif (($class = PhpReflection::getParameterType($parameter)) && !PhpReflection::isBuiltinType($class)) {
