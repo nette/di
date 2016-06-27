@@ -91,6 +91,12 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition('two7')
 			->setClass('Lorem')
 			->setFactory('Factory::createLorem', [1]);
+		$builder->addDefinition('two8')
+			->setClass('Lorem')
+			->setFactory('Factory::createLorem', [1, 2]);
+		$builder->addDefinition('two9')
+			->setClass('Lorem')
+			->setFactory('Factory::createLorem', [1, 2]);
 
 		$builder->addDefinition('three1')
 			->setFactory('Factory::createLorem', [1]);
@@ -187,6 +193,17 @@ Assert::type(Ipsum::class, $container->getService('two7'));
 Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
+
+Assert::type(Lorem::class, $container->getService('two8'));
+Assert::same([
+	'Lorem::__construct 1 new',
+], Notes::fetch());
+
+Assert::type(Lorem::class, $container->getService('two9'));
+Assert::same([
+	'Lorem::__construct new',
+], Notes::fetch());
+
 
 
 Assert::type(Ipsum::class, $container->getService('three1'));

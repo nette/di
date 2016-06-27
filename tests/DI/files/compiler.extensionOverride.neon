@@ -32,6 +32,10 @@ services:
 		arguments: [2]
 	two7:
 		factory: IpsumFactory::create(2)
+	two8:
+		arguments: [1: new]
+	two9:
+		arguments!: [new]
 
 	three1:
 		class: Ipsum

@@ -350,16 +350,19 @@ class Compiler
 
 		$config = Helpers::filterArguments($config);
 
+		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
+			$definition->setClass(NULL);
+			$definition->setFactory(NULL);
+		}
+
 		$arguments = [];
 		if (array_key_exists('arguments', $config)) {
 			Validators::assertField($config, 'arguments', 'array');
 			$arguments = $config['arguments'];
+			if (!Config\Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments) && $definition->getFactory()) {
+				$arguments += $definition->getFactory()->arguments;
+			}
 			$definition->setArguments($arguments);
-		}
-
-		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
-			$definition->setClass(NULL);
-			$definition->setFactory(NULL);
 		}
 
 		if (array_key_exists('class', $config)) {
