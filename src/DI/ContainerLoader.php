@@ -115,8 +115,7 @@ class ContainerLoader
 	{
 		$compiler = new Compiler;
 		$compiler->setClassName($class);
-		$code = call_user_func_array($generator, [& $compiler]);
-		$code = $code ?: implode("\n\n\n", $compiler->compile());
+		$code = call_user_func_array($generator, [& $compiler]) ?: $compiler->compile();
 		return [
 			"<?php\n$code",
 			serialize($compiler->exportDependencies())
