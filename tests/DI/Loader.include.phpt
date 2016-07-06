@@ -15,9 +15,9 @@ $config = new Config\Loader;
 $data = $config->load('files/loader.includes.neon', 'production');
 
 Assert::same([
-	realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'loader.includes.neon'),
-	realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'loader.includes.child.ini'),
-	realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'files' . DIRECTORY_SEPARATOR . 'loader.includes.child.php'),
+	'files/loader.includes.neon',
+	'files/loader.includes.child.ini',
+	'files/loader.includes.child.php',
 ], $config->getDependencies());
 
 Assert::same([
