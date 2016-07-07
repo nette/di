@@ -51,7 +51,7 @@ namespace
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type string used in service 's' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'string' not found. Is return type of A\\Factory::createString() used in service 's' correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -60,7 +60,7 @@ namespace
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type int used in service 'i' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'int' not found. Is return type of A\\Factory::createInt() used in service 'i' correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -69,7 +69,7 @@ namespace
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type bool used in service 'b' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'bool' not found. Is return type of A\\Factory::createBool() used in service 'b' correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -78,6 +78,6 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type float used in service 'f' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'float' not found. Is return type of A\\Factory::createFloat() used in service 'f' correct?");
 
 }

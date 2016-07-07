@@ -31,14 +31,14 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('stdClass::foo');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Factory 'stdClass::foo' used in service 'one' is not callable.");
+}, Nette\InvalidStateException::class, "Method stdClass::foo() used in service 'one' is not callable.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Nette\DI\Container::foo'); // has __magic
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Factory 'Nette\\DI\\Container::foo' used in service 'one' is not callable.");
+}, Nette\InvalidStateException::class, "Method Nette\\DI\\Container::foo() used in service 'one' is not callable.");
 
 
 Assert::exception(function () {
@@ -119,7 +119,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad6::create');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Factory 'Bad6::create' used in service 'one' is not callable.");
+}, Nette\InvalidStateException::class, "Method Bad6::create() used in service 'one' is not callable.");
 
 
 class Bad7

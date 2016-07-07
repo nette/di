@@ -39,7 +39,7 @@ namespace
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type array used in service 'a' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'array' not found. Is return type of A\\Factory::createArray() used in service 'a' correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -48,6 +48,6 @@ namespace
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Type callable used in service 'c' not found or is not class or interface.");
+	}, Nette\DI\ServiceCreationException::class, "Class or interface 'callable' not found. Is return type of A\\Factory::createCallable() used in service 'c' correct?");
 
 }

@@ -20,4 +20,4 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad1::method');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Factory 'Bad1::method' used in service 'one' is not callable.");
+}, Nette\InvalidStateException::class, "Method Bad1::method() used in service 'one' is not callable.");

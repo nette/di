@@ -461,11 +461,11 @@ class ContainerBuilder
 		$def = $this->definitions[$name];
 		$factoryClass = $def->getFactory() ? $this->resolveEntityClass($def->getFactory()->getEntity(), $recursive) : NULL; // call always to check entities
 		if ($class = $def->getClass() ?: $factoryClass) {
-			$def->setClass($class);
 			if (!class_exists($class) && !interface_exists($class)) {
-				throw new ServiceCreationException("Type $class used in service '$name' not found or is not class or interface.");
+				throw new ServiceCreationException("Class or interface '$class' used in service '$name' not found.");
 			}
 			self::checkCase($class);
+			$def->setClass($class);
 			if (count($recursive) === 1) {
 				$this->addDependency(new ReflectionClass($factoryClass ?: $class));
 			}
@@ -481,6 +481,7 @@ class ContainerBuilder
 	private function resolveEntityClass($entity, $recursive = [])
 	{
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
+		$serviceName = current(array_slice(array_keys($recursive), -1));
 
 		if (is_array($entity)) {
 			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
@@ -501,12 +502,15 @@ class ContainerBuilder
 			if (isset($e) || ($refClass && (!$reflection->isPublic()
 				|| ($refClass->isTrait() && !$reflection->isStatic())
 			))) {
-				$name = array_slice(array_keys($recursive), -1);
-				throw new ServiceCreationException(sprintf("Factory '%s' used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $name[0]));
+				throw new ServiceCreationException(sprintf("Method %s() used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $serviceName));
 			}
-
 			$this->addDependency($reflection);
-			return PhpReflection::getReturnType($reflection);
+
+			$type = PhpReflection::getReturnType($reflection);
+			if ($type && !class_exists($type) && !interface_exists($type)) {
+				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Is return type of %s() used in service '%s' correct?", $type, Nette\Utils\Callback::toString($entity), $serviceName));
+			}
+			return $type;
 
 		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
 			if (Strings::contains($service, '\\')) { // @\Class
@@ -517,9 +521,8 @@ class ContainerBuilder
 				?: $this->resolveServiceClass($service, $recursive);
 
 		} elseif (is_string($entity)) { // class
-			$name = array_slice(array_keys($recursive), -1);
 			if (!class_exists($entity)) {
-				throw new ServiceCreationException("Class $entity used in service '$name[0]' not found.");
+				throw new ServiceCreationException("Class $entity used in service '$serviceName' not found.");
 			}
 			return ltrim($entity, '\\');
 		}
