@@ -440,7 +440,7 @@ class ContainerBuilder
 					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $interface::$methodName()" . ($hint ? ", did you mean \${$hint}?" : '.'));
 				}
 				$paramDef = $hint . ' ' . $param->getName();
-				if ($param->isOptional()) {
+				if ($param->isDefaultValueAvailable()) {
 					$def->parameters[$paramDef] = $param->getDefaultValue();
 				} else {
 					$def->parameters[] = $paramDef;
