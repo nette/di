@@ -97,6 +97,28 @@ interface IFooFactory
 	public function create(Baz $baz = NULL);
 }
 
+class Dolor
+{
+	public $bar;
+
+	public $foo;
+
+	public function __construct(Bar $bar = NULL, $foo)
+	{
+		$this->bar = $bar;
+		$this->foo = $foo;
+	}
+}
+
+interface DolorFactory
+{
+
+	/** @return Dolor */
+	public function create(Bar $bar = NULL, $foo);
+
+}
+
+
 class TestClass
 {
 	public $foo;
@@ -219,6 +241,15 @@ Assert::type(ITestClassFactory::class, $container->getService('factory5'));
 $obj = $container->getService('factory5')->create('bar');
 Assert::same('foo', $obj->foo);
 Assert::same('bar', $obj->bar);
+
+Assert::type(DolorFactory::class, $factory = $container->getService('dolorFactory'));
+Assert::type(Dolor::class, $obj = $factory->create($bar = new Bar(), 'abc'));
+Assert::same($bar, $obj->bar);
+Assert::same('abc', $obj->foo);
+
+Assert::type(Dolor::class, $obj = $factory->create(NULL, 'abc'));
+Assert::null($obj->bar);
+Assert::same('abc', $obj->foo);
 
 
 class Bad1

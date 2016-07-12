@@ -31,3 +31,4 @@ services:
 	factory5:
 		implement: ITestClassFactory
 		arguments: ['foo']
+	dolorFactory: DolorFactory
