@@ -19,6 +19,7 @@ class DIExtension extends Nette\DI\CompilerExtension
 		'debugger' => TRUE,
 		'accessors' => FALSE,
 		'excluded' => [],
+		'parentClass' => NULL,
 	];
 
 	/** @var bool */
@@ -45,6 +46,10 @@ class DIExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
+		if ($this->config['parentClass']) {
+			$class->setExtends($this->config['parentClass']);
+		}
+
 		$initialize = $class->getMethod('initialize');
 		$builder = $this->getContainerBuilder();
 
