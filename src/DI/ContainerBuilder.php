@@ -408,21 +408,22 @@ class ContainerBuilder
 		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
 			throw new ServiceCreationException("Interface $interface used in service '$name' must have just one non-static method create() or get().");
 		}
-		$def->setImplementMode($methodName = $rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
+		$def->setImplementMode($rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
+		$methodName = Reflection::toString($method) . '()';
 
 		if (!$def->getClass() && !$def->getEntity()) {
 			$returnType = Helpers::getReturnType($method);
 			if (!$returnType) {
-				throw new ServiceCreationException("Method $interface::$methodName() used in service '$name' has no @return annotation.");
+				throw new ServiceCreationException("Method $methodName used in service '$name' has no @return annotation.");
 			} elseif (!class_exists($returnType)) {
-				throw new ServiceCreationException("Check a @return annotation of the $interface::$methodName() method used in service '$name', class '$returnType' cannot be found.");
+				throw new ServiceCreationException("Check a @return annotation of the $methodName method used in service '$name', class '$returnType' cannot be found.");
 			}
 			$def->setClass($returnType);
 		}
 
-		if ($methodName === 'get') {
+		if ($rc->hasMethod('get')) {
 			if ($method->getParameters()) {
-				throw new ServiceCreationException("Method $interface::get() used in service '$name' must have no arguments.");
+				throw new ServiceCreationException("Method $methodName used in service '$name' must have no arguments.");
 			}
 			if (!$def->getEntity()) {
 				$def->setFactory('@\\' . ltrim($def->getClass(), '\\'));
@@ -449,12 +450,12 @@ class ContainerBuilder
 				if (isset($ctorParams[$param->getName()])) {
 					$arg = $ctorParams[$param->getName()];
 					if ($hint !== Reflection::getParameterType($arg)) {
-						throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::$methodName() doesn't match type hint in $class constructor.");
+						throw new ServiceCreationException("Type hint for \${$param->getName()} in $methodName doesn't match type hint in $class constructor.");
 					}
 					$def->getFactory()->arguments[$arg->getPosition()] = self::literal('$' . $arg->getName());
 				} elseif (!$def->getSetup()) {
 					$hint = Nette\Utils\ObjectMixin::getSuggestion(array_keys($ctorParams), $param->getName());
-					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $interface::$methodName()" . ($hint ? ", did you mean \${$hint}?" : '.'));
+					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $methodName" . ($hint ? ", did you mean \${$hint}?" : '.'));
 				}
 				$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== NULL);
 				$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->getName();

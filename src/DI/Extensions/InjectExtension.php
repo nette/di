@@ -132,14 +132,13 @@ class InjectExtension extends DI\CompilerExtension
 	/** @internal */
 	private static function checkType($class, $name, $type, $container = NULL)
 	{
-		$rc = Reflection::getPropertyDeclaringClass(new \ReflectionProperty($class, $name));
-		$fullname = $rc->getName() . '::$' . $name;
+		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		if (!$type) {
-			throw new Nette\InvalidStateException("Property $fullname has no @var annotation.");
+			throw new Nette\InvalidStateException("Property $propName has no @var annotation.");
 		} elseif (!class_exists($type) && !interface_exists($type)) {
-			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $fullname not found. Check annotation and 'use' statements.");
+			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $propName not found. Check annotation and 'use' statements.");
 		} elseif ($container && !$container->getByType($type, FALSE)) {
-			throw new Nette\InvalidStateException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
+			throw new Nette\InvalidStateException("Service of type $type used in @var annotation at $propName not found. Did you register it in configuration file?");
 		}
 	}
 

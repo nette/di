@@ -86,8 +86,7 @@ class Helpers
 		$optCount = 0;
 		$num = -1;
 		$res = [];
-		$methodName = ($method instanceof \ReflectionMethod ? $method->getDeclaringClass()->getName() . '::' : '')
-			. $method->getName() . '()';
+		$methodName = Reflection::toString($method) . '()';
 
 		foreach ($method->getParameters() as $num => $parameter) {
 			if (!$parameter->isVariadic() && array_key_exists($parameter->getName(), $arguments)) {
@@ -107,11 +106,11 @@ class Helpers
 						$optCount++;
 					} elseif (class_exists($class) || interface_exists($class)) {
 						if ($class !== ($hint = (new \ReflectionClass($class))->getName())) {
-							throw new ServiceCreationException("Service of type {$class} needed by $methodName not found, did you mean $hint?");
+							throw new ServiceCreationException("Service of type $class needed by $methodName not found, did you mean $hint?");
 						}
-						throw new ServiceCreationException("Service of type {$class} needed by $methodName not found. Did you register it in configuration file?");
+						throw new ServiceCreationException("Service of type $class needed by $methodName not found. Did you register it in configuration file?");
 					} else {
-						throw new ServiceCreationException("Class {$class} needed by $methodName not found. Check type hint and 'use' statements.");
+						throw new ServiceCreationException("Class $class needed by $methodName not found. Check type hint and 'use' statements.");
 					}
 				} else {
 					if ($container instanceof ContainerBuilder) {
