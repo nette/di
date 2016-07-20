@@ -460,7 +460,7 @@ class ContainerBuilder
 				$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== NULL);
 				$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->getName();
 				if ($param->isDefaultValueAvailable()) {
-					$def->parameters[$paramDef] = $param->getDefaultValue();
+					$def->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
 				} else {
 					$def->parameters[] = $paramDef;
 				}
