@@ -108,7 +108,7 @@ class DependencyChecker
 						$name,
 						$method->getName(),
 						$method->getDocComment(),
-						implode('', $method->getParameters()),
+						self::hashParameters($method),
 						PHP_VERSION >= 70000 ? $method->getReturnType() : NULL
 					];
 				}
@@ -130,12 +130,28 @@ class DependencyChecker
 				$name,
 				$class ? PhpReflection::getUseStatements($method->getDeclaringClass()) : NULL,
 				$method->getDocComment(),
-				implode('', $method->getParameters()),
+				self::hashParameters($method),
 				PHP_VERSION >= 70000 ? $method->getReturnType() : NULL
 			];
 		}
 
 		return md5(serialize($hash));
+	}
+
+
+	private static function hashParameters(\ReflectionFunctionAbstract $method)
+	{
+		$res = [];
+		foreach ($method->getParameters() as $param) {
+			$res[] = [
+				$param->getName(),
+				PhpReflection::getParameterType($param),
+				$param->isDefaultValueAvailable()
+					? ($param->isDefaultValueConstant() ? $param->getDefaultValueConstantName() : [$param->getDefaultValue()])
+					: NULL
+			];
+		}
+		return $res;
 	}
 
 }
