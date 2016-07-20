@@ -158,7 +158,7 @@ class DependencyChecker
 				PHP_VERSION_ID >= 70000 ? [Reflection::getParameterType($param), $param->allowsNull()] : NULL,
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
-					? ($param->isDefaultValueConstant() ? $param->getDefaultValueConstantName() : [$param->getDefaultValue()])
+					? [Reflection::getParameterDefaultValue($param)]
 					: NULL
 			];
 		}
