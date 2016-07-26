@@ -15,6 +15,10 @@ use Nette;
  */
 class ServiceDefinition extends Nette\Object
 {
+	const
+		IMPLEMENT_MODE_CREATE = 'create',
+		IMPLEMENT_MODE_GET = 'get';
+
 	/** @var string|NULL  class or interface name */
 	private $class;
 
@@ -40,7 +44,7 @@ class ServiceDefinition extends Nette\Object
 	private $implement;
 
 	/** @var string|NULL  create | get */
-	private $implementType;
+	private $implementMode;
 
 
 	/**
@@ -262,12 +266,12 @@ class ServiceDefinition extends Nette\Object
 	 * @param  string
 	 * @return self
 	 */
-	public function setImplementType($type)
+	public function setImplementMode($mode)
 	{
-		if (!in_array($type, array('get', 'create'), TRUE)) {
+		if (!in_array($mode, array(self::IMPLEMENT_MODE_CREATE, self::IMPLEMENT_MODE_GET), TRUE)) {
 			throw new Nette\InvalidArgumentException('Argument must be get|create.');
 		}
-		$this->implementType = $type;
+		$this->implementMode = $mode;
 		return $this;
 	}
 
@@ -275,9 +279,23 @@ class ServiceDefinition extends Nette\Object
 	/**
 	 * @return string|NULL
 	 */
+	public function getImplementMode()
+	{
+		return $this->implementMode;
+	}
+
+
+	/** @deprecated */
+	public function setImplementType($type)
+	{
+		return $this->setImplementMode($type);
+	}
+
+
+	/** @deprecated */
 	public function getImplementType()
 	{
-		return $this->implementType;
+		return $this->implementMode;
 	}
 
 
