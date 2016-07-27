@@ -364,7 +364,7 @@ class ContainerBuilder extends Nette\Object
 		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
 			throw new ServiceCreationException("Interface $interface used in service '$name' must have just one non-static method create() or get().");
 		}
-		$def->setImplementType($methodName = $rc->hasMethod('create') ? 'create' : 'get');
+		$def->setImplementMode($methodName = $rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
 
 		if (!$def->getClass() && !$def->getEntity()) {
 			$returnType = PhpReflection::getReturnType($method);
@@ -608,7 +608,7 @@ class ContainerBuilder extends Nette\Object
 
 		$entity = $def->getFactory()->getEntity();
 		$serviceRef = $this->getServiceName($entity);
-		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementType() !== 'create'
+		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
 			? new Statement(array('@' . self::THIS_CONTAINER, 'getService'), array($serviceRef))
 			: $def->getFactory();
 
@@ -651,7 +651,7 @@ class ContainerBuilder extends Nette\Object
 			->addParameter('container')
 				->setTypeHint($this->className);
 
-		$factoryClass->addMethod($def->getImplementType())
+		$factoryClass->addMethod($def->getImplementMode())
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code))
 			->setReturnType(PHP_VERSION_ID >= 70000 ? $def->getClass() : NULL);
