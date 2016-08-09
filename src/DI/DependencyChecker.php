@@ -109,7 +109,7 @@ class DependencyChecker
 						$method->getName(),
 						$method->getDocComment(),
 						self::hashParameters($method),
-						PHP_VERSION >= 70000 ? $method->getReturnType() : NULL
+						PHP_VERSION_ID >= 70000 ? $method->getReturnType() : NULL
 					];
 				}
 			}
@@ -131,7 +131,7 @@ class DependencyChecker
 				$class ? PhpReflection::getUseStatements($method->getDeclaringClass()) : NULL,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				PHP_VERSION >= 70000 ? $method->getReturnType() : NULL
+				PHP_VERSION_ID >= 70000 ? $method->getReturnType() : NULL
 			];
 		}
 
