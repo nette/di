@@ -142,10 +142,14 @@ class DependencyChecker
 	private static function hashParameters(\ReflectionFunctionAbstract $method)
 	{
 		$res = [];
+		if (PHP_VERSION_ID < 70000 && $method->getNumberOfParameters() && $method->getFileName()) {
+			$res[] = file($method->getFileName())[$method->getStartLine() - 1];
+		}
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->getName(),
-				PhpReflection::getParameterType($param),
+				PHP_VERSION_ID >= 70000 ? PhpReflection::getParameterType($param) : NULL,
+				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? ($param->isDefaultValueConstant() ? $param->getDefaultValueConstantName() : [$param->getDefaultValue()])
 					: NULL
