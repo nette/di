@@ -324,7 +324,7 @@ class Foo
 
 	function bar()
 	{
-		$bar = $this->BarFactory->create();
+		$bar = $this->barFactory->create();
 	}
 }
 ```
