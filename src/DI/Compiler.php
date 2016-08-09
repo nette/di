@@ -355,7 +355,19 @@ class Compiler
 			$definition->setFactory(NULL);
 		}
 
-		$arguments = [];
+		if (array_key_exists('class', $config)) {
+			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
+			if (!$config['class'] instanceof Statement) {
+				$definition->setClass($config['class']);
+			}
+			$definition->setFactory($config['class']);
+		}
+
+		if (array_key_exists('factory', $config)) {
+			Validators::assertField($config, 'factory', 'callable|Nette\DI\Statement|null');
+			$definition->setFactory($config['factory']);
+		}
+
 		if (array_key_exists('arguments', $config)) {
 			Validators::assertField($config, 'arguments', 'array');
 			$arguments = $config['arguments'];
@@ -363,19 +375,6 @@ class Compiler
 				$arguments += $definition->getFactory()->arguments;
 			}
 			$definition->setArguments($arguments);
-		}
-
-		if (array_key_exists('class', $config)) {
-			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
-			if (!$config['class'] instanceof Statement) {
-				$definition->setClass($config['class']);
-			}
-			$definition->setFactory($config['class'], $arguments);
-		}
-
-		if (array_key_exists('factory', $config)) {
-			Validators::assertField($config, 'factory', 'callable|Nette\DI\Statement|null');
-			$definition->setFactory($config['factory'], $arguments);
 		}
 
 		if (isset($config['setup'])) {

@@ -204,6 +204,11 @@ Assert::same([
 	'Lorem::__construct new',
 ], Notes::fetch());
 
+Assert::type(Lorem::class, $container->getService('two10'));
+Assert::same([
+	'Lorem::__construct 2 new',
+], Notes::fetch());
+
 
 
 Assert::type(Ipsum::class, $container->getService('three1'));

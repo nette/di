@@ -36,6 +36,9 @@ services:
 		arguments: [1: new]
 	two9:
 		arguments!: [new]
+	two10:
+		factory: Factory::createLorem(2)
+		arguments: [1: new]
 
 	three1:
 		class: Ipsum
