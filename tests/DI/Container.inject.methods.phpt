@@ -57,4 +57,4 @@ $container = createContainer($builder);
 
 $test = new Test2;
 $container->callInjects($test);
-Assert::same(['Test1::injectOptional', 'Test1::injectA', 'Test1::inject', 'Test2::injectC'], $test->injects);
+Assert::same(['Test1::inject', 'Test1::injectA', 'Test1::injectOptional', 'Test2::injectC'], $test->injects);

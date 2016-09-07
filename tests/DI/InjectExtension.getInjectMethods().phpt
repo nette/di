@@ -49,15 +49,15 @@ Assert::same([
 ], InjectExtension::getInjectMethods('Class1'));
 
 Assert::same([
-	'injectT1',
 	'inject1',
 	'inject2',
+	'injectT1',
 ], InjectExtension::getInjectMethods('Class2'));
 
 Assert::same([
-	'injectT2',
-	'injectT1',
 	'inject1',
 	'inject2',
+	'injectT1',
 	'inject3',
+	'injectT2',
 ], InjectExtension::getInjectMethods('Class3'));
