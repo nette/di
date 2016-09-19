@@ -96,7 +96,7 @@ class DependencyChecker
 			} catch (\ReflectionException $e) {
 				return;
 			}
-			$hash[] = [$name, PhpReflection::getUseStatements($class)];
+			$hash[] = [$name, PhpReflection::getUseStatements($class), $class->isAbstract()];
 			foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
 				if ($prop->getDeclaringClass() == $class) { // intentionally ==
 					$hash[] = [$name, $prop->getName(), $prop->getDocComment()];
