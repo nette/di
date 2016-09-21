@@ -14,20 +14,24 @@ namespace NS
 		{}
 
 		/** @return B */
-		function annotationSingle()
+		function annotationClassType()
 		{}
 
 		/** @return B|string */
-		function annotationComplex()
+		function annotationUnionType()
 		{}
 
 		/** @return String */
-		function nativeType()
+		function annotationNativeType()
+		{}
+
+		/** @return self */
+		function annotationSelfType()
 		{}
 	}
 
 	/** @return B */
-	function classType()
+	function annotationClassType()
 	{}
 }
 
@@ -42,12 +46,14 @@ namespace
 
 	Assert::null(PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'noType')));
 
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSingle')));
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationClassType')));
 
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationComplex')));
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationUnionType')));
 
-	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'nativeType')));
+	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationNativeType')));
+
+	Assert::same('NS\A', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSelfType')));
 
 	// class name expanding is NOT supported for global functions
-	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction(NS\classType::class)));
+	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction('NS\annotationClassType')));
 }

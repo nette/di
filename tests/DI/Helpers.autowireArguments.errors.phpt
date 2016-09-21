@@ -42,3 +42,8 @@ Assert::exception(function () use ($container) {
 Assert::exception(function () use ($container) {
 	Helpers::autowireArguments(new ReflectionFunction(function ($x) {}), [], $container);
 }, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type hint or default value, so its value must be specified.');
+
+
+Assert::exception(function () use ($container) {
+	Helpers::autowireArguments(new ReflectionFunction(function (int $x) {}), [], $container);
+}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type hint or default value, so its value must be specified.');

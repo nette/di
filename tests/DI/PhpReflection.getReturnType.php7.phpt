@@ -2,7 +2,7 @@
 
 /**
  * Test: Nette\DI\PhpReflection::getReturnType
- * @phpversion >= 7
+ * @phpversion 7
  */
 
 namespace NS
@@ -14,12 +14,7 @@ namespace NS
 		function noType()
 		{}
 
-		/** @return B */
-		function annotationSingle()
-		{}
-
-		/** @return B|string */
-		function annotationComplex()
+		function classType(): B
 		{}
 
 		function nativeType(): string
@@ -27,9 +22,26 @@ namespace NS
 
 		function selfType(): self
 		{}
+
+		/** @return B */
+		function annotationClassType()
+		{}
+
+		/** @return B|string */
+		function annotationUnionType()
+		{}
+
+		/** @return String */
+		function annotationNativeType()
+		{}
+
+		/** @return self */
+		function annotationSelfType()
+		{}
 	}
 
-	function classType(): B
+	/** @return B */
+	function annotationClassType()
 	{}
 }
 
@@ -44,14 +56,20 @@ namespace
 
 	Assert::null(PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'noType')));
 
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSingle')));
-
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationComplex')));
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'classType')));
 
 	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'nativeType')));
 
 	Assert::same('NS\A', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'selfType')));
 
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationClassType')));
+
+	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationUnionType')));
+
+	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationNativeType')));
+
+	Assert::same('NS\A', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSelfType')));
+
 	// class name expanding is NOT supported for global functions
-	Assert::same('Test\B', PhpReflection::getReturnType(new \ReflectionFunction(NS\classType::class)));
+	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction('NS\annotationClassType')));
 }
