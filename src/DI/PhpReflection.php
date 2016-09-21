@@ -58,7 +58,9 @@ class PhpReflection
 	 */
 	public static function getParameterType(\ReflectionParameter $param)
 	{
-		if (PHP_VERSION_ID >= 70000) {
+		if (PHP_VERSION_ID >= 70100) {
+			return $param->hasType() ? $param->getType()->getName() : NULL;
+		} elseif (PHP_VERSION_ID >= 70000) {
 			return $param->hasType() ? (string) $param->getType() : NULL;
 		} elseif ($param->isArray() || $param->isCallable()) {
 			return $param->isArray() ? 'array' : 'callable';

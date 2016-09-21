@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\DI\PhpReflection::getParameterType
+ * @phpversion >= 7.1
  */
 
 use Nette\DI\PhpReflection;
@@ -15,7 +16,7 @@ use Test\B; // for testing purposes
 
 class A
 {
-	function method(Undeclared $undeclared, B $b, array $array, callable $callable, $none, B $nullable = NULL)
+	function method(?Undeclared $undeclared, ?B $b, ?array $array, ?callable $callable, $none, ?B $nullable = NULL)
 	{}
 }
 
