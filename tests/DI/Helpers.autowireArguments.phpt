@@ -21,13 +21,13 @@ class Container
 
 class Test
 {
-	function method(Test $class, Undefined $nullable1 = NULL, int $nullable2 = NULL)
+	function method(Test $class, self $self, Undefined $nullable1 = NULL, int $nullable2 = NULL)
 	{}
 }
 
 $container = new Container;
 
 Assert::equal(
-	[new Test],
+	[new Test, new Test],
 	Helpers::autowireArguments(new ReflectionMethod('Test', 'method'), [], $container)
 );
