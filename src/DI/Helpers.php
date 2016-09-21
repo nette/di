@@ -119,7 +119,7 @@ class Helpers
 					$optCount = 0;
 				}
 
-			} elseif ($parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+			} elseif (($class && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
 				// !optional + defaultAvailable = func($a = NULL, $b) since 5.4.7
 				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
 				$res[$num] = $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : NULL;
