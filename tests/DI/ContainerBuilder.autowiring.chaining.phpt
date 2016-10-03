@@ -19,6 +19,10 @@ class Foo
 	{
 		return new Bar;
 	}
+
+	static function createUnknown()
+	{
+	}
 }
 
 class Bar
@@ -65,3 +69,13 @@ services:
 	- Test
 ');
 Assert::type(Baz::class, $container->getByType('Baz'));
+
+
+$compiler = new DI\Compiler;
+$container = createContainer($compiler, '
+services:
+	baz:
+		class: Baz
+		factory: Foo::createUnknown()::foo()
+');
+Assert::true($container->hasService('baz'));

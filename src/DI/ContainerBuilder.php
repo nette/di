@@ -637,10 +637,10 @@ class ContainerBuilder
 				if (!$arguments && substr($entity[1], -2) === '[]') {
 					throw new ServiceCreationException("Missing argument for $entity[1].");
 				}
-			} else {
-				$class = empty($service) || $entity[1] === 'create'
-					? $this->resolveEntityClass($entity[0])
-					: $this->definitions[$service]->getClass();
+			} elseif ($class = empty($service) || $entity[1] === 'create'
+				? $this->resolveEntityClass($entity[0])
+				: $this->definitions[$service]->getClass()
+			) {
 				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
 			}
 		}
