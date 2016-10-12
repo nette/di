@@ -10,6 +10,7 @@ namespace Nette\DI\Extensions;
 use Nette;
 use Nette\DI;
 use Nette\DI\PhpReflection;
+use Nette\DI\ServiceDefinition;
 
 
 /**
@@ -30,13 +31,12 @@ class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	private function updateDefinition($def)
+	private function updateDefinition(ServiceDefinition $def)
 	{
 		$class = $def->getClass();
-		$builder = $this->getContainerBuilder();
 		$injects = [];
 		foreach (self::getInjectProperties($class) as $property => $type) {
-			self::checkType($class, $property, $type, $builder);
+			self::checkType($class, $property, $type);
 			$injects[] = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
 		}
 
@@ -124,7 +124,7 @@ class InjectExtension extends DI\CompilerExtension
 
 
 	/** @internal */
-	private static function checkType($class, $name, $type, $container)
+	private static function checkType($class, $name, $type, DI\Container $container = NULL)
 	{
 		$rc = PhpReflection::getDeclaringClass(new \ReflectionProperty($class, $name));
 		$fullname = $rc->getName() . '::$' . $name;
@@ -132,7 +132,7 @@ class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidStateException("Property $fullname has no @var annotation.");
 		} elseif (!class_exists($type) && !interface_exists($type)) {
 			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $fullname not found. Check annotation and 'use' statements.");
-		} elseif (!$container->getByType($type, FALSE)) {
+		} elseif ($container && !$container->getByType($type, FALSE)) {
 			throw new Nette\InvalidStateException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
 		}
 	}
