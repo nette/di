@@ -34,18 +34,24 @@ class InjectExtension extends DI\CompilerExtension
 	private function updateDefinition(ServiceDefinition $def)
 	{
 		$class = $def->getClass();
-		$injects = [];
+		$setups = $def->getSetup();
+
 		foreach (self::getInjectProperties($class) as $property => $type) {
-			self::checkType($class, $property, $type);
-			$injects[] = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
+			$builder = $this->getContainerBuilder();
+			$inject = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
+			foreach ($setups as $key => $setup) {
+				if ($setup->getEntity() === $inject->getEntity()) {
+					$inject = $setup;
+					$builder = NULL;
+					unset($setups[$key]);
+				}
+			}
+			self::checkType($class, $property, $type, $builder);
+			array_unshift($setups, $inject);
 		}
 
 		foreach (array_reverse(self::getInjectMethods($def->getClass())) as $method) {
-			$injects[] = new DI\Statement($method);
-		}
-
-		$setups = $def->getSetup();
-		foreach ($injects as $inject) {
+			$inject = new DI\Statement($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;
@@ -54,6 +60,7 @@ class InjectExtension extends DI\CompilerExtension
 			}
 			array_unshift($setups, $inject);
 		}
+
 		$def->setSetup($setups);
 	}
 
@@ -124,7 +131,7 @@ class InjectExtension extends DI\CompilerExtension
 
 
 	/** @internal */
-	private static function checkType($class, $name, $type, DI\Container $container = NULL)
+	private static function checkType($class, $name, $type, $container = NULL)
 	{
 		$rc = PhpReflection::getDeclaringClass(new \ReflectionProperty($class, $name));
 		$fullname = $rc->getName() . '::$' . $name;
