@@ -10,6 +10,7 @@ namespace Nette\DI\Extensions;
 use Nette;
 use Nette\DI;
 use Nette\DI\PhpReflection;
+use Nette\DI\ServiceDefinition;
 
 
 /**
@@ -30,22 +31,27 @@ class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	private function updateDefinition($def)
+	private function updateDefinition(ServiceDefinition $def)
 	{
 		$class = $def->getClass();
-		$builder = $this->getContainerBuilder();
-		$injects = [];
+		$setups = $def->getSetup();
+
 		foreach (self::getInjectProperties($class) as $property => $type) {
+			$builder = $this->getContainerBuilder();
+			$inject = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
+			foreach ($setups as $key => $setup) {
+				if ($setup->getEntity() === $inject->getEntity()) {
+					$inject = $setup;
+					$builder = NULL;
+					unset($setups[$key]);
+				}
+			}
 			self::checkType($class, $property, $type, $builder);
-			$injects[] = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
+			array_unshift($setups, $inject);
 		}
 
 		foreach (array_reverse(self::getInjectMethods($def->getClass())) as $method) {
-			$injects[] = new DI\Statement($method);
-		}
-
-		$setups = $def->getSetup();
-		foreach ($injects as $inject) {
+			$inject = new DI\Statement($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;
@@ -54,6 +60,7 @@ class InjectExtension extends DI\CompilerExtension
 			}
 			array_unshift($setups, $inject);
 		}
+
 		$def->setSetup($setups);
 	}
 
@@ -124,7 +131,7 @@ class InjectExtension extends DI\CompilerExtension
 
 
 	/** @internal */
-	private static function checkType($class, $name, $type, $container)
+	private static function checkType($class, $name, $type, $container = NULL)
 	{
 		$rc = PhpReflection::getDeclaringClass(new \ReflectionProperty($class, $name));
 		$fullname = $rc->getName() . '::$' . $name;
@@ -132,7 +139,7 @@ class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidStateException("Property $fullname has no @var annotation.");
 		} elseif (!class_exists($type) && !interface_exists($type)) {
 			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $fullname not found. Check annotation and 'use' statements.");
-		} elseif (!$container->getByType($type, FALSE)) {
+		} elseif ($container && !$container->getByType($type, FALSE)) {
 			throw new Nette\InvalidStateException("Service of type {$type} used in @var annotation at $fullname not found. Did you register it in configuration file?");
 		}
 	}
