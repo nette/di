@@ -135,10 +135,9 @@ class PhpGenerator
 			return $code;
 		}
 
-		$factoryClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType;
-		$factoryClass->setName(str_replace(['\\', '.'], '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"))
-			->addImplement($def->getImplement())
-			->setFinal(TRUE);
+		$factoryClass = new Nette\PhpGenerator\ClassType;
+		$factoryClass->setName('($this)')
+			->addImplement($def->getImplement());
 
 		$factoryClass->addProperty('container')
 			->setVisibility('private');
@@ -153,7 +152,13 @@ class PhpGenerator
 			->setBody(str_replace('$this', '$this->container', $code))
 			->setReturnType(PHP_VERSION_ID >= 70000 ? $def->getClass() : NULL);
 
-		return "return new {$factoryClass->getName()}(\$this);";
+		if (PHP_VERSION_ID < 70000) {
+			$this->generatedClasses[] = $factoryClass;
+			$factoryClass->setName(str_replace(['\\', '.'], '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"));
+			return "return new {$factoryClass->getName()}(\$this);";
+		}
+
+		return 'return new ' . rtrim($factoryClass) . ';';
 	}
 
 
