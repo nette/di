@@ -56,7 +56,10 @@ class Loader
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
 			foreach ($data[self::INCLUDES_KEY] as $include) {
-				$merged = Helpers::merge($this->load(dirname($file) . '/' . $include), $merged);
+				if (!preg_match('#([a-z]:)?[/\\\\]#Ai', $include)) {
+					$include = dirname($file) . '/' . $include;
+				}
+				$merged = Helpers::merge($this->load($include), $merged);
 			}
 		}
 		unset($data[self::INCLUDES_KEY]);

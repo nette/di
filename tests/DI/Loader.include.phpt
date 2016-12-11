@@ -18,12 +18,14 @@ Assert::same([
 	'files/loader.includes.neon',
 	'files/loader.includes.child.ini',
 	'files/loader.includes.child.php',
+	__DIR__ . DIRECTORY_SEPARATOR . 'files/loader.includes.grandchild.neon',
 ], $config->getDependencies());
 
 Assert::same([
 	'parameters' => [
 		'me' => [
 			'loader.includes.child.ini',
+			'loader.includes.grandchild.neon',
 			'loader.includes.child.php',
 		],
 		'scalar' => 1,
