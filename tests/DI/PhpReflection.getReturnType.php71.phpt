@@ -47,6 +47,10 @@ namespace NS
 		/** @return self */
 		function annotationSelfType()
 		{}
+
+		/** @return static */
+		function annotationStaticType()
+		{}
 	}
 
 	/** @return B */
@@ -84,6 +88,8 @@ namespace
 	Assert::same('string', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationNativeType')));
 
 	Assert::same('NS\A', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSelfType')));
+
+	Assert::same('NS\A', PhpReflection::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationStaticType')));
 
 	// class name expanding is NOT supported for global functions
 	Assert::same('B', PhpReflection::getReturnType(new \ReflectionFunction('NS\annotationClassType')));

@@ -59,6 +59,15 @@ namespace C
 			return new self;
 		}
 	}
+
+	class StaticFactory
+	{
+		/** @return static */
+		static function create()
+		{
+			return new self;
+		}
+	}
 }
 
 namespace
@@ -105,6 +114,9 @@ namespace
 	$builder->addDefinition('eight')
 		->setFactory('C\ThisFactory::create');
 
+	$builder->addDefinition('nine')
+		->setFactory('C\StaticFactory::create');
+
 
 	$container = createContainer($builder);
 
@@ -123,4 +135,5 @@ namespace
 
 	Assert::type(C\SelfFactory::class, $container->getByType('C\SelfFactory'));
 	Assert::type(C\ThisFactory::class, $container->getByType('C\ThisFactory'));
+	Assert::type(C\StaticFactory::class, $container->getByType('C\StaticFactory'));
 }
