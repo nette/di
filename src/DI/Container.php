@@ -52,7 +52,7 @@ class Container extends Nette\Object
 	 * Adds the service to the container.
 	 * @param  string
 	 * @param  object
-	 * @return self
+	 * @return static
 	 */
 	public function addService($name, $service)
 	{

@@ -34,7 +34,7 @@ class Statement extends Nette\Object
 
 	/**
 	 * @param  string|array|ServiceDefinition|NULL
-	 * @return self
+	 * @return static
 	 */
 	public function setEntity($entity)
 	{

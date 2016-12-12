@@ -43,7 +43,7 @@ class Compiler extends Nette\Object
 
 	/**
 	 * Add custom configurator extension.
-	 * @return self
+	 * @return static
 	 */
 	public function addExtension($name, CompilerExtension $extension)
 	{
@@ -76,7 +76,7 @@ class Compiler extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setClassName($className)
 	{
@@ -87,7 +87,7 @@ class Compiler extends Nette\Object
 
 	/**
 	 * Adds new configuration.
-	 * @return self
+	 * @return static
 	 */
 	public function addConfig(array $config)
 	{
@@ -98,7 +98,7 @@ class Compiler extends Nette\Object
 
 	/**
 	 * Adds new configuration from file.
-	 * @return self
+	 * @return static
 	 */
 	public function loadConfig($file)
 	{
@@ -121,7 +121,7 @@ class Compiler extends Nette\Object
 
 	/**
 	 * Adds a files to the list of dependencies.
-	 * @return self
+	 * @return static
 	 */
 	public function addDependencies(array $files)
 	{

@@ -48,7 +48,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setClass($class, array $args = array())
 	{
@@ -70,7 +70,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setFactory($factory, array $args = array())
 	{
@@ -98,7 +98,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setArguments(array $args = array())
 	{
@@ -112,7 +112,7 @@ class ServiceDefinition extends Nette\Object
 
 	/**
 	 * @param  Statement[]
-	 * @return self
+	 * @return static
 	 */
 	public function setSetup(array $setup)
 	{
@@ -136,7 +136,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function addSetup($entity, array $args = array())
 	{
@@ -146,7 +146,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setParameters(array $params)
 	{
@@ -165,7 +165,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setTags(array $tags)
 	{
@@ -184,7 +184,7 @@ class ServiceDefinition extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function addTag($tag, $attr = TRUE)
 	{
@@ -204,7 +204,7 @@ class ServiceDefinition extends Nette\Object
 
 	/**
 	 * @param  bool
-	 * @return self
+	 * @return static
 	 */
 	public function setAutowired($state = TRUE)
 	{
@@ -224,7 +224,7 @@ class ServiceDefinition extends Nette\Object
 
 	/**
 	 * @param  bool
-	 * @return self
+	 * @return static
 	 */
 	public function setDynamic($state = TRUE)
 	{
@@ -244,7 +244,7 @@ class ServiceDefinition extends Nette\Object
 
 	/**
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function setImplement($interface)
 	{
@@ -264,7 +264,7 @@ class ServiceDefinition extends Nette\Object
 
 	/**
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function setImplementMode($mode)
 	{
@@ -315,7 +315,7 @@ class ServiceDefinition extends Nette\Object
 	}
 
 
-	/** @return self */
+	/** @return static */
 	public function setInject($state = TRUE)
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);

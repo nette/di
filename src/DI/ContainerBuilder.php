@@ -169,7 +169,7 @@ class ContainerBuilder extends Nette\Object
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setClassName($name)
 	{
@@ -503,7 +503,7 @@ class ContainerBuilder extends Nette\Object
 
 	/**
 	 * @param  string[]
-	 * @return self
+	 * @return static
 	 */
 	public function addExcludedClasses(array $classes)
 	{
@@ -514,7 +514,7 @@ class ContainerBuilder extends Nette\Object
 
 	/**
 	 * Adds a file to the list of dependencies.
-	 * @return self
+	 * @return static
 	 * @internal
 	 */
 	public function addDependency($file)
