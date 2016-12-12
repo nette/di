@@ -169,7 +169,7 @@ class ContainerBuilder
 
 	/**
 	 * @param  string[]
-	 * @return self
+	 * @return static
 	 */
 	public function addExcludedClasses(array $classes)
 	{
@@ -684,7 +684,7 @@ class ContainerBuilder
 	/**
 	 * Adds item to the list of dependencies.
 	 * @param  ReflectionClass|\ReflectionFunctionAbstract|string
-	 * @return self
+	 * @return static
 	 * @internal
 	 */
 	public function addDependency($dep)

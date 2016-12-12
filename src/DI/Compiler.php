@@ -46,7 +46,7 @@ class Compiler
 
 	/**
 	 * Add custom configurator extension.
-	 * @return self
+	 * @return static
 	 */
 	public function addExtension($name, CompilerExtension $extension)
 	{
@@ -79,7 +79,7 @@ class Compiler
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setClassName($className)
 	{
@@ -90,7 +90,7 @@ class Compiler
 
 	/**
 	 * Adds new configuration.
-	 * @return self
+	 * @return static
 	 */
 	public function addConfig(array $config)
 	{
@@ -101,7 +101,7 @@ class Compiler
 
 	/**
 	 * Adds new configuration from file.
-	 * @return self
+	 * @return static
 	 */
 	public function loadConfig($file)
 	{
@@ -125,7 +125,7 @@ class Compiler
 	/**
 	 * Adds dependencies to the list.
 	 * @param  array of ReflectionClass|\ReflectionFunctionAbstract|string
-	 * @return self
+	 * @return static
 	 */
 	public function addDependencies(array $deps)
 	{

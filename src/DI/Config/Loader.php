@@ -93,7 +93,7 @@ class Loader
 	 * Registers adapter for given file extension.
 	 * @param  string  file extension
 	 * @param  string|IAdapter
-	 * @return self
+	 * @return static
 	 */
 	public function addAdapter($extension, $adapter)
 	{

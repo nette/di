@@ -27,7 +27,7 @@ class DependencyChecker
 
 	/**
 	 * Adds dependencies to the list.
-	 * @return self
+	 * @return static
 	 */
 	public function add(array $deps)
 	{

@@ -57,7 +57,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setClass($class, array $args = [])
 	{
@@ -80,7 +80,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setFactory($factory, array $args = [])
 	{
@@ -109,7 +109,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setArguments(array $args = [])
 	{
@@ -123,7 +123,7 @@ class ServiceDefinition
 
 	/**
 	 * @param  Statement[]
-	 * @return self
+	 * @return static
 	 */
 	public function setSetup(array $setup)
 	{
@@ -147,7 +147,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function addSetup($entity, array $args = [])
 	{
@@ -157,7 +157,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setParameters(array $params)
 	{
@@ -176,7 +176,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function setTags(array $tags)
 	{
@@ -195,7 +195,7 @@ class ServiceDefinition
 
 
 	/**
-	 * @return self
+	 * @return static
 	 */
 	public function addTag($tag, $attr = TRUE)
 	{
@@ -215,7 +215,7 @@ class ServiceDefinition
 
 	/**
 	 * @param  bool|string|string[]
-	 * @return self
+	 * @return static
 	 */
 	public function setAutowired($state = TRUE)
 	{
@@ -245,7 +245,7 @@ class ServiceDefinition
 
 	/**
 	 * @param  bool
-	 * @return self
+	 * @return static
 	 */
 	public function setDynamic($state = TRUE)
 	{
@@ -265,7 +265,7 @@ class ServiceDefinition
 
 	/**
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function setImplement($interface)
 	{
@@ -286,7 +286,7 @@ class ServiceDefinition
 
 	/**
 	 * @param  string
-	 * @return self
+	 * @return static
 	 */
 	public function setImplementMode($mode)
 	{
@@ -323,7 +323,7 @@ class ServiceDefinition
 	}
 
 
-	/** @return self */
+	/** @return static */
 	public function setInject($state = TRUE)
 	{
 		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
