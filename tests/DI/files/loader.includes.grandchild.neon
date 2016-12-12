@@ -1,0 +1,2 @@
+parameters:
+	me: [loader.includes.grandchild.neon]

@@ -7,4 +7,8 @@ return [
 		'list' => [5, 6],
 		'force' => [5, 6],
 	],
+
+	'includes' => [
+		__DIR__ . '/loader.includes.grandchild.neon',
+	],
 ];
