@@ -77,10 +77,11 @@ class Helpers
 
 
 	/**
-	 * @return bool
+	 * @deprecated
 	 */
 	public static function isInheriting(&$data)
 	{
+		trigger_error(__METHOD__ . ' is deprecated.', E_USER_DEPRECATED);
 		return is_array($data) && isset($data[self::EXTENDS_KEY]) && $data[self::EXTENDS_KEY] !== self::OVERWRITE;
 	}
 

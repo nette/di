@@ -51,6 +51,7 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 				$val[Helpers::EXTENDS_KEY] = Helpers::OVERWRITE;
 
 			} elseif (is_string($key) && preg_match('#^(\S+)\s+' . self::INHERITING_SEPARATOR . '\s+(\S+)\z#', $key, $matches)) {
+				trigger_error("Inheritance operator in '$key' is deprecated.", E_USER_DEPRECATED);
 				if (!is_array($val) && $val !== NULL) {
 					throw new Nette\InvalidStateException("Inheritance operator is available only for arrays, item '$key' is not array.");
 				}

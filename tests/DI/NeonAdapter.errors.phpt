@@ -13,5 +13,5 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	$config = new Config\Loader;
-	$config->load('files/neonAdapter.scalar.neon');
+	@$config->load('files/neonAdapter.scalar.neon'); // @ deprecated
 }, Nette\InvalidStateException::class, "Duplicated key 'scalar'.");
