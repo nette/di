@@ -256,7 +256,7 @@ class Compiler
 		$depths = [];
 		foreach ($services as $name => $def) {
 			$path = [];
-			while (Config\Helpers::isInheriting($def)) {
+			while (@Config\Helpers::isInheriting($def)) { // @ deprecated
 				$path[] = $def;
 				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : [];
 				if (in_array($def, $path, TRUE)) {

@@ -73,6 +73,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 
 				$parts = explode(self::INHERITING_SEPARATOR, $secName);
 				if (count($parts) > 1) {
+					trigger_error("Inheritance operator in section [$secName] is deprecated.", E_USER_DEPRECATED);
 					$secName = trim($parts[0]);
 					$secData[Helpers::EXTENDS_KEY] = trim($parts[1]);
 				}

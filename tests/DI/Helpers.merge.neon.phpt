@@ -46,4 +46,4 @@ Assert::exception(function () {
 Assert::same([
 	'parent' => 1,
 	'child' => [Config\Helpers::EXTENDS_KEY => 'parent']
-], merge('child < parent:', 'parent: 1'));
+], @merge('child < parent:', 'parent: 1')); // @ deprecated

@@ -23,5 +23,5 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$config = new Config\Loader;
-	$config->load('files/neonAdapter.neon', 'unknown');
+	@$config->load('files/neonAdapter.neon', 'unknown'); // @ deprecated
 }, Nette\Utils\AssertionException::class, "Missing section 'unknown' in file '%a%'.");

@@ -12,7 +12,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $config = new Config\Loader;
-$data = $config->load('files/loader.includes.neon', 'production');
+$data = @$config->load('files/loader.includes.neon', 'production'); // @ deprecated
 
 Assert::same([
 	'files/loader.includes.neon',

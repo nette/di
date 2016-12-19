@@ -33,10 +33,9 @@ class Loader
 	/**
 	 * Reads configuration from file.
 	 * @param  string  file name
-	 * @param  string  optional section to load
 	 * @return array
 	 */
-	public function load($file, $section = NULL)
+	public function load($file)
 	{
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
@@ -44,7 +43,9 @@ class Loader
 		$this->dependencies[] = $file;
 		$data = $this->getAdapter($file)->load($file);
 
-		if ($section) {
+		if (func_num_args() > 1) {
+			trigger_error('Sections in config file are deprecated.', E_USER_DEPRECATED);
+			$section = func_get_arg(1);
 			if (isset($data[self::INCLUDES_KEY])) {
 				throw new Nette\InvalidStateException("Section 'includes' must be placed under some top section in file '$file'.");
 			}
