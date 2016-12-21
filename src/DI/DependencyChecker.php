@@ -109,7 +109,9 @@ class DependencyChecker
 						$method->getName(),
 						$method->getDocComment(),
 						self::hashParameters($method),
-						PHP_VERSION_ID >= 70000 ? $method->getReturnType() : NULL
+						PHP_VERSION_ID >= 70000 && $method->hasReturnType()
+							? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
+							: NULL
 					];
 				}
 			}
@@ -131,7 +133,9 @@ class DependencyChecker
 				$class ? PhpReflection::getUseStatements($method->getDeclaringClass()) : NULL,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				PHP_VERSION_ID >= 70000 ? $method->getReturnType() : NULL
+				PHP_VERSION_ID >= 70000 && $method->hasReturnType()
+					? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
+					: NULL
 			];
 		}
 
@@ -148,7 +152,7 @@ class DependencyChecker
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->getName(),
-				PHP_VERSION_ID >= 70000 ? PhpReflection::getParameterType($param) : NULL,
+				PHP_VERSION_ID >= 70000 ? [PhpReflection::getParameterType($param), $param->allowsNull()] : NULL,
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? ($param->isDefaultValueConstant() ? $param->getDefaultValueConstantName() : [$param->getDefaultValue()])
