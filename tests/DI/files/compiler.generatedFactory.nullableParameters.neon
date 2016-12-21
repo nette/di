@@ -1,0 +1,14 @@
+services:
+
+	article:
+		factory: Article(%title%, %foo%, %lorem%)
+		implement: IArticleFactory
+		parameters: [?string title, ?Foo foo, ?int lorem: NULL]
+
+	article2:
+		implement: IArticleFactory
+		arguments: [%title%, %foo%, %lorem%]
+		parameters: [?string title, ?Foo foo, ?int lorem: NULL]
+
+	article3:
+		implement: IArticleFactory
