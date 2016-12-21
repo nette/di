@@ -443,6 +443,9 @@ class ContainerBuilder
 				if ($param->isDefaultValueAvailable()) {
 					$def->parameters[$paramDef] = $param->getDefaultValue();
 				} else {
+					if (PHP_VERSION_ID >= 70100 && $hint && $param->allowsNull()) {
+						$paramDef = "?" . $paramDef;
+					}
 					$def->parameters[] = $paramDef;
 				}
 			}
