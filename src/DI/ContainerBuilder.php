@@ -557,10 +557,7 @@ class ContainerBuilder
 		$entity = $this->normalizeEntity($statement->getEntity());
 		$arguments = $statement->arguments;
 
-		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
-			trigger_error("Wildcard '?' used in '$entity' is deprecated.", E_USER_DEPRECATED);
-
-		} elseif ($service = $this->getServiceName($entity)) { // factory calling
+		if ($service = $this->getServiceName($entity)) { // factory calling
 			$params = [];
 			foreach ($this->definitions[$service]->parameters as $k => $v) {
 				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
@@ -678,7 +675,7 @@ class ContainerBuilder
 	/** @internal */
 	public function normalizeEntity($entity)
 	{
-		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) { // Class::method -> [Class, method]
+		if (is_string($entity) && Strings::contains($entity, '::')) { // Class::method -> [Class, method]
 			$entity = explode('::', $entity);
 		}
 
