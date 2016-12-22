@@ -65,5 +65,5 @@ Assert::same('@database.member', $extension->prefix('@member'));
 
 
 Assert::same(['foo' => 'hello'], $extension->getConfig());
-Assert::same(['foo' => 'hello'], $extension->getConfig(['foo' => 'bar']));
-Assert::same(['foo2' => 'hello', 'foo' => 'hello'], $extension->getConfig(['foo2' => '%bar%']));
+Assert::same(['foo' => 'hello'], @$extension->getConfig(['foo' => 'bar'])); // @ deprecated
+Assert::same(['foo2' => 'hello', 'foo' => 'hello'], @$extension->getConfig(['foo2' => '%bar%'])); // @ deprecated

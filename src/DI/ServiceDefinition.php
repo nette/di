@@ -323,18 +323,18 @@ class ServiceDefinition
 	}
 
 
-	/** @return static */
+	/** @deprecated */
 	public function setInject($state = TRUE)
 	{
-		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		//trigger_error(__METHOD__ . "() is deprecated, use addTag('inject')", E_USER_DEPRECATED);
 		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $state);
 	}
 
 
-	/** @return bool|NULL */
+	/** @deprecated */
 	public function getInject()
 	{
-		//trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
+		trigger_error(__METHOD__ . "() is deprecated, use getTag('inject')", E_USER_DEPRECATED);
 		return $this->getTag(Extensions\InjectExtension::TAG_INJECT);
 	}
 

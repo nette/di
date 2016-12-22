@@ -441,6 +441,7 @@ class Compiler
 	/** @deprecated */
 	public static function filterArguments(array $args)
 	{
+		trigger_error(__METHOD__ . '() is deprecated, use Nette\DI\Helpers::filterArguments()', E_USER_DEPRECATED);
 		return Helpers::filterArguments($args);
 	}
 
@@ -448,6 +449,7 @@ class Compiler
 	/** @deprecated */
 	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
 	{
+		trigger_error(__METHOD__ . '() is deprecated, use similar loadDefinitions()', E_USER_DEPRECATED);
 		self::loadDefinitions($builder, isset($config['services']) ? $config['services'] : [], $namespace);
 	}
 
@@ -455,6 +457,7 @@ class Compiler
 	/** @deprecated */
 	public static function parseService(ServiceDefinition $definition, $config)
 	{
+		trigger_error(__METHOD__ . '() is deprecated, use loadDefinition()', E_USER_DEPRECATED);
 		self::loadDefinition($definition, $config);
 	}
 
