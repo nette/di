@@ -35,7 +35,11 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 	}
 
 
-	private function process(array $arr)
+	/**
+	 * @return array
+	 * @throws Nette\InvalidStateException
+	 */
+	public function process(array $arr)
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {

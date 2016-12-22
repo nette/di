@@ -38,9 +38,18 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 			$error = error_get_last();
 			throw new Nette\InvalidStateException("parse_ini_file(): $error[message]");
 		}
+		return $this->process($ini);
+	}
 
+
+	/**
+	 * @return array
+	 * @throws Nette\InvalidStateException
+	 */
+	public function process(array $arr)
+	{
 		$data = [];
-		foreach ($ini as $secName => $secData) {
+		foreach ($arr as $secName => $secData) {
 			if (is_array($secData)) { // is section?
 				if (substr($secName, -1) === self::RAW_SECTION) {
 					$secName = substr($secName, 0, -1);
@@ -54,7 +63,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 							if (!isset($cursor[$part]) || is_array($cursor[$part])) {
 								$cursor = & $cursor[$part];
 							} else {
-								throw new Nette\InvalidStateException("Invalid key '$key' in section [$secName] in file '$file'.");
+								throw new Nette\InvalidStateException("Invalid key '$key' in section [$secName].");
 							}
 						}
 						$cursor = $val;
@@ -74,7 +83,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 				if (!isset($cursor[$part]) || is_array($cursor[$part])) {
 					$cursor = & $cursor[$part];
 				} else {
-					throw new Nette\InvalidStateException("Invalid section [$secName] in file '$file'.");
+					throw new Nette\InvalidStateException("Invalid section [$secName].");
 				}
 			}
 

@@ -14,13 +14,13 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(function () {
 	$config = new Config\Loader;
 	$config->load('files/iniAdapter.scalar1.ini');
-}, Nette\InvalidStateException::class, "Invalid section [scalar.set] in file '%a%'.");
+}, Nette\InvalidStateException::class, "Invalid section [scalar.set].");
 
 
 Assert::exception(function () {
 	$config = new Config\Loader;
 	$config->load('files/iniAdapter.scalar2.ini');
-}, Nette\InvalidStateException::class, "Invalid key 'date.timezone' in section [set] in file '%a%'.");
+}, Nette\InvalidStateException::class, "Invalid key 'date.timezone' in section [set].");
 
 
 Assert::exception(function () {
