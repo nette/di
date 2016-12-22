@@ -169,7 +169,7 @@ Save the (above) configuration to the file `config.neon` and let's create a cont
 
 ```php
 $loader = new Nette\DI\ContainerLoader(__DIR__ . '/temp');
-$class = $loader->load('', function($compiler) {
+$class = $loader->load(function($compiler) {
     $compiler->loadConfig(__DIR__ . '/config.neon');
 });
 $container = new $class;
