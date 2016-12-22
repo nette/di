@@ -558,6 +558,7 @@ class ContainerBuilder
 		$arguments = $statement->arguments;
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
+			trigger_error("Wildcard '?' used in '$entity' is deprecated.", E_USER_DEPRECATED);
 
 		} elseif ($service = $this->getServiceName($entity)) { // factory calling
 			$params = [];
