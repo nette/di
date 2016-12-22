@@ -295,6 +295,7 @@ class Container
 	 */
 	public function expand($s)
 	{
+		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		return Helpers::expand($s, $this->parameters);
 	}
 

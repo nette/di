@@ -16,19 +16,19 @@ $container = new Container([
 	'dirs' => ['cache' => '/temp'],
 ]);
 
-Assert::same('/myApp/test', $container->expand('%appDir%/test'));
-Assert::same('/temp/test', $container->expand('%dirs.cache%/test'));
-Assert::same(['cache' => '/temp'], $container->expand('%dirs%'));
+Assert::same('/myApp/test', @$container->expand('%appDir%/test')); // @ deprecated
+Assert::same('/temp/test', @$container->expand('%dirs.cache%/test')); // @ deprecated
+Assert::same(['cache' => '/temp'], @$container->expand('%dirs%')); // @ deprecated
 
 Assert::exception(function () use ($container) {
-	$container->expand('%bar%');
+	@$container->expand('%bar%'); // @ deprecated
 }, Nette\InvalidArgumentException::class, "Missing parameter 'bar'.");
 
 Assert::exception(function () use ($container) {
-	$container->expand('%foo.bar%');
+	@$container->expand('%foo.bar%'); // @ deprecated
 }, Nette\InvalidArgumentException::class, "Missing parameter 'foo.bar'.");
 
 Assert::exception(function () use ($container) {
 	$container->parameters['bar'] = [];
-	$container->expand('foo%bar%');
+	@$container->expand('foo%bar%'); // @ deprecated
 }, Nette\InvalidArgumentException::class, "Unable to concatenate non-scalar parameter 'bar' into 'foo%bar%'.");
