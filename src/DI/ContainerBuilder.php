@@ -11,6 +11,7 @@ use Nette;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
+use Nette\Utils\Reflection;
 use ReflectionClass;
 
 
@@ -410,7 +411,7 @@ class ContainerBuilder
 		$def->setImplementMode($methodName = $rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
 
 		if (!$def->getClass() && !$def->getEntity()) {
-			$returnType = PhpReflection::getReturnType($method);
+			$returnType = Helpers::getReturnType($method);
 			if (!$returnType) {
 				throw new ServiceCreationException("Method $interface::$methodName() used in service '$name' has no @return annotation.");
 			} elseif (!class_exists($returnType)) {
@@ -444,10 +445,10 @@ class ContainerBuilder
 			}
 
 			foreach ($method->getParameters() as $param) {
-				$hint = PhpReflection::getParameterType($param);
+				$hint = Reflection::getParameterType($param);
 				if (isset($ctorParams[$param->getName()])) {
 					$arg = $ctorParams[$param->getName()];
-					if ($hint !== PhpReflection::getParameterType($arg)) {
+					if ($hint !== Reflection::getParameterType($arg)) {
 						throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::$methodName() doesn't match type hint in $class constructor.");
 					}
 					$def->getFactory()->arguments[$arg->getPosition()] = self::literal('$' . $arg->getName());
@@ -523,7 +524,7 @@ class ContainerBuilder
 			}
 			$this->addDependency($reflection);
 
-			$type = PhpReflection::getReturnType($reflection);
+			$type = Helpers::getReturnType($reflection);
 			if ($type && !class_exists($type) && !interface_exists($type)) {
 				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Is return type of %s() used in service '%s' correct?", $type, Nette\Utils\Callback::toString($entity), $serviceName));
 			}

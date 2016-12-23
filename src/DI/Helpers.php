@@ -8,6 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\Utils\Reflection;
 
 
 /**
@@ -99,7 +100,7 @@ class Helpers
 				unset($arguments[$num]);
 				$optCount = 0;
 
-			} elseif (($class = PhpReflection::getParameterType($parameter)) && !PhpReflection::isBuiltinType($class)) {
+			} elseif (($class = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($class)) {
 				$res[$num] = $container->getByType($class, FALSE);
 				if ($res[$num] === NULL) {
 					if ($parameter->allowsNull()) {
@@ -189,6 +190,42 @@ class Helpers
 			}
 		}
 		return $config;
+	}
+
+
+	/**
+	 * Returns an annotation value.
+	 * @return string|NULL
+	 */
+	public static function parseAnnotation(\Reflector $ref, $name)
+	{
+		if (!Reflection::areCommentsAvailable()) {
+			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
+		}
+		$name = preg_quote($name, '#');
+		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
+			return isset($m[1]) ? $m[1] : '';
+		}
+	}
+
+
+	/**
+	 * @return string|NULL
+	 */
+	public static function getReturnType(\ReflectionFunctionAbstract $func)
+	{
+		if ($type = Reflection::getReturnType($func)) {
+			return $type;
+		} elseif ($type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'))) {
+			if ($func instanceof \ReflectionMethod) {
+				$lower = strtolower($type);
+				return $lower === 'static' || $lower === '$this'
+					? $func->getDeclaringClass()->getName()
+					: Reflection::expandClassName($type, $func->getDeclaringClass());
+			} else {
+				return ltrim($type, '\\');
+			}
+		}
 	}
 
 }
