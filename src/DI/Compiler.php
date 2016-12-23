@@ -147,7 +147,7 @@ class Compiler
 	/**
 	 * @return string
 	 */
-	public function compile(array $config = NULL, $className = NULL, $parentName = NULL)
+	public function compile()
 	{
 		if (func_num_args()) {
 			trigger_error(__METHOD__ . ' arguments are deprecated, use Compiler::addConfig() and Compiler::setClassName().', E_USER_DEPRECATED);
