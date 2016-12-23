@@ -9,7 +9,7 @@ namespace Nette\DI\Extensions;
 
 use Nette;
 use Nette\DI;
-use Nette\DI\PhpReflection;
+use Nette\Utils\Reflection;
 
 
 /**
@@ -96,9 +96,9 @@ class InjectExtension extends DI\CompilerExtension
 		$res = [];
 		foreach (get_class_vars($class) as $name => $foo) {
 			$rp = new \ReflectionProperty($class, $name);
-			if (PhpReflection::parseAnnotation($rp, 'inject') !== NULL) {
-				if ($type = PhpReflection::parseAnnotation($rp, 'var')) {
-					$type = PhpReflection::expandClassName($type, PhpReflection::getDeclaringClass($rp));
+			if (DI\Helpers::parseAnnotation($rp, 'inject') !== NULL) {
+				if ($type = DI\Helpers::parseAnnotation($rp, 'var')) {
+					$type = Reflection::expandClassName($type, Reflection::getPropertyDeclaringClass($rp));
 				}
 				$res[$name] = $type;
 			}
@@ -132,7 +132,7 @@ class InjectExtension extends DI\CompilerExtension
 	/** @internal */
 	private static function checkType($class, $name, $type, $container = NULL)
 	{
-		$rc = PhpReflection::getDeclaringClass(new \ReflectionProperty($class, $name));
+		$rc = Reflection::getPropertyDeclaringClass(new \ReflectionProperty($class, $name));
 		$fullname = $rc->getName() . '::$' . $name;
 		if (!$type) {
 			throw new Nette\InvalidStateException("Property $fullname has no @var annotation.");

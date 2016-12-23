@@ -13,6 +13,7 @@ use Nette;
 /**
  * PHP reflection helpers.
  * @internal
+ * @deprecated
  */
 class PhpReflection
 {
