@@ -1,7 +1,7 @@
-* [ ] bug fix   <!-- #issue numbers, if any -->
-* [ ] enhancement
-* [ ] BC breaks
-* [ ] doc PR nette/docs#...  <!-- highly welcome, see https://nette.org/en/writing -->
+- bug fix? yes/no   <!-- #issue numbers, if any -->
+- new feature? yes/no
+- BC break? yes/no
+- doc PR: nette/docs#???  <!-- highly welcome, see https://nette.org/en/writing -->
 
 <!--
 Describe your changes here to communicate to the maintainers why we should accept this pull request.

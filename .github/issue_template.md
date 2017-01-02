@@ -1,6 +1,6 @@
-* [x] bug
-* [ ] enhancement
-* version: <!-- exact release version. PHP version, OS, web server if relevant -->
+- bug report? yes/no
+- feature request? yes/no
+- version: ?.?.? <!-- exact release version, for bug reports -->
 
 ### Description
 ...
