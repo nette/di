@@ -719,9 +719,9 @@ class ContainerBuilder
 	/**
 	 * @return Nette\PhpGenerator\PhpLiteral
 	 */
-	public static function literal($phpCode)
+	public static function literal($code, array $args = NULL)
 	{
-		return new Nette\PhpGenerator\PhpLiteral($phpCode);
+		return new Nette\PhpGenerator\PhpLiteral($args === NULL ? $code : PhpHelpers::formatArgs($code, $args));
 	}
 
 
