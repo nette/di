@@ -240,6 +240,22 @@ class ContainerBuilder
 
 
 	/**
+	 * Gets the service definition of the specified type.
+	 * @param  string
+	 * @return ServiceDefinition
+	 */
+	public function getDefinitionByType($class)
+	{
+		$definitionName = $this->getByType($class);
+		if (!$definitionName) {
+			throw new MissingServiceException("Service of type '$class' not found.");
+		}
+
+		return $this->getDefinition($definitionName);
+	}
+
+
+	/**
 	 * Gets the service names and definitions of the specified type.
 	 * @param  string
 	 * @return ServiceDefinition[]
