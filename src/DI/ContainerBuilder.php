@@ -571,7 +571,7 @@ class ContainerBuilder
 
 				$this->currentService = $name;
 				$setups = $def->getSetup();
-				foreach ($setups as & $setup) {
+				foreach ($setups as &$setup) {
 					if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === FALSE) { // auto-prepend @self
 						$setup = new Statement(['@' . $name, $setup->getEntity()], $setup->arguments);
 					}
@@ -662,7 +662,7 @@ class ContainerBuilder
 			}
 		}
 
-		array_walk_recursive($arguments, function (& $val) {
+		array_walk_recursive($arguments, function (&$val) {
 			if ($val instanceof Statement) {
 				$val = $this->completeStatement($val);
 
@@ -837,7 +837,7 @@ class ContainerBuilder
 	/** @deprecated */
 	public function formatPhp($statement, $args)
 	{
-		array_walk_recursive($args, function (& $val) {
+		array_walk_recursive($args, function (&$val) {
 			if ($val instanceof Statement) {
 				$val = $this->completeStatement($val);
 

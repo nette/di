@@ -56,12 +56,12 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 				} else { // process key nesting separator (key1.key2.key3)
 					$tmp = [];
 					foreach ($secData as $key => $val) {
-						$cursor = & $tmp;
+						$cursor = &$tmp;
 						$key = str_replace(self::ESCAPED_KEY_SEPARATOR, "\xFF", $key);
 						foreach (explode(self::KEY_SEPARATOR, $key) as $part) {
 							$part = str_replace("\xFF", self::KEY_SEPARATOR, $part);
 							if (!isset($cursor[$part]) || is_array($cursor[$part])) {
-								$cursor = & $cursor[$part];
+								$cursor = &$cursor[$part];
 							} else {
 								throw new Nette\InvalidStateException("Invalid key '$key' in section [$secName].");
 							}
@@ -78,10 +78,10 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 				}
 			}
 
-			$cursor = & $data; // nesting separator in section name
+			$cursor = &$data; // nesting separator in section name
 			foreach (explode(self::KEY_SEPARATOR, $secName) as $part) {
 				if (!isset($cursor[$part]) || is_array($cursor[$part])) {
-					$cursor = & $cursor[$part];
+					$cursor = &$cursor[$part];
 				} else {
 					throw new Nette\InvalidStateException("Invalid section [$secName].");
 				}
@@ -127,7 +127,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 	 * Recursive builds INI list.
 	 * @return void
 	 */
-	private static function build($input, & $output, $prefix)
+	private static function build($input, &$output, $prefix)
 	{
 		foreach ($input as $key => $val) {
 			$key = str_replace(self::KEY_SEPARATOR, self::ESCAPED_KEY_SEPARATOR, $key);

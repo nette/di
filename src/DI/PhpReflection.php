@@ -110,7 +110,7 @@ class PhpReflection
 	 */
 	public static function getClassTree(\ReflectionClass $class)
 	{
-		$addTraits = function ($types) use (& $addTraits) {
+		$addTraits = function ($types) use (&$addTraits) {
 			if ($traits = array_merge(...array_map('class_uses', array_values($types)))) {
 				$types += $traits + $addTraits($traits);
 			}
@@ -254,7 +254,7 @@ class PhpReflection
 	}
 
 
-	private static function fetch(& $tokens, $take)
+	private static function fetch(&$tokens, $take)
 	{
 		$res = NULL;
 		while ($token = current($tokens)) {

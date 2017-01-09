@@ -223,7 +223,7 @@ class PhpGenerator
 	 */
 	public function formatPhp($statement, $args)
 	{
-		array_walk_recursive($args, function (& $val) {
+		array_walk_recursive($args, function (&$val) {
 			if ($val instanceof Statement) {
 				$val = new PhpLiteral($this->formatStatement($val));
 

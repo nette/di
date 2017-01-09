@@ -39,7 +39,7 @@ class Lorem
 define('MY_CONSTANT_TEST', 'one');
 
 
-Assert::error(function () use (& $container) {
+Assert::error(function () use (&$container) {
 	$container = createContainer(new DI\Compiler, "
 	services:
 		lorem:

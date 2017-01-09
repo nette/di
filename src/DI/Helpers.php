@@ -184,7 +184,7 @@ class Helpers
 				self::prefixServiceName($config->arguments, $namespace)
 			);
 		} elseif (is_array($config)) {
-			foreach ($config as & $val) {
+			foreach ($config as &$val) {
 				$val = self::prefixServiceName($val, $namespace);
 			}
 		}
