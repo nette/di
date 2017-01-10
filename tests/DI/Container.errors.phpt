@@ -4,6 +4,8 @@
  * Test: Nette\DI\Container errors usage.
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Container;
 use Tester\Assert;
 

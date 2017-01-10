@@ -4,6 +4,8 @@
  * Test: DIExtension exluded classes
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Nette\DI\Extensions\DIExtension;
 use Tester\Assert;

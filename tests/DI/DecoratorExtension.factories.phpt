@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: service decorators && generated factories
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

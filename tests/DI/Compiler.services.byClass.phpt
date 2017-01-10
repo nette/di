@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: services by Class.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

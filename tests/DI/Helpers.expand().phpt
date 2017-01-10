@@ -4,6 +4,8 @@
  * Test: Nette\DI\Helpers::expand()
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Helpers;
 use Tester\Assert;
 

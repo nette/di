@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder autowiring in chaining
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Nette\DI\Statement;
 use Tester\Assert;

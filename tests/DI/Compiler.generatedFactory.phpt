@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: generated services factories.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 use Nette\DI\Config\Adapters as Adapt;

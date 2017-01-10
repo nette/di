@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: inject.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Nette\DI\Statement;
 use Tester\Assert;
