@@ -151,7 +151,7 @@ class PhpGenerator
 			->setBody(str_replace('$this', '$this->container', $code))
 			->setReturnType($def->getClass());
 
-		return 'return new ' . rtrim($factoryClass) . ';';
+		return 'return new ' . rtrim((string) $factoryClass) . ';';
 	}
 
 
