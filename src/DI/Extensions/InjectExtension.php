@@ -37,7 +37,7 @@ class InjectExtension extends DI\CompilerExtension
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
 			$builder = $this->getContainerBuilder();
-			$inject = new DI\Statement('$' . $property, ['@\\' . ltrim($type, '\\')]);
+			$inject = new DI\Statement('$' . $property, ['@\\' . ltrim((string) $type, '\\')]);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;
