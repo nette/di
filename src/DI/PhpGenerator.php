@@ -136,8 +136,7 @@ class PhpGenerator
 			return $code;
 		}
 
-		$factoryClass = new Nette\PhpGenerator\ClassType;
-		$factoryClass->setName('($this)')
+		$factoryClass = (new Nette\PhpGenerator\ClassType('($this)'))
 			->addImplement($def->getImplement());
 
 		$factoryClass->addProperty('container')
@@ -182,7 +181,7 @@ class PhpGenerator
 			return $this->formatPhp('!?', [$arguments[0]]);
 
 		} elseif (is_string($entity)) { // class name
-			return $this->formatPhp("new $entity" . ($arguments ? '(?*)' : ''), [$arguments]);
+			return $this->formatPhp("new $entity" . ($arguments ? '(?*)' : ''), $arguments ? [$arguments] : []);
 
 		} elseif ($entity[0] === '') { // globalFunc
 			return $this->formatPhp("$entity[1](?*)", [$arguments]);
@@ -255,10 +254,9 @@ class PhpGenerator
 		$res = [];
 		foreach ($parameters as $k => $v) {
 			$tmp = explode(' ', is_int($k) ? $v : $k);
-			$param = $res[] = new Nette\PhpGenerator\Parameter;
-			$param->setName(end($tmp));
+			$param = $res[] = new Nette\PhpGenerator\Parameter(end($tmp));
 			if (!is_int($k)) {
-				$param = $param->setOptional(TRUE)->setDefaultValue($v);
+				$param->setOptional(TRUE)->setDefaultValue($v);
 			}
 			if (isset($tmp[1])) {
 				$param->setTypeHint($tmp[0]);
