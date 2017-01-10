@@ -71,6 +71,28 @@ namespace C
 	}
 }
 
+namespace D
+{
+	interface DInterface
+	{
+
+	}
+
+	class DInjected implements DInterface
+	{
+
+	}
+
+	class DClass
+	{
+		/** @var DInterface|DInjected @inject */
+		public $var1;
+
+		/** @var DInjected|DInterface @inject */
+		public $var2;
+	}
+}
+
 namespace
 {
 	use Nette\DI\Extensions\InjectExtension;
@@ -98,4 +120,9 @@ namespace
 		'var3' => 'C\CInjected',
 		'var4' => 'C\CInjected',
 	], InjectExtension::getInjectProperties('C\CClass'));
+
+	Assert::same([
+		'var1' => 'D\DInterface',
+		'var2' => 'D\DInjected',
+	], InjectExtension::getInjectProperties('D\DClass'));
 }

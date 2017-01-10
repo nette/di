@@ -98,6 +98,10 @@ class InjectExtension extends DI\CompilerExtension
 			$rp = new \ReflectionProperty($class, $name);
 			if (PhpReflection::parseAnnotation($rp, 'inject') !== NULL) {
 				if ($type = PhpReflection::parseAnnotation($rp, 'var')) {
+					if (Nette\Utils\Strings::contains($type, '|')) {
+						list($type) = explode('|', $type); //Use only first statement
+					}
+
 					$type = PhpReflection::expandClassName($type, PhpReflection::getDeclaringClass($rp));
 				}
 				$res[$name] = $type;
