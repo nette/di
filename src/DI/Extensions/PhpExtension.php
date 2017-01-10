@@ -39,7 +39,7 @@ class PhpExtension extends Nette\DI\CompilerExtension
 				$initialize->addBody('date_default_timezone_set(?);', [$value]);
 
 			} elseif (function_exists('ini_set')) {
-				$initialize->addBody('ini_set(?, ?);', [$name, $value]);
+				$initialize->addBody('ini_set(?, ?);', [$name, $value === FALSE ? '0' : (string) $value]);
 
 			} elseif (ini_get($name) != $value) { // intentionally ==
 				throw new Nette\NotSupportedException('Required function ini_set() is disabled.');
