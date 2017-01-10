@@ -4,6 +4,8 @@
  * Test: Nette\DI\Container getServiceType.
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Container;
 use Tester\Assert;
 

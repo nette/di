@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and resolving class in generated factories. Return type is located in method signature instead of @return annotation.
  */
 
+declare(strict_types=1);
+
 namespace A
 {
 	use B\Bar;

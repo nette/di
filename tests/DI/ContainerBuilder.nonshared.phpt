@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and non-shared services.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

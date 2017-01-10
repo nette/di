@@ -4,6 +4,8 @@
  * Test: Nette\DI\Container and inject methods.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

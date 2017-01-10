@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: services factories.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

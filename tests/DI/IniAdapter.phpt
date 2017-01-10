@@ -4,6 +4,8 @@
  * Test: Nette\DI\Config\Adapters\IniAdapter
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Config;
 use Tester\Assert;
 

@@ -4,6 +4,8 @@
  * Test: Working with user defined services in CompilerExtension.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

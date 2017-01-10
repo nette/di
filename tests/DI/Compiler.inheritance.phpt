@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: multiple service inhertance
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

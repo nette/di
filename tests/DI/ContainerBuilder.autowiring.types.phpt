@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and direct types
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

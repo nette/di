@@ -4,6 +4,8 @@
  * Test: ServiceDefinition
  */
 
+declare(strict_types=1);
+
 use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
 use Tester\Assert;
