@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\ContainerBuilder and resolving class in generated factories. Return type is located in method signature instead of @return annotation.
- * @phpVersion 7.0
  */
 
 namespace A

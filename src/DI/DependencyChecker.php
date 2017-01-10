@@ -112,7 +112,7 @@ class DependencyChecker
 						$method->getName(),
 						$method->getDocComment(),
 						self::hashParameters($method),
-						PHP_VERSION_ID >= 70000 && $method->hasReturnType()
+						$method->hasReturnType()
 							? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
 							: NULL
 					];
@@ -136,7 +136,7 @@ class DependencyChecker
 				$class ? Reflection::getUseStatements($method->getDeclaringClass()) : NULL,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				PHP_VERSION_ID >= 70000 && $method->hasReturnType()
+				$method->hasReturnType()
 					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
 					: NULL
 			];
@@ -149,13 +149,11 @@ class DependencyChecker
 	private static function hashParameters(\ReflectionFunctionAbstract $method)
 	{
 		$res = [];
-		if (PHP_VERSION_ID < 70000 && $method->getNumberOfParameters() && $method->getFileName()) {
-			$res[] = file($method->getFileName())[$method->getStartLine() - 1];
-		}
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->getName(),
-				PHP_VERSION_ID >= 70000 ? [Reflection::getParameterType($param), $param->allowsNull()] : NULL,
+				Reflection::getParameterType($param),
+				$param->allowsNull(),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? [Reflection::getParameterDefaultValue($param)]
