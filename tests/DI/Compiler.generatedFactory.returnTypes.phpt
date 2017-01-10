@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\Compiler: generated services factories from interfaces with return type declarations.
- * @phpVersion 7.0
  */
 
 use Nette\DI;
