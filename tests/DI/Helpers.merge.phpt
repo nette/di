@@ -4,6 +4,8 @@
  * Test: Nette\DI\Config\Helpers::merge()
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Config\Helpers;
 use Tester\Assert;
 

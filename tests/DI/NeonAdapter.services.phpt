@@ -4,6 +4,8 @@
  * Test: Nette\DI\Config\Adapters\NeonAdapter
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Config\Adapters\NeonAdapter;
 use Nette\DI\Statement;
 use Tester\Assert;

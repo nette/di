@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder::getByType() and findByType()
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

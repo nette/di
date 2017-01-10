@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerLoader basic usage.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

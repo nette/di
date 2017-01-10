@@ -4,6 +4,8 @@
  * Test: Overriding class of service definition defined in CompilerExtension.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

@@ -4,6 +4,8 @@
  * Test: Nette\DI\Extensions\InjectExtension::getInjectProperties()
  */
 
+declare(strict_types=1);
+
 namespace A
 {
 	class AClass

@@ -4,6 +4,8 @@
  * Test: Nette\DI\Config\Adapters\PhpAdapter
  */
 
+declare(strict_types=1);
+
 use Nette\DI\Config;
 use Tester\Assert;
 

@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: generated services accessors.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

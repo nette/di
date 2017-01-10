@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler: generated services factories from interfaces with scalar type hints in parameters.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Tester\Assert;
 

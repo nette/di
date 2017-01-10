@@ -4,6 +4,8 @@
  * Test: Nette\DI\ContainerBuilder and resolving builtin types for generated factories. Added checks for types added in PHP 7.0.
  */
 
+declare(strict_types=1);
+
 namespace A
 {
 

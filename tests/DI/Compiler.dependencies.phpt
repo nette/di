@@ -4,6 +4,8 @@
  * Test: Nette\DI\Compiler and dependencies.
  */
 
+declare(strict_types=1);
+
 use Nette\DI;
 use Nette\DI\DependencyChecker;
 use Tester\Assert;
