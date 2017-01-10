@@ -79,8 +79,7 @@ class PhpGenerator
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
 				$containerClass->addMethod($methodName)
-					->addComment(PHP_VERSION_ID < 70000 ? '@return ' . ($def->getImplement() ?: $def->getClass()) : '')
-					->setReturnType(PHP_VERSION_ID >= 70000 ? ($def->getImplement() ?: $def->getClass()) : NULL)
+					->setReturnType($def->getImplement() ?: $def->getClass())
 					->setBody($name === ContainerBuilder::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
@@ -153,13 +152,7 @@ class PhpGenerator
 		$factoryClass->addMethod($def->getImplementMode())
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code))
-			->setReturnType(PHP_VERSION_ID >= 70000 ? $def->getClass() : NULL);
-
-		if (PHP_VERSION_ID < 70000) {
-			$this->generatedClasses[] = $factoryClass;
-			$factoryClass->setName(str_replace(['\\', '.'], '_', "{$this->className}_{$def->getImplement()}Impl_{$name}"));
-			return "return new {$factoryClass->getName()}(\$this);";
-		}
+			->setReturnType($def->getClass());
 
 		return 'return new class ($this) ' . $factoryClass . ';';
 	}

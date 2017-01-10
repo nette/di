@@ -33,9 +33,7 @@ Assert::exception(function () use ($container) {
 		Helpers::autowireArguments(new ReflectionFunction(function (stdclass $x) {}), [], $container);
 	},
 	Nette\DI\ServiceCreationException::class,
-	PHP_VERSION_ID < 70000
-		? 'Service of type stdClass needed by {closure}() not found. Did you register it in configuration file?'
-		: 'Service of type stdclass needed by {closure}() not found, did you mean stdClass?'
+	'Service of type stdclass needed by {closure}() not found, did you mean stdClass?'
 );
 
 
