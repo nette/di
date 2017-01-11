@@ -212,7 +212,7 @@ class Helpers
 		}
 		$name = preg_quote($name, '#');
 		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
-			return isset($m[1]) ? $m[1] : '';
+			return $m[1] ?? '';
 		}
 	}
 

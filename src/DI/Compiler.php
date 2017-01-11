@@ -180,7 +180,7 @@ class Compiler
 		$params = isset($this->config['parameters']) ? $this->config['parameters'] : [];
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
-				? ContainerBuilder::literal('isset($this->parameters[?]) ? $this->parameters[?] : ?', [$key, ContainerBuilder::literal('?'), $key, $params[$key]])
+				? ContainerBuilder::literal('$this->parameters[?] ? ?', [$key, ContainerBuilder::literal('??'), $params[$key]])
 				: ContainerBuilder::literal('$this->parameters[?]', [$key]);
 		}
 		$this->builder->parameters = Helpers::expand($params, $params, TRUE);
@@ -194,7 +194,7 @@ class Compiler
 			+ array_intersect_key($this->config, self::$reserved);
 
 		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
-			$extension->setConfig(isset($this->config[$name]) ? $this->config[$name] : []);
+			$extension->setConfig($this->config[$name] ?? []);
 			$extension->loadConfiguration();
 		}
 

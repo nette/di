@@ -72,7 +72,7 @@ class Helpers
 	 */
 	public static function isOverwriting(&$data)
 	{
-		return is_array($data) && isset($data[self::EXTENDS_KEY]) && $data[self::EXTENDS_KEY] === self::OVERWRITE;
+		return is_array($data) && ($data[self::EXTENDS_KEY] ?? NULL) === self::OVERWRITE;
 	}
 
 }
