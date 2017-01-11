@@ -137,7 +137,7 @@ class PhpGenerator
 			return $code;
 		}
 
-		$factoryClass = (new Nette\PhpGenerator\ClassType('($this)'))
+		$factoryClass = (new Nette\PhpGenerator\ClassType)
 			->addImplement($def->getImplement());
 
 		$factoryClass->addProperty('container')
@@ -153,7 +153,7 @@ class PhpGenerator
 			->setBody(str_replace('$this', '$this->container', $code))
 			->setReturnType($def->getClass());
 
-		return 'return new ' . rtrim((string) $factoryClass) . ';';
+		return 'return new class ($this) ' . $factoryClass . ';';
 	}
 
 
@@ -251,7 +251,7 @@ class PhpGenerator
 			$tmp = explode(' ', is_int($k) ? $v : $k);
 			$param = $res[] = new Nette\PhpGenerator\Parameter(end($tmp));
 			if (!is_int($k)) {
-				$param->setOptional(TRUE)->setDefaultValue($v);
+				$param->setDefaultValue($v);
 			}
 			if (isset($tmp[1])) {
 				$param->setTypeHint($tmp[0]);
