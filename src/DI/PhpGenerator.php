@@ -78,7 +78,7 @@ class PhpGenerator
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
 				$containerClass->addMethod($methodName)
-					->addComment('@return ' . ($def->getImplement() ?: $def->getClass()))
+					->setReturnType($def->getImplement() ?: $def->getClass())
 					->setBody($name === ContainerBuilder::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
