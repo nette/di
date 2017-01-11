@@ -24,7 +24,7 @@ class Service
 
 $container = new Container;
 
-test(function () use ($container) {
+(function () use ($container) {
 	$one = new Service;
 	$two = new Service;
 	$container->addService('one', $one);
@@ -37,4 +37,4 @@ test(function () use ($container) {
 
 	Assert::same($one, $container->getService('one'));
 	Assert::same($two, $container->getService('two'));
-});
+})();

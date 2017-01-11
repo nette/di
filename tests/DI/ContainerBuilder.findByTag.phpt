@@ -28,7 +28,7 @@ $builder->addDefinition('five')
 	->addTag('typeHint', 'Service');
 
 
-test(function () use ($builder) { // compile-time
+(function () use ($builder) { // compile-time
 	Assert::same([
 		'five' => 'Service',
 	], $builder->findByTag('typeHint'));
@@ -43,10 +43,10 @@ test(function () use ($builder) { // compile-time
 	], $builder->findByTag('component'));
 
 	Assert::same([], $builder->findByTag('unknown'));
-});
+})();
 
 
-test(function () use ($builder) { // run-time
+(function () use ($builder) { // run-time
 	$container = createContainer($builder);
 
 	Assert::same([
@@ -59,4 +59,4 @@ test(function () use ($builder) { // run-time
 	], $container->findByTag('debugPanel'));
 
 	Assert::same([], $container->findByTag('unknown'));
-});
+})();
