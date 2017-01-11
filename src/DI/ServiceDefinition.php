@@ -63,7 +63,7 @@ class ServiceDefinition
 	 */
 	public function setClass($class, array $args = [])
 	{
-		call_user_func($this->notifier);
+		($this->notifier)();
 		$this->class = $class ? ltrim($class, '\\') : NULL;
 		if ($args) {
 			$this->setFactory($class, $args);
@@ -86,7 +86,7 @@ class ServiceDefinition
 	 */
 	public function setFactory($factory, array $args = [])
 	{
-		call_user_func($this->notifier);
+		($this->notifier)();
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
 		return $this;
 	}
@@ -221,7 +221,7 @@ class ServiceDefinition
 	 */
 	public function setAutowired($state = TRUE)
 	{
-		call_user_func($this->notifier);
+		($this->notifier)();
 		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
 		return $this;
 	}
@@ -271,7 +271,7 @@ class ServiceDefinition
 	 */
 	public function setImplement($interface)
 	{
-		call_user_func($this->notifier);
+		($this->notifier)();
 		$this->implement = ltrim($interface, '\\');
 		return $this;
 	}
