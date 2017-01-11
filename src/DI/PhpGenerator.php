@@ -136,7 +136,7 @@ class PhpGenerator
 			return $code;
 		}
 
-		$factoryClass = (new Nette\PhpGenerator\ClassType('($this)'))
+		$factoryClass = (new Nette\PhpGenerator\ClassType)
 			->addImplement($def->getImplement());
 
 		$factoryClass->addProperty('container')
@@ -158,7 +158,7 @@ class PhpGenerator
 			return "return new {$factoryClass->getName()}(\$this);";
 		}
 
-		return 'return new ' . rtrim($factoryClass) . ';';
+		return 'return new class ($this) ' . $factoryClass . ';';
 	}
 
 
