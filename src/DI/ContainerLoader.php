@@ -72,7 +72,7 @@ class ContainerLoader
 		}
 
 		if (!is_dir($this->tempDirectory)) {
-			@mkdir($this->tempDirectory); // @ - directory may already exist
+			@mkdir($this->tempDirectory, 0755, true); // @ - directory may already exist
 		}
 
 		$handle = fopen("$file.lock", 'c+');
