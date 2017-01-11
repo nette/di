@@ -17,32 +17,32 @@ class MyExtension extends Nette\DI\CompilerExtension
 }
 
 
-test(function () {
+(function () {
 	$ext = new MyExtension;
 	Assert::same([], $ext->validateConfig([]));
 	Assert::same(['a' => 2, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], ['a' => 2]));
-});
+})();
 
-test(function () {
+(function () {
 	$ext = new MyExtension;
 	$ext->setConfig(['a' => 2]);
 	Assert::same(['a' => 2, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1]));
 	Assert::same(['a' => 2, 'b' => 1], $ext->getConfig());
-});
+})();
 
-test(function () {
+(function () {
 	$ext = new MyExtension;
 	$ext->setConfig(['a' => 2]);
 	Assert::same(['a' => 3, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], ['a' => 3]));
 	Assert::same(['a' => 2], $ext->getConfig());
-});
+})();
 
-test(function () {
+(function () {
 	$ext = new MyExtension;
 	$ext->setConfig(['a' => 2]);
 	Assert::same(['a' => 1, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], NULL));
 	Assert::same(['a' => 2], $ext->getConfig());
-});
+})();
 
 Assert::exception(function () {
 	$ext = new MyExtension;

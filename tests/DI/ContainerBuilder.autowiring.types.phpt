@@ -28,7 +28,7 @@ class Bar extends Foo implements IBar
 }
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -38,10 +38,10 @@ test(function () {
 	Assert::same(NULL, $builder->getByType('IBar'));
 	Assert::same(NULL, $builder->getByType('Foo'));
 	Assert::same(NULL, $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -51,10 +51,10 @@ test(function () {
 	Assert::same('bar', $builder->getByType('IBar'));
 	Assert::same(NULL, $builder->getByType('Foo'));
 	Assert::same(NULL, $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -64,10 +64,10 @@ test(function () {
 	Assert::same(NULL, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same(NULL, $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -77,10 +77,10 @@ test(function () {
 	Assert::same(NULL, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -90,10 +90,10 @@ test(function () {
 	Assert::same('bar', $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -103,10 +103,10 @@ test(function () {
 	Assert::same(NULL, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same(NULL, $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -116,10 +116,10 @@ test(function () {
 	Assert::same('bar', $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same(NULL, $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -129,10 +129,10 @@ test(function () {
 	Assert::same(NULL, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -146,10 +146,10 @@ test(function () {
 	Assert::null($builder->getByType('IBar'));
 	Assert::same('foo', $builder->getByType('Foo'));
 	Assert::same('foo', $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setClass('Bar')
@@ -163,10 +163,10 @@ test(function () {
 	Assert::null($builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setClass('Bar')
@@ -186,10 +186,10 @@ test(function () {
 	Assert::exception(function () use ($builder) {
 		$builder->getByType('IFoo');
 	}, DI\ServiceCreationException::class, 'Multiple services of type IFoo found: bar, foo');
-});
+})();
 
 
-test(function () {
+(function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setClass('Foo')
@@ -198,4 +198,4 @@ test(function () {
 	Assert::exception(function () use ($builder) {
 		$builder->getByType('Foo');
 	}, DI\ServiceCreationException::class, "Incompatible class Bar in autowiring definition of service 'bar'.");
-});
+})();

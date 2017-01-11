@@ -23,12 +23,6 @@ register_shutdown_function(function () {
 });
 
 
-function test(\Closure $function)
-{
-	$function();
-}
-
-
 class Notes
 {
 	static public $notes = [];
