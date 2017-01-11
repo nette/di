@@ -72,6 +72,25 @@ class Compiler
 
 
 	/**
+	 * @param string $class
+	 * @param bool $need
+	 * @return CompilerExtension
+	 */
+	public function getExtension($class, $need = true)
+	{
+		$extensions = $this->getExtensions($class);
+		$count = count($extensions);
+		if ($count > 1) {
+			throw new \Nette\Utils\AssertionException("Extension '$class' is installed $count times.");
+		}
+		if ($count < 1 && $need) {
+			throw new \Nette\Utils\AssertionException("Extension '$class' is not installed.");
+		}
+		return $count === 1 ? reset($extensions) : null;
+	}
+
+
+	/**
 	 * @return ContainerBuilder
 	 */
 	public function getContainerBuilder()
