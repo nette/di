@@ -274,20 +274,6 @@ class Compiler
 	 */
 	public static function loadDefinitions(ContainerBuilder $builder, array $services, $namespace = NULL)
 	{
-		$depths = [];
-		foreach ($services as $name => $def) {
-			$path = [];
-			while (@Config\Helpers::isInheriting($def)) { // @ deprecated
-				$path[] = $def;
-				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : [];
-				if (in_array($def, $path, TRUE)) {
-					throw new ServiceCreationException("Circular reference detected for service '$name'.");
-				}
-			}
-			$depths[$name] = count($path);
-		}
-		array_multisort($depths, $services);
-
 		foreach ($services as $name => $def) {
 			if ((string) (int) $name === (string) $name) {
 				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
@@ -316,21 +302,12 @@ class Compiler
 			if (is_array($def) && !empty($def['alteration']) && !$builder->hasDefinition($name)) {
 				throw new ServiceCreationException("Service '$name': missing original definition for alteration.");
 			}
-
-			if (($parent = Config\Helpers::takeParent($def)) && $parent !== $name) {
-				if ($parent !== Config\Helpers::OVERWRITE) {
-					trigger_error("Section inheritance $name < $parent is deprecated.", E_USER_DEPRECATED);
-				}
+			if (Config\Helpers::takeParent($def)) {
 				$builder->removeDefinition($name);
-				$definition = $builder->addDefinition(
-					$name,
-					$parent === Config\Helpers::OVERWRITE ? NULL : clone $builder->getDefinition($parent)
-				);
-			} elseif ($builder->hasDefinition($name)) {
-				$definition = $builder->getDefinition($name);
-			} else {
-				$definition = $builder->addDefinition($name);
 			}
+			$definition = $builder->hasDefinition($name)
+				? $builder->getDefinition($name)
+				: $builder->addDefinition($name);
 
 			try {
 				static::loadDefinition($definition, $def);

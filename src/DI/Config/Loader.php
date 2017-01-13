@@ -43,15 +43,6 @@ class Loader
 		$this->dependencies[] = $file;
 		$data = $this->getAdapter($file)->load($file);
 
-		if (func_num_args() > 1 && ($section = func_get_arg(1))) {
-			trigger_error('Sections in config file are deprecated.', E_USER_DEPRECATED);
-			if (isset($data[self::INCLUDES_KEY])) {
-				throw new Nette\InvalidStateException("Section 'includes' must be placed under some top section in file '$file'.");
-			}
-			$data = $this->getSection($data, $section, $file);
-		}
-
-		// include child files
 		$merged = [];
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
@@ -113,17 +104,6 @@ class Loader
 			throw new Nette\InvalidArgumentException("Unknown file extension '$file'.");
 		}
 		return is_object($this->adapters[$extension]) ? $this->adapters[$extension] : new $this->adapters[$extension];
-	}
-
-
-	private function getSection(array $data, $key, $file)
-	{
-		Validators::assertField($data, $key, 'array|null', "section '%' in file '$file'");
-		$item = $data[$key];
-		if ($parent = Helpers::takeParent($item)) {
-			$item = Helpers::merge($item, $this->getSection($data, $parent, $file));
-		}
-		return $item;
 	}
 
 }

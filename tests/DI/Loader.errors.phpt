@@ -20,8 +20,3 @@ Assert::exception(function () {
 	$config = new Config\Loader;
 	$config->load(__FILE__);
 }, Nette\InvalidArgumentException::class, "Unknown file extension '%a%.phpt'.");
-
-Assert::exception(function () {
-	$config = new Config\Loader;
-	@$config->load('files/neonAdapter.neon', 'unknown'); // @ deprecated
-}, Nette\Utils\AssertionException::class, "Missing section 'unknown' in file '%a%'.");
