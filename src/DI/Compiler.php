@@ -151,11 +151,6 @@ class Compiler
 	 */
 	public function compile()
 	{
-		if (func_num_args()) {
-			trigger_error(__METHOD__ . ' arguments are deprecated, use Compiler::addConfig() and Compiler::setClassName().', E_USER_DEPRECATED);
-			$this->config = func_get_arg(0) ?: $this->config;
-			$this->className = @func_get_arg(1) ?: $this->className;
-		}
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
@@ -222,11 +217,6 @@ class Compiler
 	/** @internal */
 	public function generateCode()
 	{
-		if (func_num_args()) {
-			trigger_error(__METHOD__ . ' arguments are deprecated, use Compiler::setClassName().', E_USER_DEPRECATED);
-			$this->className = func_get_arg(0) ?: $this->className;
-		}
-
 		$this->builder->prepareClassList();
 
 		foreach ($this->extensions as $extension) {
@@ -311,12 +301,6 @@ class Compiler
 			$config = ['class' => NULL, 'factory' => $config];
 		}
 
-		if (array_key_exists('create', $config)) {
-			trigger_error("Key 'create' is deprecated, use 'factory' or 'class' in configuration.", E_USER_DEPRECATED);
-			$config['factory'] = $config['create'];
-			unset($config['create']);
-		}
-
 		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
@@ -395,11 +379,6 @@ class Compiler
 			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
 		}
 
-		if (isset($config['run'])) {
-			trigger_error("Option 'run' is deprecated, use 'run' as tag.", E_USER_DEPRECATED);
-			$config['tags']['run'] = (bool) $config['run'];
-		}
-
 		if (isset($config['tags'])) {
 			Validators::assertField($config, 'tags', 'array');
 			if (Config\Helpers::takeParent($config['tags'])) {
@@ -413,30 +392,6 @@ class Compiler
 				}
 			}
 		}
-	}
-
-
-	/** @deprecated */
-	public static function filterArguments(array $args)
-	{
-		trigger_error(__METHOD__ . '() is deprecated, use Nette\DI\Helpers::filterArguments()', E_USER_DEPRECATED);
-		return Helpers::filterArguments($args);
-	}
-
-
-	/** @deprecated */
-	public static function parseServices(ContainerBuilder $builder, array $config, $namespace = NULL)
-	{
-		trigger_error(__METHOD__ . '() is deprecated, use similar loadDefinitions()', E_USER_DEPRECATED);
-		self::loadDefinitions($builder, isset($config['services']) ? $config['services'] : [], $namespace);
-	}
-
-
-	/** @deprecated */
-	public static function parseService(ServiceDefinition $definition, $config)
-	{
-		trigger_error(__METHOD__ . '() is deprecated, use loadDefinition()', E_USER_DEPRECATED);
-		self::loadDefinition($definition, $config);
 	}
 
 }

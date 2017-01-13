@@ -40,10 +40,6 @@ class ContainerLoader
 	 */
 	public function load($generator, $key = NULL)
 	{
-		if (!is_callable($generator)) { // back compatiblity
-			trigger_error(__METHOD__ . ': order of arguments has been swapped.', E_USER_DEPRECATED);
-			list($generator, $key) = [$key, $generator];
-		}
 		$class = $this->getClassName($key);
 		if (!class_exists($class, FALSE)) {
 			$this->loadFile($class, $generator);

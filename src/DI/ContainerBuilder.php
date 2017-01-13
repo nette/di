@@ -186,25 +186,6 @@ class ContainerBuilder
 	}
 
 
-	/**
-	 * @deprecated
-	 */
-	public function setClassName($name)
-	{
-		trigger_error(__METHOD__ . ' has been deprecated', E_USER_DEPRECATED);
-		return $this;
-	}
-
-
-	/**
-	 * @deprecated
-	 */
-	public function getClassName()
-	{
-		trigger_error(__METHOD__ . ' has been deprecated', E_USER_DEPRECATED);
-	}
-
-
 	/********************* class resolving ****************d*g**/
 
 
@@ -670,10 +651,6 @@ class ContainerBuilder
 			if ($val instanceof Statement) {
 				$val = $this->completeStatement($val);
 
-			} elseif ($val === $this) {
-				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
-				$val = self::literal('$this');
-
 			} elseif ($val instanceof ServiceDefinition) {
 				$val = '@' . current(array_keys($this->getDefinitions(), $val, TRUE));
 
@@ -726,18 +703,6 @@ class ContainerBuilder
 
 
 	/**
-	 * Expands %placeholders% in strings.
-	 * @return mixed
-	 * @deprecated
-	 */
-	public function expand($value)
-	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		return Helpers::expand($value, $this->parameters);
-	}
-
-
-	/**
 	 * @return Nette\PhpGenerator\PhpLiteral
 	 */
 	public static function literal($code, array $args = NULL)
@@ -758,10 +723,6 @@ class ContainerBuilder
 
 		} elseif ($entity instanceof ServiceDefinition) { // ServiceDefinition -> @serviceName
 			$entity = '@' . current(array_keys($this->definitions, $entity, TRUE));
-
-		} elseif (is_array($entity) && $entity[0] === $this) { // [$this, ...] -> [@container, ...]
-			trigger_error("Replace object ContainerBuilder in Statement entity with '@container'.", E_USER_DEPRECATED);
-			$entity[0] = '@' . self::THIS_CONTAINER;
 		}
 		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc], Statement
 	}
@@ -824,31 +785,11 @@ class ContainerBuilder
 
 
 	/** @deprecated */
-	public function generateClasses($className = 'Container', $parentName = NULL)
-	{
-		trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
-		return (new PhpGenerator($this))->generate($className);
-	}
-
-
-	/** @deprecated */
-	public function formatStatement(Statement $statement)
-	{
-		trigger_error(__METHOD__ . ' is deprecated', E_USER_DEPRECATED);
-		return (new PhpGenerator($this))->formatStatement($statement);
-	}
-
-
-	/** @deprecated */
 	public function formatPhp($statement, $args)
 	{
 		array_walk_recursive($args, function (&$val) {
 			if ($val instanceof Statement) {
 				$val = $this->completeStatement($val);
-
-			} elseif ($val === $this) {
-				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
-				$val = self::literal('$this');
 
 			} elseif ($val instanceof ServiceDefinition) {
 				$val = '@' . current(array_keys($this->getDefinitions(), $val, TRUE));

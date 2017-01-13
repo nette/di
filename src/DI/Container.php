@@ -286,55 +286,6 @@ class Container
 	}
 
 
-	/********************* shortcuts ****************d*g**/
-
-
-	/**
-	 * Expands %placeholders%.
-	 * @param  mixed
-	 * @return mixed
-	 * @deprecated
-	 */
-	public function expand($s)
-	{
-		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		return Helpers::expand($s, $this->parameters);
-	}
-
-
-	/** @deprecated */
-	public function &__get($name)
-	{
-		trigger_error(__METHOD__ . ' is deprecated; use getService().', E_USER_DEPRECATED);
-		$tmp = $this->getService($name);
-		return $tmp;
-	}
-
-
-	/** @deprecated */
-	public function __set($name, $service)
-	{
-		trigger_error(__METHOD__ . ' is deprecated; use addService().', E_USER_DEPRECATED);
-		$this->addService($name, $service);
-	}
-
-
-	/** @deprecated */
-	public function __isset($name)
-	{
-		trigger_error(__METHOD__ . ' is deprecated; use hasService().', E_USER_DEPRECATED);
-		return $this->hasService($name);
-	}
-
-
-	/** @deprecated */
-	public function __unset($name)
-	{
-		trigger_error(__METHOD__ . ' is deprecated; use removeService().', E_USER_DEPRECATED);
-		$this->removeService($name);
-	}
-
-
 	public static function getMethodName($name)
 	{
 		$uname = ucfirst($name);

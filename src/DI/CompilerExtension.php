@@ -50,10 +50,6 @@ abstract class CompilerExtension
 	 */
 	public function getConfig()
 	{
-		if (func_num_args()) {
-			trigger_error(__METHOD__ . '() arguments are deprecated; combine config using validateConfig()', E_USER_DEPRECATED);
-			return Config\Helpers::merge($this->config, Helpers::expand(func_get_arg(0), $this->getContainerBuilder()->parameters));
-		}
 		return $this->config;
 	}
 
