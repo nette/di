@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $config = new Config\Loader;
-$data = @$config->load('files/loader.includes.neon', 'production'); // @ deprecated
+$data = $config->load('files/loader.includes.neon');
 
 Assert::same([
 	'files/loader.includes.neon',

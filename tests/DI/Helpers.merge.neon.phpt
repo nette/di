@@ -42,10 +42,3 @@ Assert::exception(function () {
 Assert::exception(function () {
 	merge('item!: 231', 'item: 231');
 }, Nette\InvalidStateException::class);
-
-
-// inherit
-Assert::same([
-	'parent' => 1,
-	'child' => [Config\Helpers::EXTENDS_KEY => 'parent']
-], @merge('child < parent:', 'parent: 1')); // @ deprecated

@@ -21,7 +21,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 	use Nette\SmartObject;
 
 	/** @internal */
-	const INHERITING_SEPARATOR = '<', // child < parent
+	const
 		KEY_SEPARATOR = '.', // key nesting key1.key2.key3
 		ESCAPED_KEY_SEPARATOR = '..',
 		RAW_SECTION = '!';
@@ -72,13 +72,6 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 					}
 					$secData = $tmp;
 				}
-
-				$parts = explode(self::INHERITING_SEPARATOR, $secName);
-				if (count($parts) > 1) {
-					trigger_error("Inheritance operator in section [$secName] is deprecated.", E_USER_DEPRECATED);
-					$secName = trim($parts[0]);
-					$secData[Helpers::EXTENDS_KEY] = trim($parts[1]);
-				}
 			}
 
 			$cursor = &$data; // nesting separator in section name
@@ -114,11 +107,7 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 				self::build($data, $output, '');
 				break;
 			}
-			if ($parent = Helpers::takeParent($secData)) {
-				$output[] = "[$name " . self::INHERITING_SEPARATOR . " $parent]";
-			} else {
-				$output[] = "[$name]";
-			}
+			$output[] = "[$name]";
 			self::build($secData, $output, '');
 			$output[] = '';
 		}
