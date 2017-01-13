@@ -41,15 +41,6 @@ class Statement
 	}
 
 
-	/** @deprecated */
-	public function setEntity($entity)
-	{
-		trigger_error(__METHOD__ . ' is deprecated, change Statement object itself.', E_USER_DEPRECATED);
-		$this->__construct($entity, $this->arguments);
-		return $this;
-	}
-
-
 	public function getEntity()
 	{
 		return $this->entity;
