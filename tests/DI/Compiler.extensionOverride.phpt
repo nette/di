@@ -69,6 +69,9 @@ class FooExtension extends Nette\DI\CompilerExtension
 			->setClass('Lorem', [1]);
 		$builder->addDefinition('one7')
 			->setClass('Lorem', [1]);
+		$builder->addDefinition('one8')
+			->setClass('Lorem', [1])
+			->addSetup('__construct', [2]);
 
 		$builder->addDefinition('two1')
 			->setClass('Lorem')
@@ -156,6 +159,11 @@ Assert::same([
 Assert::type(Ipsum::class, $container->getService('one7'));
 Assert::same([
 	'Ipsum::__construct 2',
+], Notes::fetch());
+
+Assert::type(Ipsum::class, $container->getService('one8'));
+Assert::same([
+	'Ipsum::__construct ',
 ], Notes::fetch());
 
 
