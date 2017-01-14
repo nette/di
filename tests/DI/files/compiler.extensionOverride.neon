@@ -1,6 +1,7 @@
 services:
 	one1:
 		class: Ipsum
+		alteration: yes
 	one2:
 		class: Ipsum
 		arguments: [2]

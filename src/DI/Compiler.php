@@ -292,6 +292,10 @@ class Compiler
 			}
 			$def = Helpers::expand($def, $params);
 
+			if (is_array($def) && !empty($def['alteration']) && !$builder->hasDefinition($name)) {
+				throw new ServiceCreationException("Service '$name': missing original definition for alteration.");
+			}
+
 			if (($parent = Config\Helpers::takeParent($def)) && $parent !== $name) {
 				if ($parent !== Config\Helpers::OVERWRITE) {
 					trigger_error("Section inheritance $name < $parent is deprecated.", E_USER_DEPRECATED);
@@ -341,7 +345,7 @@ class Compiler
 			unset($config['create']);
 		}
 
-		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags'];
+		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
