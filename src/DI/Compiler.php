@@ -172,6 +172,7 @@ class Compiler
 		$this->processExtensions();
 		$this->processServices();
 		$classes = $this->generateCode();
+		array_unshift($classes, 'declare(strict_types=1);');
 		return implode("\n\n\n", $classes);
 	}
 
