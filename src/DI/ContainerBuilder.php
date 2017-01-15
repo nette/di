@@ -414,9 +414,9 @@ class ContainerBuilder
 		if (!$def->getClass() && !$def->getEntity()) {
 			$returnType = Helpers::getReturnType($method);
 			if (!$returnType) {
-				throw new ServiceCreationException("Method $methodName used in service '$name' has no @return annotation.");
+				throw new ServiceCreationException("Method $methodName used in service '$name' has not return type hint or annotation @return.");
 			} elseif (!class_exists($returnType)) {
-				throw new ServiceCreationException("Check a @return annotation of the $methodName method used in service '$name', class '$returnType' cannot be found.");
+				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method used in service '$name', class '$returnType' cannot be found.");
 			}
 			$def->setClass($returnType);
 		}

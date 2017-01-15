@@ -94,7 +94,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad4');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Method Bad4::create() used in service 'one' has no @return annotation.");
+}, Nette\InvalidStateException::class, "Method Bad4::create() used in service 'one' has not return type hint or annotation @return.");
 
 
 interface Bad5
