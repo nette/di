@@ -25,8 +25,7 @@ class Helpers
 	/**
 	 * Expands %placeholders%.
 	 * @param  mixed
-	 * @param  array
-	 * @param  bool|array
+	 * @param  bool|array $recursive
 	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -90,9 +89,8 @@ class Helpers
 
 	/**
 	 * Generates list of arguments using autowiring.
-	 * @return array
 	 */
-	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, $container)
+	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, $container): array
 	{
 		$optCount = 0;
 		$num = -1;
@@ -157,9 +155,8 @@ class Helpers
 
 	/**
 	 * Removes ... and process constants recursively.
-	 * @return array
 	 */
-	public static function filterArguments(array $args)
+	public static function filterArguments(array $args): array
 	{
 		foreach ($args as $k => $v) {
 			if ($v === '...') {
@@ -180,10 +177,9 @@ class Helpers
 	/**
 	 * Replaces @extension with real extension name in service definition.
 	 * @param  mixed
-	 * @param  string
 	 * @return mixed
 	 */
-	public static function prefixServiceName($config, $namespace)
+	public static function prefixServiceName($config, string $namespace)
 	{
 		if (is_string($config)) {
 			if (strncmp($config, '@extension.', 10) === 0) {

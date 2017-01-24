@@ -30,10 +30,9 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 	/**
 	 * Reads configuration from INI file.
 	 * @param  string  file name
-	 * @return array
 	 * @throws Nette\InvalidStateException
 	 */
-	public function load($file)
+	public function load(string $file): array
 	{
 		$ini = @parse_ini_file($file, TRUE); // @ escalated to exception
 		if ($ini === FALSE) {
@@ -45,10 +44,9 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 
 
 	/**
-	 * @return array
 	 * @throws Nette\InvalidStateException
 	 */
-	public function process(array $arr)
+	public function process(array $arr): array
 	{
 		$data = [];
 		foreach ($arr as $secName => $secData) {
@@ -96,9 +94,8 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Generates configuration in INI format.
-	 * @return string
 	 */
-	public function dump(array $data)
+	public function dump(array $data): string
 	{
 		$output = [];
 		foreach ($data as $name => $secData) {

@@ -19,14 +19,12 @@ interface IAdapter
 	/**
 	 * Reads configuration from file.
 	 * @param  string  file name
-	 * @return array
 	 */
-	function load($file);
+	function load(string $file): array;
 
 	/**
 	 * Generates configuration string.
-	 * @return string
 	 */
-	function dump(array $data);
+	function dump(array $data): string;
 
 }

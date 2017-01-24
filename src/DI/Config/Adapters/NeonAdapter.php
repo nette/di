@@ -28,19 +28,17 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 	/**
 	 * Reads configuration from NEON file.
 	 * @param  string  file name
-	 * @return array
 	 */
-	public function load($file)
+	public function load(string $file): array
 	{
 		return $this->process((array) Neon\Neon::decode(file_get_contents($file)));
 	}
 
 
 	/**
-	 * @return array
 	 * @throws Nette\InvalidStateException
 	 */
-	public function process(array $arr)
+	public function process(array $arr): array
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {
@@ -78,9 +76,8 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Generates configuration in NEON format.
-	 * @return string
 	 */
-	public function dump(array $data)
+	public function dump(array $data): string
 	{
 		array_walk_recursive(
 			$data,
@@ -94,10 +91,7 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 	}
 
 
-	/**
-	 * @return Neon\Entity
-	 */
-	private static function statementToEntity(Statement $val)
+	private static function statementToEntity(Statement $val): Neon\Entity
 	{
 		array_walk_recursive(
 			$val->arguments,

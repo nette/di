@@ -45,7 +45,7 @@ class PhpGenerator
 	 * Generates PHP classes. First class is the container.
 	 * @return Nette\PhpGenerator\ClassType[]
 	 */
-	public function generate($className)
+	public function generate(string $className): array
 	{
 		$this->builder->complete();
 
@@ -99,9 +99,8 @@ class PhpGenerator
 
 	/**
 	 * Generates body of service method.
-	 * @return string
 	 */
-	private function generateService($name)
+	private function generateService(string $name): string
 	{
 		$def = $this->builder->getDefinition($name);
 
@@ -162,9 +161,8 @@ class PhpGenerator
 
 	/**
 	 * Formats PHP code for class instantiating, function calling or property setting in PHP.
-	 * @return string
 	 */
-	private function formatStatement(Statement $statement)
+	private function formatStatement(Statement $statement): string
 	{
 		$entity = $statement->getEntity();
 		$arguments = $statement->arguments;
@@ -216,10 +214,9 @@ class PhpGenerator
 
 	/**
 	 * Formats PHP statement.
-	 * @return string
 	 * @internal
 	 */
-	public function formatPhp($statement, $args)
+	public function formatPhp(string $statement, array $args): string
 	{
 		array_walk_recursive($args, function (&$val) {
 			if ($val instanceof Statement) {
@@ -247,7 +244,7 @@ class PhpGenerator
 	 * Converts parameters from ServiceDefinition to PhpGenerator.
 	 * @return Nette\PhpGenerator\Parameter[]
 	 */
-	private function convertParameters(array $parameters)
+	private function convertParameters(array $parameters): array
 	{
 		$res = [];
 		foreach ($parameters as $k => $v) {

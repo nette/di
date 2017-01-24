@@ -54,10 +54,8 @@ class ContainerBuilder
 
 	/**
 	 * Adds new service definition.
-	 * @param  string
-	 * @return ServiceDefinition
 	 */
-	public function addDefinition($name, ServiceDefinition $definition = NULL)
+	public function addDefinition(string $name, ServiceDefinition $definition = NULL): ServiceDefinition
 	{
 		$this->classListNeedsRefresh = TRUE;
 		if (!is_string($name) || !$name) { // builder is not ready for falsy names such as '0'
@@ -79,10 +77,9 @@ class ContainerBuilder
 
 	/**
 	 * Removes the specified service definition.
-	 * @param  string
 	 * @return void
 	 */
-	public function removeDefinition($name)
+	public function removeDefinition(string $name)
 	{
 		$this->classListNeedsRefresh = TRUE;
 		$name = $this->aliases[$name] ?? $name;
@@ -92,10 +89,8 @@ class ContainerBuilder
 
 	/**
 	 * Gets the service definition.
-	 * @param  string
-	 * @return ServiceDefinition
 	 */
-	public function getDefinition($name)
+	public function getDefinition(string $name): ServiceDefinition
 	{
 		$service = $this->aliases[$name] ?? $name;
 		if (!isset($this->definitions[$service])) {
@@ -109,7 +104,7 @@ class ContainerBuilder
 	 * Gets all service definitions.
 	 * @return ServiceDefinition[]
 	 */
-	public function getDefinitions()
+	public function getDefinitions(): array
 	{
 		return $this->definitions;
 	}
@@ -117,21 +112,15 @@ class ContainerBuilder
 
 	/**
 	 * Does the service definition or alias exist?
-	 * @param  string
-	 * @return bool
 	 */
-	public function hasDefinition($name)
+	public function hasDefinition(string $name): bool
 	{
 		$name = $this->aliases[$name] ?? $name;
 		return isset($this->definitions[$name]);
 	}
 
 
-	/**
-	 * @param  string
-	 * @param  string
-	 */
-	public function addAlias($alias, $service)
+	public function addAlias(string $alias, string $service)
 	{
 		if (!is_string($alias) || !$alias) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Alias name must be a non-empty string, %s given.', gettype($alias)));
@@ -154,7 +143,7 @@ class ContainerBuilder
 	 * Removes the specified alias.
 	 * @return void
 	 */
-	public function removeAlias($alias)
+	public function removeAlias(string $alias)
 	{
 		unset($this->aliases[$alias]);
 	}
@@ -162,9 +151,8 @@ class ContainerBuilder
 
 	/**
 	 * Gets all service aliases.
-	 * @return array
 	 */
-	public function getAliases()
+	public function getAliases(): array
 	{
 		return $this->aliases;
 	}
@@ -195,7 +183,7 @@ class ContainerBuilder
 	 * @return string|NULL  service name or NULL
 	 * @throws ServiceCreationException
 	 */
-	public function getByType($class)
+	public function getByType(string $class)
 	{
 		$class = ltrim($class, '\\');
 
@@ -225,10 +213,8 @@ class ContainerBuilder
 
 	/**
 	 * Gets the service definition of the specified type.
-	 * @param  string
-	 * @return ServiceDefinition
 	 */
-	public function getDefinitionByType($class)
+	public function getDefinitionByType(string $class): ServiceDefinition
 	{
 		$definitionName = $this->getByType($class);
 		if (!$definitionName) {
@@ -241,10 +227,9 @@ class ContainerBuilder
 
 	/**
 	 * Gets the service names and definitions of the specified type.
-	 * @param  string
 	 * @return ServiceDefinition[]
 	 */
-	public function findByType($class)
+	public function findByType(string $class): array
 	{
 		$class = ltrim($class, '\\');
 		self::checkCase($class);
@@ -261,10 +246,9 @@ class ContainerBuilder
 
 	/**
 	 * Gets the service objects of the specified tag.
-	 * @param  string
 	 * @return array of [service name => tag attributes]
 	 */
-	public function findByTag($tag)
+	public function findByTag(string $tag): array
 	{
 		$found = [];
 		foreach ($this->definitions as $name => $def) {
@@ -279,7 +263,7 @@ class ContainerBuilder
 	/**
 	 * @internal
 	 */
-	public function getClassList()
+	public function getClassList(): array
 	{
 		if ($this->classList !== FALSE && $this->classListNeedsRefresh) {
 			$this->prepareClassList();
@@ -454,7 +438,7 @@ class ContainerBuilder
 
 
 	/** @return string|NULL */
-	private function resolveServiceClass($name, $recursive = [])
+	private function resolveServiceClass($name, array $recursive = [])
 	{
 		if (isset($recursive[$name])) {
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
@@ -481,7 +465,7 @@ class ContainerBuilder
 
 
 	/** @return string|NULL */
-	private function resolveEntityClass($entity, $recursive = [])
+	private function resolveEntityClass($entity, array $recursive = [])
 	{
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
 		$serviceName = current(array_slice(array_keys($recursive), -1));
@@ -575,10 +559,7 @@ class ContainerBuilder
 	}
 
 
-	/**
-	 * @return Statement
-	 */
-	public function completeStatement(Statement $statement)
+	public function completeStatement(Statement $statement): Statement
 	{
 		$entity = $this->normalizeEntity($statement->getEntity());
 		$arguments = $statement->arguments;
@@ -675,7 +656,7 @@ class ContainerBuilder
 	}
 
 
-	private function checkCase($class)
+	private function checkCase(string $class)
 	{
 		if ((class_exists($class) || interface_exists($class)) && $class !== ($name = (new ReflectionClass($class))->getName())) {
 			throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '$name'.");
@@ -698,18 +679,14 @@ class ContainerBuilder
 
 	/**
 	 * Returns the list of dependencies.
-	 * @return array
 	 */
-	public function getDependencies()
+	public function getDependencies(): array
 	{
 		return $this->dependencies;
 	}
 
 
-	/**
-	 * @return Nette\PhpGenerator\PhpLiteral
-	 */
-	public static function literal($code, array $args = NULL)
+	public static function literal(string $code, array $args = NULL): Nette\PhpGenerator\PhpLiteral
 	{
 		return new Nette\PhpGenerator\PhpLiteral($args === NULL ? $code : PhpHelpers::formatArgs($code, $args));
 	}
@@ -766,10 +743,9 @@ class ContainerBuilder
 
 	/**
 	 * Creates a list of arguments using autowiring.
-	 * @return array
 	 * @internal
 	 */
-	public function autowireArguments($class, $method, array $arguments)
+	public function autowireArguments($class, $method, array $arguments): array
 	{
 		$rc = new ReflectionClass($class);
 		if (!$rc->hasMethod($method)) {
@@ -789,7 +765,7 @@ class ContainerBuilder
 
 
 	/** @deprecated */
-	public function formatPhp($statement, $args)
+	public function formatPhp(string $statement, array $args): string
 	{
 		array_walk_recursive($args, function (&$val) {
 			if ($val instanceof Statement) {

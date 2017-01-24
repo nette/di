@@ -35,9 +35,8 @@ class Loader
 	/**
 	 * Reads configuration from file.
 	 * @param  string  file name
-	 * @return array
 	 */
-	public function load($file)
+	public function load(string $file): array
 	{
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
@@ -63,11 +62,9 @@ class Loader
 
 	/**
 	 * Save configuration to file.
-	 * @param  array
-	 * @param  string  file
 	 * @return void
 	 */
-	public function save($data, $file)
+	public function save(array $data, string $file)
 	{
 		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === FALSE) {
 			throw new Nette\IOException("Cannot write file '$file'.");
@@ -77,9 +74,8 @@ class Loader
 
 	/**
 	 * Returns configuration files.
-	 * @return array
 	 */
-	public function getDependencies()
+	public function getDependencies(): array
 	{
 		return array_unique($this->dependencies);
 	}
@@ -91,7 +87,7 @@ class Loader
 	 * @param  string|IAdapter
 	 * @return static
 	 */
-	public function addAdapter($extension, $adapter)
+	public function addAdapter(string $extension, $adapter)
 	{
 		$this->adapters[strtolower($extension)] = $adapter;
 		return $this;
@@ -99,7 +95,7 @@ class Loader
 
 
 	/** @return IAdapter */
-	private function getAdapter($file)
+	private function getAdapter(string $file)
 	{
 		$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 		if (!isset($this->adapters[$extension])) {

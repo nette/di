@@ -32,7 +32,7 @@ abstract class CompilerExtension
 	/**
 	 * @return static
 	 */
-	public function setCompiler(Compiler $compiler, $name)
+	public function setCompiler(Compiler $compiler, string $name)
 	{
 		$this->compiler = $compiler;
 		$this->name = $name;
@@ -52,9 +52,8 @@ abstract class CompilerExtension
 
 	/**
 	 * Returns extension configuration.
-	 * @return array
 	 */
-	public function getConfig()
+	public function getConfig(): array
 	{
 		return $this->config;
 	}
@@ -62,10 +61,9 @@ abstract class CompilerExtension
 
 	/**
 	 * Checks whether $config contains only $expected items and returns combined array.
-	 * @return array
 	 * @throws Nette\InvalidStateException
 	 */
-	public function validateConfig(array $expected, array $config = NULL, $name = NULL)
+	public function validateConfig(array $expected, array $config = NULL, string $name = NULL): array
 	{
 		if (func_num_args() === 1) {
 			return $this->config = $this->validateConfig($expected, $this->config);
@@ -80,10 +78,7 @@ abstract class CompilerExtension
 	}
 
 
-	/**
-	 * @return ContainerBuilder
-	 */
-	public function getContainerBuilder()
+	public function getContainerBuilder(): ContainerBuilder
 	{
 		return $this->compiler->getContainerBuilder();
 	}
@@ -92,9 +87,8 @@ abstract class CompilerExtension
 	/**
 	 * Reads configuration from file.
 	 * @param  string  file name
-	 * @return array
 	 */
-	public function loadFromFile($file)
+	public function loadFromFile(string $file): array
 	{
 		$loader = new Config\Loader;
 		$res = $loader->load($file);
@@ -105,10 +99,8 @@ abstract class CompilerExtension
 
 	/**
 	 * Prepend extension name to identifier or service name.
-	 * @param  string
-	 * @return string
 	 */
-	public function prefix($id)
+	public function prefix(string $id): string
 	{
 		return substr_replace($id, $this->name . '.', substr($id, 0, 1) === '@' ? 1 : 0, 0);
 	}

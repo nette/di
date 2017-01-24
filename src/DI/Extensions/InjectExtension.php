@@ -68,10 +68,9 @@ class InjectExtension extends DI\CompilerExtension
 
 	/**
 	 * Generates list of inject methods.
-	 * @return array
 	 * @internal
 	 */
-	public static function getInjectMethods($class)
+	public static function getInjectMethods($class): array
 	{
 		$res = [];
 		foreach (get_class_methods($class) as $name) {
@@ -90,10 +89,9 @@ class InjectExtension extends DI\CompilerExtension
 
 	/**
 	 * Generates list of properties with annotation @inject.
-	 * @return array
 	 * @internal
 	 */
-	public static function getInjectProperties($class)
+	public static function getInjectProperties($class): array
 	{
 		$res = [];
 		foreach (get_class_vars($class) as $name => $foo) {

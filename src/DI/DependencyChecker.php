@@ -41,9 +41,8 @@ class DependencyChecker
 
 	/**
 	 * Exports dependencies.
-	 * @return array
 	 */
-	public function export()
+	public function export(): array
 	{
 		$files = $phpFiles = $classes = $functions = [];
 		foreach ($this->dependencies as $dep) {
@@ -80,9 +79,8 @@ class DependencyChecker
 
 	/**
 	 * Are dependencies expired?
-	 * @return bool
 	 */
-	public static function isExpired($version, $files, $phpFiles, $classes, $functions, $hash)
+	public static function isExpired(int $version, array $files, array $phpFiles, array $classes, array $functions, string $hash): bool
 	{
 		$current = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
 		$currentClass = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
@@ -92,7 +90,7 @@ class DependencyChecker
 	}
 
 
-	private static function calculateHash($classes, $functions)
+	private static function calculateHash(array $classes, array $functions)
 	{
 		$hash = [];
 		foreach ($classes as $name) {
@@ -148,7 +146,7 @@ class DependencyChecker
 	}
 
 
-	private static function hashParameters(\ReflectionFunctionAbstract $method)
+	private static function hashParameters(\ReflectionFunctionAbstract $method): array
 	{
 		$res = [];
 		foreach ($method->getParameters() as $param) {

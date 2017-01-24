@@ -40,9 +40,8 @@ class ContainerPanel implements Tracy\IBarPanel
 
 	/**
 	 * Renders tab.
-	 * @return string
 	 */
-	public function getTab()
+	public function getTab(): string
 	{
 		ob_start(function () {});
 		$elapsedTime = $this->elapsedTime;
@@ -53,9 +52,8 @@ class ContainerPanel implements Tracy\IBarPanel
 
 	/**
 	 * Renders panel.
-	 * @return string
 	 */
-	public function getPanel()
+	public function getPanel(): string
 	{
 		$container = $this->container;
 		$registry = $this->getContainerProperty('registry');
@@ -78,7 +76,7 @@ class ContainerPanel implements Tracy\IBarPanel
 	}
 
 
-	private function getContainerProperty($name)
+	private function getContainerProperty(string $name)
 	{
 		$prop = (new \ReflectionClass(Nette\DI\Container::class))->getProperty($name);
 		$prop->setAccessible(TRUE);

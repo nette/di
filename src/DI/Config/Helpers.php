@@ -69,10 +69,7 @@ class Helpers
 	}
 
 
-	/**
-	 * @return bool
-	 */
-	public static function isOverwriting(&$data)
+	public static function isOverwriting(&$data): bool
 	{
 		return is_array($data) && ($data[self::EXTENDS_KEY] ?? NULL) === self::OVERWRITE;
 	}

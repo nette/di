@@ -43,10 +43,7 @@ class Container
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getParameters()
+	public function getParameters(): array
 	{
 		return $this->parameters;
 	}
@@ -54,11 +51,10 @@ class Container
 
 	/**
 	 * Adds the service to the container.
-	 * @param  string
-	 * @param  object
+	 * @param  object $service
 	 * @return static
 	 */
-	public function addService($name, $service)
+	public function addService(string $name, $service)
 	{
 		if (!is_string($name) || !$name) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
@@ -82,10 +78,9 @@ class Container
 
 	/**
 	 * Removes the service from the container.
-	 * @param  string
 	 * @return void
 	 */
-	public function removeService($name)
+	public function removeService(string $name)
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
 		unset($this->registry[$name]);
@@ -94,11 +89,10 @@ class Container
 
 	/**
 	 * Gets the service object by name.
-	 * @param  string
 	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function getService($name)
+	public function getService(string $name)
 	{
 		if (!isset($this->registry[$name])) {
 			if (isset($this->meta[self::ALIASES][$name])) {
@@ -112,11 +106,9 @@ class Container
 
 	/**
 	 * Gets the service type by name.
-	 * @param  string
-	 * @return string
 	 * @throws MissingServiceException
 	 */
-	public function getServiceType($name)
+	public function getServiceType(string $name): string
 	{
 		if (isset($this->meta[self::ALIASES][$name])) {
 			return $this->getServiceType($this->meta[self::ALIASES][$name]);
@@ -133,9 +125,8 @@ class Container
 	/**
 	 * Does the service exist?
 	 * @param  string service name
-	 * @return bool
 	 */
-	public function hasService($name)
+	public function hasService(string $name): bool
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
 		return isset($this->registry[$name])
@@ -147,9 +138,8 @@ class Container
 	/**
 	 * Is the service created?
 	 * @param  string service name
-	 * @return bool
 	 */
-	public function isCreated($name)
+	public function isCreated(string $name): bool
 	{
 		if (!$this->hasService($name)) {
 			throw new MissingServiceException("Service '$name' not found.");
@@ -165,7 +155,7 @@ class Container
 	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function createService($name, array $args = [])
+	public function createService(string $name, array $args = [])
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
 		$method = self::getMethodName($name);
@@ -199,7 +189,7 @@ class Container
 	 * @return object  service or NULL
 	 * @throws MissingServiceException
 	 */
-	public function getByType($class, $throw = TRUE)
+	public function getByType(string $class, bool $throw = TRUE)
 	{
 		$class = ltrim($class, '\\');
 		if (!empty($this->meta[self::TYPES][$class][TRUE])) {
@@ -216,10 +206,9 @@ class Container
 
 	/**
 	 * Gets the service names of the specified type.
-	 * @param  string
 	 * @return string[]
 	 */
-	public function findByType($class)
+	public function findByType(string $class): array
 	{
 		$class = ltrim($class, '\\');
 		return empty($this->meta[self::TYPES][$class])
@@ -230,10 +219,9 @@ class Container
 
 	/**
 	 * Gets the service names of the specified tag.
-	 * @param  string
 	 * @return array of [service name => tag attributes]
 	 */
-	public function findByTag($tag)
+	public function findByTag(string $tag): array
 	{
 		return $this->meta[self::TAGS][$tag] ?? [];
 	}
@@ -244,12 +232,11 @@ class Container
 
 	/**
 	 * Creates new instance using autowiring.
-	 * @param  string  class
-	 * @param  array   arguments
+	 * @param  array $args   arguments
 	 * @return object
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function createInstance($class, array $args = [])
+	public function createInstance(string $class, array $args = [])
 	{
 		$rc = new \ReflectionClass($class);
 		if (!$rc->isInstantiable()) {
@@ -286,7 +273,7 @@ class Container
 	}
 
 
-	public static function getMethodName($name)
+	public static function getMethodName(string $name): string
 	{
 		$uname = ucfirst($name);
 		return 'createService' . ((string) $name === $uname ? '__' : '') . str_replace('.', '__', $uname);

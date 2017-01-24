@@ -66,10 +66,7 @@ class Compiler
 	}
 
 
-	/**
-	 * @return array
-	 */
-	public function getExtensions($type = NULL)
+	public function getExtensions(string $type = NULL): array
 	{
 		return $type
 			? array_filter($this->extensions, function ($item) use ($type) { return $item instanceof $type; })
@@ -77,10 +74,7 @@ class Compiler
 	}
 
 
-	/**
-	 * @return ContainerBuilder
-	 */
-	public function getContainerBuilder()
+	public function getContainerBuilder(): ContainerBuilder
 	{
 		return $this->builder;
 	}
@@ -89,7 +83,7 @@ class Compiler
 	/**
 	 * @return static
 	 */
-	public function setClassName($className)
+	public function setClassName(string $className)
 	{
 		$this->className = $className;
 		return $this;
@@ -111,7 +105,7 @@ class Compiler
 	 * Adds new configuration from file.
 	 * @return static
 	 */
-	public function loadConfig($file)
+	public function loadConfig(string $file)
 	{
 		$loader = new Config\Loader;
 		$this->addConfig($loader->load($file));
@@ -122,9 +116,8 @@ class Compiler
 
 	/**
 	 * Returns configuration.
-	 * @return array
 	 */
-	public function getConfig()
+	public function getConfig(): array
 	{
 		return $this->config;
 	}
@@ -155,18 +148,14 @@ class Compiler
 
 	/**
 	 * Exports dependencies.
-	 * @return array
 	 */
-	public function exportDependencies()
+	public function exportDependencies(): array
 	{
 		return $this->dependencies->export();
 	}
 
 
-	/**
-	 * @return string
-	 */
-	public function compile()
+	public function compile(): string
 	{
 		$this->processParameters();
 		$this->processExtensions();
@@ -237,7 +226,7 @@ class Compiler
 
 
 	/** @internal */
-	public function generateCode()
+	public function generateCode(): array
 	{
 		$this->builder->prepareClassList();
 
@@ -265,7 +254,7 @@ class Compiler
 	 * Adds service definitions from configuration.
 	 * @return void
 	 */
-	public static function loadDefinitions(ContainerBuilder $builder, array $services, $namespace = NULL)
+	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = NULL)
 	{
 		foreach ($services as $name => $def) {
 			if ((string) (int) $name === (string) $name) {
