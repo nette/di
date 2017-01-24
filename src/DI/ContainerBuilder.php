@@ -734,13 +734,13 @@ class ContainerBuilder
 
 	/**
 	 * Converts @service or @\Class -> service name and checks its existence.
-	 * @return string  of FALSE, if argument is not service name
+	 * @return string|NULL
 	 * @internal
 	 */
 	public function getServiceName($arg)
 	{
 		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
-			return FALSE;
+			return NULL;
 		}
 		$service = substr($arg, 1);
 		if ($service === self::THIS_SERVICE) {
