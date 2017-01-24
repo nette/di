@@ -197,7 +197,7 @@ class Container
 	 * @return object  service or NULL
 	 * @throws MissingServiceException
 	 */
-	public function getByType($class, $need = TRUE)
+	public function getByType($class, $throw = TRUE)
 	{
 		$class = ltrim($class, '\\');
 		if (!empty($this->meta[self::TYPES][$class][TRUE])) {
@@ -206,7 +206,7 @@ class Container
 			}
 			throw new MissingServiceException("Multiple services of type $class found: " . implode(', ', $names) . '.');
 
-		} elseif ($need) {
+		} elseif ($throw) {
 			throw new MissingServiceException("Service of type $class not found.");
 		}
 	}

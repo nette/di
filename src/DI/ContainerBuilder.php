@@ -308,7 +308,7 @@ class ContainerBuilder
 
 	/**
 	 * Generates $dependencies, $classes and normalizes class names.
-	 * @return array
+	 * @return void
 	 * @internal
 	 */
 	public function prepareClassList()
