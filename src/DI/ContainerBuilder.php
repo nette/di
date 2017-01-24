@@ -58,7 +58,7 @@ class ContainerBuilder
 	public function addDefinition(string $name, ServiceDefinition $definition = NULL): ServiceDefinition
 	{
 		$this->classListNeedsRefresh = TRUE;
-		if (!is_string($name) || !$name) { // builder is not ready for falsy names such as '0'
+		if (!$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
 		$name = $this->aliases[$name] ?? $name;
@@ -122,10 +122,10 @@ class ContainerBuilder
 
 	public function addAlias(string $alias, string $service)
 	{
-		if (!is_string($alias) || !$alias) { // builder is not ready for falsy names such as '0'
+		if (!$alias) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Alias name must be a non-empty string, %s given.', gettype($alias)));
 
-		} elseif (!is_string($service) || !$service) { // builder is not ready for falsy names such as '0'
+		} elseif (!$service) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($service)));
 
 		} elseif (isset($this->aliases[$alias])) {

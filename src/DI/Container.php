@@ -56,9 +56,8 @@ class Container
 	 */
 	public function addService(string $name, $service)
 	{
-		if (!is_string($name) || !$name) {
+		if (!$name) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
-
 		}
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
 		if (isset($this->registry[$name])) {
@@ -276,7 +275,7 @@ class Container
 	public static function getMethodName(string $name): string
 	{
 		$uname = ucfirst($name);
-		return 'createService' . ((string) $name === $uname ? '__' : '') . str_replace('.', '__', $uname);
+		return 'createService' . ($name === $uname ? '__' : '') . str_replace('.', '__', $uname);
 	}
 
 }

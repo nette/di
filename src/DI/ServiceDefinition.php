@@ -244,7 +244,7 @@ class ServiceDefinition
 	 */
 	public function setDynamic(bool $state = TRUE)
 	{
-		$this->dynamic = (bool) $state;
+		$this->dynamic = $state;
 		return $this;
 	}
 
