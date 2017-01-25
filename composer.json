@@ -15,7 +15,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.0",
+		"php": ">=7.1",
 		"ext-tokenizer": "*",
 		"nette/neon": "^2.3.3 || ~3.0.0",
 		"nette/php-generator": "^3.0",
