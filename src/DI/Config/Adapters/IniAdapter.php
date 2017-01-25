@@ -20,8 +20,7 @@ final class IniAdapter implements Nette\DI\Config\IAdapter
 {
 	use Nette\SmartObject;
 
-	/** @internal */
-	const
+	private const
 		KEY_SEPARATOR = '.', // key nesting key1.key2.key3
 		ESCAPED_KEY_SEPARATOR = '..',
 		RAW_SECTION = '!';

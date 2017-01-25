@@ -19,13 +19,13 @@ class Container
 {
 	use Nette\SmartObject;
 
-	const TAGS = 'tags';
+	public const TAGS = 'tags';
 
-	const TYPES = 'types';
+	public const TYPES = 'types';
 
-	const SERVICES = 'services';
+	public const SERVICES = 'services';
 
-	const ALIASES = 'aliases';
+	public const ALIASES = 'aliases';
 
 	/** @var array  user parameters */
 	public $parameters = [];

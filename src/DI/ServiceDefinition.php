@@ -23,7 +23,7 @@ final class ServiceDefinition
 {
 	use Nette\SmartObject;
 
-	const
+	public const
 		IMPLEMENT_MODE_CREATE = 'create',
 		IMPLEMENT_MODE_GET = 'get';
 

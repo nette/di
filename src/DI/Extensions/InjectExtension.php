@@ -19,7 +19,7 @@ use Nette\Utils\Reflection;
  */
 final class InjectExtension extends DI\CompilerExtension
 {
-	const TAG_INJECT = 'inject';
+	public const TAG_INJECT = 'inject';
 
 
 	public function beforeCompile()

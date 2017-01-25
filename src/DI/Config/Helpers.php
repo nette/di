@@ -19,7 +19,7 @@ final class Helpers
 {
 	use Nette\StaticClass;
 
-	const
+	public const
 		EXTENDS_KEY = '_extends',
 		OVERWRITE = true;
 
