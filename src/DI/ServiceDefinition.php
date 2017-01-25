@@ -59,11 +59,10 @@ final class ServiceDefinition
 
 
 	/**
-	 * @param  string|null
 	 * @return static
 	 * @deprecated Use setType() instead.
 	 */
-	public function setClass($type)
+	public function setClass(?string $type)
 	{
 		($this->notifier)();
 		$this->type = $type;
@@ -78,20 +77,18 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|null
 	 * @deprecated Use getType() instead.
 	 */
-	public function getClass()
+	public function getClass(): ?string
 	{
 		return $this->type;
 	}
 
 
 	/**
-	 * @param  string|null
 	 * @return static
 	 */
-	public function setType($type)
+	public function setType(?string $type)
 	{
 		($this->notifier)();
 		$this->type = $type;
@@ -99,10 +96,7 @@ final class ServiceDefinition
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public function getType()
+	public function getType(): ?string
 	{
 		return $this->type;
 	}
@@ -119,10 +113,7 @@ final class ServiceDefinition
 	}
 
 
-	/**
-	 * @return Statement|null
-	 */
-	public function getFactory()
+	public function getFactory(): ?Statement
 	{
 		return $this->factory;
 	}
@@ -293,10 +284,7 @@ final class ServiceDefinition
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public function getImplement()
+	public function getImplement(): ?string
 	{
 		return $this->implement;
 	}
@@ -315,10 +303,7 @@ final class ServiceDefinition
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public function getImplementMode()
+	public function getImplementMode(): ?string
 	{
 		return $this->implementMode;
 	}

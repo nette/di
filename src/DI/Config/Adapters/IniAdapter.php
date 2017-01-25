@@ -113,9 +113,8 @@ final class IniAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Recursive builds INI list.
-	 * @return void
 	 */
-	private static function build($input, &$output, $prefix)
+	private static function build($input, &$output, $prefix): void
 	{
 		foreach ($input as $key => $val) {
 			$key = str_replace(self::KEY_SEPARATOR, self::ESCAPED_KEY_SEPARATOR, $key);

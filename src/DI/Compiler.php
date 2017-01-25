@@ -258,9 +258,8 @@ class Compiler
 
 	/**
 	 * Adds service definitions from configuration.
-	 * @return void
 	 */
-	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = null)
+	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = null): void
 	{
 		foreach ($services as $name => $def) {
 			if (is_int($name)) {
@@ -310,9 +309,8 @@ class Compiler
 
 	/**
 	 * Parses single service definition from configuration.
-	 * @return void
 	 */
-	public static function loadDefinition(ServiceDefinition $definition, $config, string $name = null)
+	public static function loadDefinition(ServiceDefinition $definition, $config, string $name = null): void
 	{
 		if ($config === null) {
 			return;
