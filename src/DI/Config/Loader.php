@@ -20,8 +20,7 @@ class Loader
 {
 	use Nette\SmartObject;
 
-	/** @internal */
-	const INCLUDES_KEY = 'includes';
+	private const INCLUDES_KEY = 'includes';
 
 	private $adapters = [
 		'php' => Adapters\PhpAdapter::class,

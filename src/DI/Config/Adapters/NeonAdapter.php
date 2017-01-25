@@ -22,8 +22,7 @@ final class NeonAdapter implements Nette\DI\Config\IAdapter
 {
 	use Nette\SmartObject;
 
-	/** @internal */
-	const PREVENT_MERGING = '!';
+	private const PREVENT_MERGING = '!';
 
 
 	/**

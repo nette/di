@@ -22,7 +22,7 @@ class DependencyChecker
 {
 	use Nette\SmartObject;
 
-	const VERSION = 1;
+	public const VERSION = 1;
 
 	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
 	private $dependencies = [];
