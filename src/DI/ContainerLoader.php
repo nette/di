@@ -76,7 +76,7 @@ class ContainerLoader
 			if (isset($updatedMeta)) {
 				$toWrite["$file.meta"] = $updatedMeta;
 			} else {
-				list($toWrite[$file], $toWrite["$file.meta"]) = $this->generate($class, $generator);
+				[$toWrite[$file], $toWrite["$file.meta"]] = $this->generate($class, $generator);
 			}
 
 			foreach ($toWrite as $name => $content) {
