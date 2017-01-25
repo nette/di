@@ -53,10 +53,7 @@ class ContainerLoader
 	}
 
 
-	/**
-	 * @return void
-	 */
-	private function loadFile(string $class, callable $generator)
+	private function loadFile(string $class, callable $generator): void
 	{
 		$file = "$this->tempDirectory/$class.php";
 		if (!$this->isExpired($file) && (@include $file) !== false) { // @ file may not exist

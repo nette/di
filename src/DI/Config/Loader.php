@@ -61,9 +61,8 @@ class Loader
 
 	/**
 	 * Save configuration to file.
-	 * @return void
 	 */
-	public function save(array $data, string $file)
+	public function save(array $data, string $file): void
 	{
 		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === false) {
 			throw new Nette\IOException("Cannot write file '$file'.");

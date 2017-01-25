@@ -80,9 +80,8 @@ class Container
 
 	/**
 	 * Removes the service from the container.
-	 * @return void
 	 */
-	public function removeService(string $name)
+	public function removeService(string $name): void
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
 		unset($this->registry[$name]);
@@ -257,9 +256,8 @@ class Container
 	/**
 	 * Calls all methods starting with with "inject" using autowiring.
 	 * @param  object
-	 * @return void
 	 */
-	public function callInjects($service)
+	public function callInjects($service): void
 	{
 		Extensions\InjectExtension::callInjects($this, $service);
 	}

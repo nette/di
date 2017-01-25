@@ -198,9 +198,8 @@ final class Helpers
 
 	/**
 	 * Returns an annotation value.
-	 * @return string|null
 	 */
-	public static function parseAnnotation(\Reflector $ref, $name)
+	public static function parseAnnotation(\Reflector $ref, $name): ?string
 	{
 		if (!Reflection::areCommentsAvailable()) {
 			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
@@ -209,13 +208,11 @@ final class Helpers
 		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
 			return $m[1] ?? '';
 		}
+		return null;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public static function getReturnType(\ReflectionFunctionAbstract $func)
+	public static function getReturnType(\ReflectionFunctionAbstract $func): ?string
 	{
 		if ($type = Reflection::getReturnType($func)) {
 			return $type;
@@ -230,6 +227,7 @@ final class Helpers
 				return $type;
 			}
 		}
+		return null;
 	}
 
 

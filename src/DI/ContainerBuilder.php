@@ -78,9 +78,8 @@ class ContainerBuilder
 
 	/**
 	 * Removes the specified service definition.
-	 * @return void
 	 */
-	public function removeDefinition(string $name)
+	public function removeDefinition(string $name): void
 	{
 		$this->classListNeedsRefresh = true;
 		$name = $this->aliases[$name] ?? $name;
@@ -141,9 +140,8 @@ class ContainerBuilder
 
 	/**
 	 * Removes the specified alias.
-	 * @return void
 	 */
-	public function removeAlias(string $alias)
+	public function removeAlias(string $alias): void
 	{
 		unset($this->aliases[$alias]);
 	}
@@ -184,7 +182,7 @@ class ContainerBuilder
 	 * @return string|null  service name or null
 	 * @throws ServiceCreationException
 	 */
-	public function getByType(string $type, bool $throw = false)
+	public function getByType(string $type, bool $throw = false): ?string
 	{
 		$type = Helpers::normalizeClass($type);
 
@@ -199,7 +197,7 @@ class ContainerBuilder
 			if ($throw) {
 				throw new MissingServiceException("Service of type '$type' not found.");
 			}
-			return;
+			return null;
 
 		} elseif (count($types[$type][true]) === 1) {
 			return $types[$type][true][0];
@@ -272,10 +270,9 @@ class ContainerBuilder
 
 	/**
 	 * Generates $dependencies, $classList and normalizes class names.
-	 * @return void
 	 * @internal
 	 */
-	public function prepareClassList()
+	public function prepareClassList(): void
 	{
 		unset($this->definitions[self::THIS_CONTAINER]);
 		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
@@ -515,10 +512,7 @@ class ContainerBuilder
 	}
 
 
-	/**
-	 * @return void
-	 */
-	public function complete()
+	public function complete(): void
 	{
 		$this->prepareClassList();
 
@@ -699,10 +693,9 @@ class ContainerBuilder
 
 	/**
 	 * Converts @service or @\Class -> service name and checks its existence.
-	 * @return string|null
 	 * @internal
 	 */
-	public function getServiceName($arg)
+	public function getServiceName($arg): ?string
 	{
 		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
 			return null;
