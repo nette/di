@@ -341,8 +341,9 @@ class ContainerBuilder
 			}
 
 			// auto-disable autowiring for aliases
-			if (($alias = $this->getServiceName($def->getFactory()->getEntity())) &&
-				(!$def->getImplement() || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->getImplement()))
+			if ($def->getAutowired() === TRUE
+				&& ($alias = $this->getServiceName($def->getFactory()->getEntity()))
+				&& (!$def->getImplement() || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->getImplement()))
 			) {
 				$def->setAutowired(FALSE);
 			}
