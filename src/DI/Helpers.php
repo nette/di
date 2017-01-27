@@ -8,6 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
 
 
@@ -68,7 +69,7 @@ class Helpers
 				if (strlen($part) + 2 === strlen($var)) {
 					return $val;
 				}
-				if ($val instanceof Nette\PhpGenerator\PhpLiteral) {
+				if ($val instanceof PhpLiteral) {
 					$php = TRUE;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
@@ -78,8 +79,8 @@ class Helpers
 		}
 		if ($php) {
 			$res = array_filter($res, function ($val) { return $val !== ''; });
-			$res = array_map(function ($val) { return is_string($val) ? var_export($val, TRUE) : $val; }, $res);
-			return new Nette\PhpGenerator\PhpLiteral(implode(' . ', $res));
+			$res = array_map(function ($val) { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, TRUE); }, $res);
+			return new PhpLiteral(implode(' . ', $res));
 		}
 		return implode('', $res);
 	}

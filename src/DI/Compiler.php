@@ -33,6 +33,9 @@ class Compiler
 	/** @var string */
 	private $className = 'Container';
 
+	/** @var string[] */
+	private $dynamicParams = [];
+
 	/** @var array reserved section names */
 	private static $reserved = ['services' => 1, 'parameters' => 1];
 
@@ -126,6 +129,17 @@ class Compiler
 
 
 	/**
+	 * Sets the names of dynamic parameters.
+	 * @return static
+	 */
+	public function setDynamicParameterNames(array $names)
+	{
+		$this->dynamicParams = $names;
+		return $this;
+	}
+
+
+	/**
 	 * Adds dependencies to the list.
 	 * @param  array of ReflectionClass|\ReflectionFunctionAbstract|string
 	 * @return static
@@ -168,9 +182,13 @@ class Compiler
 	/** @internal */
 	public function processParameters()
 	{
-		if (isset($this->config['parameters'])) {
-			$this->builder->parameters = Helpers::expand($this->config['parameters'], $this->config['parameters'], TRUE);
+		$params = isset($this->config['parameters']) ? $this->config['parameters'] : [];
+		foreach ($this->dynamicParams as $key) {
+			$params[$key] = array_key_exists($key, $params)
+				? ContainerBuilder::literal('isset($this->parameters[?]) ? $this->parameters[?] : ?', [$key, ContainerBuilder::literal('?'), $key, $params[$key]])
+				: ContainerBuilder::literal('$this->parameters[?]', [$key]);
 		}
+		$this->builder->parameters = Helpers::expand($params, $params, TRUE);
 	}
 
 

@@ -46,7 +46,7 @@ class Notes
 
 
 /** @return Nette\DI\Container */
-function createContainer($source, $config = NULL)
+function createContainer($source, $config = NULL, $params = [])
 {
 	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {
@@ -66,5 +66,5 @@ function createContainer($source, $config = NULL)
 
 	file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
 	require TEMP_DIR . '/code.php';
-	return new $class;
+	return new $class($params);
 }

@@ -52,7 +52,10 @@ class PhpGenerator
 		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($this->className);
 		$containerClass->setExtends(Container::class);
 		$containerClass->addMethod('__construct')
-			->addBody('parent::__construct(?);', [$this->builder->parameters]);
+			->addBody('$this->parameters = $params;')
+			->addBody('$this->parameters += ?;', [$this->builder->parameters])
+			->addParameter('params', [])
+				->setTypeHint('array');
 
 		$definitions = $this->builder->getDefinitions();
 		ksort($definitions);
