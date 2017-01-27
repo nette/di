@@ -20,7 +20,7 @@ di:
 
 services:
 	std: stdClass
-', 'neon');
+');
 
 $builder = $compiler->getContainerBuilder();
 Assert::null($builder->getByType('stdClass'));

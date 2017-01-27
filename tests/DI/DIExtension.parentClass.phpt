@@ -21,6 +21,6 @@ $compiler->addExtension('di', new DIExtension);
 $container = createContainer($compiler, '
 di:
 	parentClass: MyContainer
-', 'neon');
+');
 
 Assert::type(MyContainer::class, $container);

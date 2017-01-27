@@ -43,7 +43,7 @@ services:
 	classB1: @classA::funcA()
 	classB2: ::func()::funcA()
 	classC: ClassA()::funcA()::funcB()
-', 'neon');
+');
 
 Assert::type('ClassA', $container->getService('classA'));
 Assert::type('ClassB', $container->getService('classB1'));
