@@ -46,11 +46,14 @@ class Compiler
 
 	/**
 	 * Add custom configurator extension.
+	 * @param  string|NULL
 	 * @return static
 	 */
 	public function addExtension($name, CompilerExtension $extension)
 	{
-		if (isset($this->extensions[$name]) || isset(self::$reserved[$name])) {
+		if ($name === NULL) {
+			$name = '_' . count($this->extensions);
+		} elseif (isset($this->extensions[$name]) || isset(self::$reserved[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
 		}
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
