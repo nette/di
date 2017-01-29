@@ -16,7 +16,7 @@ use Nette\DI\Config\Helpers;
 /**
  * Reading and generating INI files.
  */
-class IniAdapter implements Nette\DI\Config\IAdapter
+final class IniAdapter implements Nette\DI\Config\IAdapter
 {
 	use Nette\SmartObject;
 

@@ -15,7 +15,7 @@ use Nette;
 /**
  * PHP directives definition.
  */
-class PhpExtension extends Nette\DI\CompilerExtension
+final class PhpExtension extends Nette\DI\CompilerExtension
 {
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)

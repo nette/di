@@ -15,7 +15,7 @@ use Nette;
 /**
  * Decorators for services.
  */
-class DecoratorExtension extends Nette\DI\CompilerExtension
+final class DecoratorExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
 		'setup' => [],

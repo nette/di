@@ -15,7 +15,7 @@ use Nette;
 /**
  * Constant definitions.
  */
-class ConstantsExtension extends Nette\DI\CompilerExtension
+final class ConstantsExtension extends Nette\DI\CompilerExtension
 {
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)

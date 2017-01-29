@@ -17,7 +17,7 @@ use Nette\Utils\Reflection;
 /**
  * Calls inject methods and fills @inject properties.
  */
-class InjectExtension extends DI\CompilerExtension
+final class InjectExtension extends DI\CompilerExtension
 {
 	const TAG_INJECT = 'inject';
 

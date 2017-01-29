@@ -19,7 +19,7 @@ use Nette;
  * @property Statement|NULL $factory
  * @property Statement[] $setup
  */
-class ServiceDefinition
+final class ServiceDefinition
 {
 	const
 		IMPLEMENT_MODE_CREATE = 'create',

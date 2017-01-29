@@ -15,7 +15,7 @@ use Nette;
 /**
  * DI extension.
  */
-class DIExtension extends Nette\DI\CompilerExtension
+final class DIExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
 		'debugger' => TRUE,

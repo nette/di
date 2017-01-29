@@ -18,7 +18,7 @@ use Nette\Utils\Reflection;
  * The DI helpers.
  * @internal
  */
-class Helpers
+final class Helpers
 {
 	use Nette\StaticClass;
 

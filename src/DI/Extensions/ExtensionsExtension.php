@@ -15,7 +15,7 @@ use Nette;
 /**
  * Enables registration of other extensions in $config file
  */
-class ExtensionsExtension extends Nette\DI\CompilerExtension
+final class ExtensionsExtension extends Nette\DI\CompilerExtension
 {
 
 	public function loadConfiguration()

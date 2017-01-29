@@ -17,7 +17,7 @@ use Nette;
  *
  * @property string|array|ServiceDefinition|NULL $entity
  */
-class Statement
+final class Statement
 {
 	use Nette\SmartObject;
 
