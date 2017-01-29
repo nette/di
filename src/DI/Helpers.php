@@ -44,13 +44,14 @@ class Helpers
 		}
 
 		$parts = preg_split('#%([\w.-]*)%#i', $var, -1, PREG_SPLIT_DELIM_CAPTURE);
-		$res = '';
+		$res = [];
+		$php = FALSE;
 		foreach ($parts as $n => $part) {
 			if ($n % 2 === 0) {
-				$res .= $part;
+				$res[] = $part;
 
 			} elseif ($part === '') {
-				$res .= '%';
+				$res[] = '%';
 
 			} elseif (isset($recursive[$part])) {
 				throw new Nette\InvalidArgumentException(sprintf('Circular reference detected for variables: %s.', implode(', ', array_keys($recursive))));
@@ -67,13 +68,20 @@ class Helpers
 				if (strlen($part) + 2 === strlen($var)) {
 					return $val;
 				}
-				if (!is_scalar($val)) {
+				if ($val instanceof Nette\PhpGenerator\PhpLiteral) {
+					$php = TRUE;
+				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
 				}
-				$res .= $val;
+				$res[] = $val;
 			}
 		}
-		return $res;
+		if ($php) {
+			$res = array_filter($res, function ($val) { return $val !== ''; });
+			$res = array_map(function ($val) { return is_string($val) ? var_export($val, TRUE) : $val; }, $res);
+			return new Nette\PhpGenerator\PhpLiteral(implode(' . ', $res));
+		}
+		return implode('', $res);
 	}
 
 
