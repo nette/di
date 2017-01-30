@@ -614,6 +614,7 @@ class ContainerBuilder
 		} elseif ($entity === 'not') { // operator
 
 		} elseif (is_string($entity)) { // class name
+			$entity = ltrim($entity, '\\');
 			if (!class_exists($entity)) {
 				throw new ServiceCreationException("Class $entity not found.");
 			} elseif ((new ReflectionClass($entity))->isAbstract()) {
@@ -650,6 +651,8 @@ class ContainerBuilder
 				$entity[0] = $this->completeStatement($entity[0]);
 			} elseif ($service = $this->getServiceName($entity[0])) { // service method
 				$entity[0] = '@' . $service;
+			} elseif (is_string($entity[0])) {
+				$entity[0] = ltrim($entity[0], '\\');
 			}
 
 			if ($entity[1][0] === '$') { // property getter, setter or appender
