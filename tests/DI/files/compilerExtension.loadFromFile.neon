@@ -1,0 +1,3 @@
+services:
+	one:
+		class: Ipsum

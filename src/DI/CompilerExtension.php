@@ -90,10 +90,16 @@ abstract class CompilerExtension
 	 */
 	public function loadFromFile(string $file): array
 	{
-		$loader = new Config\Loader;
+		$loader = $this->createLoader();
 		$res = $loader->load($file);
 		$this->compiler->addDependencies($loader->getDependencies());
 		return $res;
+	}
+
+
+	protected function createLoader(): Config\Loader
+	{
+		return new Config\Loader;
 	}
 
 

@@ -105,9 +105,9 @@ class Compiler
 	 * Adds new configuration from file.
 	 * @return static
 	 */
-	public function loadConfig(string $file)
+	public function loadConfig(string $file, Config\Loader $loader = NULL)
 	{
-		$loader = new Config\Loader;
+		$loader = $loader ?: new Config\Loader;
 		$this->addConfig($loader->load($file));
 		$this->dependencies->add($loader->getDependencies());
 		return $this;
