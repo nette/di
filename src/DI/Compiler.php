@@ -29,6 +29,9 @@ class Compiler
 	/** @var array */
 	private $config = [];
 
+	/** @var array */
+	private $serviceConfigs = [];
+
 	/** @var DependencyChecker */
 	private $dependencies;
 
@@ -96,6 +99,9 @@ class Compiler
 	 */
 	public function addConfig(array $config)
 	{
+		if (isset($config['services'])) {
+			$this->serviceConfigs[] = $config['services'];
+		}
 		$this->config = Config\Helpers::merge($config, $this->config);
 		return $this;
 	}
@@ -219,8 +225,8 @@ class Compiler
 	/** @internal */
 	public function processServices()
 	{
-		if (isset($this->config['services'])) {
-			self::loadDefinitions($this->builder, $this->config['services']);
+		foreach ($this->serviceConfigs as $config) {
+			self::loadDefinitions($this->builder, $config);
 		}
 	}
 
