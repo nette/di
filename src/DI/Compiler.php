@@ -185,7 +185,7 @@ class Compiler
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
 
-		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
+		foreach ($first = $this->getExtensions(Extensions\IExtensionsExtension::class) as $name => $extension) {
 			$extension->setConfig($this->config[$name] ?? []);
 			$extension->loadConfiguration();
 		}
