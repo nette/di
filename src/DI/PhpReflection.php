@@ -160,7 +160,8 @@ class PhpReflection
 		$namespace = $class = $classLevel = $level = NULL;
 		$res = $uses = array();
 
-		while (list(, $token) = each($tokens)) {
+		while ($token = current($tokens)) {
+			next($tokens);
 			switch (is_array($token) ? $token[0] : $token) {
 				case T_NAMESPACE:
 					$namespace = ltrim(self::fetch($tokens, array(T_STRING, T_NS_SEPARATOR)) . '\\', '\\');
