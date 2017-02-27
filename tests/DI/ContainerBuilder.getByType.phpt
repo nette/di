@@ -43,11 +43,19 @@ Assert::same('one', $builder->getByType('\Service'));
 
 Assert::null($builder->getByType('Child'));
 
+Assert::exception(function () use ($builder) {
+	$builder->getByType('Child', TRUE);
+}, Nette\DI\MissingServiceException::class, "Service of type 'Child' not found.");
+
 Assert::same('two', $builder->getByType('Service2'));
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType(stdClass::class);
 }, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: one, two');
+
+Assert::exception(function () use ($builder) {
+	$builder->getByType('unknown', TRUE);
+}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found.");
 
 Assert::null($builder->getByType('unknown'));
 
