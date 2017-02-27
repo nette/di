@@ -78,8 +78,12 @@ class ContainerLoader
 			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'.");
 		}
 
-		if (!is_file($file) || $this->isExpired($file)) {
-			list($toWrite[$file], $toWrite["$file.meta"]) = $this->generate($class, $generator);
+		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
+			if (isset($updatedMeta)) {
+				$toWrite["$file.meta"] = $updatedMeta;
+			} else {
+				list($toWrite[$file], $toWrite["$file.meta"]) = $this->generate($class, $generator);
+			}
 
 			foreach ($toWrite as $name => $content) {
 				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
@@ -98,11 +102,14 @@ class ContainerLoader
 	}
 
 
-	private function isExpired($file)
+	private function isExpired($file, &$updatedMeta = NULL)
 	{
 		if ($this->autoRebuild) {
-			$meta = @unserialize(file_get_contents("$file.meta")); // @ - file may not exist
-			return empty($meta[0]) || DependencyChecker::isExpired(...$meta);
+			$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
+			$orig = $meta[2];
+			return empty($meta[0])
+				|| DependencyChecker::isExpired(...$meta)
+				|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
 		}
 		return FALSE;
 	}
