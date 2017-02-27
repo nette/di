@@ -257,7 +257,13 @@ class Compiler
 	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = NULL)
 	{
 		foreach ($services as $name => $def) {
-			if ((string) (int) $name === (string) $name) {
+			if (is_string($name) && preg_match('#^@\w*[\\\][\w\\\]+\z#', $name)) {
+				$service = substr($name, 1);
+				$name = $builder->getByType($service);
+				if (!$name) {
+					throw new ServiceCreationException("Reference to missing service of type $service.");
+				}
+			} elseif ((string) (int) $name === (string) $name) {
 				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
 				$name = (count($builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
 			} elseif ($namespace) {
