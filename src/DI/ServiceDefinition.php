@@ -61,12 +61,15 @@ final class ServiceDefinition
 	/**
 	 * @return static
 	 */
-	public function setClass($class, array $args = [])
+	public function setClass($class)
 	{
 		($this->notifier)();
 		$this->class = $class;
-		if ($args) {
-			$this->setFactory($class, $args);
+		if (func_num_args() > 1) {
+			trigger_error(__METHOD__ . '() second parameter $args is deprecated, use setFactory()', E_USER_DEPRECATED);
+			if ($args = func_get_arg(1)) {
+				$this->setFactory($class, $args);
+			}
 		}
 		return $this;
 	}
