@@ -257,9 +257,11 @@ class Compiler
 	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = NULL)
 	{
 		foreach ($services as $name => $def) {
-			if ((string) (int) $name === (string) $name) {
+			if (is_int($name)) {
 				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
 				$name = (count($builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
+			} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
+				$name = $builder->getByType(substr($name, 1), TRUE);
 			} elseif ($namespace) {
 				$name = $namespace . '.' . $name;
 			}
