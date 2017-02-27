@@ -20,6 +20,15 @@ class Lorem
 
 class Ipsum
 {
+	public $value;
+
+
+	public function __construct($value)
+	{
+		$this->value = $value;
+	}
+
+
 	static function foo()
 	{
 	}
@@ -34,16 +43,20 @@ services:
 		class: Lorem(@\Ipsum)
 
 	two:
-		class: Ipsum
+		class: Ipsum(1)
 		setup:
 			- @\Ipsum::foo()
 
 	four: @\Lorem
+
+	@\Ipsum:
+		arguments: [2]
 ');
 
 
 Assert::type(Lorem::class, $container->getService('one'));
 Assert::type(Ipsum::class, $container->getService('two'));
+Assert::same(2, $container->getService('two')->value);
 Assert::type(Lorem::class, $container->getService('three'));
 Assert::same($container->getService('one'), $container->getService('three'));
 Assert::type(Lorem::class, $container->getService('four'));
