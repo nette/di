@@ -178,7 +178,7 @@ class Compiler
 		$params = isset($this->config['parameters']) ? $this->config['parameters'] : [];
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
-				? ContainerBuilder::literal('$this->parameters[?] ? ?', [$key, ContainerBuilder::literal('??'), $params[$key]])
+				? ContainerBuilder::literal('$this->parameters[?] \?\? ?', [$key, $params[$key]])
 				: ContainerBuilder::literal('$this->parameters[?]', [$key]);
 		}
 		$this->builder->parameters = Helpers::expand($params, $params, TRUE);
