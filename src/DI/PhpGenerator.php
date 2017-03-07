@@ -178,23 +178,23 @@ class PhpGenerator
 			return $this->formatPhp($entity, $arguments);
 
 		} elseif ($service = $this->builder->getServiceName($entity)) { // factory calling
-			return $this->formatPhp('$this->?(?*)', [Container::getMethodName($service), $arguments]);
+			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($service), $arguments]);
 
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', [$arguments[0]]);
 
 		} elseif (is_string($entity)) { // class name
-			return $this->formatPhp("new $entity" . ($arguments ? '(?*)' : ''), $arguments ? [$arguments] : []);
+			return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
 
 		} elseif ($entity[0] === '') { // globalFunc
-			return $this->formatPhp("$entity[1](?*)", [$arguments]);
+			return $this->formatPhp("$entity[1](...?)", [$arguments]);
 
 		} elseif ($entity[0] instanceof Statement) {
 			$inner = $this->formatPhp('?', [$entity[0]]);
 			if (substr($inner, 0, 4) === 'new ') {
 				$inner = "($inner)";
 			}
-			return $this->formatPhp("$inner->?(?*)", [$entity[1], $arguments]);
+			return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);
 
 		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
 			$name = substr($entity[1], 1);
@@ -211,10 +211,10 @@ class PhpGenerator
 				: $prop;
 
 		} elseif ($service = $this->builder->getServiceName($entity[0])) { // service method
-			return $this->formatPhp('?->?(?*)', [$entity[0], $entity[1], $arguments]);
+			return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
 
 		} else { // static method
-			return $this->formatPhp("$entity[0]::$entity[1](?*)", [$arguments]);
+			return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
 		}
 	}
 
