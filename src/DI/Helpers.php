@@ -223,9 +223,10 @@ final class Helpers
 		if ($type = Reflection::getReturnType($func)) {
 			return $type;
 		} elseif ($type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'))) {
-			if ($func instanceof \ReflectionMethod) {
-				$lower = strtolower($type);
-				return $lower === 'static' || $lower === '$this'
+			if ($type === 'object' || $type === 'mixed') {
+				return NULL;
+			} elseif ($func instanceof \ReflectionMethod) {
+				return $type === 'static' || $type === '$this'
 					? $func->getDeclaringClass()->getName()
 					: Reflection::expandClassName($type, $func->getDeclaringClass());
 			} else {

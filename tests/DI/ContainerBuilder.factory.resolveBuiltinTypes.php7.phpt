@@ -44,6 +44,17 @@ namespace A
 		{
 			return 0.0;
 		}
+
+		/** @return object */
+		function createObject()
+		{
+			return (object) NULL;
+		}
+
+		/** @return mixed */
+		function createMixed()
+		{
+		}
 	}
 
 }
@@ -110,5 +121,23 @@ namespace
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "Class or interface 'float' not found. Is return type of A\\Factory::createFloat() used in service 'f' correct?");
+
+	Assert::exception(function () {
+		$builder = new DI\ContainerBuilder;
+		$builder->addDefinition('factory')
+			->setClass('A\Factory');
+		$builder->addDefinition('f')
+			->setFactory('@factory::createObject');
+		$container = createContainer($builder);
+	}, Nette\DI\ServiceCreationException::class, "Unknown type of service 'f', declare return type of factory method (for PHP 5 use annotation @return)");
+
+	Assert::exception(function () {
+		$builder = new DI\ContainerBuilder;
+		$builder->addDefinition('factory')
+			->setClass('A\Factory');
+		$builder->addDefinition('f')
+			->setFactory('@factory::createMixed');
+		$container = createContainer($builder);
+	}, Nette\DI\ServiceCreationException::class, "Unknown type of service 'f', declare return type of factory method (for PHP 5 use annotation @return)");
 
 }
