@@ -119,7 +119,7 @@ class PhpGenerator
 		$this->currentService = NULL;
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
 
-		if (($class = $def->getClass()) && !$serviceRef && $class !== $entity
+		if ($def->getSetup() && ($class = $def->getClass()) && !$serviceRef && $class !== $entity
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $class))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $class) {\n"
