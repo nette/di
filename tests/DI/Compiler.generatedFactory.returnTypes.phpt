@@ -29,6 +29,11 @@ class Article
 	}
 }
 
+class FooArticle extends Article
+{
+
+}
+
 $compiler = new DI\Compiler;
 $container = createContainer($compiler, 'files/compiler.generatedFactory.returnTypes.neon');
 
@@ -40,4 +45,10 @@ Assert::same('lorem-ipsum', $article->title);
 Assert::type(IArticleFactory::class, $container->getService('article2'));
 $article = $container->getService('article2')->create('lorem-ipsum');
 Assert::type(Article::class, $article);
+Assert::same('lorem-ipsum', $article->title);
+
+
+Assert::type(IArticleFactory::class, $container->getService('article3'));
+$article = $container->getService('article3')->create('lorem-ipsum');
+Assert::type(FooArticle::class, $article);
 Assert::same('lorem-ipsum', $article->title);

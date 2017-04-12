@@ -9,3 +9,7 @@ services:
 		implement: IArticleFactory
 		arguments: [%title%]
 		parameters: [title]
+
+	article3:
+		implement: IArticleFactory
+		factory: FooArticle
