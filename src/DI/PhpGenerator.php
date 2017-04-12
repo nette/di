@@ -8,11 +8,10 @@
 namespace Nette\DI;
 
 use Nette;
-use Nette\Utils\Validators;
 use Nette\Utils\Strings;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\PhpGenerator\PhpLiteral;
-use ReflectionClass;
+use Nette\Utils\Reflection;
 
 
 /**
@@ -150,10 +149,12 @@ class PhpGenerator
 			->addParameter('container')
 				->setTypeHint($this->className);
 
+		$rm = new \ReflectionMethod($def->getImplement(), $def->getImplementMode());
+
 		$factoryClass->addMethod($def->getImplementMode())
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code))
-			->setReturnType(PHP_VERSION_ID >= 70000 ? $def->getClass() : NULL);
+			->setReturnType(PHP_VERSION_ID >= 70000 ? (Reflection::getReturnType($rm) ?: $def->getClass()) : NULL);
 
 		if (PHP_VERSION_ID < 70000) {
 			$this->generatedClasses[] = $factoryClass;
