@@ -576,6 +576,9 @@ class ContainerBuilder
 
 		} elseif ($entity === 'not') { // operator
 
+		} elseif ($entity === 'raw') { // workaround for string that begins with @
+			return PhpHelpers::dump($arguments[0]);
+
 		} elseif (is_string($entity)) { // class name
 			$entity = ltrim($entity, '\\');
 			if (!class_exists($entity)) {
