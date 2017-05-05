@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace Nette\DI\Extensions;
 
+use DateTime;
+use DateTimeImmutable;
+use DateTimeInterface;
+use DateTimeZone;
 use Nette;
 
 
@@ -17,6 +21,20 @@ use Nette;
  */
 final class PhpExtension extends Nette\DI\CompilerExtension
 {
+
+	public function loadConfiguration()
+	{
+		$config = $this->getConfig();
+		if (isset($config['date.timezone'])) {
+			$timezone = new DateTimeZone($config['date.timezone']);
+			// Fix all incorrect DateTime object when timezone was specified
+			array_walk_recursive($this->getContainerBuilder()->parameters, function (&$value) use ($timezone) {
+				if ($value instanceof DateTime || $value instanceof DateTimeImmutable) {
+					$value = $this->recreateDateTime($value, $timezone);
+				}
+			});
+		}
+	}
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
@@ -47,6 +65,11 @@ final class PhpExtension extends Nette\DI\CompilerExtension
 				throw new Nette\NotSupportedException('Required function ini_set() is disabled.');
 			}
 		}
+	}
+
+	private function recreateDateTime(DateTimeInterface $value, DateTimeZone $timezone)
+	{
+		return new DateTimeImmutable($value->format('Y-m-d H:i:s.u'), $timezone); // forgot timezone and recreate in proper one
 	}
 
 }
