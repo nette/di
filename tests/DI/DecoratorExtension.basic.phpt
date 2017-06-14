@@ -45,6 +45,7 @@ decorator:
 		setup:
 			- setup(Iface::NAME)
 			- setup
+			- $a = 10
 		tags: [Iface::NAME, tag: 1]
 
 	spec1:
@@ -76,4 +77,5 @@ Assert::equal([
 	new Statement(['@one', 'setup'], ['Object']),
 	new Statement(['@one', 'setup'], ['Iface']),
 	new Statement(['@one', 'setup']),
+	new Statement(['@one', '$a'], [10]),
 ], $builder->getDefinition('one')->getSetup());
