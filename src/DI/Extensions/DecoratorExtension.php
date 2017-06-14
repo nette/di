@@ -40,6 +40,9 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 	{
 		foreach ($this->findByType($type) as $def) {
 			foreach ($setups as $setup) {
+				if (is_array($setup)) {
+					$setup = new Nette\DI\Statement(key($setup), array_values($setup));
+				}
 				$def->addSetup($setup);
 			}
 		}
