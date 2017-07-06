@@ -657,8 +657,11 @@ class ContainerBuilder
 
 	private function checkCase(string $class)
 	{
-		if ((class_exists($class) || interface_exists($class)) && $class !== ($name = (new ReflectionClass($class))->getName())) {
-			throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '$name'.");
+		if (class_exists($class) || interface_exists($class)) {
+			$name = (new ReflectionClass($class))->getName();
+			if ($class !== $name && strtolower($class) === strtolower($name)) {
+				throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '$name'.");
+			}
 		}
 	}
 
