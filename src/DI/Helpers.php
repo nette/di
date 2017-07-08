@@ -229,7 +229,7 @@ class Helpers
 					? $func->getDeclaringClass()->getName()
 					: Reflection::expandClassName($type, $func->getDeclaringClass());
 			} else {
-				return ltrim($type, '\\');
+				return $type;
 			}
 		}
 	}
@@ -239,7 +239,7 @@ class Helpers
 	{
 		return class_exists($class) || interface_exists($class)
 			? (new \ReflectionClass($class))->getName()
-			: ltrim($class, '\\');
+			: $class;
 	}
 
 }
