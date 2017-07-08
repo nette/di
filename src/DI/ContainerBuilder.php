@@ -176,7 +176,7 @@ class ContainerBuilder
 	{
 		foreach ($classes as $class) {
 			if (class_exists($class) || interface_exists($class)) {
-				self::checkCase($class);
+				$class = Helpers::normalizeClass($class);
 				$this->excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
 			}
 		}
@@ -215,7 +215,7 @@ class ContainerBuilder
 	 */
 	public function getByType($class, $throw = FALSE)
 	{
-		$class = ltrim($class, '\\');
+		$class = Helpers::normalizeClass($class);
 
 		if ($this->currentService !== NULL
 			&& is_a($this->definitions[$this->currentService]->getClass(), $class, TRUE)
@@ -225,7 +225,6 @@ class ContainerBuilder
 
 		$classes = $this->getClassList();
 		if (empty($classes[$class][TRUE])) {
-			self::checkCase($class);
 			if ($throw) {
 				throw new MissingServiceException("Service of type '$class' not found.");
 			}
@@ -262,8 +261,7 @@ class ContainerBuilder
 	 */
 	public function findByType($class)
 	{
-		$class = ltrim($class, '\\');
-		self::checkCase($class);
+		$class = Helpers::normalizeClass($class);
 		$found = [];
 		$classes = $this->getClassList();
 		if (!empty($classes[$class])) {
@@ -398,7 +396,9 @@ class ContainerBuilder
 		if (!interface_exists($interface)) {
 			throw new ServiceCreationException("Interface $interface used in service '$name' not found.");
 		}
-		self::checkCase($interface);
+		$interface = Helpers::normalizeClass($interface);
+		$def->setImplement($interface);
+
 		$rc = new ReflectionClass($interface);
 		$this->addDependency($rc);
 		$method = $rc->hasMethod('create')
@@ -483,7 +483,7 @@ class ContainerBuilder
 			if (!class_exists($class) && !interface_exists($class)) {
 				throw new ServiceCreationException("Class or interface '$class' used in service '$name' not found.");
 			}
-			self::checkCase($class);
+			$class = Helpers::normalizeClass($class);
 			$def->setClass($class);
 			if (count($recursive) === 1) {
 				$this->addDependency(new ReflectionClass($factoryClass ?: $class));
@@ -692,14 +692,6 @@ class ContainerBuilder
 		});
 
 		return new Statement($entity, $arguments);
-	}
-
-
-	private function checkCase($class)
-	{
-		if ((class_exists($class) || interface_exists($class)) && $class !== ($name = (new ReflectionClass($class))->getName())) {
-			throw new ServiceCreationException("Case mismatch on class name '$class', correct name is '$name'.");
-		}
 	}
 
 

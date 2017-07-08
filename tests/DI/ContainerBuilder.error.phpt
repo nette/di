@@ -23,16 +23,6 @@ Assert::exception(function () use ($builder) {
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('one')
-	->setClass('stdclass');
-
-Assert::exception(function () use ($builder) {
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Case mismatch on class name 'stdclass', correct name is 'stdClass'.");
-
-
-
-$builder = new DI\ContainerBuilder;
 $builder->addDefinition('extension.one')
 	->setClass('stdClass');
 $builder->addDefinition('25_service')
