@@ -64,7 +64,7 @@ final class ServiceDefinition
 	public function setClass($class, array $args = [])
 	{
 		($this->notifier)();
-		$this->class = $class ? ltrim($class, '\\') : NULL;
+		$this->class = $class;
 		if ($args) {
 			$this->setFactory($class, $args);
 		}
@@ -261,7 +261,7 @@ final class ServiceDefinition
 	public function setImplement(string $interface)
 	{
 		($this->notifier)();
-		$this->implement = ltrim($interface, '\\');
+		$this->implement = $interface;
 		return $this;
 	}
 
