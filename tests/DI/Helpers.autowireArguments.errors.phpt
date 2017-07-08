@@ -32,14 +32,6 @@ Assert::exception(function () use ($container) {
 
 
 Assert::exception(function () use ($container) {
-		Helpers::autowireArguments(new ReflectionFunction(function (stdclass $x) {}), [], $container);
-	},
-	Nette\DI\ServiceCreationException::class,
-	'Service of type stdclass needed by {closure}() not found, did you mean stdClass?'
-);
-
-
-Assert::exception(function () use ($container) {
 	Helpers::autowireArguments(new ReflectionFunction(function ($x) {}), [], $container);
 }, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type hint or default value, so its value must be specified.');
 

@@ -190,7 +190,7 @@ class Container
 	 */
 	public function getByType(string $class, bool $throw = TRUE)
 	{
-		$class = ltrim($class, '\\');
+		$class = Helpers::normalizeClass($class);
 		if (!empty($this->meta[self::TYPES][$class][TRUE])) {
 			if (count($names = $this->meta[self::TYPES][$class][TRUE]) === 1) {
 				return $this->getService($names[0]);
@@ -209,7 +209,7 @@ class Container
 	 */
 	public function findByType(string $class): array
 	{
-		$class = ltrim($class, '\\');
+		$class = Helpers::normalizeClass($class);
 		return empty($this->meta[self::TYPES][$class])
 			? []
 			: array_merge(...array_values($this->meta[self::TYPES][$class]));
