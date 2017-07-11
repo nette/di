@@ -184,10 +184,10 @@ $manager->distribute(['john@example.com', ...]);
 
 The container will be generated only once and the code is stored in cache (in directory `__DIR__ . '/temp'`).  Therefore the loading of configuration file is placed in the closure in `$loader->load()`, so it is called only once.
 
-During development it is useful to activate auto-refresh mode which automatically regenerate the container when any class or configuration file is changed. Just in the constructor `ContainerLoader` append `TRUE` as the second argument:
+During development it is useful to activate auto-refresh mode which automatically regenerate the container when any class or configuration file is changed. Just in the constructor `ContainerLoader` append `true` as the second argument:
 
 ```php
-$loader = new Nette\DI\ContainerLoader(__DIR__ . '/temp', TRUE);
+$loader = new Nette\DI\ContainerLoader(__DIR__ . '/temp', true);
 ```
 
 

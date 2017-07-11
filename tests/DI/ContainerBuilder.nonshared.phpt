@@ -24,7 +24,7 @@ $builder->addDefinition('one')
 	->setClass('Service', [new Nette\DI\Statement('@two', ['foo'])]);
 
 $two = $builder->addDefinition('two')
-	->setParameters(['foo', 'bar' => FALSE, 'array foobar' => NULL])
+	->setParameters(['foo', 'bar' => false, 'array foobar' => null])
 	->setClass('stdClass')
 	->addSetup('$foo', [$builder::literal('$foo')]);
 

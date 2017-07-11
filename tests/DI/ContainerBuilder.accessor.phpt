@@ -39,7 +39,7 @@ $builder->addDefinition('service')
 	->setFactory('stdClass');
 
 $builder->addDefinition('service2')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('stdClass');
 
 $builder->addDefinition('one')
@@ -51,7 +51,7 @@ $builder->addDefinition('two')
 
 $builder->addDefinition('three')
 	->setImplement('StdClassAccessor')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@service2');
 
 $builder->addDefinition('four')

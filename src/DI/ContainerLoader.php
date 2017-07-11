@@ -18,13 +18,13 @@ class ContainerLoader
 	use Nette\SmartObject;
 
 	/** @var bool */
-	private $autoRebuild = FALSE;
+	private $autoRebuild = false;
 
 	/** @var string */
 	private $tempDirectory;
 
 
-	public function __construct($tempDirectory, $autoRebuild = FALSE)
+	public function __construct($tempDirectory, $autoRebuild = false)
 	{
 		$this->tempDirectory = $tempDirectory;
 		$this->autoRebuild = $autoRebuild;
@@ -32,18 +32,18 @@ class ContainerLoader
 
 
 	/**
-	 * @param  callable  function (Nette\DI\Compiler $compiler): string|NULL
+	 * @param  callable  function (Nette\DI\Compiler $compiler): string|null
 	 * @param  mixed
 	 * @return string
 	 */
-	public function load($generator, $key = NULL)
+	public function load($generator, $key = null)
 	{
 		if (!is_callable($generator)) { // back compatiblity
 			trigger_error(__METHOD__ . ': order of arguments has been swapped.', E_USER_DEPRECATED);
 			list($generator, $key) = [$key, $generator];
 		}
 		$class = $this->getClassName($key);
-		if (!class_exists($class, FALSE)) {
+		if (!class_exists($class, false)) {
 			$this->loadFile($class, $generator);
 		}
 		return $class;
@@ -65,7 +65,7 @@ class ContainerLoader
 	private function loadFile($class, $generator)
 	{
 		$file = "$this->tempDirectory/$class.php";
-		if (!$this->isExpired($file) && (@include $file) !== FALSE) { // @ file may not exist
+		if (!$this->isExpired($file) && (@include $file) !== false) { // @ file may not exist
 			return;
 		}
 
@@ -90,19 +90,19 @@ class ContainerLoader
 					@unlink("$name.tmp"); // @ - file may not exist
 					throw new Nette\IOException("Unable to create file '$name'.");
 				} elseif (function_exists('opcache_invalidate')) {
-					@opcache_invalidate($name, TRUE); // @ can be restricted
+					@opcache_invalidate($name, true); // @ can be restricted
 				}
 			}
 		}
 
-		if ((@include $file) === FALSE) { // @ - error escalated to exception
+		if ((@include $file) === false) { // @ - error escalated to exception
 			throw new Nette\IOException("Unable to include '$file'.");
 		}
 		flock($handle, LOCK_UN);
 	}
 
 
-	private function isExpired($file, &$updatedMeta = NULL)
+	private function isExpired($file, &$updatedMeta = null)
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
@@ -111,7 +111,7 @@ class ContainerLoader
 				|| DependencyChecker::isExpired(...$meta)
 				|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
 		}
-		return FALSE;
+		return false;
 	}
 
 

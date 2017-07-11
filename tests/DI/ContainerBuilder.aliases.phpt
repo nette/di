@@ -39,7 +39,7 @@ $builder->addDefinition('aliasedFactory')
 
 $builder->addDefinition('aliasedFactoryViaClass')
 	->setImplement('ServiceFactory')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@\ServiceFactory');
 
 $builder->addDefinition('aliasedService')

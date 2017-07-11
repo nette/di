@@ -19,7 +19,7 @@ class Helpers
 
 	const
 		EXTENDS_KEY = '_extends',
-		OVERWRITE = TRUE;
+		OVERWRITE = true;
 
 
 	/**
@@ -45,7 +45,7 @@ class Helpers
 			}
 			return $right;
 
-		} elseif ($left === NULL && is_array($right)) {
+		} elseif ($left === null && is_array($right)) {
 			return $right;
 
 		} else {

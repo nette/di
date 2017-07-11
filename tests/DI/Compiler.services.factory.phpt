@@ -23,7 +23,7 @@ class Factory
 
 class Lorem
 {
-	function __construct($arg = NULL)
+	function __construct($arg = null)
 	{
 		$this->arg = $arg;
 	}

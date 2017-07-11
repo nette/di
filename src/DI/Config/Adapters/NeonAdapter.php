@@ -45,14 +45,14 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 		$res = [];
 		foreach ($arr as $key => $val) {
 			if (is_string($key) && substr($key, -1) === self::PREVENT_MERGING) {
-				if (!is_array($val) && $val !== NULL) {
+				if (!is_array($val) && $val !== null) {
 					throw new Nette\InvalidStateException("Replacing operator is available only for arrays, item '$key' is not array.");
 				}
 				$key = substr($key, 0, -1);
 				$val[Helpers::EXTENDS_KEY] = Helpers::OVERWRITE;
 
 			} elseif (is_string($key) && preg_match('#^(\S+)\s+' . self::INHERITING_SEPARATOR . '\s+(\S+)\z#', $key, $matches)) {
-				if (!is_array($val) && $val !== NULL) {
+				if (!is_array($val) && $val !== null) {
 					throw new Nette\InvalidStateException("Inheritance operator is available only for arrays, item '$key' is not array.");
 				}
 				list(, $key, $val[Helpers::EXTENDS_KEY]) = $matches;
@@ -66,10 +66,10 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 
 			} elseif ($val instanceof Neon\Entity) {
 				if ($val->value === Neon\Neon::CHAIN) {
-					$tmp = NULL;
+					$tmp = null;
 					foreach ($this->process($val->attributes) as $st) {
 						$tmp = new Statement(
-							$tmp === NULL ? $st->getEntity() : [$tmp, ltrim($st->getEntity(), ':')],
+							$tmp === null ? $st->getEntity() : [$tmp, ltrim($st->getEntity(), ':')],
 							$st->arguments
 						);
 					}

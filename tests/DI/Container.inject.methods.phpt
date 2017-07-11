@@ -34,7 +34,7 @@ class Test1
 	}
 
 
-	function injectOptional(DateTime $obj = NULL)
+	function injectOptional(DateTime $obj = null)
 	{
 		$this->injects[] = __METHOD__;
 	}

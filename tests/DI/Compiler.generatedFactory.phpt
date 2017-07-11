@@ -71,7 +71,7 @@ class Foo
 	public $baz;
 
 
-	public function __construct(Bar $bar, Baz $baz = NULL)
+	public function __construct(Bar $bar, Baz $baz = null)
 	{
 		$this->bar = $bar;
 		$this->baz = $baz;
@@ -92,7 +92,7 @@ interface IFooFactory
 	 * @param Baz
 	 * @return Foo
 	 */
-	public function create(Baz $baz = NULL);
+	public function create(Baz $baz = null);
 }
 
 class Dolor
@@ -102,7 +102,7 @@ class Dolor
 	public $foo;
 
 
-	public function __construct(Bar $bar = NULL, $foo)
+	public function __construct(Bar $bar = null, $foo)
 	{
 		$this->bar = $bar;
 		$this->foo = $foo;
@@ -113,7 +113,7 @@ interface DolorFactory
 {
 
 	/** @return Dolor */
-	public function create(Bar $bar = NULL, $foo);
+	public function create(Bar $bar = null, $foo);
 }
 
 
@@ -143,7 +143,7 @@ class TestExtension extends DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition('fooFactory2')
 			->setFactory('Foo')
-			->setParameters(['Baz baz' => NULL])
+			->setParameters(['Baz baz' => null])
 			->setImplement('IFooFactory')
 			->setArguments([1 => $builder::literal('$baz')]);
 
@@ -247,7 +247,7 @@ Assert::type(Dolor::class, $obj = $factory->create($bar = new Bar(), 'abc'));
 Assert::same($bar, $obj->bar);
 Assert::same('abc', $obj->foo);
 
-Assert::type(Dolor::class, $obj = $factory->create(NULL, 'abc'));
+Assert::type(Dolor::class, $obj = $factory->create(null, 'abc'));
 Assert::null($obj->bar);
 Assert::same('abc', $obj->foo);
 

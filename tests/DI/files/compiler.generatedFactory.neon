@@ -20,7 +20,7 @@ services:
 	fooFactory1:
 		factory: Foo(..., %baz%)
 		implement: IFooFactory
-		parameters: [Baz baz = NULL]
+		parameters: [Baz baz = null]
 
 	fooFactory3:
 		class: Foo

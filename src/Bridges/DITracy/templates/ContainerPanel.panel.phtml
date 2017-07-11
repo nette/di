@@ -46,20 +46,20 @@ use Tracy\Helpers;
 		</thead>
 		<tbody>
 		<?php foreach ($services as $name => $class): ?>
-		<?php $autowired = !empty($meta[Nette\DI\Container::TYPES][$class][TRUE]) && in_array($name, $meta[Nette\DI\Container::TYPES][$class][TRUE]) ?>
+		<?php $autowired = !empty($meta[Nette\DI\Container::TYPES][$class][true]) && in_array($name, $meta[Nette\DI\Container::TYPES][$class][true]) ?>
 		<tr>
 			<td class="<?= isset($registry[$name]) ? 'created' : '' ?>"><?= htmlSpecialChars($name) ?></td>
 			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : 'no' ?></td>
 			<td>
 				<?php if (isset($registry[$name]) && !$registry[$name] instanceof Nette\DI\Container): ?>
-					<?= Dumper::toHtml($registry[$name], [Dumper::COLLAPSE => TRUE, Dumper::LIVE => TRUE]); ?>
+					<?= Dumper::toHtml($registry[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true]); ?>
 				<?php elseif (isset($registry[$name])): ?>
 					<code><?= get_class($registry[$name]) ?></code>
 				<?php elseif (is_string($class)): ?>
 					<code><?= htmlSpecialChars($class) ?></code>
 				<?php endif ?>
 			</td>
-			<td><?php if (isset($tags[$name])) { echo Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => TRUE]); } ?></td>
+			<td><?php if (isset($tags[$name])) { echo Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => true]); } ?></td>
 		</tr>
 		<?php endforeach ?>
 		</tbody>

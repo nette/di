@@ -71,21 +71,21 @@ $builder->addDefinition('annotatedFactory')
 
 $builder->addDefinition('two')
 	->setClass('stdClass')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@factory::create', ['@\Factory'])
 	->addSetup(['@\Factory', 'create'], ['@\Factory']);
 
 $builder->addDefinition('three')
 	->setClass('stdClass')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@\Factory::create', ['@\Factory']);
 
 $builder->addDefinition('four')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@\AnnotatedFactory::create');
 
 $builder->addDefinition('five')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@\IFactory::create');
 
 $builder->addDefinition('uninstantiableFactory')
@@ -93,7 +93,7 @@ $builder->addDefinition('uninstantiableFactory')
 	->setFactory('UninstantiableFactory::getInstance');
 
 $builder->addDefinition('six')
-	->setAutowired(FALSE)
+	->setAutowired(false)
 	->setFactory('@\UninstantiableFactory::create');
 
 
@@ -109,7 +109,7 @@ Assert::same([
 	['create', [$factory]],
 ], Factory::$methods);
 
-Factory::$methods = NULL;
+Factory::$methods = null;
 
 Assert::type(stdClass::class, $container->getService('three'));
 Assert::same([

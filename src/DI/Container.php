@@ -174,7 +174,7 @@ class Container
 		}
 
 		try {
-			$this->creating[$name] = TRUE;
+			$this->creating[$name] = true;
 			$service = $this->$method(...$args);
 
 		} finally {
@@ -193,14 +193,14 @@ class Container
 	 * Resolves service by type.
 	 * @param  string  class or interface
 	 * @param  bool    throw exception if service doesn't exist?
-	 * @return object  service or NULL
+	 * @return object  service or null
 	 * @throws MissingServiceException
 	 */
-	public function getByType($class, $throw = TRUE)
+	public function getByType($class, $throw = true)
 	{
 		$class = Helpers::normalizeClass($class);
-		if (!empty($this->meta[self::TYPES][$class][TRUE])) {
-			if (count($names = $this->meta[self::TYPES][$class][TRUE]) === 1) {
+		if (!empty($this->meta[self::TYPES][$class][true])) {
+			if (count($names = $this->meta[self::TYPES][$class][true]) === 1) {
 				return $this->getService($names[0]);
 			}
 			throw new MissingServiceException("Multiple services of type $class found: " . implode(', ', $names) . '.');

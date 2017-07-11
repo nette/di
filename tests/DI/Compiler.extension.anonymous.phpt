@@ -13,7 +13,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 
 
 $compiler = new DI\Compiler;
-$compiler->addExtension(NULL, new FooExtension);
-$compiler->addExtension(NULL, new FooExtension);
+$compiler->addExtension(null, new FooExtension);
+$compiler->addExtension(null, new FooExtension);
 
 Assert::count(2, $compiler->getExtensions());

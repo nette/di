@@ -16,7 +16,7 @@ $builder->addDefinition('one')
 	->setClass('stdClass');
 $builder->addDefinition('two')
 	->setClass('stdClass')
-	->addTag('debugPanel', TRUE);
+	->addTag('debugPanel', true);
 $builder->addDefinition('three')
 	->setClass('stdClass')
 	->addTag('component');
@@ -32,12 +32,12 @@ test(function () use ($builder) { // compile-time
 	], $builder->findByTag('typeHint'));
 
 	Assert::same([
-		'two' => TRUE,
+		'two' => true,
 		'five' => [1, 2, 3],
 	], $builder->findByTag('debugPanel'));
 
 	Assert::same([
-		'three' => TRUE,
+		'three' => true,
 	], $builder->findByTag('component'));
 
 	Assert::same([], $builder->findByTag('unknown'));
@@ -53,7 +53,7 @@ test(function () use ($builder) { // run-time
 
 	Assert::same([
 		'five' => [1, 2, 3],
-		'two' => TRUE,
+		'two' => true,
 	], $container->findByTag('debugPanel'));
 
 	Assert::same([], $container->findByTag('unknown'));

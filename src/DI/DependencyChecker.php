@@ -54,7 +54,7 @@ class DependencyChecker
 					foreach ($all as & $item) {
 						$all += class_uses($item);
 						$phpFiles[] = (new ReflectionClass($item))->getFileName();
-						$classes[$item] = TRUE;
+						$classes[$item] = true;
 					}
 				}
 
@@ -123,7 +123,7 @@ class DependencyChecker
 						self::hashParameters($method),
 						PHP_VERSION_ID >= 70000 && $method->hasReturnType()
 							? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
-							: NULL
+							: null
 					];
 				}
 			}
@@ -136,18 +136,18 @@ class DependencyChecker
 			} catch (\ReflectionException $e) {
 				return;
 			}
-			$class = $method instanceof ReflectionMethod ? $method->getDeclaringClass() : NULL;
+			$class = $method instanceof ReflectionMethod ? $method->getDeclaringClass() : null;
 			if ($class && isset($flip[$class->getName()])) {
 				continue;
 			}
 			$hash[] = [
 				$name,
-				$class ? Reflection::getUseStatements($method->getDeclaringClass()) : NULL,
+				$class ? Reflection::getUseStatements($method->getDeclaringClass()) : null,
 				$method->getDocComment(),
 				self::hashParameters($method),
 				PHP_VERSION_ID >= 70000 && $method->hasReturnType()
 					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
-					: NULL
+					: null
 			];
 		}
 
@@ -164,11 +164,11 @@ class DependencyChecker
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->getName(),
-				PHP_VERSION_ID >= 70000 ? [Reflection::getParameterType($param), $param->allowsNull()] : NULL,
+				PHP_VERSION_ID >= 70000 ? [Reflection::getParameterType($param), $param->allowsNull()] : null,
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? [Reflection::getParameterDefaultValue($param)]
-					: NULL
+					: null
 			];
 		}
 		return $res;

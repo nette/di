@@ -15,11 +15,11 @@ $service = new stdClass;
 $container = new Container;
 
 Assert::exception(function () use ($container, $service) {
-	$container->addService(NULL, $service);
+	$container->addService(null, $service);
 }, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string, NULL given.');
 
 Assert::exception(function () use ($container) {
-	$container->addService('one', NULL);
+	$container->addService('one', null);
 }, Nette\InvalidArgumentException::class, "Service 'one' must be a object, NULL given.");
 
 Assert::exception(function () use ($container) {

@@ -19,7 +19,7 @@ class PhpExtension extends Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 		foreach ($this->getConfig() as $name => $value) {
-			if ($value === NULL) {
+			if ($value === null) {
 				continue;
 
 			} elseif (!is_scalar($value)) {

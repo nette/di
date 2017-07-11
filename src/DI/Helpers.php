@@ -28,7 +28,7 @@ class Helpers
 	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public static function expand($var, array $params, $recursive = FALSE)
+	public static function expand($var, array $params, $recursive = false)
 	{
 		if (is_array($var)) {
 			$res = [];
@@ -46,7 +46,7 @@ class Helpers
 
 		$parts = preg_split('#%([\w.-]*)%#i', $var, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$res = [];
-		$php = FALSE;
+		$php = false;
 		foreach ($parts as $n => $part) {
 			if ($n % 2 === 0) {
 				$res[] = $part;
@@ -70,7 +70,7 @@ class Helpers
 					return $val;
 				}
 				if ($val instanceof PhpLiteral) {
-					$php = TRUE;
+					$php = true;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
 				}
@@ -79,7 +79,7 @@ class Helpers
 		}
 		if ($php) {
 			$res = array_filter($res, function ($val) { return $val !== ''; });
-			$res = array_map(function ($val) { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, TRUE); }, $res);
+			$res = array_map(function ($val) { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, true); }, $res);
 			return new PhpLiteral(implode(' . ', $res));
 		}
 		return implode('', $res);
@@ -109,8 +109,8 @@ class Helpers
 				$optCount = 0;
 
 			} elseif (($class = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($class)) {
-				$res[$num] = $container->getByType($class, FALSE);
-				if ($res[$num] === NULL) {
+				$res[$num] = $container->getByType($class, false);
+				if ($res[$num] === null) {
 					if ($parameter->allowsNull()) {
 						$optCount++;
 					} elseif (class_exists($class) || interface_exists($class)) {
@@ -126,9 +126,9 @@ class Helpers
 				}
 
 			} elseif (($class && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
-				// !optional + defaultAvailable = func($a = NULL, $b) since 5.4.7
+				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
-				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : NULL;
+				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
 				$optCount++;
 
 			} else {
@@ -200,7 +200,7 @@ class Helpers
 
 	/**
 	 * Returns an annotation value.
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public static function parseAnnotation(\Reflector $ref, $name)
 	{
@@ -215,7 +215,7 @@ class Helpers
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public static function getReturnType(\ReflectionFunctionAbstract $func)
 	{
@@ -223,7 +223,7 @@ class Helpers
 			return $type;
 		} elseif ($type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'))) {
 			if ($type === 'object' || $type === 'mixed') {
-				return NULL;
+				return null;
 			} elseif ($func instanceof \ReflectionMethod) {
 				return $type === 'static' || $type === '$this'
 					? $func->getDeclaringClass()->getName()

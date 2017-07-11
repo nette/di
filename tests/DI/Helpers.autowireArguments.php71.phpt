@@ -16,13 +16,13 @@ class Container
 {
 	function getByType($type)
 	{
-		return $type === 'Test' ? new Test : NULL;
+		return $type === 'Test' ? new Test : null;
 	}
 }
 
 class Test
 {
-	function method(Test $class, self $self, Undefined $nullable1 = NULL, int $nullable2 = NULL)
+	function method(Test $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
 	{
 	}
 

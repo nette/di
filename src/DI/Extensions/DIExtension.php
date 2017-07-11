@@ -16,10 +16,10 @@ use Nette;
 class DIExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
-		'debugger' => TRUE,
-		'accessors' => FALSE,
+		'debugger' => true,
+		'accessors' => false,
 		'excluded' => [],
-		'parentClass' => NULL,
+		'parentClass' => null,
 	];
 
 	/** @var bool */
@@ -29,10 +29,10 @@ class DIExtension extends Nette\DI\CompilerExtension
 	private $time;
 
 
-	public function __construct($debugMode = FALSE)
+	public function __construct($debugMode = false)
 	{
 		$this->debugMode = $debugMode;
-		$this->time = microtime(TRUE);
+		$this->time = microtime(true);
 	}
 
 

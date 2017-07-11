@@ -80,7 +80,7 @@ class LastExtension extends DI\CompilerExtension
 		$this->getContainerBuilder()->addDefinition($this->prefix('one'))
 			->setClass('Service')
 			->addSetup('$e', ['@\ConcreteDependencyA'])
-			->setInject(TRUE);
+			->setInject(true);
 	}
 }
 

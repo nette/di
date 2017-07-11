@@ -43,11 +43,11 @@ Assert::same([
 		],
 	],
 	'timeout' => 10,
-	'display_errors' => TRUE,
-	'html_errors' => FALSE,
+	'display_errors' => true,
+	'html_errors' => false,
 	'items' => [10, 20],
 	'php' => [
-		'zlib.output_compression' => TRUE,
+		'zlib.output_compression' => true,
 		'date.timezone' => 'Europe/Prague',
 	],
 ], $data);

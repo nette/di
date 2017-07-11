@@ -25,14 +25,14 @@ class ContainerPanel implements Tracy\IBarPanel
 	/** @var Nette\DI\Container */
 	private $container;
 
-	/** @var int|NULL */
+	/** @var int|null */
 	private $elapsedTime;
 
 
 	public function __construct(Container $container)
 	{
 		$this->container = $container;
-		$this->elapsedTime = self::$compilationTime ? microtime(TRUE) - self::$compilationTime : NULL;
+		$this->elapsedTime = self::$compilationTime ? microtime(true) - self::$compilationTime : null;
 	}
 
 
@@ -79,7 +79,7 @@ class ContainerPanel implements Tracy\IBarPanel
 	private function getContainerProperty($name)
 	{
 		$prop = (new \ReflectionClass(Nette\DI\Container::class))->getProperty($name);
-		$prop->setAccessible(TRUE);
+		$prop->setAccessible(true);
 		return $prop->getValue($this->container);
 	}
 }

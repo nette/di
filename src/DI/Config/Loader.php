@@ -36,7 +36,7 @@ class Loader
 	 * @param  string  optional section to load
 	 * @return array
 	 */
-	public function load($file, $section = NULL)
+	public function load($file, $section = null)
 	{
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
@@ -76,7 +76,7 @@ class Loader
 	 */
 	public function save($data, $file)
 	{
-		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === FALSE) {
+		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === false) {
 			throw new Nette\IOException("Cannot write file '$file'.");
 		}
 	}

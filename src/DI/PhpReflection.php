@@ -21,7 +21,7 @@ class PhpReflection
 
 	/**
 	 * Returns an annotation value.
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public static function parseAnnotation(\Reflector $ref, $name)
 	{
@@ -30,7 +30,7 @@ class PhpReflection
 			if (!(new \ReflectionMethod(__METHOD__))->getDocComment()) {
 				throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
 			}
-			$ok = TRUE;
+			$ok = true;
 		}
 		$name = preg_quote($name, '#');
 		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
@@ -55,18 +55,18 @@ class PhpReflection
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public static function getParameterType(\ReflectionParameter $param)
 	{
 		if (PHP_VERSION_ID >= 70000) {
-			$type = $param->hasType() ? (string) $param->getType() : NULL;
+			$type = $param->hasType() ? (string) $param->getType() : null;
 			return strtolower($type) === 'self' ? $param->getDeclaringClass()->getName() : $type;
 		} elseif ($param->isArray() || $param->isCallable()) {
 			return $param->isArray() ? 'array' : 'callable';
 		} else {
 			try {
-				return ($ref = $param->getClass()) ? $ref->getName() : NULL;
+				return ($ref = $param->getClass()) ? $ref->getName() : null;
 			} catch (\ReflectionException $e) {
 				if (preg_match('#Class (.+) does not exist#', $e->getMessage(), $m)) {
 					return $m[1];
@@ -78,7 +78,7 @@ class PhpReflection
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public static function getReturnType(\ReflectionFunctionAbstract $func)
 	{
@@ -101,7 +101,7 @@ class PhpReflection
 	 */
 	public static function isBuiltinType($type)
 	{
-		return in_array(strtolower($type), ['string', 'int', 'float', 'bool', 'array', 'callable'], TRUE);
+		return in_array(strtolower($type), ['string', 'int', 'float', 'bool', 'array', 'callable'], true);
 	}
 
 
@@ -182,10 +182,10 @@ class PhpReflection
 	 * @param  string
 	 * @return array of [class => [alias => class, ...]]
 	 */
-	public static function parseUseStatements($code, $forClass = NULL)
+	public static function parseUseStatements($code, $forClass = null)
 	{
 		$tokens = token_get_all($code);
-		$namespace = $class = $classLevel = $level = NULL;
+		$namespace = $class = $classLevel = $level = null;
 		$res = $uses = [];
 
 		while ($token = current($tokens)) {
@@ -246,7 +246,7 @@ class PhpReflection
 
 				case '}':
 					if ($level === $classLevel) {
-						$class = $classLevel = NULL;
+						$class = $classLevel = null;
 					}
 					$level--;
 			}
@@ -258,12 +258,12 @@ class PhpReflection
 
 	private static function fetch(&$tokens, $take)
 	{
-		$res = NULL;
+		$res = null;
 		while ($token = current($tokens)) {
 			list($token, $s) = is_array($token) ? $token : [$token, $token];
-			if (in_array($token, (array) $take, TRUE)) {
+			if (in_array($token, (array) $take, true)) {
 				$res .= $s;
-			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], TRUE)) {
+			} elseif (!in_array($token, [T_DOC_COMMENT, T_WHITESPACE, T_COMMENT], true)) {
 				break;
 			}
 			next($tokens);

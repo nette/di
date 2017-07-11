@@ -40,4 +40,4 @@ $test = $container->createInstance('Test');
 Assert::type(Test::class, $test);
 Assert::same($container, $test->container);
 Assert::false($container->callMethod([$test, 'method']));
-Assert::true($container->callMethod([$test, 'method'], [(object) ['prop' => TRUE]]));
+Assert::true($container->callMethod([$test, 'method'], [(object) ['prop' => true]]));

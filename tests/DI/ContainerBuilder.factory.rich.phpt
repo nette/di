@@ -22,7 +22,7 @@ class Factory
 
 	function mark(Obj $obj)
 	{
-		$obj->mark = TRUE;
+		$obj->mark = true;
 	}
 }
 
