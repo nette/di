@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
-	function __construct(Ipsum $arg)
+	public function __construct(Ipsum $arg)
 	{
 	}
 }
@@ -29,7 +29,7 @@ class Ipsum
 	}
 
 
-	static function foo()
+	public static function foo()
 	{
 	}
 }

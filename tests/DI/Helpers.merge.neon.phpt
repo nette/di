@@ -45,5 +45,5 @@ Assert::exception(function () {
 // inherit
 Assert::same([
 	'parent' => 1,
-	'child' => [Config\Helpers::EXTENDS_KEY => 'parent']
+	'child' => [Config\Helpers::EXTENDS_KEY => 'parent'],
 ], merge('child < parent:', 'parent: 1'));

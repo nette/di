@@ -18,9 +18,9 @@ use ReflectionMethod;
  */
 class DependencyChecker
 {
-	const VERSION = 1;
-
 	use Nette\SmartObject;
+
+	const VERSION = 1;
 
 	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
 	private $dependencies = [];
@@ -51,7 +51,7 @@ class DependencyChecker
 			} elseif ($dep instanceof ReflectionClass) {
 				if (empty($classes[$name = $dep->getName()])) {
 					$all = [$name] + class_parents($name) + class_implements($name);
-					foreach ($all as & $item) {
+					foreach ($all as &$item) {
 						$all += class_uses($item);
 						$phpFiles[] = (new ReflectionClass($item))->getFileName();
 						$classes[$item] = true;
@@ -123,7 +123,7 @@ class DependencyChecker
 						self::hashParameters($method),
 						PHP_VERSION_ID >= 70000 && $method->hasReturnType()
 							? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
-							: null
+							: null,
 					];
 				}
 			}
@@ -147,7 +147,7 @@ class DependencyChecker
 				self::hashParameters($method),
 				PHP_VERSION_ID >= 70000 && $method->hasReturnType()
 					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
-					: null
+					: null,
 			];
 		}
 
@@ -168,7 +168,7 @@ class DependencyChecker
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? [Reflection::getParameterDefaultValue($param)]
-					: null
+					: null,
 			];
 		}
 		return $res;

@@ -12,7 +12,7 @@ class Service
 	public $arg;
 
 
-	function __construct($arg)
+	public function __construct($arg)
 	{
 		$this->arg = $arg;
 	}

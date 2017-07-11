@@ -17,19 +17,19 @@ class Service
 
 
 	/** @return Service */
-	static function create(DI\Container $container = null)
+	public static function create(DI\Container $container = null)
 	{
 		return new self(array_slice(func_get_args(), 1));
 	}
 
 
-	function __construct($arg = null)
+	public function __construct($arg = null)
 	{
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 	}
 
 
-	function __call($nm, $args)
+	public function __call($nm, $args)
 	{
 		$this->methods[] = [$nm, $args];
 	}

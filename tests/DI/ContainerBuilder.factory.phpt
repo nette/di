@@ -13,18 +13,18 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassFactory
 {
-	function create();
+	public function create();
 }
 
 interface AnnotatedFactory
 {
 	/** @return stdClass */
-	function create();
+	public function create();
 }
 
 class FactoryReceiver
 {
-	function __construct(StdClassFactory $factory)
+	public function __construct(StdClassFactory $factory)
 	{
 	}
 }

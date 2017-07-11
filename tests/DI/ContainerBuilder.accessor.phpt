@@ -13,13 +13,13 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassAccessor
 {
-	function get();
+	public function get();
 }
 
 interface AnnotatedAccessor
 {
 	/** @return stdClass */
-	function get();
+	public function get();
 }
 
 class AccessorReceiver
@@ -27,7 +27,7 @@ class AccessorReceiver
 	public $accessor;
 
 
-	function __construct(StdClassAccessor $accessor)
+	public function __construct(StdClassAccessor $accessor)
 	{
 		$this->accessor = $accessor;
 	}

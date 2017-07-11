@@ -11,7 +11,7 @@ namespace A
 
 	class Factory
 	{
-		function createBar(): Bar
+		public function createBar(): Bar
 		{
 			return new Bar();
 		}

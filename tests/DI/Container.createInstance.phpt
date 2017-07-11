@@ -16,13 +16,13 @@ class Test
 	public $container;
 
 
-	function __construct(stdClass $obj, DI\Container $container)
+	public function __construct(stdClass $obj, DI\Container $container)
 	{
 		$this->container = $container;
 	}
 
 
-	function method(stdClass $obj, DI\Container $container)
+	public function method(stdClass $obj, DI\Container $container)
 	{
 		return isset($obj->prop);
 	}

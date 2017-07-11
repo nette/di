@@ -25,11 +25,11 @@ class Container
 	/** @var array  user parameters */
 	/*private*/public $parameters = [];
 
-	/** @var object[]  storage for shared objects */
-	private $registry = [];
-
 	/** @var array[] */
 	protected $meta = [];
+
+	/** @var object[]  storage for shared objects */
+	private $registry = [];
 
 	/** @var array circular reference detector */
 	private $creating;

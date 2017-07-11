@@ -16,7 +16,7 @@ interface IArticleFactory
 {
 
 	/** @return Article */
-	function create(string $title);
+	public function create(string $title);
 }
 
 class Article
@@ -24,7 +24,7 @@ class Article
 	public $title;
 
 
-	function __construct(string $title)
+	public function __construct(string $title)
 	{
 		$this->title = $title;
 	}

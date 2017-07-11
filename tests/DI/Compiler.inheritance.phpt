@@ -17,13 +17,13 @@ class BaseService
 	private $private;
 
 
-	function setPrivate($private)
+	public function setPrivate($private)
 	{
 		$this->private = $private;
 	}
 
 
-	function getPrivate()
+	public function getPrivate()
 	{
 		return $this->private;
 	}

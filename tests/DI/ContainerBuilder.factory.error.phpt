@@ -50,7 +50,7 @@ Assert::exception(function () {
 
 interface Bad1
 {
-	static function create();
+	public static function create();
 }
 
 Assert::exception(function () {
@@ -62,7 +62,7 @@ Assert::exception(function () {
 
 interface Bad2
 {
-	function createx();
+	public function createx();
 }
 
 Assert::exception(function () {
@@ -74,9 +74,9 @@ Assert::exception(function () {
 
 interface Bad3
 {
-	function other();
+	public function other();
 
-	function create();
+	public function create();
 }
 
 Assert::exception(function () {
@@ -88,7 +88,7 @@ Assert::exception(function () {
 
 interface Bad4
 {
-	function create();
+	public function create();
 }
 
 Assert::exception(function () {
@@ -100,7 +100,7 @@ Assert::exception(function () {
 
 interface Bad5
 {
-	function get($arg);
+	public function get($arg);
 }
 
 Assert::exception(function () {
@@ -126,7 +126,7 @@ Assert::exception(function () {
 
 class Bad7
 {
-	static function create()
+	public static function create()
 	{
 	}
 }
@@ -154,7 +154,7 @@ Assert::exception(function () {
 
 class Good
 {
-	function __construct()
+	public function __construct()
 	{
 	}
 }

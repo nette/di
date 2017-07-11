@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	function __construct()
+	public function __construct()
 	{
 	}
 }

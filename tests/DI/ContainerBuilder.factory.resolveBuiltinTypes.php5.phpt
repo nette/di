@@ -10,14 +10,14 @@ namespace A
 	class Factory
 	{
 		/** @return array */
-		function createArray()
+		public function createArray()
 		{
 			return [];
 		}
 
 
 		/** @return callable */
-		function createCallable()
+		public function createCallable()
 		{
 			return function () {};
 		}

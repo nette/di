@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class FooExtension extends DI\CompilerExtension
 {
-	function loadConfiguration()
+	public function loadConfiguration()
 	{
 		$this->getContainerBuilder()->parameters['foo'] = 'hello';
 	}
@@ -31,7 +31,7 @@ class BarExtension extends DI\CompilerExtension
 	}
 
 
-	function loadConfiguration()
+	public function loadConfiguration()
 	{
 		$this->getContainerBuilder()->parameters['bar'] = $this->param;
 	}
@@ -43,7 +43,7 @@ class FirstExtension extends DI\CompilerExtension
 	private $param;
 
 
-	function loadConfiguration()
+	public function loadConfiguration()
 	{
 		$this->getContainerBuilder()->parameters['first'] = array_keys($this->compiler->getExtensions());
 	}

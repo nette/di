@@ -19,7 +19,7 @@ class Factory
 
 
 	/** @return Factory */
-	static function create()
+	public static function create()
 	{
 		return new self;
 	}

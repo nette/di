@@ -11,67 +11,67 @@ namespace NS
 
 	class A
 	{
-		function noType()
+		public function noType()
 		{
 		}
 
 
-		function classType(): B
+		public function classType(): B
 		{
 		}
 
 
-		function nativeType(): string
+		public function nativeType(): string
 		{
 		}
 
 
-		function selfType(): self
+		public function selfType(): self
 		{
 		}
 
 
-		function nullableClassType(): ?B
+		public function nullableClassType(): ?B
 		{
 		}
 
 
-		function nullableNativeType(): ?string
+		public function nullableNativeType(): ?string
 		{
 		}
 
 
-		function nullableSelfType(): ?self
+		public function nullableSelfType(): ?self
 		{
 		}
 
 
 		/** @return B */
-		function annotationClassType()
+		public function annotationClassType()
 		{
 		}
 
 
 		/** @return B|string */
-		function annotationUnionType()
+		public function annotationUnionType()
 		{
 		}
 
 
 		/** @return String */
-		function annotationNativeType()
+		public function annotationNativeType()
 		{
 		}
 
 
 		/** @return self */
-		function annotationSelfType()
+		public function annotationSelfType()
 		{
 		}
 
 
 		/** @return static */
-		function annotationStaticType()
+		public function annotationStaticType()
 		{
 		}
 	}

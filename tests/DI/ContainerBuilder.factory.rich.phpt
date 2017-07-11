@@ -14,13 +14,13 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	/** @return Obj */
-	function create()
+	public function create()
 	{
 		return new Obj;
 	}
 
 
-	function mark(Obj $obj)
+	public function mark(Obj $obj)
 	{
 		$obj->mark = true;
 	}
@@ -29,7 +29,7 @@ class Factory
 class Obj
 {
 	/** @return Obj */
-	function foo(...$args)
+	public function foo(...$args)
 	{
 		$this->args[] = $args;
 		return $this;

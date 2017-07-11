@@ -16,7 +16,7 @@ class Foo
 	public $arg;
 
 
-	function test(M $arg)
+	public function test(M $arg)
 	{
 		$this->arg = $arg;
 	}

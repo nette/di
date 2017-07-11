@@ -62,11 +62,11 @@ Assert::null($builder->getByType('unknown'));
 
 Assert::same([
 	'one' => $builder->getDefinition('one'),
-	'child' =>  $builder->getDefinition('child'),
+	'child' => $builder->getDefinition('child'),
 ], $builder->findByType('Service'));
 
 Assert::same([
-	'child' =>  $builder->getDefinition('child'),
+	'child' => $builder->getDefinition('child'),
 ], $builder->findByType('Child'));
 
 Assert::same(
