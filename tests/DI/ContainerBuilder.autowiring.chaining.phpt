@@ -5,7 +5,6 @@
  */
 
 use Nette\DI;
-use Nette\DI\Statement;
 use Tester\Assert;
 
 
@@ -19,6 +18,7 @@ class Foo
 	{
 		return new Bar;
 	}
+
 
 	static function createUnknown()
 	{

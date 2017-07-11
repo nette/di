@@ -14,7 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 /**
  * @inject @var  type
  *@return bool|int */
-class TestClass {}
+class TestClass
+{
+}
 
 $rc = new ReflectionClass('TestClass');
 
@@ -25,7 +27,9 @@ Assert::same('bool|int', Helpers::parseAnnotation($rc, 'return'));
 
 
 /** @return*/
-class TestClass2 {}
+class TestClass2
+{
+}
 
 $rc = new ReflectionClass('TestClass2');
 

@@ -270,5 +270,4 @@ class PhpReflection
 		}
 		return $res;
 	}
-
 }

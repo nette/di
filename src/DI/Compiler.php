@@ -486,5 +486,4 @@ class Compiler
 	{
 		self::loadDefinition($definition, $config);
 	}
-
 }

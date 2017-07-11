@@ -13,16 +13,15 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-
 	protected function createServiceOne()
 	{
 		return new stdClass;
 	}
 
+
 	protected function createServiceTwo()
 	{
 	}
-
 }
 
 

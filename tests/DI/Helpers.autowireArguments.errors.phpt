@@ -14,7 +14,8 @@ require __DIR__ . '/../bootstrap.php';
 class Container
 {
 	function getByType()
-	{}
+	{
+	}
 }
 
 $container = new Container;

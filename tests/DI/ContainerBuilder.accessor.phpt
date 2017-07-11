@@ -26,6 +26,7 @@ class AccessorReceiver
 {
 	public $accessor;
 
+
 	function __construct(StdClassAccessor $accessor)
 	{
 		$this->accessor = $accessor;

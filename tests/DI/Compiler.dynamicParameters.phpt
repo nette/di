@@ -1,7 +1,6 @@
 <?php
 
 use Nette\DI;
-use Nette\DI\Statement;
 use Tester\Assert;
 
 
@@ -11,6 +10,7 @@ require __DIR__ . '/../bootstrap.php';
 class Service
 {
 	public $arg;
+
 
 	function __construct($arg)
 	{

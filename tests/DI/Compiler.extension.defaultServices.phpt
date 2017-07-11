@@ -11,20 +11,36 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-interface IBar {}
-interface IIpsum {}
+interface IBar
+{
+}
+interface IIpsum
+{
+}
 interface IIpsumFactory
 {
 	/** @return IIpsum */
 	function create();
 }
-interface IFooBar {}
+interface IFooBar
+{
+}
 
-class Foo {}
-class Bar implements IBar {}
-class Lorem {}
-class Ipsum implements IIpsum {}
-class FooBar implements IFooBar {}
+class Foo
+{
+}
+class Bar implements IBar
+{
+}
+class Lorem
+{
+}
+class Ipsum implements IIpsum
+{
+}
+class FooBar implements IFooBar
+{
+}
 
 class Factory
 {
@@ -39,7 +55,6 @@ class Factory
 
 class FooExtension extends Nette\DI\CompilerExtension
 {
-
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
@@ -61,7 +76,6 @@ class FooExtension extends Nette\DI\CompilerExtension
 			$builder->addDefinition('five')->setClass('FooBar');
 		}
 	}
-
 }
 
 

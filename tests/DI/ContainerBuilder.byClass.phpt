@@ -20,17 +20,18 @@ class Factory implements IFactory
 {
 	public static $methods;
 
+
 	static function create()
 	{
 		self::$methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
 	}
-
 }
 
 class AnnotatedFactory
 {
 	public $methods;
+
 
 	/** @return stdClass */
 	function create()
@@ -38,7 +39,6 @@ class AnnotatedFactory
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
 	}
-
 }
 
 
@@ -49,12 +49,16 @@ class UninstantiableFactory
 		return new self;
 	}
 
+
 	private function __construct()
-	{}
+	{
+	}
+
 
 	/** @return stdClass */
 	function create()
-	{}
+	{
+	}
 }
 
 

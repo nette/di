@@ -14,7 +14,9 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	private function __construct()
-	{}
+	{
+	}
+
 
 	/** @return Factory */
 	static function create()

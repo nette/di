@@ -5,7 +5,6 @@
  */
 
 use Nette\DI;
-use Nette\DI\Statement;
 use Tester\Assert;
 
 
@@ -25,6 +24,7 @@ class Foo
 class Test
 {
 	public $foo;
+
 
 	function inject(Foo $foo)
 	{

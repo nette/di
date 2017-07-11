@@ -24,7 +24,6 @@ namespace B
 
 	class Bar
 	{
-
 	}
 
 }

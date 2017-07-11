@@ -24,10 +24,12 @@ class BarExtension extends DI\CompilerExtension
 {
 	private $param;
 
+
 	public function __construct($param)
 	{
 		$this->param = $param;
 	}
+
 
 	function loadConfiguration()
 	{
@@ -39,6 +41,7 @@ class BarExtension extends DI\CompilerExtension
 class FirstExtension extends DI\CompilerExtension
 {
 	private $param;
+
 
 	function loadConfiguration()
 	{

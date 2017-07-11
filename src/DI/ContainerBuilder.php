@@ -9,9 +9,9 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
+use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
-use Nette\Utils\Reflection;
 use ReflectionClass;
 
 
@@ -142,7 +142,6 @@ class ContainerBuilder
 
 		} elseif (isset($this->definitions[$alias])) {
 			throw new Nette\InvalidStateException("Service '$alias' has already been added.");
-
 		}
 		$this->aliases[$alias] = $service;
 	}
@@ -845,5 +844,4 @@ class ContainerBuilder
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);
 	}
-
 }

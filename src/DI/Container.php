@@ -60,7 +60,6 @@ class Container
 	{
 		if (!is_string($name) || !$name) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
-
 		}
 		$name = isset($this->meta[self::ALIASES][$name]) ? $this->meta[self::ALIASES][$name] : $name;
 		if (isset($this->registry[$name])) {
@@ -337,5 +336,4 @@ class Container
 		$uname = ucfirst($name);
 		return 'createService' . ((string) $name === $uname ? '__' : '') . str_replace('.', '__', $uname);
 	}
-
 }

@@ -54,5 +54,4 @@ class Statement
 	{
 		return $this->entity;
 	}
-
 }

@@ -15,22 +15,24 @@ class Service
 {
 	public $methods;
 
+
 	/** @return Service */
 	static function create(DI\Container $container = NULL)
 	{
 		return new self(array_slice(func_get_args(), 1));
 	}
 
+
 	function __construct($arg = NULL)
 	{
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 	}
 
+
 	function __call($nm, $args)
 	{
 		$this->methods[] = [$nm, $args];
 	}
-
 }
 
 

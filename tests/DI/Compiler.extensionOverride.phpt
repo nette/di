@@ -50,7 +50,6 @@ class Ipsum
 
 class FooExtension extends Nette\DI\CompilerExtension
 {
-
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
@@ -116,7 +115,6 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition('three7')
 			->setFactory('Factory::createLorem', [1]);
 	}
-
 }
 
 

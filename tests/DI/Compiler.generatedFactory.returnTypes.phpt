@@ -14,13 +14,13 @@ require __DIR__ . '/../bootstrap.php';
 
 interface IArticleFactory
 {
-
 	function create($title): Article;
 }
 
 class Article
 {
 	public $title;
+
 
 	function __construct($title)
 	{
@@ -30,7 +30,6 @@ class Article
 
 class FooArticle extends Article
 {
-
 }
 
 $compiler = new DI\Compiler;

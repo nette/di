@@ -140,5 +140,4 @@ abstract class CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 	}
-
 }

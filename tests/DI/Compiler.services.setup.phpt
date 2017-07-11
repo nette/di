@@ -28,16 +28,19 @@ class Ipsum
 
 	public $test;
 
+
 	function __construct(...$args)
 	{
 		$this->args = $args;
 		self::$instances[] = $this;
 	}
 
+
 	function test(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args) . ' ' . implode(' ', $this->args));
 	}
+
 
 	static function staticTest(...$args)
 	{

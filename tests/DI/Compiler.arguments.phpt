@@ -19,21 +19,23 @@ class Lorem
 
 	public $var = 123;
 
+
 	function __construct()
 	{
 		$this->args[] = func_get_args();
 	}
+
 
 	function method()
 	{
 		$this->args[] = func_get_args();
 	}
 
+
 	function add($a, $b)
 	{
 		return $a + $b;
 	}
-
 }
 
 define('MY_CONSTANT_TEST', 'one');

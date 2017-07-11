@@ -12,10 +12,12 @@ require __DIR__ . '/../bootstrap.php';
 
 
 class B extends stdClass
-{}
+{
+}
 
 class A extends B
-{}
+{
+}
 
 
 $builder = new DI\ContainerBuilder;

@@ -5,8 +5,8 @@
  */
 
 use Nette\DI;
-use Tester\Assert;
 use Nette\DI\Config\Adapters as Adapt;
+use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
@@ -23,14 +23,13 @@ interface ILoremFactory
 
 class Lorem
 {
-
 	public $ipsum;
+
 
 	function __construct(Ipsum $ipsum)
 	{
 		$this->ipsum = $ipsum;
 	}
-
 }
 
 interface IFinderFactory
@@ -55,6 +54,7 @@ class Article
 {
 	public $title;
 
+
 	function __construct($title)
 	{
 		$this->title = $title;
@@ -63,13 +63,13 @@ class Article
 
 class Ipsum
 {
-
 }
 
 class Foo
 {
 	public $bar;
 	public $baz;
+
 
 	public function __construct(Bar $bar, Baz $baz = NULL)
 	{
@@ -80,12 +80,10 @@ class Foo
 
 class Bar
 {
-
 }
 
 class Baz
 {
-
 }
 
 interface IFooFactory
@@ -103,6 +101,7 @@ class Dolor
 
 	public $foo;
 
+
 	public function __construct(Bar $bar = NULL, $foo)
 	{
 		$this->bar = $bar;
@@ -115,7 +114,6 @@ interface DolorFactory
 
 	/** @return Dolor */
 	public function create(Bar $bar = NULL, $foo);
-
 }
 
 
@@ -123,6 +121,8 @@ class TestClass
 {
 	public $foo;
 	public $bar;
+
+
 	public function __construct($foo, $bar)
 	{
 		$this->foo = $foo;

@@ -16,27 +16,32 @@ namespace A
 			return "";
 		}
 
+
 		/** @return int */
 		function createInt()
 		{
 			return 0;
 		}
 
+
 		function createBool(): bool
 		{
 			return FALSE;
 		}
+
 
 		function createFloat(): float
 		{
 			return 0.0;
 		}
 
+
 		/** @return object */
 		function createObject()
 		{
 			return (object) NULL;
 		}
+
 
 		/** @return mixed */
 		function createMixed()

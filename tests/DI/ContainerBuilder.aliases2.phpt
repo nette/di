@@ -12,7 +12,8 @@ require __DIR__ . '/../bootstrap.php';
 
 
 class Service
-{}
+{
+}
 
 interface ServiceFactory
 {

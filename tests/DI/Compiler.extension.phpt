@@ -13,17 +13,18 @@ require __DIR__ . '/../bootstrap.php';
 
 class DatabaseExtension extends Nette\DI\CompilerExtension
 {
-
 	public function loadConfiguration()
 	{
 		Assert::same(['foo' => 'hello'], $this->config);
 		Notes::add(__METHOD__);
 	}
 
+
 	public function beforeCompile()
 	{
 		Notes::add(__METHOD__);
 	}
+
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{

@@ -26,5 +26,4 @@ interface IAdapter
 	 * @return string
 	 */
 	function dump(array $data);
-
 }

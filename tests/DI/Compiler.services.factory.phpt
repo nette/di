@@ -28,13 +28,13 @@ class Lorem
 		$this->arg = $arg;
 	}
 
+
 	/** @return Lorem */
 	function foo(...$args)
 	{
 		$this->foo = $args;
 		return $this;
 	}
-
 }
 
 class Ipsum

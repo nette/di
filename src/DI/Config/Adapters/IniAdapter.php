@@ -148,5 +148,4 @@ class IniAdapter implements Nette\DI\Config\IAdapter
 			}
 		}
 	}
-
 }

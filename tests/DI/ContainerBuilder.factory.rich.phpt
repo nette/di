@@ -19,6 +19,7 @@ class Factory
 		return new Obj;
 	}
 
+
 	function mark(Obj $obj)
 	{
 		$obj->mark = TRUE;

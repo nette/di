@@ -21,6 +21,7 @@ class Helpers
 		EXTENDS_KEY = '_extends',
 		OVERWRITE = TRUE;
 
+
 	/**
 	 * Merges configurations. Left has higher priority than right one.
 	 * @return array|string
@@ -83,5 +84,4 @@ class Helpers
 	{
 		return is_array($data) && isset($data[self::EXTENDS_KEY]) && $data[self::EXTENDS_KEY] !== self::OVERWRITE;
 	}
-
 }

@@ -15,12 +15,12 @@ class FooExtension extends Nette\DI\CompilerExtension
 {
 	public $barConfig;
 
+
 	public function loadConfiguration()
 	{
 		$exts = $this->compiler->getExtensions();
 		$this->barConfig = $exts['bar']->getConfig();
 	}
-
 }
 
 

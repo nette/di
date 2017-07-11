@@ -13,7 +13,6 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-
 	protected $meta = [
 		'services' => [
 			'one' => 'One',
@@ -23,7 +22,6 @@ class MyContainer extends Container
 			'three' => 'one',
 		],
 	];
-
 }
 
 

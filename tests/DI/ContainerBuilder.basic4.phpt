@@ -13,6 +13,7 @@ function func()
 	return new ClassA;
 }
 
+
 class ClassA
 {
 	/** @return ClassB */
@@ -32,7 +33,8 @@ class ClassB
 }
 
 class ClassC
-{}
+{
+}
 
 
 $compiler = new DI\Compiler;

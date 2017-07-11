@@ -64,5 +64,4 @@ class DecoratorExtension extends Nette\DI\CompilerExtension
 			return is_a($def->getClass(), $type, TRUE) || is_a($def->getImplement(), $type, TRUE);
 		});
 	}
-
 }

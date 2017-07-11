@@ -15,6 +15,7 @@ namespace A
 			return [];
 		}
 
+
 		/** @return callable */
 		function createCallable()
 		{

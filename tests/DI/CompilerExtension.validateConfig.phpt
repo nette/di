@@ -4,7 +4,6 @@
  * Test: Nette\DI\CompilerExtension::validateConfig()
  */
 
-use Nette\DI;
 use Tester\Assert;
 
 

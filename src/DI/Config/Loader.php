@@ -125,5 +125,4 @@ class Loader
 		}
 		return $item;
 	}
-
 }

@@ -16,29 +16,33 @@ class BaseService
 {
 	private $private;
 
+
 	function setPrivate($private)
 	{
 		$this->private = $private;
 	}
 
+
 	function getPrivate()
 	{
 		return $this->private;
 	}
-
 }
 
 
 class ChildService extends BaseService
-{}
+{
+}
 
 
 class SubChildService extends ChildService
-{}
+{
+}
 
 
 class SecondChildService extends ChildService
-{}
+{
+}
 
 
 

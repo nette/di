@@ -13,8 +13,8 @@ require __DIR__ . '/../bootstrap.php';
 
 class Foo
 {
-
 	public $value;
+
 
 	public function __construct($value)
 	{

@@ -26,7 +26,6 @@ namespace A
 
 	class AInjected
 	{
-
 	}
 }
 
@@ -40,7 +39,6 @@ namespace A\B
 
 	class BInjected
 	{
-
 	}
 }
 
@@ -67,7 +65,6 @@ namespace C
 
 	class CInjected
 	{
-
 	}
 }
 

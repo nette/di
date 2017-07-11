@@ -8,10 +8,10 @@
 namespace Nette\DI;
 
 use Nette;
-use Nette\Utils\Strings;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
+use Nette\Utils\Strings;
 
 
 /**
@@ -268,5 +268,4 @@ class PhpGenerator
 		}
 		return $res;
 	}
-
 }

@@ -8,7 +8,6 @@ namespace A
 {
 	class AInjected
 	{
-
 	}
 }
 

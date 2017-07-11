@@ -24,6 +24,7 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 	const INHERITING_SEPARATOR = '<', // child < parent
 		PREVENT_MERGING = '!';
 
+
 	/**
 	 * Reads configuration from NEON file.
 	 * @param  string  file name
@@ -135,5 +136,4 @@ class NeonAdapter implements Nette\DI\Config\IAdapter
 			return new Neon\Entity($val->getEntity(), $val->arguments);
 		}
 	}
-
 }

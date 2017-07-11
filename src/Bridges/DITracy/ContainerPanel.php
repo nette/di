@@ -82,5 +82,4 @@ class ContainerPanel implements Tracy\IBarPanel
 		$prop->setAccessible(TRUE);
 		return $prop->getValue($this->container);
 	}
-
 }
