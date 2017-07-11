@@ -15,19 +15,22 @@ require __DIR__ . '/../bootstrap.php';
 trait Trait1
 {
 	function injectT1()
-	{}
+	{
+	}
 }
 
 trait Trait2
 {
 	function injectT2()
-	{}
+	{
+	}
 }
 
 class Class1
 {
 	function inject1()
-	{}
+	{
+	}
 }
 
 class Class2 extends Class1
@@ -35,7 +38,8 @@ class Class2 extends Class1
 	use Trait1;
 
 	function inject2()
-	{}
+	{
+	}
 }
 
 class Class3 extends Class2
@@ -43,7 +47,8 @@ class Class3 extends Class2
 	use Trait2;
 
 	function inject3()
-	{}
+	{
+	}
 }
 
 Assert::same([

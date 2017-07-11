@@ -27,7 +27,8 @@ interface AnnotatedFactory
 class FactoryReceiver
 {
 	function __construct(StdClassFactory $factory)
-	{}
+	{
+	}
 }
 
 

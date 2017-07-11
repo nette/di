@@ -24,6 +24,7 @@ class Article
 {
 	public $title;
 
+
 	function __construct(string $title)
 	{
 		$this->title = $title;

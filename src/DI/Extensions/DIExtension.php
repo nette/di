@@ -66,5 +66,4 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			$initialize->addBody('$this->getService(?);', [$name]);
 		}
 	}
-
 }

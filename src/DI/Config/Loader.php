@@ -103,5 +103,4 @@ class Loader
 		}
 		return is_object($this->adapters[$extension]) ? $this->adapters[$extension] : new $this->adapters[$extension];
 	}
-
 }

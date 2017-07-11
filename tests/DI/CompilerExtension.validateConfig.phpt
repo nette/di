@@ -6,7 +6,6 @@
 
 declare(strict_types=1);
 
-use Nette\DI;
 use Tester\Assert;
 
 

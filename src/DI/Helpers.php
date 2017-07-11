@@ -239,5 +239,4 @@ final class Helpers
 			? (new \ReflectionClass($class))->getName()
 			: $class;
 	}
-
 }

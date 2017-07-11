@@ -15,7 +15,9 @@ require __DIR__ . '/../bootstrap.php';
 
 trait Bad1
 {
-	function method() {}
+	function method()
+	{
+	}
 }
 
 Assert::exception(function () {

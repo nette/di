@@ -24,7 +24,8 @@ class Container
 class Test
 {
 	function method(Test $class, self $self, Undefined $nullable1 = NULL, int $nullable2 = NULL)
-	{}
+	{
+	}
 }
 
 $container = new Container;

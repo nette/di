@@ -16,12 +16,10 @@ require __DIR__ . '/../bootstrap.php';
 
 class Foo
 {
-
 }
 
 interface IArticleFactory
 {
-
 	function create(?string $title, ?Foo $foo, ?int $lorem = 1): Article;
 }
 

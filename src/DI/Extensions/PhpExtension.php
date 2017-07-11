@@ -17,7 +17,6 @@ use Nette;
  */
 final class PhpExtension extends Nette\DI\CompilerExtension
 {
-
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->getMethod('initialize');
@@ -48,5 +47,4 @@ final class PhpExtension extends Nette\DI\CompilerExtension
 			}
 		}
 	}
-
 }

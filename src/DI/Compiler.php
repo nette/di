@@ -419,5 +419,4 @@ class Compiler
 			}
 		}
 	}
-
 }

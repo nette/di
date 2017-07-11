@@ -26,5 +26,4 @@ interface IAdapter
 	 * Generates configuration string.
 	 */
 	function dump(array $data): string;
-
 }

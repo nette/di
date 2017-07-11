@@ -77,6 +77,7 @@ Assert::exception(function () {
 interface Bad3
 {
 	function other();
+
 	function create();
 }
 
@@ -114,7 +115,8 @@ Assert::exception(function () {
 class Bad6
 {
 	protected function create()
-	{}
+	{
+	}
 }
 
 Assert::exception(function () {
@@ -127,7 +129,8 @@ Assert::exception(function () {
 class Bad7
 {
 	static function create()
-	{}
+	{
+	}
 }
 
 Assert::exception(function () {
@@ -140,7 +143,8 @@ Assert::exception(function () {
 class Bad8
 {
 	private function __construct()
-	{}
+	{
+	}
 }
 
 Assert::exception(function () {
@@ -153,7 +157,8 @@ Assert::exception(function () {
 class Good
 {
 	function __construct()
-	{}
+	{
+	}
 }
 
 Assert::exception(function () {
@@ -172,7 +177,8 @@ Assert::exception(function () {
 abstract class Bad9
 {
 	protected function __construct()
-	{}
+	{
+	}
 }
 
 Assert::exception(function () {

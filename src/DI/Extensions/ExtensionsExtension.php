@@ -17,7 +17,6 @@ use Nette;
  */
 final class ExtensionsExtension extends Nette\DI\CompilerExtension
 {
-
 	public function loadConfiguration()
 	{
 		foreach ($this->getConfig() as $name => $class) {
@@ -32,5 +31,4 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 			}
 		}
 	}
-
 }

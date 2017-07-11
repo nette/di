@@ -28,7 +28,6 @@ class Test1
 
 	/** @var stdClass @inject */
 	public $varB;
-
 }
 
 class Test2 extends Test1
@@ -38,7 +37,6 @@ class Test2 extends Test1
 
 	/** @var IFoo @inject */
 	public $varD;
-
 }
 
 

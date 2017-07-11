@@ -16,17 +16,14 @@ require __DIR__ . '/../bootstrap.php';
 
 abstract class AbstractDependency
 {
-
 }
 
 class ConcreteDependencyA extends AbstractDependency
 {
-
 }
 
 class ConcreteDependencyB extends AbstractDependency
 {
-
 }
 
 
@@ -39,8 +36,15 @@ class ParentClass
 	/** @var stdClass @inject */
 	protected $b;
 
-	function injectA() {}
-	function injectB() {}
+
+	function injectA()
+	{
+	}
+
+
+	function injectB()
+	{
+	}
 }
 
 class Service extends ParentClass
@@ -54,8 +58,15 @@ class Service extends ParentClass
 	/** @var AbstractDependency @inject */
 	public $e;
 
-	function injectC() {}
-	function injectD() {}
+
+	function injectC()
+	{
+	}
+
+
+	function injectD()
+	{
+	}
 }
 
 
@@ -63,6 +74,7 @@ class Service extends ParentClass
 class LastExtension extends DI\CompilerExtension
 {
 	private $param;
+
 
 	function beforeCompile()
 	{

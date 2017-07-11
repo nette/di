@@ -141,5 +141,4 @@ final class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidStateException("Service of type $type used in @var annotation at $propName not found. Did you register it in configuration file?");
 		}
 	}
-
 }

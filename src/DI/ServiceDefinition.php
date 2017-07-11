@@ -320,5 +320,4 @@ final class ServiceDefinition
 		$this->setup = unserialize(serialize($this->setup));
 		$this->notifier = 'pi';
 	}
-
 }

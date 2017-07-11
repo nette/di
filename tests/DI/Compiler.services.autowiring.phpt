@@ -43,7 +43,8 @@ class Lorem
 }
 
 class Ipsum
-{}
+{
+}
 
 
 $container = createContainer(new DI\Compiler, '

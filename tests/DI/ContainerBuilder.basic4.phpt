@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 use Nette\DI;
@@ -14,6 +13,7 @@ function func()
 {
 	return new ClassA;
 }
+
 
 class ClassA
 {
@@ -34,7 +34,8 @@ class ClassB
 }
 
 class ClassC
-{}
+{
+}
 
 
 $compiler = new DI\Compiler;

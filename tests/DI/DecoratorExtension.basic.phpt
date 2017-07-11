@@ -22,8 +22,8 @@ interface Iface
 
 class Service extends stdClass implements Iface
 {
-
 	public $setup;
+
 
 	function setup($a = NULL)
 	{

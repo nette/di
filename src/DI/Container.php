@@ -277,5 +277,4 @@ class Container
 		$uname = ucfirst($name);
 		return 'createService' . ($name === $uname ? '__' : '') . str_replace('.', '__', $uname);
 	}
-
 }

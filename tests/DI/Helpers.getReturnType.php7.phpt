@@ -14,43 +14,61 @@ namespace NS
 	class A
 	{
 		function noType()
-		{}
+		{
+		}
+
 
 		function classType(): B
-		{}
+		{
+		}
+
 
 		function nativeType(): string
-		{}
+		{
+		}
+
 
 		function selfType(): self
-		{}
+		{
+		}
+
 
 		/** @return B */
 		function annotationClassType()
-		{}
+		{
+		}
+
 
 		/** @return B|string */
 		function annotationUnionType()
-		{}
+		{
+		}
+
 
 		/** @return String */
 		function annotationNativeType()
-		{}
+		{
+		}
+
 
 		/** @return self */
 		function annotationSelfType()
-		{}
+		{
+		}
+
 
 		/** @return static */
 		function annotationStaticType()
-		{}
+		{
+		}
 	}
+
 
 	/** @return B */
 	function annotationClassType()
-	{}
+	{
+	}
 }
-
 
 namespace
 {

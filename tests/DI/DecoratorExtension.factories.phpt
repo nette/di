@@ -23,7 +23,6 @@ interface FooFactory
 
 class Foo
 {
-
 }
 
 

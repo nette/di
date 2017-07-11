@@ -25,6 +25,7 @@ final class NeonAdapter implements Nette\DI\Config\IAdapter
 	/** @internal */
 	const PREVENT_MERGING = '!';
 
+
 	/**
 	 * Reads configuration from NEON file.
 	 * @param  string  file name
@@ -113,5 +114,4 @@ final class NeonAdapter implements Nette\DI\Config\IAdapter
 			return new Neon\Entity($val->getEntity(), $val->arguments);
 		}
 	}
-
 }

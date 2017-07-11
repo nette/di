@@ -122,5 +122,4 @@ class ContainerLoader
 			serialize($compiler->exportDependencies())
 		];
 	}
-
 }

@@ -17,36 +17,37 @@ class Test1
 {
 	public $injects;
 
+
 	function inject(stdClass $obj)
 	{
 		$this->injects[] = __METHOD__;
 	}
+
 
 	function injectA(stdClass $obj)
 	{
 		$this->injects[] = __METHOD__;
 	}
 
+
 	protected function injectB(stdClass $obj)
 	{
 		$this->injects[] = __METHOD__;
 	}
 
+
 	function injectOptional(DateTime $obj = NULL)
 	{
 		$this->injects[] = __METHOD__;
 	}
-
 }
 
 class Test2 extends Test1
 {
-
 	function injectC(stdClass $obj)
 	{
 		$this->injects[] = __METHOD__;
 	}
-
 }
 
 

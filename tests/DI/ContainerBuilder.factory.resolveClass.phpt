@@ -18,6 +18,7 @@ namespace A
 			return new Foo();
 		}
 
+
 		/** @return Bar */
 		function createBar()
 		{
@@ -27,7 +28,6 @@ namespace A
 
 	class Foo
 	{
-
 	}
 
 }
@@ -37,7 +37,6 @@ namespace B
 
 	class Bar
 	{
-
 	}
 
 }

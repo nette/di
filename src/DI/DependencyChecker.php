@@ -10,9 +10,9 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\Utils\Reflection;
 use ReflectionClass;
 use ReflectionMethod;
-use Nette\Utils\Reflection;
 
 
 /**
@@ -171,5 +171,4 @@ class DependencyChecker
 		}
 		return $res;
 	}
-
 }
