@@ -12,37 +12,37 @@ namespace NS
 
 	class A
 	{
-		function noType()
+		public function noType()
 		{
 		}
 
 
 		/** @return B */
-		function annotationClassType()
+		public function annotationClassType()
 		{
 		}
 
 
 		/** @return B|string */
-		function annotationUnionType()
+		public function annotationUnionType()
 		{
 		}
 
 
 		/** @return String */
-		function annotationNativeType()
+		public function annotationNativeType()
 		{
 		}
 
 
 		/** @return self */
-		function annotationSelfType()
+		public function annotationSelfType()
 		{
 		}
 
 
 		/** @return static */
-		function annotationStaticType()
+		public function annotationStaticType()
 		{
 		}
 	}

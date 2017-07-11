@@ -37,12 +37,12 @@ class ParentClass
 	protected $b;
 
 
-	function injectA()
+	public function injectA()
 	{
 	}
 
 
-	function injectB()
+	public function injectB()
 	{
 	}
 }
@@ -52,19 +52,19 @@ class Service extends ParentClass
 	/** @var stdClass @inject */
 	public $c;
 
-	/** @var stdClass @inject */
-	protected $d;
-
 	/** @var AbstractDependency @inject */
 	public $e;
 
+	/** @var stdClass @inject */
+	protected $d;
 
-	function injectC()
+
+	public function injectC()
 	{
 	}
 
 
-	function injectD()
+	public function injectD()
 	{
 	}
 }
@@ -76,7 +76,7 @@ class LastExtension extends DI\CompilerExtension
 	private $param;
 
 
-	function beforeCompile()
+	public function beforeCompile()
 	{
 		// note that services should be added in loadConfiguration()
 		$this->getContainerBuilder()->addDefinition($this->prefix('one'))

@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	/** @return Model  auto-wiring using annotation */
-	static function createModel()
+	public static function createModel()
 	{
 		return new Model;
 	}
@@ -26,7 +26,7 @@ class Factory
 class Model
 {
 	/** autowiring using parameters */
-	function test(Lorem $arg)
+	public function test(Lorem $arg)
 	{
 		Notes::add(__METHOD__);
 	}
@@ -36,7 +36,7 @@ class Model
 class Lorem
 {
 	/** autowiring using parameters */
-	static function test(Ipsum $arg)
+	public static function test(Ipsum $arg)
 	{
 		Notes::add(__METHOD__);
 	}

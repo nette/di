@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 trait Bad1
 {
-	function method()
+	public function method()
 	{
 	}
 }

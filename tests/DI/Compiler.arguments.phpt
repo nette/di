@@ -22,19 +22,19 @@ class Lorem
 	public $var = 123;
 
 
-	function __construct()
+	public function __construct()
 	{
 		$this->args[] = func_get_args();
 	}
 
 
-	function method()
+	public function method()
 	{
 		$this->args[] = func_get_args();
 	}
 
 
-	function add($a, $b)
+	public function add($a, $b)
 	{
 		return $a + $b;
 	}

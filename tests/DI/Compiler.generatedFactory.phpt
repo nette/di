@@ -20,7 +20,7 @@ interface ILoremFactory
 	/**
 	 * @return Lorem
 	 */
-	function create();
+	public function create();
 }
 
 class Lorem
@@ -28,7 +28,7 @@ class Lorem
 	public $ipsum;
 
 
-	function __construct(Ipsum $ipsum)
+	public function __construct(Ipsum $ipsum)
 	{
 		$this->ipsum = $ipsum;
 	}
@@ -39,7 +39,7 @@ interface IFinderFactory
 	/**
 	 * @return Adapt\NeonAdapter comment
 	 */
-	function create();
+	public function create();
 }
 
 interface IArticleFactory
@@ -49,7 +49,7 @@ interface IArticleFactory
 	 * @param string
 	 * @return Article
 	 */
-	function create($title);
+	public function create($title);
 }
 
 class Article
@@ -57,7 +57,7 @@ class Article
 	public $title;
 
 
-	function __construct($title)
+	public function __construct($title)
 	{
 		$this->title = $title;
 	}

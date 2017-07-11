@@ -14,21 +14,21 @@ require __DIR__ . '/../bootstrap.php';
 
 trait Trait1
 {
-	function injectT1()
+	public function injectT1()
 	{
 	}
 }
 
 trait Trait2
 {
-	function injectT2()
+	public function injectT2()
 	{
 	}
 }
 
 class Class1
 {
-	function inject1()
+	public function inject1()
 	{
 	}
 }
@@ -37,7 +37,7 @@ class Class2 extends Class1
 {
 	use Trait1;
 
-	function inject2()
+	public function inject2()
 	{
 	}
 }
@@ -46,7 +46,7 @@ class Class3 extends Class2
 {
 	use Trait2;
 
-	function inject3()
+	public function inject3()
 	{
 	}
 }

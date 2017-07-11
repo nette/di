@@ -16,13 +16,13 @@ require __DIR__ . '/../bootstrap.php';
 class Foo
 {
 	/** @return Bar */
-	static function create(Test $test)
+	public static function create(Test $test)
 	{
 		return new Bar;
 	}
 
 
-	static function createUnknown()
+	public static function createUnknown()
 	{
 	}
 }
@@ -30,7 +30,7 @@ class Foo
 class Bar
 {
 	/** @return Baz */
-	function create(Test $test)
+	public function create(Test $test)
 	{
 		return new Baz;
 	}

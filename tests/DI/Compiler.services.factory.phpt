@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	/** @return Lorem */
-	static function createLorem($arg)
+	public static function createLorem($arg)
 	{
 		return new Lorem(__METHOD__ . ' ' . implode(' ', func_get_args()));
 	}
@@ -25,14 +25,14 @@ class Factory
 
 class Lorem
 {
-	function __construct($arg = null)
+	public function __construct($arg = null)
 	{
 		$this->arg = $arg;
 	}
 
 
 	/** @return Lorem */
-	function foo(...$args)
+	public function foo(...$args)
 	{
 		$this->foo = $args;
 		return $this;
@@ -41,7 +41,7 @@ class Lorem
 
 class Ipsum
 {
-	function __construct($arg)
+	public function __construct($arg)
 	{
 		$this->arg = $arg;
 	}

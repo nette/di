@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 class Factory
 {
 	/** @return Lorem */
-	static function createLorem(...$args)
+	public static function createLorem(...$args)
 	{
 		return new Lorem(...$args);
 	}
@@ -26,7 +26,7 @@ class Factory
 class IpsumFactory
 {
 	/** @return Ipsum */
-	static function create(...$args)
+	public static function create(...$args)
 	{
 		return new Ipsum(...$args);
 	}
@@ -35,17 +35,17 @@ class IpsumFactory
 
 class Lorem
 {
-	function __construct(...$args)
+	public function __construct(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . implode(' ' , $args));
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
 }
 
 class Ipsum
 {
-	function __construct(...$args)
+	public function __construct(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . implode(' ' , $args));
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
 }
 

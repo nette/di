@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	static function create()
+	public static function create()
 	{
 		return new static;
 	}

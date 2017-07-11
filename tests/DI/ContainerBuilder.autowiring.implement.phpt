@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 interface ITestFactory
 {
 	/** @return Test */
-	function create();
+	public function create();
 }
 
 class Foo
@@ -28,7 +28,7 @@ class Test
 	public $foo;
 
 
-	function inject(Foo $foo)
+	public function inject(Foo $foo)
 	{
 		$this->foo = $foo;
 	}

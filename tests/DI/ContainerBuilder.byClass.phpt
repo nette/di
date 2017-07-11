@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface IFactory
 {
-	static function create();
+	public static function create();
 }
 
 class Factory implements IFactory
@@ -23,7 +23,7 @@ class Factory implements IFactory
 	public static $methods;
 
 
-	static function create()
+	public static function create()
 	{
 		self::$methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
@@ -36,7 +36,7 @@ class AnnotatedFactory
 
 
 	/** @return stdClass */
-	function create()
+	public function create()
 	{
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
@@ -58,7 +58,7 @@ class UninstantiableFactory
 
 
 	/** @return stdClass */
-	function create()
+	public function create()
 	{
 	}
 }

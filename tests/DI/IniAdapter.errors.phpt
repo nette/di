@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(function () {
 	$config = new Config\Loader;
 	$config->load('files/iniAdapter.scalar1.ini');
-}, Nette\InvalidStateException::class, "Invalid section [scalar.set].");
+}, Nette\InvalidStateException::class, 'Invalid section [scalar.set].');
 
 
 Assert::exception(function () {

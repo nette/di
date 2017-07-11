@@ -20,7 +20,7 @@ class Foo
 
 interface IArticleFactory
 {
-	function create(?string $title, ?Foo $foo, ?int $lorem = 1): Article;
+	public function create(?string $title, ?Foo $foo, ?int $lorem = 1): Article;
 }
 
 class Article
@@ -32,7 +32,7 @@ class Article
 	public $lorem;
 
 
-	function __construct(?string $title, ?Foo $foo, ?int $lorem = null)
+	public function __construct(?string $title, ?Foo $foo, ?int $lorem = null)
 	{
 		$this->title = $title;
 		$this->foo = $foo;

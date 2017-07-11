@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\CompilerExtension and getConfig
- *
  */
 
 declare(strict_types=1);

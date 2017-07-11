@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Container
 {
-	function getByType($type)
+	public function getByType($type)
 	{
 		return $type === 'Test' ? new Test : null;
 	}
@@ -24,12 +24,12 @@ class Container
 
 class Test
 {
-	function method(Test $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
+	public function method(Test $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
 	{
 	}
 
 
-	function methodNullable(?Test $class, ?self $self, ?Undefined $nullable1, ?int $nullable2)
+	public function methodNullable(?Test $class, ?self $self, ?Undefined $nullable1, ?int $nullable2)
 	{
 	}
 }

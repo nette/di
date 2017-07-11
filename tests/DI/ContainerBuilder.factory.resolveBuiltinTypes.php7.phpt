@@ -12,54 +12,54 @@ namespace A
 	class Factory
 	{
 		/** @return array */
-		function createArray()
+		public function createArray()
 		{
 			return [];
 		}
 
 
 		/** @return callable */
-		function createCallable()
+		public function createCallable()
 		{
 			return function () {};
 		}
 
 
 		/** @return string */
-		function createString()
+		public function createString()
 		{
-			return "";
+			return '';
 		}
 
 
 		/** @return int */
-		function createInt()
+		public function createInt()
 		{
 			return 0;
 		}
 
 
-		function createBool(): bool
+		public function createBool(): bool
 		{
 			return false;
 		}
 
 
-		function createFloat(): float
+		public function createFloat(): float
 		{
 			return 0.0;
 		}
 
 
 		/** @return object */
-		function createObject()
+		public function createObject()
 		{
 			return (object) null;
 		}
 
 
 		/** @return mixed */
-		function createMixed()
+		public function createMixed()
 		{
 		}
 	}

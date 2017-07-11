@@ -13,14 +13,14 @@ namespace A
 	class Factory
 	{
 		/** @return Foo */
-		function createFoo()
+		public function createFoo()
 		{
 			return new Foo();
 		}
 
 
 		/** @return Bar */
-		function createBar()
+		public function createBar()
 		{
 			return new Bar();
 		}
@@ -46,7 +46,7 @@ namespace C
 	class SelfFactory
 	{
 		/** @return self */
-		static function create()
+		public static function create()
 		{
 			return new self;
 		}
@@ -55,7 +55,7 @@ namespace C
 	class ThisFactory
 	{
 		/** @return $this */
-		static function create()
+		public static function create()
 		{
 			return new self;
 		}
@@ -64,7 +64,7 @@ namespace C
 	class StaticFactory
 	{
 		/** @return static */
-		static function create()
+		public static function create()
 		{
 			return new self;
 		}
@@ -82,7 +82,7 @@ namespace
 
 	interface StdClassFactory
 	{
-		function create();
+		public function create();
 	}
 
 

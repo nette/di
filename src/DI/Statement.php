@@ -21,11 +21,11 @@ final class Statement
 {
 	use Nette\SmartObject;
 
-	/** @var string|array|ServiceDefinition|null  class|method|$property */
-	private $entity;
-
 	/** @var array */
 	public $arguments;
+
+	/** @var string|array|ServiceDefinition|null  class|method|$property */
+	private $entity;
 
 
 	/**

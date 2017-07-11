@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
-	function test(...$args)
+	public function test(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
@@ -31,20 +31,20 @@ class Ipsum
 	public $test;
 
 
-	function __construct(...$args)
+	public function __construct(...$args)
 	{
 		$this->args = $args;
 		self::$instances[] = $this;
 	}
 
 
-	function test(...$args)
+	public function test(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args) . ' ' . implode(' ', $this->args));
 	}
 
 
-	static function staticTest(...$args)
+	public static function staticTest(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}

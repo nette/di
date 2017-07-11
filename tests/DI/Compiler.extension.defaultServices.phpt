@@ -22,7 +22,7 @@ interface IIpsum
 interface IIpsumFactory
 {
 	/** @return IIpsum */
-	function create();
+	public function create();
 }
 interface IFooBar
 {
@@ -49,7 +49,7 @@ class Factory
 	/**
 	 * @return Lorem
 	 */
-	static function createLorem()
+	public static function createLorem()
 	{
 		return new Lorem();
 	}

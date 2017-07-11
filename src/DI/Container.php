@@ -25,13 +25,13 @@ class Container
 	const ALIASES = 'aliases';
 
 	/** @var array  user parameters */
-	/*private*/public $parameters = [];
-
-	/** @var object[]  storage for shared objects */
-	private $registry = [];
+	public $parameters = [];
 
 	/** @var array[] */
 	protected $meta = [];
+
+	/** @var object[]  storage for shared objects */
+	private $registry = [];
 
 	/** @var array circular reference detector */
 	private $creating;

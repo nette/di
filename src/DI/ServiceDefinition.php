@@ -21,11 +21,14 @@ use Nette;
  */
 final class ServiceDefinition
 {
+	use Nette\SmartObject;
+
 	const
 		IMPLEMENT_MODE_CREATE = 'create',
 		IMPLEMENT_MODE_GET = 'get';
 
-	use Nette\SmartObject;
+	/** @var array */
+	public $parameters = [];
 
 	/** @var string|null  class or interface name */
 	private $class;
@@ -35,9 +38,6 @@ final class ServiceDefinition
 
 	/** @var Statement[] */
 	private $setup = [];
-
-	/** @var array */
-	public $parameters = [];
 
 	/** @var array */
 	private $tags = [];

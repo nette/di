@@ -20,7 +20,7 @@ class Lorem
 interface ILoremAccessor
 {
 	/** @return Lorem */
-	function get();
+	public function get();
 }
 
 

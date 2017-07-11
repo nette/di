@@ -107,7 +107,7 @@ final class NeonAdapter implements Nette\DI\Config\IAdapter
 				Neon\Neon::CHAIN,
 				[
 					self::statementToEntity($val->getEntity()[0]),
-					new Neon\Entity('::' . $val->getEntity()[1], $val->arguments)
+					new Neon\Entity('::' . $val->getEntity()[1], $val->arguments),
 				]
 			);
 		} else {

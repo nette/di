@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface IArticleFactory
 {
-	function create($title): Article;
+	public function create($title): Article;
 }
 
 class Article
@@ -23,7 +23,7 @@ class Article
 	public $title;
 
 
-	function __construct($title)
+	public function __construct($title)
 	{
 		$this->title = $title;
 	}

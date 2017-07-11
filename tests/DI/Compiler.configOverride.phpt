@@ -15,9 +15,9 @@ require __DIR__ . '/../bootstrap.php';
 
 class Ipsum
 {
-	function __construct(...$args)
+	public function __construct(...$args)
 	{
-		Notes::add(__METHOD__ . ' ' . implode(' ' , $args));
+		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
 	}
 }
 

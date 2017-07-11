@@ -25,7 +25,7 @@ class Service extends stdClass implements Iface
 	public $setup;
 
 
-	function setup($a = null)
+	public function setup($a = null)
 	{
 		$this->setup[] = $a;
 	}

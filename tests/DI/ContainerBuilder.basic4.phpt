@@ -18,7 +18,7 @@ function func()
 class ClassA
 {
 	/** @return ClassB */
-	function funcA(stdClass $arg)
+	public function funcA(stdClass $arg)
 	{
 		return new ClassB;
 	}
@@ -27,7 +27,7 @@ class ClassA
 class ClassB
 {
 	/** @return ClassC */
-	function funcB(stdClass $arg)
+	public function funcB(stdClass $arg)
 	{
 		return new ClassC;
 	}
