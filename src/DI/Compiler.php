@@ -286,7 +286,7 @@ class Compiler
 			}
 			$depths[$name] = count($path) + preg_match('#^@[\w\\\\]+\z#', $name);
 		}
-		array_multisort($depths, $services);
+		@array_multisort($depths, $services); // @ may trigger E_NOTICE: Object of class Nette\DI\Statement could not be converted to int
 
 		foreach ($services as $name => $def) {
 			if (is_int($name)) {
