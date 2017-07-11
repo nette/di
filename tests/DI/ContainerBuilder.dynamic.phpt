@@ -25,7 +25,7 @@ class Service extends ParentClass
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
 	->setClass('ParentClass')
-	->setDynamic(TRUE);
+	->setDynamic(true);
 
 
 // compile-time

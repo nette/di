@@ -66,7 +66,7 @@ class PhpGenerator
 			->setValue([Container::TYPES => $this->builder->getClassList()]);
 
 		foreach ($definitions as $name => $def) {
-			$meta->value[Container::SERVICES][$name] = $def->getClass() ?: NULL;
+			$meta->value[Container::SERVICES][$name] = $def->getClass() ?: null;
 			foreach ($def->getTags() as $tag => $value) {
 				$meta->value[Container::TAGS][$tag][$name] = $value;
 			}
@@ -115,7 +115,7 @@ class PhpGenerator
 			? new Statement(['@' . ContainerBuilder::THIS_CONTAINER, 'getService'], [$serviceRef])
 			: $def->getFactory();
 
-		$this->currentService = NULL;
+		$this->currentService = null;
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
 
 		if ($def->getSetup() && ($class = $def->getClass()) && !$serviceRef && $class !== $entity
@@ -252,7 +252,7 @@ class PhpGenerator
 			$tmp = explode(' ', is_int($k) ? $v : $k);
 			$param = $res[] = new Nette\PhpGenerator\Parameter(end($tmp));
 			if (!is_int($k)) {
-				$param->setOptional(TRUE)->setDefaultValue($v);
+				$param->setOptional(true)->setDefaultValue($v);
 			}
 			if (isset($tmp[1])) {
 				$param->setTypeHint($tmp[0]);

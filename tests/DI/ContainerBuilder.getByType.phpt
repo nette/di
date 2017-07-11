@@ -31,12 +31,12 @@ $one = $builder->addDefinition('one')
 	->setClass('Service');
 $child = $builder->addDefinition('child')
 	->setClass('Child')
-	->setAutowired(FALSE);
+	->setAutowired(false);
 $two = $builder->addDefinition('two')
 	->setClass('Service2');
 $three = $builder->addDefinition('three')
 	->setClass('Service2')
-	->setAutowired(FALSE);
+	->setAutowired(false);
 
 
 
@@ -46,7 +46,7 @@ Assert::same('one', $builder->getByType('\Service'));
 Assert::null($builder->getByType('Child'));
 
 Assert::exception(function () use ($builder) {
-	$builder->getByType('Child', TRUE);
+	$builder->getByType('Child', true);
 }, Nette\DI\MissingServiceException::class, "Service of type 'Child' not found.");
 
 Assert::same('two', $builder->getByType('Service2'));
@@ -56,7 +56,7 @@ Assert::exception(function () use ($builder) {
 }, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: one, two');
 
 Assert::exception(function () use ($builder) {
-	$builder->getByType('unknown', TRUE);
+	$builder->getByType('unknown', true);
 }, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found.");
 
 Assert::null($builder->getByType('unknown'));

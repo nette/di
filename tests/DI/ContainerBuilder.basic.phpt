@@ -19,13 +19,13 @@ class Service
 
 
 	/** @return Service */
-	static function create(DI\Container $container = NULL)
+	static function create(DI\Container $container = null)
 	{
 		return new self(array_slice(func_get_args(), 1));
 	}
 
 
-	function __construct($arg = NULL)
+	function __construct($arg = null)
 	{
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 	}
@@ -51,7 +51,7 @@ $builder->addDefinition('four')
 	->addSetup('methodC', ['@self', '@container'])
 	->addSetup('methodD', ['@one']);
 
-$builder->addDefinition('five', NULL)
+$builder->addDefinition('five', null)
 	->setFactory('Service::create');
 
 $six = $builder->addDefinition('six')

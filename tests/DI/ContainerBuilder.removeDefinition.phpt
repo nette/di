@@ -32,7 +32,7 @@ $builder->addDefinition('two')
 
 $builder->addDefinition('three')
 	->setClass('stdClass')
-	->setAutowired(FALSE);
+	->setAutowired(false);
 
 $builder->addDefinition('four')
 	->setClass('A');

@@ -26,7 +26,7 @@ services:
 
 
 $prop = (new ReflectionClass($container))->getProperty('meta');
-$prop->setAccessible(TRUE);
+$prop->setAccessible(true);
 
 Assert::same([
 	'types' => [
@@ -35,12 +35,12 @@ Assert::same([
 	],
 	'services' => ['container' => Nette\DI\Container::class, 'lorem' => 'stdClass'],
 	'tags' => [
-		'a' => ['lorem' => TRUE],
+		'a' => ['lorem' => true],
 		'b' => ['lorem' => 'c'],
 		'd' => ['lorem' => ['e']],
 	],
 	'aliases' => [],
 ], $prop->getValue($container));
 
-Assert::same(['lorem' => TRUE], $container->findByTag('a'));
+Assert::same(['lorem' => true], $container->findByTag('a'));
 Assert::same([], $container->findByTag('x'));

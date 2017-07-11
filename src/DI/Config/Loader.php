@@ -66,7 +66,7 @@ class Loader
 	 */
 	public function save(array $data, string $file)
 	{
-		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === FALSE) {
+		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === false) {
 			throw new Nette\IOException("Cannot write file '$file'.");
 		}
 	}

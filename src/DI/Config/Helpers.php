@@ -21,7 +21,7 @@ final class Helpers
 
 	const
 		EXTENDS_KEY = '_extends',
-		OVERWRITE = TRUE;
+		OVERWRITE = true;
 
 
 	/**
@@ -47,7 +47,7 @@ final class Helpers
 			}
 			return $right;
 
-		} elseif ($left === NULL && is_array($right)) {
+		} elseif ($left === null && is_array($right)) {
 			return $right;
 
 		} else {
@@ -72,6 +72,6 @@ final class Helpers
 
 	public static function isOverwriting(&$data): bool
 	{
-		return is_array($data) && ($data[self::EXTENDS_KEY] ?? NULL) === self::OVERWRITE;
+		return is_array($data) && ($data[self::EXTENDS_KEY] ?? null) === self::OVERWRITE;
 	}
 }

@@ -41,7 +41,7 @@ test(function () {
 test(function () {
 	$ext = new MyExtension;
 	$ext->setConfig(['a' => 2]);
-	Assert::same(['a' => 1, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], NULL));
+	Assert::same(['a' => 1, 'b' => 1], $ext->validateConfig(['a' => 1, 'b' => 1], null));
 	Assert::same(['a' => 2], $ext->getConfig());
 });
 

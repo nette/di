@@ -21,7 +21,7 @@ final class PhpExtension extends Nette\DI\CompilerExtension
 	{
 		$initialize = $class->getMethod('initialize');
 		foreach ($this->getConfig() as $name => $value) {
-			if ($value === NULL) {
+			if ($value === null) {
 				continue;
 
 			} elseif (!is_scalar($value)) {
@@ -40,7 +40,7 @@ final class PhpExtension extends Nette\DI\CompilerExtension
 				$initialize->addBody('date_default_timezone_set(?);', [$value]);
 
 			} elseif (function_exists('ini_set')) {
-				$initialize->addBody('ini_set(?, ?);', [$name, $value === FALSE ? '0' : (string) $value]);
+				$initialize->addBody('ini_set(?, ?);', [$name, $value === false ? '0' : (string) $value]);
 
 			} elseif (ini_get($name) != $value) { // intentionally ==
 				throw new Nette\NotSupportedException('Required function ini_set() is disabled.');

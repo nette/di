@@ -63,7 +63,7 @@ abstract class CompilerExtension
 	 * Checks whether $config contains only $expected items and returns combined array.
 	 * @throws Nette\InvalidStateException
 	 */
-	public function validateConfig(array $expected, array $config = NULL, string $name = NULL): array
+	public function validateConfig(array $expected, array $config = null, string $name = null): array
 	{
 		if (func_num_args() === 1) {
 			return $this->config = $this->validateConfig($expected, $this->config);

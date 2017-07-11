@@ -37,9 +37,9 @@ test(function () {
 		->setAutowired('Bar');
 
 	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(NULL, $builder->getByType('IBar'));
-	Assert::same(NULL, $builder->getByType('Foo'));
-	Assert::same(NULL, $builder->getByType('IFoo'));
+	Assert::same(null, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('Foo'));
+	Assert::same(null, $builder->getByType('IFoo'));
 });
 
 
@@ -51,8 +51,8 @@ test(function () {
 
 	Assert::same('bar', $builder->getByType('Bar'));
 	Assert::same('bar', $builder->getByType('IBar'));
-	Assert::same(NULL, $builder->getByType('Foo'));
-	Assert::same(NULL, $builder->getByType('IFoo'));
+	Assert::same(null, $builder->getByType('Foo'));
+	Assert::same(null, $builder->getByType('IFoo'));
 });
 
 
@@ -63,9 +63,9 @@ test(function () {
 		->setAutowired('Foo');
 
 	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(NULL, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(NULL, $builder->getByType('IFoo'));
+	Assert::same(null, $builder->getByType('IFoo'));
 });
 
 
@@ -76,7 +76,7 @@ test(function () {
 		->setAutowired('IFoo');
 
 	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(NULL, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
 });
@@ -102,9 +102,9 @@ test(function () {
 		->setAutowired(['Foo', 'Bar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(NULL, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(NULL, $builder->getByType('IFoo'));
+	Assert::same(null, $builder->getByType('IFoo'));
 });
 
 
@@ -117,7 +117,7 @@ test(function () {
 	Assert::same('bar', $builder->getByType('Bar'));
 	Assert::same('bar', $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(NULL, $builder->getByType('IFoo'));
+	Assert::same(null, $builder->getByType('IFoo'));
 });
 
 
@@ -128,7 +128,7 @@ test(function () {
 		->setAutowired(['IFoo', 'Bar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(NULL, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('IBar'));
 	Assert::same('bar', $builder->getByType('Foo'));
 	Assert::same('bar', $builder->getByType('IFoo'));
 });

@@ -41,7 +41,7 @@ namespace A
 
 		function createBool(): bool
 		{
-			return FALSE;
+			return false;
 		}
 
 
@@ -54,7 +54,7 @@ namespace A
 		/** @return object */
 		function createObject()
 		{
-			return (object) NULL;
+			return (object) null;
 		}
 
 

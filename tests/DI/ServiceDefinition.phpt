@@ -88,13 +88,13 @@ test(function () {
 	$def->addTag('tag1');
 	$def->addTag('tag2', [1, 2]);
 	Assert::equal([
-		'tag1' => TRUE,
+		'tag1' => true,
 		'tag2' => [1, 2],
 	], $def->getTags());
 
-	Assert::equal(TRUE, $def->getTag('tag1'));
+	Assert::equal(true, $def->getTag('tag1'));
 	Assert::equal([1, 2], $def->getTag('tag2'));
-	Assert::equal(NULL, $def->getTag('tag3'));
+	Assert::equal(null, $def->getTag('tag3'));
 });
 
 test(function () { // deep clone

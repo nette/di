@@ -52,7 +52,7 @@ Assert::error(function () use (&$container) {
 				- method( @lorem, @self, @container )
 				- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
 				- method( [Lorem, method], 'Lorem::add', Lorem::add )
-				- method( not(TRUE) )
+				- method( not(true) )
 				- method( @lorem::var, @self::var, @container::parameters )
 				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
 
@@ -68,7 +68,7 @@ $dolor = $container->getService('dolor');
 
 // constants
 Assert::same(['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0]);
-Assert::same([NULL], $dolor->args[0]);
+Assert::same([null], $dolor->args[0]);
 
 // services
 Assert::same([$lorem, $lorem, $container], $lorem->args[1]);
@@ -80,7 +80,7 @@ Assert::same([3, ['x' => 'HELLO']], $lorem->args[2]);
 Assert::same([['Lorem', 'method'], 'Lorem::add', 'Lorem::add'], $lorem->args[3]);
 
 // special
-Assert::same([FALSE], $lorem->args[4]);
+Assert::same([false], $lorem->args[4]);
 
 // service variables
 Assert::same([$lorem->var, $lorem->var, $container->parameters], $lorem->args[5]);

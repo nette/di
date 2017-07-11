@@ -15,13 +15,13 @@ use Nette;
 /**
  * Assignment or calling statement.
  *
- * @property string|array|ServiceDefinition|NULL $entity
+ * @property string|array|ServiceDefinition|null $entity
  */
 final class Statement
 {
 	use Nette\SmartObject;
 
-	/** @var string|array|ServiceDefinition|NULL  class|method|$property */
+	/** @var string|array|ServiceDefinition|null  class|method|$property */
 	private $entity;
 
 	/** @var array */
@@ -29,12 +29,12 @@ final class Statement
 
 
 	/**
-	 * @param  string|array|ServiceDefinition|NULL
+	 * @param  string|array|ServiceDefinition|null
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
 		if (!is_string($entity) && !(is_array($entity) && isset($entity[0], $entity[1]))
-			&& !$entity instanceof ServiceDefinition && $entity !== NULL
+			&& !$entity instanceof ServiceDefinition && $entity !== null
 		) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}

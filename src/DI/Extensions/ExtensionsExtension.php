@@ -21,7 +21,7 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 	{
 		foreach ($this->getConfig() as $name => $class) {
 			if (is_int($name)) {
-				$name = NULL;
+				$name = null;
 			}
 			if ($class instanceof Nette\DI\Statement) {
 				$rc = new \ReflectionClass($class->getEntity());

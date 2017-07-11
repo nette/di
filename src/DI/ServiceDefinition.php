@@ -15,8 +15,8 @@ use Nette;
 /**
  * Definition used by ContainerBuilder.
  *
- * @property string|NULL $class
- * @property Statement|NULL $factory
+ * @property string|null $class
+ * @property Statement|null $factory
  * @property Statement[] $setup
  */
 final class ServiceDefinition
@@ -27,10 +27,10 @@ final class ServiceDefinition
 
 	use Nette\SmartObject;
 
-	/** @var string|NULL  class or interface name */
+	/** @var string|null  class or interface name */
 	private $class;
 
-	/** @var Statement|NULL */
+	/** @var Statement|null */
 	private $factory;
 
 	/** @var Statement[] */
@@ -43,15 +43,15 @@ final class ServiceDefinition
 	private $tags = [];
 
 	/** @var bool|string[] */
-	private $autowired = TRUE;
+	private $autowired = true;
 
 	/** @var bool */
-	private $dynamic = FALSE;
+	private $dynamic = false;
 
-	/** @var string|NULL  interface name */
+	/** @var string|null  interface name */
 	private $implement;
 
-	/** @var string|NULL  create | get */
+	/** @var string|null  create | get */
 	private $implementMode;
 
 	/** @var callable */
@@ -73,7 +73,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public function getClass()
 	{
@@ -93,7 +93,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return Statement|NULL
+	 * @return Statement|null
 	 */
 	public function getFactory()
 	{
@@ -102,11 +102,11 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|array|ServiceDefinition|NULL
+	 * @return string|array|ServiceDefinition|null
 	 */
 	public function getEntity()
 	{
-		return $this->factory ? $this->factory->getEntity() : NULL;
+		return $this->factory ? $this->factory->getEntity() : null;
 	}
 
 
@@ -193,7 +193,7 @@ final class ServiceDefinition
 	/**
 	 * @return static
 	 */
-	public function addTag(string $tag, $attr = TRUE)
+	public function addTag(string $tag, $attr = true)
 	{
 		$this->tags[$tag] = $attr;
 		return $this;
@@ -205,7 +205,7 @@ final class ServiceDefinition
 	 */
 	public function getTag(string $tag)
 	{
-		return $this->tags[$tag] ?? NULL;
+		return $this->tags[$tag] ?? null;
 	}
 
 
@@ -213,7 +213,7 @@ final class ServiceDefinition
 	 * @param  bool|string|string[]
 	 * @return static
 	 */
-	public function setAutowired($state = TRUE)
+	public function setAutowired($state = true)
 	{
 		($this->notifier)();
 		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
@@ -242,7 +242,7 @@ final class ServiceDefinition
 	/**
 	 * @return static
 	 */
-	public function setDynamic(bool $state = TRUE)
+	public function setDynamic(bool $state = true)
 	{
 		$this->dynamic = $state;
 		return $this;
@@ -267,7 +267,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public function getImplement()
 	{
@@ -280,7 +280,7 @@ final class ServiceDefinition
 	 */
 	public function setImplementMode(string $mode)
 	{
-		if (!in_array($mode, [self::IMPLEMENT_MODE_CREATE, self::IMPLEMENT_MODE_GET], TRUE)) {
+		if (!in_array($mode, [self::IMPLEMENT_MODE_CREATE, self::IMPLEMENT_MODE_GET], true)) {
 			throw new Nette\InvalidArgumentException('Argument must be get|create.');
 		}
 		$this->implementMode = $mode;
@@ -289,7 +289,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|NULL
+	 * @return string|null
 	 */
 	public function getImplementMode()
 	{
@@ -298,7 +298,7 @@ final class ServiceDefinition
 
 
 	/** @deprecated */
-	public function setInject(bool $state = TRUE)
+	public function setInject(bool $state = true)
 	{
 		trigger_error(__METHOD__ . "() is deprecated, use addTag('inject')", E_USER_DEPRECATED);
 		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $state);

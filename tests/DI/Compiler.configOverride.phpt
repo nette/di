@@ -32,7 +32,7 @@ $compiler->addConfig([
 $compiler->addConfig([
 	'services' => [
 		's1' => ['arguments' => [2]],
-		's2' => ['class' => 'Ipsum', 'alteration' => TRUE],
+		's2' => ['class' => 'Ipsum', 'alteration' => true],
 	],
 ]);
 
@@ -52,7 +52,7 @@ Assert::same([
 
 $compiler->addConfig([
 	'services' => [
-		's3' => ['class' => 'Ipsum', 'alteration' => TRUE],
+		's3' => ['class' => 'Ipsum', 'alteration' => true],
 	],
 ]);
 

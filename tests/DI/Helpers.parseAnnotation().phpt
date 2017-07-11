@@ -23,7 +23,7 @@ class TestClass
 $rc = new ReflectionClass('TestClass');
 
 Assert::same('', Helpers::parseAnnotation($rc, 'inject'));
-Assert::same(NULL, Helpers::parseAnnotation($rc, 'injec'));
+Assert::same(null, Helpers::parseAnnotation($rc, 'injec'));
 Assert::same('type', Helpers::parseAnnotation($rc, 'var'));
 Assert::same('bool|int', Helpers::parseAnnotation($rc, 'return'));
 

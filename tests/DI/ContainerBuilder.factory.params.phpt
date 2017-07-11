@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassFactory
 {
-	function create(stdClass $a, array $b, $c = NULL);
+	function create(stdClass $a, array $b, $c = null);
 }
 
 
@@ -26,7 +26,7 @@ $builder->addDefinition('one')
 	->addSetup('$a', [$builder::literal('$a')]);
 
 $builder->addDefinition('two')
-	->setParameters(['stdClass foo', 'array bar', 'foobar' => NULL])
+	->setParameters(['stdClass foo', 'array bar', 'foobar' => null])
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
 	->addSetup('$a', [$builder::literal('$foo')]);
@@ -36,11 +36,11 @@ $builder->addDefinition('three')
 
 $builder->addDefinition('four')
 	->setFactory('@one::create', [1 => [1]])
-	->setAutowired(FALSE);
+	->setAutowired(false);
 
 $builder->addDefinition('five')
 	->setFactory('@two::create', [1 => [1]])
-	->setAutowired(FALSE);
+	->setAutowired(false);
 
 
 $container = createContainer($builder);

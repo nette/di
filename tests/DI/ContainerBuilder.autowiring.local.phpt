@@ -51,7 +51,7 @@ $builder->addDefinition('m1')
 $builder->addDefinition('m2')
 	->setClass('M2')
 	->addSetup('@foo::test')
-	->setAutowired(FALSE);
+	->setAutowired(false);
 
 
 $container = createContainer($builder);

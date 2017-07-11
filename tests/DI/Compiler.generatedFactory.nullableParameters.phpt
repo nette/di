@@ -32,7 +32,7 @@ class Article
 	public $lorem;
 
 
-	function __construct(?string $title, ?Foo $foo, ?int $lorem = NULL)
+	function __construct(?string $title, ?Foo $foo, ?int $lorem = null)
 	{
 		$this->title = $title;
 		$this->foo = $foo;
@@ -52,9 +52,9 @@ foreach (['article', 'article2', 'article3'] as $serviceName) {
 	Assert::same($foo, $article->foo);
 	Assert::same(1, $article->lorem);
 
-	$article = $service->create(NULL, NULL);
+	$article = $service->create(null, null);
 	Assert::type(Article::class, $article);
 	Assert::null($article->title);
 	Assert::null($article->foo);
-	Assert::same($serviceName === 'article3' ? 1 : NULL, $article->lorem);
+	Assert::same($serviceName === 'article3' ? 1 : null, $article->lorem);
 }

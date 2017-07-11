@@ -25,7 +25,7 @@ class Service extends stdClass implements Iface
 	public $setup;
 
 
-	function setup($a = NULL)
+	function setup($a = null)
 	{
 		$this->setup[] = $a;
 	}
@@ -66,7 +66,7 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::same(
-	['a' => TRUE, 'tag' => 2, 'inject' => TRUE, 'Iface' => TRUE],
+	['a' => true, 'tag' => 2, 'inject' => true, 'Iface' => true],
 	$builder->getDefinition('one')->getTags()
 );
 
