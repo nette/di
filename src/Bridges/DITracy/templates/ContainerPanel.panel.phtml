@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Nette\Bridges\DITracy;
 
@@ -46,6 +47,7 @@ use Tracy\Helpers;
 		</thead>
 		<tbody>
 		<?php foreach ($services as $name => $class): ?>
+		<?php $name = (string) $name ?>
 		<?php $autowired = !empty($meta[Nette\DI\Container::TYPES][$class][true]) && in_array($name, $meta[Nette\DI\Container::TYPES][$class][true], true) ?>
 		<tr>
 			<td class="<?= isset($registry[$name]) ? 'created' : '' ?>"><?= htmlspecialchars($name) ?></td>
