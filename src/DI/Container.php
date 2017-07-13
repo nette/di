@@ -23,7 +23,7 @@ class Container
 	const ALIASES = 'aliases';
 
 	/** @var array  user parameters */
-	/*private*/public $parameters = [];
+	public $parameters = [];
 
 	/** @var array[] */
 	protected $meta = [];
