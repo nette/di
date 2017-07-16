@@ -1,6 +1,7 @@
 {
 	"name": "nette/di",
-	"description": "Nette Dependency Injection Component",
+	"description": "💎 Nette Dependency Injection Container: Flexible, compiled and full-featured DIC with perfectly usable autowiring and support for all new PHP 7.1 features.",
+	"keywords": ["nette", "di", "dic", "ioc", "factory", "compiled", "static"],
 	"homepage": "https://nette.org",
 	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
 	"authors": [
