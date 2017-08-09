@@ -30,7 +30,7 @@ class BarExtension extends Nette\DI\CompilerExtension
 }
 
 
-$compiler = new Nette\DI\Compiler();
+$compiler = new Nette\DI\Compiler;
 $compiler->addExtension('foo', $foo = new FooExtension);
 $compiler->addExtension('bar', new BarExtension);
 createContainer($compiler, '

@@ -245,7 +245,7 @@ Assert::same('foo', $obj->foo);
 Assert::same('bar', $obj->bar);
 
 Assert::type(DolorFactory::class, $factory = $container->getService('dolorFactory'));
-Assert::type(Dolor::class, $obj = $factory->create($bar = new Bar(), 'abc'));
+Assert::type(Dolor::class, $obj = $factory->create($bar = new Bar, 'abc'));
 Assert::same($bar, $obj->bar);
 Assert::same('abc', $obj->foo);
 

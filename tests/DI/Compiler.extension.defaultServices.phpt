@@ -51,7 +51,7 @@ class Factory
 	 */
 	public static function createLorem()
 	{
-		return new Lorem();
+		return new Lorem;
 	}
 }
 

@@ -14,7 +14,7 @@ namespace A
 	{
 		public function createBar(): Bar
 		{
-			return new Bar();
+			return new Bar;
 		}
 	}
 
