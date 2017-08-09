@@ -10,7 +10,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
-$config = (new DI\Config\Adapters\NeonAdapter())->load(__DIR__ . '/files/compiler.parseServices.namespace.neon');
+$config = (new DI\Config\Adapters\NeonAdapter)->load(__DIR__ . '/files/compiler.parseServices.namespace.neon');
 DI\Compiler::parseServices($builder, $config, 'blog');
 
 

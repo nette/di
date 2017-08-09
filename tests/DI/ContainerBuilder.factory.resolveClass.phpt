@@ -13,14 +13,14 @@ namespace A
 		/** @return Foo */
 		public function createFoo()
 		{
-			return new Foo();
+			return new Foo;
 		}
 
 
 		/** @return Bar */
 		public function createBar()
 		{
-			return new Bar();
+			return new Bar;
 		}
 	}
 

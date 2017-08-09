@@ -44,7 +44,7 @@ $container = createContainer($compiler, 'files/compiler.generatedFactory.nullabl
 foreach (['article', 'article2', 'article3'] as $serviceName) {
 	$service = $container->getService($serviceName);
 	Assert::type(IArticleFactory::class, $service);
-	$article = $service->create('lorem-ipsum', $foo = new Foo(), 1);
+	$article = $service->create('lorem-ipsum', $foo = new Foo, 1);
 	Assert::type(Article::class, $article);
 	Assert::same('lorem-ipsum', $article->title);
 	Assert::same($foo, $article->foo);
