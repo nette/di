@@ -69,9 +69,7 @@ class ContainerLoader
 			return;
 		}
 
-		if (!is_dir($this->tempDirectory)) {
-			@mkdir($this->tempDirectory); // @ - directory may already exist
-		}
+		Nette\Utils\FileSystem::createDir($this->tempDirectory);
 
 		$handle = fopen("$file.lock", 'c+');
 		if (!$handle || !flock($handle, LOCK_EX)) {
