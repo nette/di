@@ -65,9 +65,11 @@ class ContainerLoader
 
 		Nette\Utils\FileSystem::createDir($this->tempDirectory);
 
-		$handle = fopen("$file.lock", 'c+');
-		if (!$handle || !flock($handle, LOCK_EX)) {
-			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'.");
+		$handle = @fopen("$file.lock", 'c+'); // @ is escalated to exception
+		if (!$handle) {
+			throw new Nette\IOException("Unable to create file '$file.lock'. " . error_get_last()['message']);
+		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
+			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'. " . error_get_last()['message']);
 		}
 
 		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
