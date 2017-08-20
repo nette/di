@@ -77,7 +77,7 @@ $compiler = new DI\Compiler;
 $container = createContainer($compiler, '
 services:
 	baz:
-		class: Baz
+		type: Baz
 		factory: Foo::createUnknown()::foo()
 ');
 Assert::true($container->hasService('baz'));

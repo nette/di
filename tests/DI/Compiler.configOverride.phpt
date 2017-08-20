@@ -26,13 +26,13 @@ $compiler = new DI\Compiler;
 $compiler->addConfig([
 	'services' => [
 		's1' => 'Ipsum',
-		's2' => ['class' => 'Ipsum'],
+		's2' => ['type' => 'Ipsum'],
 	],
 ]);
 $compiler->addConfig([
 	'services' => [
 		's1' => ['arguments' => [2]],
-		's2' => ['class' => 'Ipsum', 'alteration' => true],
+		's2' => ['type' => 'Ipsum', 'alteration' => true],
 	],
 ]);
 
@@ -52,7 +52,7 @@ Assert::same([
 
 $compiler->addConfig([
 	'services' => [
-		's3' => ['class' => 'Ipsum', 'alteration' => true],
+		's3' => ['type' => 'Ipsum', 'alteration' => true],
 	],
 ]);
 

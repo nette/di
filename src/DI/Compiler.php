@@ -318,16 +318,16 @@ class Compiler
 			return;
 
 		} elseif (is_string($config) && interface_exists($config)) {
-			$config = ['class' => null, 'implement' => $config];
+			$config = ['implement' => $config];
 
 		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
-			$config = ['class' => null, 'implement' => $config->getEntity(), 'factory' => array_shift($config->arguments)];
+			$config = ['implement' => $config->getEntity(), 'factory' => array_shift($config->arguments)];
 
 		} elseif (!is_array($config) || isset($config[0], $config[1])) {
-			$config = ['class' => null, 'factory' => $config];
+			$config = ['factory' => $config];
 		}
 
-		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
+		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
@@ -341,6 +341,14 @@ class Compiler
 		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
 			$definition->setClass(null);
 			$definition->setFactory(null);
+		}
+
+		if (array_key_exists('type', $config)) {
+			Validators::assertField($config, 'type', 'string|null');
+			$definition->setClass($config['type']);
+			if (array_key_exists('class', $config)) {
+				throw new Nette\InvalidStateException("Unexpected 'class' when 'type' is used.");
+			}
 		}
 
 		if (array_key_exists('class', $config)) {
