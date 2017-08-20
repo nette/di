@@ -188,7 +188,7 @@ class ContainerBuilder
 		$class = Helpers::normalizeClass($class);
 
 		if ($this->currentService !== null
-			&& is_a($this->definitions[$this->currentService]->getClass(), $class, true)
+			&& is_a($this->definitions[$this->currentService]->getType(), $class, true)
 		) {
 			return $this->currentService;
 		}
@@ -277,7 +277,7 @@ class ContainerBuilder
 	public function prepareClassList()
 	{
 		unset($this->definitions[self::THIS_CONTAINER]);
-		$this->addDefinition(self::THIS_CONTAINER)->setClass(Container::class);
+		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
 
 		$this->classList = false;
 
@@ -288,7 +288,7 @@ class ContainerBuilder
 			}
 
 			if ($def->isDynamic()) {
-				if (!$def->getClass()) {
+				if (!$def->getType()) {
 					throw new ServiceCreationException("Type is missing in definition of service '$name'.");
 				}
 				$def->setFactory(null);
@@ -297,10 +297,10 @@ class ContainerBuilder
 
 			// complete class-factory pairs
 			if (!$def->getEntity()) {
-				if (!$def->getClass()) {
+				if (!$def->getType()) {
 					throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
 				}
-				$def->setFactory($def->getClass(), ($factory = $def->getFactory()) ? $factory->arguments : []);
+				$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
 			}
 
 			// auto-disable autowiring for aliases
@@ -320,7 +320,7 @@ class ContainerBuilder
 		//  build auto-wiring list
 		$this->classList = $preferred = [];
 		foreach ($this->definitions as $name => $def) {
-			if ($class = $def->getImplement() ?: $def->getClass()) {
+			if ($class = $def->getImplement() ?: $def->getType()) {
 				$defAutowired = $def->getAutowired();
 				if (is_array($defAutowired)) {
 					foreach ($defAutowired as $k => $aclass) {
@@ -377,14 +377,14 @@ class ContainerBuilder
 		$def->setImplementMode($rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
 		$methodName = Reflection::toString($method) . '()';
 
-		if (!$def->getClass() && !$def->getEntity()) {
+		if (!$def->getType() && !$def->getEntity()) {
 			$returnType = Helpers::getReturnType($method);
 			if (!$returnType) {
 				throw new ServiceCreationException("Method $methodName used in service '$name' has not return type hint or annotation @return.");
 			} elseif (!class_exists($returnType)) {
 				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method used in service '$name', class '$returnType' cannot be found.");
 			}
-			$def->setClass($returnType);
+			$def->setType($returnType);
 		}
 
 		if ($rc->hasMethod('get')) {
@@ -392,7 +392,7 @@ class ContainerBuilder
 				throw new ServiceCreationException("Method $methodName used in service '$name' must have no arguments.");
 			}
 			if (!$def->getEntity()) {
-				$def->setFactory('@\\' . ltrim($def->getClass(), '\\'));
+				$def->setFactory('@\\' . ltrim($def->getType(), '\\'));
 			} elseif (!$this->getServiceName($def->getFactory()->getEntity())) {
 				throw new ServiceCreationException("Invalid factory in service '$name' definition.");
 			}
@@ -401,7 +401,7 @@ class ContainerBuilder
 		if (!$def->parameters) {
 			$ctorParams = [];
 			if (!$def->getEntity()) {
-				$def->setFactory($def->getClass(), $def->getFactory() ? $def->getFactory()->arguments : []);
+				$def->setFactory($def->getType(), $def->getFactory() ? $def->getFactory()->arguments : []);
 			}
 			if (($class = $this->resolveEntityClass($def->getFactory(), [$name => 1]))
 				&& ($ctor = (new ReflectionClass($class))->getConstructor())
@@ -445,12 +445,12 @@ class ContainerBuilder
 
 		$def = $this->definitions[$name];
 		$factoryClass = $def->getFactory() ? $this->resolveEntityClass($def->getFactory()->getEntity(), $recursive) : null; // call always to check entities
-		if ($class = $def->getClass() ?: $factoryClass) {
+		if ($class = $def->getType() ?: $factoryClass) {
 			if (!class_exists($class) && !interface_exists($class)) {
 				throw new ServiceCreationException("Class or interface '$class' used in service '$name' not found.");
 			}
 			$class = Helpers::normalizeClass($class);
-			$def->setClass($class);
+			$def->setType($class);
 			if (count($recursive) === 1) {
 				$this->addDependency(new ReflectionClass($factoryClass ?: $class));
 			}
@@ -502,7 +502,7 @@ class ContainerBuilder
 				return $service;
 			}
 			return $this->definitions[$service]->getImplement()
-				?: $this->definitions[$service]->getClass()
+				?: $this->definitions[$service]->getType()
 				?: $this->resolveServiceClass($service, $recursive);
 
 		} elseif (is_string($entity)) { // class
@@ -621,7 +621,7 @@ class ContainerBuilder
 				}
 			} elseif ($class = empty($service) || $entity[1] === 'create'
 				? $this->resolveEntityClass($entity[0])
-				: $this->definitions[$service]->getClass()
+				: $this->definitions[$service]->getType()
 			) {
 				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
 			}
@@ -640,7 +640,7 @@ class ContainerBuilder
 				if (!isset($pair[1])) { // @service
 					$val = '@' . $name;
 				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
-					$val = self::literal($this->getDefinition($name)->getClass() . '::' . $pair[1]);
+					$val = self::literal($this->getDefinition($name)->getType() . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement(['@' . $name, '$' . $pair[1]]);
 				}

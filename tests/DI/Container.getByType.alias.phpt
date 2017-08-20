@@ -17,9 +17,9 @@ class_alias('Service', 'Alias');
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setClass('Service');
+	->setType('Service');
 $two = $builder->addDefinition('two')
-	->setClass('Alias');
+	->setType('Alias');
 
 $container = createContainer($builder);
 

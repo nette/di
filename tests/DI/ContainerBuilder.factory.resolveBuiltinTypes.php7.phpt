@@ -78,7 +78,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
@@ -87,7 +87,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
@@ -96,7 +96,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
@@ -105,7 +105,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
 		$container = createContainer($builder);
@@ -114,7 +114,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
 		$container = createContainer($builder);
@@ -123,7 +123,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
@@ -132,7 +132,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('f')
 			->setFactory('@factory::createObject');
 		$container = createContainer($builder);
@@ -141,7 +141,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('f')
 			->setFactory('@factory::createMixed');
 		$container = createContainer($builder);

@@ -41,7 +41,7 @@ $builder->addDefinition('two')
 	->setImplement('AnnotatedFactory');
 
 $builder->addDefinition('three')
-	->setClass('FactoryReceiver');
+	->setType('FactoryReceiver');
 
 $builder->addDefinition('four')
 	->setFactory('FactoryReceiver', ['@one']);

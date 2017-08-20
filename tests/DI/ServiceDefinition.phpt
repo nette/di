@@ -16,12 +16,12 @@ require __DIR__ . '/../bootstrap.php';
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setClass('Class');
-	Assert::same('Class', $def->getClass());
+	$def->setType('Class');
+	Assert::same('Class', $def->getType());
 	Assert::null($def->getFactory());
 
 	$def->setArguments([1, 2]);
-	Assert::same('Class', $def->getClass());
+	Assert::same('Class', $def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 
@@ -30,7 +30,7 @@ test(function () {
 	Assert::error(function () use ($def) {
 		$def->setClass('Class', []);
 	}, E_USER_DEPRECATED);
-	Assert::same('Class', $def->getClass());
+	Assert::same('Class', $def->getType());
 	Assert::null($def->getFactory());
 });
 
@@ -39,39 +39,39 @@ test(function () {
 	Assert::error(function () use ($def) {
 		$def->setClass('Class', [1, 2]);
 	}, E_USER_DEPRECATED);
-	Assert::same('Class', $def->getClass());
+	Assert::same('Class', $def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory('Class');
-	Assert::null($def->getClass());
+	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', []), $def->getFactory());
 
 	$def->setArguments([1, 2]);
-	Assert::null($def->getClass());
+	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory('Class', [1, 2]);
-	Assert::null($def->getClass());
+	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory(new Statement('Class', [1, 2]));
-	Assert::null($def->getClass());
+	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	$def->setFactory(new Statement('Class', [1, 2]), [99]); // 99 is ignored
-	Assert::null($def->getClass());
+	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
 

@@ -31,7 +31,7 @@ final class ServiceDefinition
 	public $parameters = [];
 
 	/** @var string|null  class or interface name */
-	private $class;
+	private $type;
 
 	/** @var Statement|null */
 	private $factory;
@@ -59,12 +59,14 @@ final class ServiceDefinition
 
 
 	/**
+	 * @param  string|null
 	 * @return static
+	 * @deprecated
 	 */
 	public function setClass($class)
 	{
 		($this->notifier)();
-		$this->class = $class;
+		$this->type = $class;
 		if (func_num_args() > 1) {
 			trigger_error(__METHOD__ . '() second parameter $args is deprecated, use setFactory()', E_USER_DEPRECATED);
 			if ($args = func_get_arg(1)) {
@@ -77,10 +79,32 @@ final class ServiceDefinition
 
 	/**
 	 * @return string|null
+	 * @deprecated
 	 */
 	public function getClass()
 	{
-		return $this->class;
+		return $this->type;
+	}
+
+
+	/**
+	 * @param  string|null
+	 * @return static
+	 */
+	public function setType($type)
+	{
+		($this->notifier)();
+		$this->type = $type;
+		return $this;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getType()
+	{
+		return $this->type;
 	}
 
 
@@ -119,7 +143,7 @@ final class ServiceDefinition
 	public function setArguments(array $args = [])
 	{
 		if (!$this->factory) {
-			$this->factory = new Statement($this->class);
+			$this->factory = new Statement($this->type);
 		}
 		$this->factory->arguments = $args;
 		return $this;

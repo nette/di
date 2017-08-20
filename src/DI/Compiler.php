@@ -339,13 +339,13 @@ class Compiler
 		$config = Helpers::filterArguments($config);
 
 		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
-			$definition->setClass(null);
+			$definition->setType(null);
 			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
 			Validators::assertField($config, 'type', 'string|null');
-			$definition->setClass($config['type']);
+			$definition->setType($config['type']);
 			if (array_key_exists('class', $config)) {
 				throw new Nette\InvalidStateException("Unexpected 'class' when 'type' is used.");
 			}
@@ -356,7 +356,7 @@ class Compiler
 			if ($config['class'] instanceof Statement) {
 				trigger_error("Service '$name': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
 			} else {
-				$definition->setClass($config['class']);
+				$definition->setType($config['class']);
 			}
 			$definition->setFactory($config['class']);
 		}
