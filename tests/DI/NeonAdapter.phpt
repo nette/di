@@ -128,7 +128,7 @@ services:
 			- 1
 
 	two:
-		class: %class%(1)
+		factory: %class%(1)
 
 	three:
 		class: Lorem

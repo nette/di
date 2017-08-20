@@ -1,12 +1,12 @@
 services:
 	one1:
-		class: Ipsum
+		factory: Ipsum
 		alteration: yes
 	one2:
-		class: Ipsum
+		factory: Ipsum
 		arguments: [2]
 	one3:
-		class: Ipsum(2)
+		factory: Ipsum(2)
 	one4:
 		arguments: [2]
 	one5:
@@ -17,15 +17,15 @@ services:
 	one7:
 		factory: IpsumFactory::create(2)
 	one8!:
-		class: Ipsum
+		factory: Ipsum
 
 	two1:
-		class: Ipsum
+		factory: Ipsum
 	two2:
-		class: Ipsum
+		factory: Ipsum
 		arguments: [2]
 	two3:
-		class: Ipsum(2)
+		factory: Ipsum(2)
 	two4:
 		arguments: [2]
 	two5:
@@ -44,12 +44,12 @@ services:
 		arguments: [1: new]
 
 	three1:
-		class: Ipsum
+		factory: Ipsum
 	three2:
-		class: Ipsum
+		factory: Ipsum
 		arguments: [2]
 	three3:
-		class: Ipsum(2)
+		factory: Ipsum(2)
 	three4:
 		arguments: [2]
 	three5:

@@ -64,12 +64,12 @@ services:
 			- @lorem::test
 
 	lorem:
-		class: Lorem
+		factory: Lorem
 
 	alias: @lorem
 
 	ipsum:
-		class: Ipsum
+		factory: Ipsum
 ');
 
 
