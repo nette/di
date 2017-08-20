@@ -57,21 +57,21 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition('one1')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one2')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one3')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one4')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one5')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one6')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one7')
-			->setClass('Lorem', [1]);
+			->setFactory('Lorem', [1]);
 		$builder->addDefinition('one8')
-			->setClass('Lorem', [1])
+			->setFactory('Lorem', [1])
 			->addSetup('__construct', [2]);
 
 		$builder->addDefinition('two1')
