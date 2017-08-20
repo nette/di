@@ -36,7 +36,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
@@ -45,7 +45,7 @@ namespace
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
 		$builder->addDefinition('factory')
-			->setClass('A\Factory');
+			->setType('A\Factory');
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);

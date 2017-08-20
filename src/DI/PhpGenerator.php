@@ -64,7 +64,7 @@ class PhpGenerator
 			->setValue([Container::TYPES => $this->builder->getClassList()]);
 
 		foreach ($definitions as $name => $def) {
-			$meta->value[Container::SERVICES][$name] = $def->getClass() ?: null;
+			$meta->value[Container::SERVICES][$name] = $def->getType() ?: null;
 			foreach ($def->getTags() as $tag => $value) {
 				$meta->value[Container::TAGS][$tag][$name] = $value;
 			}
@@ -78,8 +78,8 @@ class PhpGenerator
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
 				$containerClass->addMethod($methodName)
-					->addComment(PHP_VERSION_ID < 70000 ? '@return ' . ($def->getImplement() ?: $def->getClass()) : '')
-					->setReturnType(PHP_VERSION_ID >= 70000 ? ($def->getImplement() ?: $def->getClass()) : null)
+					->addComment(PHP_VERSION_ID < 70000 ? '@return ' . ($def->getImplement() ?: $def->getType()) : '')
+					->setReturnType(PHP_VERSION_ID >= 70000 ? ($def->getImplement() ?: $def->getType()) : null)
 					->setBody($name === ContainerBuilder::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
@@ -118,7 +118,7 @@ class PhpGenerator
 		$this->currentService = null;
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
 
-		if ((PHP_VERSION_ID < 70000 || $def->getSetup()) && ($class = $def->getClass()) && !$serviceRef && $class !== $entity
+		if ((PHP_VERSION_ID < 70000 || $def->getSetup()) && ($class = $def->getType()) && !$serviceRef && $class !== $entity
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $class))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $class) {\n"
@@ -154,7 +154,7 @@ class PhpGenerator
 		$factoryClass->addMethod($def->getImplementMode())
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code))
-			->setReturnType(PHP_VERSION_ID >= 70000 ? (Reflection::getReturnType($rm) ?: $def->getClass()) : null);
+			->setReturnType(PHP_VERSION_ID >= 70000 ? (Reflection::getReturnType($rm) ?: $def->getType()) : null);
 
 		if (PHP_VERSION_ID < 70000) {
 			$this->generatedClasses[] = $factoryClass;

@@ -12,13 +12,13 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $definitionOne = $builder->addDefinition('one')
-	->setClass(stdClass::class);
+	->setType(stdClass::class);
 
 $builder->addDefinition('two')
-	->setClass(SplFileInfo::class);
+	->setType(SplFileInfo::class);
 
 $builder->addDefinition('three')
-	->setClass(SplFileInfo::class);
+	->setType(SplFileInfo::class);
 
 
 $definition = $builder->getDefinitionByType(stdClass::class);

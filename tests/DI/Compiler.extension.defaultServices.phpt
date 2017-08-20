@@ -73,7 +73,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (!$builder->getByType('FooBar')) {
-			$builder->addDefinition('five')->setClass('FooBar');
+			$builder->addDefinition('five')->setType('FooBar');
 		}
 	}
 }

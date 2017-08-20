@@ -30,7 +30,7 @@ class Bar extends Foo implements IBar
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('bar')
-		->setClass('Bar');
+		->setType('Bar');
 $builder->addExcludedClasses(['Foo', 'IBar']);
 
 

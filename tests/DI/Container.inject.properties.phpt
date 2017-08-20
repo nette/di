@@ -40,9 +40,9 @@ class Test2 extends Test1
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('stdClass');
+	->setType('stdClass');
 $builder->addDefinition('two')
-	->setClass('Foo');
+	->setType('Foo');
 
 
 $container = createContainer($builder);

@@ -26,14 +26,14 @@ class Service2 extends stdClass
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setClass('Service');
+	->setType('Service');
 $child = $builder->addDefinition('child')
-	->setClass('Child')
+	->setType('Child')
 	->setAutowired(false);
 $two = $builder->addDefinition('two')
-	->setClass('Service2');
+	->setType('Service2');
 $three = $builder->addDefinition('three')
-	->setClass('Service2')
+	->setType('Service2')
 	->setAutowired(false);
 
 

@@ -25,7 +25,7 @@ $builder->addDefinition('one')
 
 $two = $builder->addDefinition('two')
 	->setParameters(['foo', 'bar' => false, 'array foobar' => null])
-	->setClass('stdClass')
+	->setType('stdClass')
 	->addSetup('$foo', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')

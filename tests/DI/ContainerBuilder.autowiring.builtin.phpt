@@ -28,9 +28,9 @@ class Bar
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('foo')
-	->setClass('Foo');
+	->setType('Foo');
 $builder->addDefinition('bar')
-	->setClass('Bar');
+	->setType('Bar');
 
 $container = createContainer($builder);
 

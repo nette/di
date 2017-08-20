@@ -30,7 +30,7 @@ $builder->addDefinition('two')
 	->addSetup('$a', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 $builder->addDefinition('four')
 	->setFactory('@one::create', [1 => [1]])

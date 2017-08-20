@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('stdClass')
+	->setType('stdClass')
 	->addSetup('::1234');
 
 Assert::exception(function () use ($builder) {
@@ -24,9 +24,9 @@ Assert::exception(function () use ($builder) {
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('extension.one')
-	->setClass('stdClass');
+	->setType('stdClass');
 $builder->addDefinition('25_service')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType(stdClass::class);
@@ -36,7 +36,7 @@ Assert::exception(function () use ($builder) {
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('stdClass')
+	->setType('stdClass')
 	->addSetup('$prop[]');
 
 Assert::exception(function () use ($builder) {

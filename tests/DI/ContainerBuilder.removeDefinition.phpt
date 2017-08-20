@@ -23,17 +23,17 @@ class A extends B
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('one')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 $builder->addDefinition('two')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 $builder->addDefinition('three')
-	->setClass('stdClass')
+	->setType('stdClass')
 	->setAutowired(false);
 
 $builder->addDefinition('four')
-	->setClass('A');
+	->setType('A');
 
 
 Assert::exception(function () use ($builder) {
@@ -57,6 +57,6 @@ Assert::count(1, $builder->findByType('stdClass'));
 
 
 $builder->addDefinition('one')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 Assert::count(2, $builder->findByType('stdClass'));

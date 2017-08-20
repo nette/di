@@ -51,7 +51,7 @@ class Test2 extends Test1
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 
 $container = createContainer($builder);

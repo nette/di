@@ -380,13 +380,13 @@ class Compiler
 		$config = Helpers::filterArguments($config);
 
 		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
-			$definition->setClass(null);
+			$definition->setType(null);
 			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
 			Validators::assertField($config, 'type', 'string|null');
-			$definition->setClass($config['type']);
+			$definition->setType($config['type']);
 			if (array_key_exists('class', $config)) {
 				throw new Nette\InvalidStateException("Unexpected 'class' when 'type' is used.");
 			}
@@ -395,7 +395,7 @@ class Compiler
 		if (array_key_exists('class', $config)) {
 			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
 			if (!$config['class'] instanceof Statement) {
-				$definition->setClass($config['class']);
+				$definition->setType($config['class']);
 			}
 			$definition->setFactory($config['class']);
 		}

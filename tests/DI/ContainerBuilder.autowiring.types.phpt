@@ -31,7 +31,7 @@ class Bar extends Foo implements IBar
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired('Bar');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -44,7 +44,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired('IBar');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -57,7 +57,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired('Foo');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -70,7 +70,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired('IFoo');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -83,7 +83,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['IFoo', 'IBar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -96,7 +96,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['Foo', 'Bar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -109,7 +109,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['Foo', 'IBar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -122,7 +122,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['IFoo', 'Bar']);
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -135,11 +135,11 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired('Bar');
 
 	$builder->addDefinition('foo')
-		->setClass('Foo')
+		->setType('Foo')
 		->setAutowired();
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -152,11 +152,11 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['Bar', 'IFoo']);
 
 	$builder->addDefinition('foo')
-		->setClass('Foo')
+		->setType('Foo')
 		->setAutowired();
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -169,11 +169,11 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
-		->setClass('Bar')
+		->setType('Bar')
 		->setAutowired(['Bar', 'IFoo']);
 
 	$foo = $builder->addDefinition('foo')
-		->setClass('Foo')
+		->setType('Foo')
 		->setAutowired('IFoo');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -192,7 +192,7 @@ test(function () {
 test(function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
-		->setClass('Foo')
+		->setType('Foo')
 		->setAutowired(['Bar']);
 
 	Assert::exception(function () use ($builder) {

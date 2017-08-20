@@ -57,7 +57,7 @@ $builder->addDefinition('serviceFactoryViaClass')
 	->setFactory('@\Service');
 
 $builder->addDefinition('service')
-	->setClass('Service');
+	->setType('Service');
 
 
 $container = createContainer($builder);

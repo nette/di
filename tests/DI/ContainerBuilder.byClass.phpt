@@ -64,19 +64,19 @@ class UninstantiableFactory
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('factory')
-	->setClass('Factory');
+	->setType('Factory');
 
 $builder->addDefinition('annotatedFactory')
-	->setClass('AnnotatedFactory');
+	->setType('AnnotatedFactory');
 
 $builder->addDefinition('two')
-	->setClass('stdClass')
+	->setType('stdClass')
 	->setAutowired(false)
 	->setFactory('@factory::create', ['@\Factory'])
 	->addSetup(['@\Factory', 'create'], ['@\Factory']);
 
 $builder->addDefinition('three')
-	->setClass('stdClass')
+	->setType('stdClass')
 	->setAutowired(false)
 	->setFactory('@\Factory::create', ['@\Factory']);
 
@@ -89,7 +89,7 @@ $builder->addDefinition('five')
 	->setFactory('@\IFactory::create');
 
 $builder->addDefinition('uninstantiableFactory')
-	->setClass('UninstantiableFactory')
+	->setType('UninstantiableFactory')
 	->setFactory('UninstantiableFactory::getInstance');
 
 $builder->addDefinition('six')

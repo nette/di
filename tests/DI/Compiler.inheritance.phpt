@@ -50,7 +50,7 @@ define('PRIVATE_VALUE', 'foo.bar');
 
 
 $compiler = new DI\Compiler;
-$compiler->getContainerBuilder()->addDefinition('outer')->setClass('stdClass');
+$compiler->getContainerBuilder()->addDefinition('outer')->setType('stdClass');
 
 $container = @createContainer($compiler, '
 services:

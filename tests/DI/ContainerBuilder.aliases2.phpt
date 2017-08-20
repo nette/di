@@ -36,7 +36,7 @@ $builder->addDefinition('serviceFactoryViaClass')
 	->setFactory('@\Service');
 
 $builder->addDefinition('service')
-	->setClass('Foo');
+	->setType('Foo');
 
 
 $builder->addAlias('aliased.service', 'service');
@@ -67,7 +67,7 @@ Assert::same($builder->getDefinition('service'), $builder->getDefinition('aliase
 $builder->removeDefinition('aliased.service');
 Assert::false($builder->hasDefinition('aliased.service'));
 $builder->addDefinition('aliased.service')
-	->setClass('Service');
+	->setType('Service');
 
 
 $container = createContainer($builder);

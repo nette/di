@@ -44,7 +44,7 @@ $builder->addDefinition('service2')
 
 $builder->addDefinition('one')
 	->setImplement('StdClassAccessor')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 $builder->addDefinition('two')
 	->setImplement('AnnotatedAccessor');
@@ -55,7 +55,7 @@ $builder->addDefinition('three')
 	->setFactory('@service2');
 
 $builder->addDefinition('four')
-	->setClass('AccessorReceiver');
+	->setType('AccessorReceiver');
 
 
 $container = createContainer($builder);

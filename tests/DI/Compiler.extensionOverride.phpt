@@ -73,31 +73,31 @@ class FooExtension extends Nette\DI\CompilerExtension
 			->addSetup('__construct', [2]);
 
 		$builder->addDefinition('two1')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two2')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two3')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two4')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two5')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two6')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two7')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two8')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two9')
-			->setClass('Lorem')
+			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1, 2]);
 
 		$builder->addDefinition('three1')

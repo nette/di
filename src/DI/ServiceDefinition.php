@@ -29,7 +29,7 @@ class ServiceDefinition
 	public $parameters = [];
 
 	/** @var string|null  class or interface name */
-	private $class;
+	private $type;
 
 	/** @var Statement|null */
 	private $factory;
@@ -57,12 +57,14 @@ class ServiceDefinition
 
 
 	/**
+	 * @param  string|null
 	 * @return static
+	 * @deprecated
 	 */
 	public function setClass($class, array $args = [])
 	{
 		call_user_func($this->notifier);
-		$this->class = $class;
+		$this->type = $class;
 		if ($args) {
 			$this->setFactory($class, $args);
 		}
@@ -72,10 +74,32 @@ class ServiceDefinition
 
 	/**
 	 * @return string|null
+	 * @deprecated
 	 */
 	public function getClass()
 	{
-		return $this->class;
+		return $this->type;
+	}
+
+
+	/**
+	 * @param  string|null
+	 * @return static
+	 */
+	public function setType($type)
+	{
+		call_user_func($this->notifier);
+		$this->type = $type;
+		return $this;
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getType()
+	{
+		return $this->type;
 	}
 
 
@@ -114,7 +138,7 @@ class ServiceDefinition
 	public function setArguments(array $args = [])
 	{
 		if (!$this->factory) {
-			$this->factory = new Statement($this->class);
+			$this->factory = new Statement($this->type);
 		}
 		$this->factory->arguments = $args;
 		return $this;
