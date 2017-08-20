@@ -45,7 +45,7 @@ Assert::error(function () use (&$container) {
 	$container = createContainer(new DI\Compiler, "
 	services:
 		lorem:
-			class: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
+			factory: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
 			setup:
 				- method( @lorem, @self, @container )
 				- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
@@ -55,7 +55,7 @@ Assert::error(function () use (&$container) {
 				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
 
 		dolor:
-			class: Lorem(::MY_FAILING_CONSTANT_TEST)
+			factory: Lorem(::MY_FAILING_CONSTANT_TEST)
 	");
 }, E_WARNING, "%a?%Couldn't find constant MY_FAILING_CONSTANT_TEST");
 

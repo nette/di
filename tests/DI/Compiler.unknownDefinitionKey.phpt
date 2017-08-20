@@ -15,7 +15,7 @@ Assert::throws(function () {
 	createContainer(new DI\Compiler, '
 	services:
 		-
-			class: stdClass
+			factory: stdClass
 			autowire: false
 			setups: []
 			foo: bar

@@ -25,14 +25,14 @@ test(function () {
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setClass('Class', []);
+	$def->setClass('Class', []); // misused
 	Assert::same('Class', $def->getClass());
 	Assert::null($def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setClass('Class', [1, 2]);
+	$def->setClass('Class', [1, 2]); // misused
 	Assert::same('Class', $def->getClass());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });

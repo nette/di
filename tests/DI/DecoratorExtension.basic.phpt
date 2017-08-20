@@ -54,7 +54,7 @@ decorator:
 
 services:
 	one:
-		class: Service
+		factory: Service
 		tags: [a, tag: 2]
 		setup:
 			- setup(Service)

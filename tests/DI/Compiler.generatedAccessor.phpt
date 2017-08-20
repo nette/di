@@ -27,7 +27,7 @@ services:
 	lorem: Lorem
 
 	lorem2:
-		class: Lorem
+		factory: Lorem
 		autowired: no
 
 	one: ILoremAccessor
