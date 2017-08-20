@@ -33,7 +33,7 @@ class Test
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setClass('stdClass');
+	->setType('stdClass');
 
 
 $container = createContainer($builder);

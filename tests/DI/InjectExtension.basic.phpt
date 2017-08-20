@@ -80,7 +80,7 @@ class LastExtension extends DI\CompilerExtension
 	{
 		// note that services should be added in loadConfiguration()
 		$this->getContainerBuilder()->addDefinition($this->prefix('one'))
-			->setClass('Service')
+			->setType('Service')
 			->addSetup('$e', ['@\ConcreteDependencyA'])
 			->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT);
 	}

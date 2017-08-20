@@ -25,7 +25,7 @@ final class InjectExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if ($def->getTag(self::TAG_INJECT) && $def->getClass()) {
+			if ($def->getTag(self::TAG_INJECT) && $def->getType()) {
 				$this->updateDefinition($def);
 			}
 		}
@@ -34,7 +34,7 @@ final class InjectExtension extends DI\CompilerExtension
 
 	private function updateDefinition(DI\ServiceDefinition $def)
 	{
-		$class = $def->getClass();
+		$class = $def->getType();
 		$setups = $def->getSetup();
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
@@ -51,7 +51,7 @@ final class InjectExtension extends DI\CompilerExtension
 			array_unshift($setups, $inject);
 		}
 
-		foreach (array_reverse(self::getInjectMethods($def->getClass())) as $method) {
+		foreach (array_reverse(self::getInjectMethods($def->getType())) as $method) {
 			$inject = new DI\Statement($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {

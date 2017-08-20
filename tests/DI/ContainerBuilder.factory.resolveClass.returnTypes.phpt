@@ -41,7 +41,7 @@ namespace
 	$builder = new DI\ContainerBuilder;
 
 	$builder->addDefinition('one')
-		->setClass('A\Factory');
+		->setType('A\Factory');
 
 	$builder->addDefinition('two')
 		->setFactory('@one::createBar');

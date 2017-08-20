@@ -66,7 +66,7 @@ class PhpGenerator
 			->setValue([Container::TYPES => $this->builder->getClassList()]);
 
 		foreach ($definitions as $name => $def) {
-			$meta->value[Container::SERVICES][$name] = $def->getClass() ?: null;
+			$meta->value[Container::SERVICES][$name] = $def->getType() ?: null;
 			foreach ($def->getTags() as $tag => $value) {
 				$meta->value[Container::TAGS][$tag][$name] = $value;
 			}
@@ -80,7 +80,7 @@ class PhpGenerator
 					throw new ServiceCreationException('Name contains invalid characters.');
 				}
 				$containerClass->addMethod($methodName)
-					->setReturnType($def->getImplement() ?: $def->getClass())
+					->setReturnType($def->getImplement() ?: $def->getType())
 					->setBody($name === ContainerBuilder::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
 					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
 			} catch (\Exception $e) {
@@ -118,7 +118,7 @@ class PhpGenerator
 		$this->currentService = null;
 		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
 
-		if ($def->getSetup() && ($class = $def->getClass()) && !$serviceRef && $class !== $entity
+		if ($def->getSetup() && ($class = $def->getType()) && !$serviceRef && $class !== $entity
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $class))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $class) {\n"
@@ -154,7 +154,7 @@ class PhpGenerator
 		$factoryClass->addMethod($def->getImplementMode())
 			->setParameters($this->convertParameters($def->parameters))
 			->setBody(str_replace('$this', '$this->container', $code))
-			->setReturnType(Reflection::getReturnType($rm) ?: $def->getClass());
+			->setReturnType(Reflection::getReturnType($rm) ?: $def->getType());
 
 		return 'return new class ($this) ' . $factoryClass . ';';
 	}

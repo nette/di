@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setClass('X')->setFactory('Unknown');
+	$builder->addDefinition('one')->setType('X')->setFactory('Unknown');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Class Unknown used in service 'one' not found.");
 
@@ -45,7 +45,7 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Unknown')->setClass('stdClass');
+	$builder->addDefinition('one')->setImplement('Unknown')->setType('stdClass');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Interface Unknown used in service 'one' not found.");
 
@@ -149,7 +149,7 @@ class Bad8
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setClass('Bad8');
+	$builder->addDefinition('one')->setType('Bad8');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Class Bad8 has private constructor.");
 
@@ -183,6 +183,6 @@ abstract class Bad9
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setClass('Bad9');
+	$builder->addDefinition('one')->setType('Bad9');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Class Bad9 is abstract.");

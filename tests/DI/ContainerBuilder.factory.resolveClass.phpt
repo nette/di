@@ -90,7 +90,7 @@ namespace
 
 	$builder->addDefinition('one')
 		->setImplement('StdClassFactory')
-		->setClass('stdClass');
+		->setType('stdClass');
 
 	$builder->addDefinition('two')
 		->setImplement('StdClassFactory')
@@ -101,7 +101,7 @@ namespace
 		->setFactory('@one::create'); // alias
 
 	$builder->addDefinition('four')
-		->setClass('A\Factory');
+		->setType('A\Factory');
 
 	$builder->addDefinition('five')
 		->setFactory('@four::createFoo');
