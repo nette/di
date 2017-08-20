@@ -31,7 +31,7 @@ services:
 		factory: Ipsum
 
 	lorem:
-		class: Lorem
+		type: Lorem
 		parameters: [Ipsum foo, bar: %false%]
 		setup:
 			- test(%foo%, %bar%)

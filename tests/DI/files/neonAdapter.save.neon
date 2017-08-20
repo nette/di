@@ -1,5 +1,5 @@
 parameters:
-	class: Ipsum
+	type: Ipsum
 
 services:
 	referencedService: @one
@@ -16,14 +16,14 @@ services:
 	calledServiceWithArgsAsParam: Ipsum(@one(1))
 
 	one:
-		class: %class%
+		type: %class%
 		arguments: [1]
 
 	two:
 		factory: %class%(1)
 
 	three:
-		class: Lorem
+		type: Lorem
 		factory: Factory::createLorem
 		arguments: [1]
 
