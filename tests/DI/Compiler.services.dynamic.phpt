@@ -19,7 +19,7 @@ class Service
 $container = createContainer(new DI\Compiler, '
 services:
 	one:
-		class: Service
+		type: Service
 		dynamic: true
 ');
 

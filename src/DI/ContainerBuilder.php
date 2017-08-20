@@ -322,7 +322,7 @@ class ContainerBuilder
 
 			if ($def->isDynamic()) {
 				if (!$def->getClass()) {
-					throw new ServiceCreationException("Class is missing in definition of service '$name'.");
+					throw new ServiceCreationException("Type is missing in definition of service '$name'.");
 				}
 				$def->setFactory(null);
 				continue;
@@ -331,7 +331,7 @@ class ContainerBuilder
 			// complete class-factory pairs
 			if (!$def->getEntity()) {
 				if (!$def->getClass()) {
-					throw new ServiceCreationException("Class and factory are missing in definition of service '$name'.");
+					throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
 				}
 				$def->setFactory($def->getClass(), ($factory = $def->getFactory()) ? $factory->arguments : []);
 			}

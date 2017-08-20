@@ -363,12 +363,12 @@ class Compiler
 		}
 
 		if (array_key_exists('create', $config)) {
-			trigger_error("Key 'create' is deprecated, use 'factory' or 'class' in configuration.", E_USER_DEPRECATED);
+			trigger_error("Key 'create' is deprecated, use 'factory' or 'type' in configuration.", E_USER_DEPRECATED);
 			$config['factory'] = $config['create'];
 			unset($config['create']);
 		}
 
-		$known = ['class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
+		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
@@ -382,6 +382,14 @@ class Compiler
 		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
 			$definition->setClass(null);
 			$definition->setFactory(null);
+		}
+
+		if (array_key_exists('type', $config)) {
+			Validators::assertField($config, 'type', 'string|null');
+			$definition->setClass($config['type']);
+			if (array_key_exists('class', $config)) {
+				throw new Nette\InvalidStateException("Unexpected 'class' when 'type' is used.");
+			}
 		}
 
 		if (array_key_exists('class', $config)) {

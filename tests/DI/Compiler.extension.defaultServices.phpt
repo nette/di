@@ -90,7 +90,7 @@ services:
 	two: Bar
 	three: Factory::createLorem()
 	four:
-		class: Ipsum
+		type: Ipsum
 		implement: IIpsumFactory
 ');
 

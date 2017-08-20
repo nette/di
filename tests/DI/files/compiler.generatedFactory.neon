@@ -23,7 +23,7 @@ services:
 		parameters: [Baz baz = null]
 
 	fooFactory3:
-		class: Foo
+		type: Foo
 		implement: IFooFactory
 
 	fooFactory4: IFooFactory
