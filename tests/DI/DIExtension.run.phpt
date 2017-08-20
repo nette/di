@@ -19,7 +19,7 @@ $compiler->addExtension('di', new DIExtension);
 $loader = new DI\Config\Loader;
 $config = $loader->load(Tester\FileMock::create('
 services:
-	std: {class: stdClass, tags: [run]}
+	std: {factory: stdClass, tags: [run]}
 ', 'neon'));
 
 eval($compiler->addConfig($config)->setClassName('Container1')->compile());

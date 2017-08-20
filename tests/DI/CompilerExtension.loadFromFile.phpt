@@ -25,7 +25,7 @@ test(function () {
 	Assert::equal([
 		'services' => [
 			'one' => [
-				'class' => 'Ipsum',
+				'factory' => 'Ipsum',
 			],
 		],
 	], $res);

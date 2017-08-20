@@ -28,7 +28,7 @@ parameters:
 
 services:
 	ipsum:
-		class: Ipsum
+		factory: Ipsum
 
 	lorem:
 		class: Lorem
