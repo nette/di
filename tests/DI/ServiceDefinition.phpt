@@ -27,14 +27,18 @@ test(function () {
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setClass('Class', []); // misused
+	Assert::error(function () use ($def) {
+		$def->setClass('Class', []);
+	}, E_USER_DEPRECATED);
 	Assert::same('Class', $def->getClass());
 	Assert::null($def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setClass('Class', [1, 2]); // misused
+	Assert::error(function () use ($def) {
+		$def->setClass('Class', [1, 2]);
+	}, E_USER_DEPRECATED);
 	Assert::same('Class', $def->getClass());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
 });
