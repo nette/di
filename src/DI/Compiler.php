@@ -300,7 +300,7 @@ class Compiler
 				: $builder->addDefinition($name);
 
 			try {
-				static::loadDefinition($definition, $def);
+				static::loadDefinition($definition, $def, $name);
 			} catch (\Exception $e) {
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 			}
@@ -312,7 +312,7 @@ class Compiler
 	 * Parses single service definition from configuration.
 	 * @return void
 	 */
-	public static function loadDefinition(ServiceDefinition $definition, $config)
+	public static function loadDefinition(ServiceDefinition $definition, $config, string $name = null)
 	{
 		if ($config === null) {
 			return;
@@ -345,7 +345,9 @@ class Compiler
 
 		if (array_key_exists('class', $config)) {
 			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
-			if (!$config['class'] instanceof Statement) {
+			if ($config['class'] instanceof Statement) {
+				trigger_error("Service '$name': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
+			} else {
 				$definition->setClass($config['class']);
 			}
 			$definition->setFactory($config['class']);
