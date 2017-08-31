@@ -61,12 +61,12 @@ class ServiceDefinition
 	 * @return static
 	 * @deprecated
 	 */
-	public function setClass($class, array $args = [])
+	public function setClass($type, array $args = [])
 	{
 		call_user_func($this->notifier);
-		$this->type = $class;
+		$this->type = $type;
 		if ($args) {
-			$this->setFactory($class, $args);
+			$this->setFactory($type, $args);
 		}
 		return $this;
 	}

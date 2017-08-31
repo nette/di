@@ -171,12 +171,12 @@ class ContainerBuilder
 	 * @param  string[]
 	 * @return static
 	 */
-	public function addExcludedClasses(array $classes)
+	public function addExcludedClasses(array $types)
 	{
-		foreach ($classes as $class) {
-			if (class_exists($class) || interface_exists($class)) {
-				$class = Helpers::normalizeClass($class);
-				$this->excludedClasses += class_parents($class) + class_implements($class) + [$class => $class];
+		foreach ($types as $type) {
+			if (class_exists($type) || interface_exists($type)) {
+				$type = Helpers::normalizeClass($type);
+				$this->excludedClasses += class_parents($type) + class_implements($type) + [$type => $type];
 			}
 		}
 		return $this;
@@ -212,32 +212,32 @@ class ContainerBuilder
 	 * @return string|null  service name or null
 	 * @throws ServiceCreationException
 	 */
-	public function getByType($class, $throw = false)
+	public function getByType($type, $throw = false)
 	{
-		$class = Helpers::normalizeClass($class);
+		$type = Helpers::normalizeClass($type);
 
 		if ($this->currentService !== null
-			&& is_a($this->definitions[$this->currentService]->getType(), $class, true)
+			&& is_a($this->definitions[$this->currentService]->getType(), $type, true)
 		) {
 			return $this->currentService;
 		}
 
-		$classes = $this->getClassList();
-		if (empty($classes[$class][true])) {
+		$types = $this->getClassList();
+		if (empty($types[$type][true])) {
 			if ($throw) {
-				throw new MissingServiceException("Service of type '$class' not found.");
+				throw new MissingServiceException("Service of type '$type' not found.");
 			}
 			return;
 
-		} elseif (count($classes[$class][true]) === 1) {
-			return $classes[$class][true][0];
+		} elseif (count($types[$type][true]) === 1) {
+			return $types[$type][true][0];
 
 		} else {
-			$list = $classes[$class][true];
+			$list = $types[$type][true];
 			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
 				: '';
-			throw new ServiceCreationException("Multiple services of type $class found: " . implode(', ', $list) . $hint);
+			throw new ServiceCreationException("Multiple services of type $type found: " . implode(', ', $list) . $hint);
 		}
 	}
 
@@ -247,9 +247,9 @@ class ContainerBuilder
 	 * @param  string
 	 * @return ServiceDefinition
 	 */
-	public function getDefinitionByType($class)
+	public function getDefinitionByType($type)
 	{
-		return $this->getDefinition($this->getByType($class, true));
+		return $this->getDefinition($this->getByType($type, true));
 	}
 
 
@@ -258,13 +258,13 @@ class ContainerBuilder
 	 * @param  string
 	 * @return ServiceDefinition[]
 	 */
-	public function findByType($class)
+	public function findByType($type)
 	{
-		$class = Helpers::normalizeClass($class);
+		$type = Helpers::normalizeClass($type);
 		$found = [];
-		$classes = $this->getClassList();
-		if (!empty($classes[$class])) {
-			foreach (array_merge(...array_values($classes[$class])) as $name) {
+		$types = $this->getClassList();
+		if (!empty($types[$type])) {
+			foreach (array_merge(...array_values($types[$type])) as $name) {
 				$found[$name] = $this->definitions[$name];
 			}
 		}
@@ -303,7 +303,7 @@ class ContainerBuilder
 
 
 	/**
-	 * Generates $dependencies, $classes and normalizes class names.
+	 * Generates $dependencies, $classList and normalizes class names.
 	 * @return void
 	 * @internal
 	 */
@@ -347,30 +347,30 @@ class ContainerBuilder
 
 		// resolve and check classes
 		foreach ($this->definitions as $name => $def) {
-			$this->resolveServiceClass($name);
+			$this->resolveServiceType($name);
 		}
 
 		//  build auto-wiring list
 		$this->classList = $preferred = [];
 		foreach ($this->definitions as $name => $def) {
-			if ($class = $def->getImplement() ?: $def->getType()) {
+			if ($type = $def->getImplement() ?: $def->getType()) {
 				$defAutowired = $def->getAutowired();
 				if (is_array($defAutowired)) {
-					foreach ($defAutowired as $k => $aclass) {
-						if ($aclass === self::THIS_SERVICE) {
-							$defAutowired[$k] = $class;
-						} elseif (!is_a($class, $aclass, true)) {
-							throw new ServiceCreationException("Incompatible class $aclass in autowiring definition of service '$name'.");
+					foreach ($defAutowired as $k => $autowiredType) {
+						if ($autowiredType === self::THIS_SERVICE) {
+							$defAutowired[$k] = $type;
+						} elseif (!is_a($type, $autowiredType, true)) {
+							throw new ServiceCreationException("Incompatible class $autowiredType in autowiring definition of service '$name'.");
 						}
 					}
 				}
 
-				foreach (class_parents($class) + class_implements($class) + [$class] as $parent) {
+				foreach (class_parents($type) + class_implements($type) + [$type] as $parent) {
 					$autowired = $defAutowired && empty($this->excludedClasses[$parent]);
 					if ($autowired && is_array($defAutowired)) {
 						$autowired = false;
-						foreach ($defAutowired as $aclass) {
-							if (is_a($parent, $aclass, true)) {
+						foreach ($defAutowired as $autowiredType) {
+							if (is_a($parent, $autowiredType, true)) {
 								if (empty($preferred[$parent]) && isset($this->classList[$parent][true])) {
 									$this->classList[$parent][false] = array_merge(...$this->classList[$parent]);
 									$this->classList[$parent][true] = [];
@@ -436,7 +436,7 @@ class ContainerBuilder
 			if (!$def->getEntity()) {
 				$def->setFactory($def->getType(), $def->getFactory() ? $def->getFactory()->arguments : []);
 			}
-			if (($class = $this->resolveEntityClass($def->getFactory(), [$name => 1]))
+			if (($class = $this->resolveEntityType($def->getFactory(), [$name => 1]))
 				&& ($ctor = (new ReflectionClass($class))->getConstructor())
 			) {
 				foreach ($ctor->getParameters() as $param) {
@@ -469,7 +469,7 @@ class ContainerBuilder
 
 
 	/** @return string|null */
-	private function resolveServiceClass($name, $recursive = [])
+	private function resolveServiceType($name, $recursive = [])
 	{
 		if (isset($recursive[$name])) {
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
@@ -477,37 +477,37 @@ class ContainerBuilder
 		$recursive[$name] = true;
 
 		$def = $this->definitions[$name];
-		$factoryClass = $def->getFactory() ? $this->resolveEntityClass($def->getFactory()->getEntity(), $recursive) : null; // call always to check entities
-		if ($class = $def->getType() ?: $factoryClass) {
-			if (!class_exists($class) && !interface_exists($class)) {
-				throw new ServiceCreationException("Class or interface '$class' used in service '$name' not found.");
+		$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity(), $recursive) : null; // call always to check entities
+		if ($type = $def->getType() ?: $factoryClass) {
+			if (!class_exists($type) && !interface_exists($type)) {
+				throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
 			}
-			$class = Helpers::normalizeClass($class);
-			$def->setType($class);
+			$type = Helpers::normalizeClass($type);
+			$def->setType($type);
 			if (count($recursive) === 1) {
-				$this->addDependency(new ReflectionClass($factoryClass ?: $class));
+				$this->addDependency(new ReflectionClass($factoryClass ?: $type));
 			}
 
 		} elseif ($def->getAutowired()) {
 			throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
 		}
-		return $class;
+		return $type;
 	}
 
 
 	/** @return string|null */
-	private function resolveEntityClass($entity, $recursive = [])
+	private function resolveEntityType($entity, $recursive = [])
 	{
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
 		$serviceName = current(array_slice(array_keys($recursive), -1));
 
 		if (is_array($entity)) {
 			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
-				$entity[0] = $this->resolveEntityClass($entity[0], $recursive);
+				$entity[0] = $this->resolveEntityType($entity[0], $recursive);
 				if (!$entity[0]) {
 					return;
 				} elseif (isset($this->definitions[$service]) && $this->definitions[$service]->getImplement()) { // @Implement::create
-					return $entity[1] === 'create' ? $this->resolveServiceClass($service, $recursive) : null;
+					return $entity[1] === 'create' ? $this->resolveServiceType($service, $recursive) : null;
 				}
 			}
 
@@ -536,7 +536,7 @@ class ContainerBuilder
 			}
 			return $this->definitions[$service]->getImplement()
 				?: $this->definitions[$service]->getType()
-				?: $this->resolveServiceClass($service, $recursive);
+				?: $this->resolveServiceType($service, $recursive);
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
@@ -655,11 +655,11 @@ class ContainerBuilder
 				if (!$arguments && substr($entity[1], -2) === '[]') {
 					throw new ServiceCreationException("Missing argument for $entity[1].");
 				}
-			} elseif ($class = empty($service) || $entity[1] === 'create'
-				? $this->resolveEntityClass($entity[0])
+			} elseif ($type = empty($service) || $entity[1] === 'create'
+				? $this->resolveEntityType($entity[0])
 				: $this->definitions[$service]->getType()
 			) {
-				$arguments = $this->autowireArguments($class, $entity[1], $arguments);
+				$arguments = $this->autowireArguments($type, $entity[1], $arguments);
 			}
 		}
 
