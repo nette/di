@@ -108,15 +108,15 @@ final class Helpers
 				unset($arguments[$num]);
 				$optCount = 0;
 
-			} elseif (($class = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($class)) {
-				$res[$num] = $container->getByType($class, false);
+			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
+				$res[$num] = $container->getByType($type, false);
 				if ($res[$num] === null) {
 					if ($parameter->allowsNull()) {
 						$optCount++;
-					} elseif (class_exists($class) || interface_exists($class)) {
-						throw new ServiceCreationException("Service of type $class needed by $methodName not found. Did you register it in configuration file?");
+					} elseif (class_exists($type) || interface_exists($type)) {
+						throw new ServiceCreationException("Service of type $type needed by $methodName not found. Did you register it in configuration file?");
 					} else {
-						throw new ServiceCreationException("Class $class needed by $methodName not found. Check type hint and 'use' statements.");
+						throw new ServiceCreationException("Class $type needed by $methodName not found. Check type hint and 'use' statements.");
 					}
 				} else {
 					if ($container instanceof ContainerBuilder) {
@@ -125,7 +125,7 @@ final class Helpers
 					$optCount = 0;
 				}
 
-			} elseif (($class && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
 				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
 				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
@@ -233,10 +233,10 @@ final class Helpers
 	}
 
 
-	public static function normalizeClass(string $class): string
+	public static function normalizeClass(string $type): string
 	{
-		return class_exists($class) || interface_exists($class)
-			? (new \ReflectionClass($class))->getName()
-			: $class;
+		return class_exists($type) || interface_exists($type)
+			? (new \ReflectionClass($type))->getName()
+			: $type;
 	}
 }
