@@ -68,6 +68,7 @@ class Ipsum
 class Foo
 {
 	public $bar;
+
 	public $baz;
 
 
@@ -120,6 +121,7 @@ interface DolorFactory
 class TestClass
 {
 	public $foo;
+
 	public $bar;
 
 

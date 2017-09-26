@@ -21,7 +21,7 @@ class Container
 
 class Test
 {
-	public function method(Test $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
+	public function method(self $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
 	{
 	}
 }
