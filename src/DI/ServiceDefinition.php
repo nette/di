@@ -54,8 +54,8 @@ final class ServiceDefinition
 	/** @var string|null  create | get */
 	private $implementMode;
 
-	/** @var callable */
-	private $notifier = 'pi'; // = noop
+	/** @var callable  'pi' is noop */
+	private $notifier = 'pi';
 
 
 	/**
