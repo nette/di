@@ -24,12 +24,12 @@ class Container
 
 class Test
 {
-	public function method(Test $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
+	public function method(self $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
 	{
 	}
 
 
-	public function methodNullable(?Test $class, ?self $self, ?Undefined $nullable1, ?int $nullable2)
+	public function methodNullable(?self $class, ?self $self, ?Undefined $nullable1, ?int $nullable2)
 	{
 	}
 }
