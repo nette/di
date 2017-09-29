@@ -61,7 +61,7 @@ final class ServiceDefinition
 	/**
 	 * @param  string|null
 	 * @return static
-	 * @deprecated
+	 * @deprecated Use setType() instead.
 	 */
 	public function setClass($type)
 	{
@@ -79,7 +79,7 @@ final class ServiceDefinition
 
 	/**
 	 * @return string|null
-	 * @deprecated
+	 * @deprecated Use getType() instead.
 	 */
 	public function getClass()
 	{
