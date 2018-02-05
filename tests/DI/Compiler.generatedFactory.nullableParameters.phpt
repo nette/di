@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\Compiler: generated services factories from interfaces with nullable parameters.
- * @phpVersion 7.1
  */
 
 declare(strict_types=1);
