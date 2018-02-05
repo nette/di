@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\Helpers::getReturnType
- * @phpversion 7.1
  */
 
 declare(strict_types=1);

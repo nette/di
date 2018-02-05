@@ -2,7 +2,6 @@
 
 /**
  * Test: Nette\DI\Config\Helpers::autowireArguments()
- * @phpversion 7.1
  */
 
 declare(strict_types=1);
