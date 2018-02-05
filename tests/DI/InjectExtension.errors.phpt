@@ -16,7 +16,6 @@ require __DIR__ . '/../bootstrap.php';
 
 class ServiceA
 {
-
 	/** @var DateTimeImmutable @inject */
 	public $a;
 }
@@ -24,7 +23,6 @@ class ServiceA
 
 class ServiceB
 {
-
 	/** @var Unknown @inject */
 	public $a;
 }
@@ -32,7 +30,6 @@ class ServiceB
 
 class ServiceC
 {
-
 	/** @inject */
 	public $a;
 }
