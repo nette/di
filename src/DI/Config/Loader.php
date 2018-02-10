@@ -29,6 +29,8 @@ class Loader
 
 	private $dependencies = [];
 
+	private $loadedFiles = [];
+
 
 	/**
 	 * Reads configuration from file.
@@ -41,6 +43,12 @@ class Loader
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
 		}
+
+		if (isset($this->loadedFiles[$file])) {
+			throw new Nette\InvalidStateException("Recursive included file '$file'");
+		}
+		$this->loadedFiles[$file] = true;
+
 		$this->dependencies[] = $file;
 		$data = $this->getAdapter($file)->load($file);
 
@@ -62,7 +70,8 @@ class Loader
 				$merged = Helpers::merge($this->load($include), $merged);
 			}
 		}
-		unset($data[self::INCLUDES_KEY]);
+		unset($data[self::INCLUDES_KEY], $this->loadedFiles[$file]);
+
 
 		return Helpers::merge($data, $merged);
 	}
