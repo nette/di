@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
-	const DOLOR_SIT = 10;
+	public const DOLOR_SIT = 10;
 
 	public $args;
 
