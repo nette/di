@@ -53,6 +53,21 @@ class Container
 
 
 	/**
+	 * @param string $name
+	 * @return mixed|bool|string
+	 * @throws MissingParameterException
+	 */
+	public function getParameter(string $name)
+	{
+		if (isset($this->parameters[$name])) {
+			return $this->parameters[$name];
+		} else {
+			throw new MissingParameterException("Parameter '$name' not found.");
+		}
+	}
+
+
+	/**
 	 * Adds the service to the container.
 	 * @param  object $service
 	 * @return static

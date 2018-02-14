@@ -26,3 +26,11 @@ class MissingServiceException extends Nette\InvalidStateException
 class ServiceCreationException extends Nette\InvalidStateException
 {
 }
+
+
+/**
+ * Parameter not found exception.
+ */
+class MissingParameterException extends Nette\InvalidStateException
+{
+}
