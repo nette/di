@@ -53,6 +53,16 @@ class Container
 
 
 	/**
+	 * @param string $name
+	 * @return bool|string
+	 */
+	public function getParameter(string $name)
+	{
+		return $this->parameters[$name];
+	}
+
+
+	/**
 	 * Adds the service to the container.
 	 * @param  object $service
 	 * @return static
