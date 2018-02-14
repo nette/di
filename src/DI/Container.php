@@ -54,7 +54,7 @@ class Container
 
 	/**
 	 * @param string $name
-	 * @return bool|string
+	 * @return mixed|bool|string
 	 * @throws MissingParameterException
 	 */
 	public function getParameter(string $name)
