@@ -543,7 +543,7 @@ class ContainerBuilder
 				$def->setSetup($setups);
 
 			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+				throw new ServiceCreationException("Service '$name' (type of $entity): " . $e->getMessage(), 0, $e);
 
 			} finally {
 				$this->currentService = null;
