@@ -18,7 +18,7 @@ $builder->addDefinition('one')
 
 Assert::exception(function () use ($builder) {
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Expected function, method or property name, '1234' given.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of stdClass): Expected function, method or property name, '1234' given.");
 
 
 
@@ -41,4 +41,4 @@ $builder->addDefinition('one')
 
 Assert::exception(function () use ($builder) {
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Missing argument for \$prop[].");
+}, Nette\InvalidStateException::class, "Service 'one' (type of stdClass): Missing argument for \$prop[].");
