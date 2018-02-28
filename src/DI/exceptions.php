@@ -26,3 +26,10 @@ class MissingServiceException extends Nette\InvalidStateException
 class ServiceCreationException extends Nette\InvalidStateException
 {
 }
+
+/**
+ * Max nesting includes of same file reached exception.
+ */
+class RecursiveIncludesException extends Nette\ArgumentOutOfRangeException
+{
+}
