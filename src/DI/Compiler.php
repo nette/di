@@ -213,7 +213,7 @@ class Compiler
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
 		} elseif ($extra = key(array_diff_key($this->config, self::$reserved, $this->extensions))) {
-			$hint = Nette\Utils\ObjectMixin::getSuggestion(array_keys(self::$reserved + $this->extensions), $extra);
+			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::$reserved + $this->extensions), $extra);
 			throw new Nette\InvalidStateException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')
@@ -328,7 +328,7 @@ class Compiler
 		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
-				return Nette\Utils\ObjectMixin::getSuggestion($known, $error);
+				return Nette\Utils\ObjectHelpers::getSuggestion($known, $error);
 			}, $error));
 			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
 			throw new Nette\InvalidStateException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
