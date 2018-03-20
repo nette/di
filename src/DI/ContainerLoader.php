@@ -34,8 +34,8 @@ class ContainerLoader
 
 
 	/**
-	 * @param  callable  function (Nette\DI\Compiler $compiler): string|null
-	 * @param  mixed
+	 * @param  callable  $generator  function (Nette\DI\Compiler $compiler): string|null
+	 * @param  mixed  $key
 	 */
 	public function load(callable $generator, $key = null): string
 	{

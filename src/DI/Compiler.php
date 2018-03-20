@@ -54,10 +54,9 @@ class Compiler
 
 	/**
 	 * Add custom configurator extension.
-	 * @param  string|null
 	 * @return static
 	 */
-	public function addExtension($name, CompilerExtension $extension)
+	public function addExtension(?string $name, CompilerExtension $extension)
 	{
 		if ($name === null) {
 			$name = '_' . count($this->extensions);
@@ -142,7 +141,7 @@ class Compiler
 
 	/**
 	 * Adds dependencies to the list.
-	 * @param  array of ReflectionClass|\ReflectionFunctionAbstract|string
+	 * @param  array  $deps  of ReflectionClass|\ReflectionFunctionAbstract|string
 	 * @return static
 	 */
 	public function addDependencies(array $deps)

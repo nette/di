@@ -142,7 +142,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @param  Statement[]
+	 * @param  Statement[]  $setup
 	 * @return static
 	 */
 	public function setSetup(array $setup)
@@ -228,7 +228,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @param  bool|string|string[]
+	 * @param  bool|string|string[]  $state
 	 * @return static
 	 */
 	public function setAutowired($state = true)

@@ -29,7 +29,7 @@ final class Statement
 
 
 	/**
-	 * @param  string|array|ServiceDefinition|null
+	 * @param  string|array|ServiceDefinition|null  $entity
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
@@ -43,6 +43,7 @@ final class Statement
 	}
 
 
+	/** @return string|array|ServiceDefinition|null */
 	public function getEntity()
 	{
 		return $this->entity;

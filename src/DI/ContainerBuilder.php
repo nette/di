@@ -157,7 +157,7 @@ class ContainerBuilder
 
 
 	/**
-	 * @param  string[]
+	 * @param  string[]  $types
 	 * @return static
 	 */
 	public function addExcludedClasses(array $types)
@@ -177,9 +177,7 @@ class ContainerBuilder
 
 	/**
 	 * Resolves service name by type.
-	 * @param  string  class or interface
-	 * @param  bool    throw exception if service doesn't exist?
-	 * @return string|null  service name or null
+	 * @param  bool  $throw exception if service doesn't exist?
 	 * @throws ServiceCreationException
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
@@ -648,7 +646,7 @@ class ContainerBuilder
 
 	/**
 	 * Adds item to the list of dependencies.
-	 * @param  ReflectionClass|\ReflectionFunctionAbstract|string
+	 * @param  ReflectionClass|\ReflectionFunctionAbstract|string  $dep
 	 * @return static
 	 * @internal
 	 */

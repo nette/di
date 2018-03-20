@@ -24,8 +24,8 @@ final class Helpers
 
 	/**
 	 * Expands %placeholders%.
-	 * @param  mixed
-	 * @param  bool|array $recursive
+	 * @param  mixed  $var
+	 * @param  bool|array  $recursive
 	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -173,7 +173,7 @@ final class Helpers
 
 	/**
 	 * Replaces @extension with real extension name in service definition.
-	 * @param  mixed
+	 * @param  mixed  $config
 	 * @return mixed
 	 */
 	public static function prefixServiceName($config, string $namespace)

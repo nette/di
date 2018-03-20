@@ -54,7 +54,7 @@ class Container
 
 	/**
 	 * Adds the service to the container.
-	 * @param  object $service
+	 * @param  object  $service
 	 * @return static
 	 */
 	public function addService(string $name, $service)
@@ -125,7 +125,6 @@ class Container
 
 	/**
 	 * Does the service exist?
-	 * @param  string service name
 	 */
 	public function hasService(string $name): bool
 	{
@@ -138,7 +137,6 @@ class Container
 
 	/**
 	 * Is the service created?
-	 * @param  string service name
 	 */
 	public function isCreated(string $name): bool
 	{
@@ -152,7 +150,6 @@ class Container
 
 	/**
 	 * Creates new instance of the service.
-	 * @param  string service name
 	 * @return object
 	 * @throws MissingServiceException
 	 */
@@ -185,8 +182,7 @@ class Container
 
 	/**
 	 * Resolves service by type.
-	 * @param  string  class or interface
-	 * @param  bool    throw exception if service doesn't exist?
+	 * @param  bool  $throw  exception if service doesn't exist?
 	 * @return object  service or null
 	 * @throws MissingServiceException
 	 */
@@ -233,7 +229,6 @@ class Container
 
 	/**
 	 * Creates new instance using autowiring.
-	 * @param  array $args   arguments
 	 * @return object
 	 * @throws Nette\InvalidArgumentException
 	 */
@@ -255,7 +250,7 @@ class Container
 
 	/**
 	 * Calls all methods starting with with "inject" using autowiring.
-	 * @param  object
+	 * @param  object  $service
 	 */
 	public function callInjects($service): void
 	{

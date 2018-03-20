@@ -28,7 +28,6 @@ final class IniAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Reads configuration from INI file.
-	 * @param  string  file name
 	 * @throws Nette\InvalidStateException
 	 */
 	public function load(string $file): array

@@ -33,7 +33,6 @@ class Loader
 
 	/**
 	 * Reads configuration from file.
-	 * @param  string  file name
 	 */
 	public function load(string $file): array
 	{
@@ -81,8 +80,7 @@ class Loader
 
 	/**
 	 * Registers adapter for given file extension.
-	 * @param  string  file extension
-	 * @param  string|IAdapter
+	 * @param  string|IAdapter  $adapter
 	 * @return static
 	 */
 	public function addAdapter(string $extension, $adapter)
@@ -92,8 +90,7 @@ class Loader
 	}
 
 
-	/** @return IAdapter */
-	private function getAdapter(string $file)
+	private function getAdapter(string $file): IAdapter
 	{
 		$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 		if (!isset($this->adapters[$extension])) {

@@ -18,7 +18,6 @@ interface IAdapter
 
 	/**
 	 * Reads configuration from file.
-	 * @param  string  file name
 	 */
 	function load(string $file): array;
 

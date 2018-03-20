@@ -27,7 +27,6 @@ final class NeonAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Reads configuration from NEON file.
-	 * @param  string  file name
 	 */
 	public function load(string $file): array
 	{

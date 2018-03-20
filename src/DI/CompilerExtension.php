@@ -86,7 +86,6 @@ abstract class CompilerExtension
 
 	/**
 	 * Reads configuration from file.
-	 * @param  string  file name
 	 */
 	public function loadFromFile(string $file): array
 	{

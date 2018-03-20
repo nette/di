@@ -21,7 +21,6 @@ final class PhpAdapter implements Nette\DI\Config\IAdapter
 
 	/**
 	 * Reads configuration from PHP file.
-	 * @param  string  file name
 	 */
 	public function load(string $file): array
 	{
