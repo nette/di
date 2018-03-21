@@ -120,7 +120,7 @@ class ContainerBuilder
 	}
 
 
-	public function addAlias(string $alias, string $service)
+	public function addAlias(string $alias, string $service): void
 	{
 		if (!$alias) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Alias name must be a non-empty string, %s given.', gettype($alias)));
@@ -352,7 +352,7 @@ class ContainerBuilder
 	}
 
 
-	private function resolveImplement(ServiceDefinition $def, $name)
+	private function resolveImplement(ServiceDefinition $def, $name): void
 	{
 		$interface = $def->getImplement();
 		if (!interface_exists($interface)) {
@@ -431,8 +431,7 @@ class ContainerBuilder
 	}
 
 
-	/** @return string|null */
-	private function resolveServiceType($name, array $recursive = [])
+	private function resolveServiceType($name, array $recursive = []): ?string
 	{
 		if (isset($recursive[$name])) {
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
@@ -458,8 +457,7 @@ class ContainerBuilder
 	}
 
 
-	/** @return string|null */
-	private function resolveEntityType($entity, array $recursive = [])
+	private function resolveEntityType($entity, array $recursive = []): ?string
 	{
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
 		$serviceName = current(array_slice(array_keys($recursive), -1));
@@ -468,7 +466,7 @@ class ContainerBuilder
 			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
 				$entity[0] = $this->resolveEntityType($entity[0], $recursive);
 				if (!$entity[0]) {
-					return;
+					return null;
 				} elseif (isset($this->definitions[$service]) && $this->definitions[$service]->getImplement()) { // @Implement::create
 					return $entity[1] === 'create' ? $this->resolveServiceType($service, $recursive) : null;
 				}
@@ -507,6 +505,7 @@ class ContainerBuilder
 			}
 			return $entity;
 		}
+		return null;
 	}
 
 
@@ -620,7 +619,7 @@ class ContainerBuilder
 			}
 		}
 
-		array_walk_recursive($arguments, function (&$val) {
+		array_walk_recursive($arguments, function (&$val): void {
 			if ($val instanceof Statement) {
 				$val = $this->completeStatement($val);
 
@@ -724,7 +723,7 @@ class ContainerBuilder
 	 * Creates a list of arguments using autowiring.
 	 * @internal
 	 */
-	public function autowireArguments($class, $method, array $arguments): array
+	public function autowireArguments(string $class, string $method, array $arguments): array
 	{
 		$rc = new ReflectionClass($class);
 		if (!$rc->hasMethod($method)) {

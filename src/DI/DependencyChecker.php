@@ -91,14 +91,14 @@ class DependencyChecker
 	}
 
 
-	private static function calculateHash(array $classes, array $functions)
+	private static function calculateHash(array $classes, array $functions): ?string
 	{
 		$hash = [];
 		foreach ($classes as $name) {
 			try {
 				$class = new ReflectionClass($name);
 			} catch (\ReflectionException $e) {
-				return;
+				return null;
 			}
 			$hash[] = [
 				$name,
@@ -134,7 +134,7 @@ class DependencyChecker
 			try {
 				$method = strpos($name, '::') ? new ReflectionMethod($name) : new \ReflectionFunction($name);
 			} catch (\ReflectionException $e) {
-				return;
+				return null;
 			}
 			$class = $method instanceof ReflectionMethod ? $method->getDeclaringClass() : null;
 			if ($class && isset($flip[$class->getName()])) {

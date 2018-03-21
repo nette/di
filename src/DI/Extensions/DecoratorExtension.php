@@ -38,7 +38,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function addSetups($type, array $setups)
+	public function addSetups(string $type, array $setups): void
 	{
 		foreach ($this->findByType($type) as $def) {
 			foreach ($setups as $setup) {
@@ -51,7 +51,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function addTags($type, array $tags)
+	public function addTags(string $type, array $tags): void
 	{
 		$tags = Nette\Utils\Arrays::normalize($tags, true);
 		foreach ($this->findByType($type) as $def) {
@@ -60,7 +60,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function findByType($type)
+	private function findByType(string $type): array
 	{
 		return array_filter($this->getContainerBuilder()->getDefinitions(), function ($def) use ($type) {
 			return is_a($def->getType(), $type, true) || is_a($def->getImplement(), $type, true);

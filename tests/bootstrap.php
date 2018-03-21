@@ -21,7 +21,7 @@ define('TEMP_DIR', __DIR__ . '/tmp/' . lcg_value());
 @mkdir(TEMP_DIR);
 
 
-function test(\Closure $function)
+function test(\Closure $function): void
 {
 	$function();
 }
@@ -32,13 +32,13 @@ class Notes
 	public static $notes = [];
 
 
-	public static function add($message)
+	public static function add($message): void
 	{
 		self::$notes[] = $message;
 	}
 
 
-	public static function fetch()
+	public static function fetch(): array
 	{
 		$res = self::$notes;
 		self::$notes = [];
@@ -47,8 +47,7 @@ class Notes
 }
 
 
-/** @return Nette\DI\Container */
-function createContainer($source, $config = null, $params = [])
+function createContainer($source, $config = null, $params = []): ?Nette\DI\Container
 {
 	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {
@@ -63,7 +62,7 @@ function createContainer($source, $config = null, $params = [])
 			->setClassName($class)
 			->compile();
 	} else {
-		return;
+		return null;
 	}
 
 	file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");

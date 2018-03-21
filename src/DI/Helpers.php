@@ -199,7 +199,7 @@ final class Helpers
 	/**
 	 * Returns an annotation value.
 	 */
-	public static function parseAnnotation(\Reflector $ref, $name): ?string
+	public static function parseAnnotation(\Reflector $ref, string $name): ?string
 	{
 		if (!Reflection::areCommentsAvailable()) {
 			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');

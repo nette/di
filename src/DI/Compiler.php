@@ -172,7 +172,7 @@ class Compiler
 
 
 	/** @internal */
-	public function processParameters()
+	public function processParameters(): void
 	{
 		$params = isset($this->config['parameters']) ? $this->config['parameters'] : [];
 		foreach ($this->dynamicParams as $key) {
@@ -185,7 +185,7 @@ class Compiler
 
 
 	/** @internal */
-	public function processExtensions()
+	public function processExtensions(): void
 	{
 		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
 			+ array_intersect_key($this->config, self::$reserved);
@@ -222,7 +222,7 @@ class Compiler
 
 
 	/** @internal */
-	public function processServices()
+	public function processServices(): void
 	{
 		foreach ($this->serviceConfigs as $config) {
 			self::loadDefinitions($this->builder, $config);

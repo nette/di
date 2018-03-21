@@ -32,7 +32,7 @@ final class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	private function updateDefinition(DI\ServiceDefinition $def)
+	private function updateDefinition(DI\ServiceDefinition $def): void
 	{
 		$class = $def->getType();
 		$setups = $def->getSetup();
@@ -70,7 +70,7 @@ final class InjectExtension extends DI\CompilerExtension
 	 * Generates list of inject methods.
 	 * @internal
 	 */
-	public static function getInjectMethods($class): array
+	public static function getInjectMethods(string $class): array
 	{
 		$res = [];
 		foreach (get_class_methods($class) as $name) {
@@ -91,7 +91,7 @@ final class InjectExtension extends DI\CompilerExtension
 	 * Generates list of properties with annotation @inject.
 	 * @internal
 	 */
-	public static function getInjectProperties($class): array
+	public static function getInjectProperties(string $class): array
 	{
 		$res = [];
 		foreach (get_class_vars($class) as $name => $foo) {
@@ -117,7 +117,7 @@ final class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
 		}
 
-		foreach (self::getInjectMethods($service) as $method) {
+		foreach (self::getInjectMethods(get_class($service)) as $method) {
 			$container->callMethod([$service, $method]);
 		}
 
@@ -129,7 +129,7 @@ final class InjectExtension extends DI\CompilerExtension
 
 
 	/** @internal */
-	private static function checkType($class, $name, $type, $container = null)
+	private static function checkType($class, string $name, ?string $type, $container = null): void
 	{
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		if (!$type) {
