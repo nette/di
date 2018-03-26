@@ -19,7 +19,6 @@ final class DIExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
 		'debugger' => true,
-		'accessors' => false,
 		'excluded' => [],
 		'parentClass' => null,
 	];
