@@ -311,3 +311,17 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setImplement('Bad6')->setFactory('Bad5');
 	$builder->complete();
 }, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad6::create().');
+
+
+
+interface Bad7
+{
+	public function get();
+}
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('stdClass')->setFactory('stdClass');
+	$builder->addDefinition('one')->setImplement('Bad7')->setClass('stdClass')->addSetup('method');
+	$builder->complete();
+}, Nette\InvalidStateException::class, "Service accessor 'one' must have no setup.");
