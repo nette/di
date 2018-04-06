@@ -8,11 +8,6 @@ use Tracy\Helpers;
 
 ?>
 <style class="tracy-debug">
-
-	#tracy-debug .nette-ContainerPanel .tracy-inner {
-		width: 700px;
-	}
-
 	#tracy-debug .nette-ContainerPanel table {
 		width: 100%;
 		white-space: nowrap;
@@ -26,13 +21,12 @@ use Tracy\Helpers;
 		color: green;
 		font-weight: bold;
 	}
-
 </style>
 
-<div class="nette-ContainerPanel">
 <h1><?= get_class($container) ?></h1>
 
-<div class="tracy-inner">
+<div class="tracy-inner nette-ContainerPanel">
+<div class="tracy-inner-container">
 	<h2>Services</h2>
 
 	<table>
