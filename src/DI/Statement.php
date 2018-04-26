@@ -31,8 +31,11 @@ class Statement
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
-		if (!is_string($entity) && !(is_array($entity) && isset($entity[0], $entity[1]))
-			&& !$entity instanceof ServiceDefinition && $entity !== null
+		if (
+			!is_string($entity)
+			&& !(is_array($entity) && isset($entity[0], $entity[1]))
+			&& !$entity instanceof ServiceDefinition
+			&& $entity !== null
 		) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}

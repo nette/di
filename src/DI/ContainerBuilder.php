@@ -216,7 +216,8 @@ class ContainerBuilder
 	{
 		$type = Helpers::normalizeClass($type);
 
-		if ($this->currentService !== null
+		if (
+			$this->currentService !== null
 			&& is_a($this->definitions[$this->currentService]->getType(), $type, true)
 		) {
 			return $this->currentService;
@@ -337,7 +338,8 @@ class ContainerBuilder
 			}
 
 			// auto-disable autowiring for aliases
-			if ($def->getAutowired() === true
+			if (
+				$def->getAutowired() === true
 				&& ($alias = $this->getServiceName($def->getFactory()->getEntity()))
 				&& (!$def->getImplement() || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->getImplement()))
 			) {
@@ -438,7 +440,8 @@ class ContainerBuilder
 			if (!$def->getEntity()) {
 				$def->setFactory($def->getType(), $def->getFactory() ? $def->getFactory()->arguments : []);
 			}
-			if (($class = $this->resolveEntityType($def->getFactory(), [$name => 1]))
+			if (
+				($class = $this->resolveEntityType($def->getFactory(), [$name => 1]))
 				&& ($ctor = (new ReflectionClass($class))->getConstructor())
 			) {
 				foreach ($ctor->getParameters() as $param) {
@@ -657,9 +660,10 @@ class ContainerBuilder
 				if (!$arguments && substr($entity[1], -2) === '[]') {
 					throw new ServiceCreationException("Missing argument for $entity[1].");
 				}
-			} elseif ($type = empty($service) || $entity[1] === 'create'
-				? $this->resolveEntityType($entity[0])
-				: $this->definitions[$service]->getType()
+			} elseif (
+				$type = empty($service) || $entity[1] === 'create'
+					? $this->resolveEntityType($entity[0])
+					: $this->definitions[$service]->getType()
 			) {
 				$arguments = $this->autowireArguments($type, $entity[1], $arguments);
 			}
