@@ -740,7 +740,10 @@ class ContainerBuilder
 	}
 
 
-	/** @internal */
+	/**
+	 * @return string|array  Class, @service, [Class, member], [@service, member], [, globalFunc], [Statement, member]
+	 * @internal
+	 */
 	public function normalizeEntity($entity)
 	{
 		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) { // Class::method -> [Class, method]
@@ -757,7 +760,7 @@ class ContainerBuilder
 			trigger_error("Replace object ContainerBuilder in Statement entity with '@container'.", E_USER_DEPRECATED);
 			$entity[0] = '@' . self::THIS_CONTAINER;
 		}
-		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc], Statement
+		return $entity;
 	}
 
 
