@@ -24,7 +24,7 @@ final class Statement
 	/** @var array */
 	public $arguments;
 
-	/** @var string|array|ServiceDefinition|null  class|method|$property */
+	/** @var string|array|ServiceDefinition|null */
 	private $entity;
 
 
@@ -34,8 +34,8 @@ final class Statement
 	public function __construct($entity, array $arguments = [])
 	{
 		if (
-			!is_string($entity)
-			&& !(is_array($entity) && isset($entity[0], $entity[1]))
+			!is_string($entity) // Class, @service, not, PHP literal, entity::member
+			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | ServiceDefinition, method | $property | $appender]
 			&& !$entity instanceof ServiceDefinition
 			&& $entity !== null
 		) {

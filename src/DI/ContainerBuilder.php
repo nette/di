@@ -677,7 +677,10 @@ class ContainerBuilder
 	}
 
 
-	/** @internal */
+	/**
+	 * @return string|array  Class, @service, [Class, member], [@service, member], [, globalFunc], [Statement, member]
+	 * @internal
+	 */
 	public function normalizeEntity($entity)
 	{
 		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) { // Class::method -> [Class, method]
@@ -690,7 +693,7 @@ class ContainerBuilder
 		} elseif ($entity instanceof ServiceDefinition) { // ServiceDefinition -> @serviceName
 			$entity = '@' . current(array_keys($this->definitions, $entity, true));
 		}
-		return $entity; // Class, @service, [Class, member], [@service, member], [, globalFunc], Statement
+		return $entity;
 	}
 
 

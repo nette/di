@@ -89,6 +89,7 @@ final class Helpers
 
 	/**
 	 * Generates list of arguments using autowiring.
+	 * @throws ServiceCreationException
 	 */
 	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, $container): array
 	{
