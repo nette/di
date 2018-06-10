@@ -673,29 +673,40 @@ class ContainerBuilder
 			}
 		}
 
-		array_walk_recursive($arguments, function (&$val) {
-			if ($val instanceof Statement) {
-				$val = $this->completeStatement($val);
+		try {
+			array_walk_recursive($arguments, function (&$val) {
+				if ($val instanceof Statement) {
+					$val = $this->completeStatement($val);
 
-			} elseif ($val === $this) {
-				trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
-				$val = self::literal('$this');
+				} elseif ($val === $this) {
+					trigger_error("Replace object ContainerBuilder in Statement arguments with '@container'.", E_USER_DEPRECATED);
+					$val = self::literal('$this');
 
-			} elseif ($val instanceof ServiceDefinition) {
-				$val = '@' . current(array_keys($this->getDefinitions(), $val, true));
+				} elseif ($val instanceof ServiceDefinition) {
+					$val = '@' . current(array_keys($this->getDefinitions(), $val, true));
 
-			} elseif (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
-				$pair = explode('::', $val, 2);
-				$name = $this->getServiceName($pair[0]);
-				if (!isset($pair[1])) { // @service
-					$val = '@' . $name;
-				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
-					$val = self::literal($this->getDefinition($name)->getType() . '::' . $pair[1]);
-				} else { // @service::property
-					$val = new Statement(['@' . $name, '$' . $pair[1]]);
+				} elseif (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
+					$pair = explode('::', $val, 2);
+					$name = $this->getServiceName($pair[0]);
+					if (!isset($pair[1])) { // @service
+						$val = '@' . $name;
+					} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
+						$val = self::literal($this->getDefinition($name)->getType() . '::' . $pair[1]);
+					} else { // @service::property
+						$val = new Statement(['@' . $name, '$' . $pair[1]]);
+					}
 				}
+			});
+
+		} catch (ServiceCreationException $e) {
+			if ((is_string($entity) || is_array($entity)) && !strpos($e->getMessage(), ' (used in')) {
+				$desc = is_string($entity)
+					? $entity . '::__construct'
+					: (is_string($entity[0]) ? ($entity[0] . '::') : 'method ') . $entity[1];
+				$e->setMessage($e->getMessage() . " (used in $desc)");
 			}
-		});
+			throw $e;
+		}
 
 		return new Statement($entity, $arguments);
 	}
