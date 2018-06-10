@@ -587,7 +587,10 @@ class ContainerBuilder
 				$def->setSetup($setups);
 
 			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name' (type of {$def->getType()}): " . $e->getMessage(), 0, $e);
+				$message = "Service '$name' (type of {$def->getType()}): " . $e->getMessage();
+				throw $e instanceof ServiceCreationException
+					? $e->setMessage($message)
+					: new ServiceCreationException($message, 0, $e);
 
 			} finally {
 				$this->currentService = null;

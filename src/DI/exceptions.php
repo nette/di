@@ -23,4 +23,9 @@ class MissingServiceException extends Nette\InvalidStateException
  */
 class ServiceCreationException extends Nette\InvalidStateException
 {
+	public function setMessage($message)
+	{
+		$this->message = $message;
+		return $this;
+	}
 }
