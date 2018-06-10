@@ -159,12 +159,14 @@ class Good
 	}
 }
 
+// fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad')]);
+	$builder->addDefinition('one')->setFactory('Good', [new Statement('Unknown')]);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Bad not found.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Unknown not found.");
 
+// fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad8')]);
@@ -179,8 +181,197 @@ abstract class Bad9
 	}
 }
 
+// abstract class cannot be instantiated
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType('Bad9');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad9): Class Bad9 is abstract.");
+
+
+trait Bad10
+{
+	public function method()
+	{
+	}
+}
+
+// trait cannot be instantiated
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory('Bad10::method');
+	$builder->complete();
+}, Nette\InvalidStateException::class, "Method Bad10::method() used in service 'one' is not callable.");
+
+
+class ConstructorParam
+{
+	public function __construct(stdClass $x)
+	{
+	}
+}
+
+class MethodParam
+{
+	/** @return self */
+	public function foo(stdClass $x)
+	{
+	}
+}
+
+// autowiring fail
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: ConstructorParam
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: ConstructorParam(@\stdClass)
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in chain
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: MethodParam()::foo()
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail in chain
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: MethodParam()::foo(@\stdClass)
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in argument
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: Good(ConstructorParam())
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail in argument
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: Good(ConstructorParam(@\stdClass))
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in chain in argument
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: Good(MethodParam()::foo())
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail in chain in argument
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad: Good(MethodParam()::foo(@\stdClass))
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail in property passing
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad:
+		factory: Good
+		setup:
+			- $a = @\stdClass
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in rich property passing
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad:
+		factory: Good
+		setup:
+			- $a = MethodParam()::foo(@\stdClass)
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in method calling
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad:
+		factory: MethodParam
+		setup:
+			- foo
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b");
+
+
+// forced autowiring fail in method calling
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad:
+		factory: Good
+		setup:
+			- bar(@\stdClass)
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
+
+
+// autowiring fail in rich method calling
+Assert::exception(function () {
+	createContainer(new DI\Compiler, '
+services:
+	a: stdClass
+	b: stdClass
+	bad:
+		factory: Good
+		setup:
+			- bar(MethodParam()::foo(@\stdClass))
+');
+}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b");
