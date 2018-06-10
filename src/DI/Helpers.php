@@ -99,9 +99,10 @@ class Helpers
 		$methodName = Reflection::toString($method) . '()';
 
 		foreach ($method->getParameters() as $num => $parameter) {
-			if (!$parameter->isVariadic() && array_key_exists($parameter->getName(), $arguments)) {
-				$res[$num] = $arguments[$parameter->getName()];
-				unset($arguments[$parameter->getName()], $arguments[$num]);
+			$paramName = $parameter->getName();
+			if (!$parameter->isVariadic() && array_key_exists($paramName, $arguments)) {
+				$res[$num] = $arguments[$paramName];
+				unset($arguments[$paramName], $arguments[$num]);
 				$optCount = 0;
 
 			} elseif (array_key_exists($num, $arguments)) {
@@ -110,14 +111,18 @@ class Helpers
 				$optCount = 0;
 
 			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
-				$res[$num] = $container->getByType($type, false);
+				try {
+					$res[$num] = $container->getByType($type, false);
+				} catch (ServiceCreationException $e) {
+					throw new ServiceCreationException("{$e->getMessage()} (needed by $$paramName in $methodName)", 0, $e);
+				}
 				if ($res[$num] === null) {
 					if ($parameter->allowsNull()) {
 						$optCount++;
 					} elseif (class_exists($type) || interface_exists($type)) {
-						throw new ServiceCreationException("Service of type $type needed by $methodName not found. Did you register it in configuration file?");
+						throw new ServiceCreationException("Service of type $type needed by $$paramName in $methodName not found. Did you register it in configuration file?");
 					} else {
-						throw new ServiceCreationException("Class $type needed by $methodName not found. Check type hint and 'use' statements.");
+						throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
 					}
 				} else {
 					if ($container instanceof ContainerBuilder) {
@@ -133,7 +138,7 @@ class Helpers
 				$optCount++;
 
 			} else {
-				throw new ServiceCreationException("Parameter \${$parameter->getName()} in $methodName has no class type hint or default value, so its value must be specified.");
+				throw new ServiceCreationException("Parameter $$paramName in $methodName has no class type hint or default value, so its value must be specified.");
 			}
 		}
 
