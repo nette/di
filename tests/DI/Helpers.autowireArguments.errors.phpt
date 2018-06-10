@@ -24,12 +24,12 @@ $container = new Container;
 
 Assert::exception(function () use ($container) {
 	Helpers::autowireArguments(new ReflectionFunction(function (stdClass $x) {}), [], $container);
-}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass needed by {closure}() not found. Did you register it in configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass needed by $x in {closure}() not found. Did you register it in configuration file?');
 
 
 Assert::exception(function () use ($container) {
 	Helpers::autowireArguments(new ReflectionFunction(function (Foo $x) {}), [], $container);
-}, Nette\DI\ServiceCreationException::class, "Class Foo needed by {closure}() not found. Check type hint and 'use' statements.");
+}, Nette\DI\ServiceCreationException::class, "Class Foo needed by \$x in {closure}() not found. Check type hint and 'use' statements.");
 
 
 Assert::exception(function () use ($container) {
