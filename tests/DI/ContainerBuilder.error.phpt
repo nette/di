@@ -32,7 +32,7 @@ $builder->addDefinition('25_service')
 
 Assert::exception(function () use ($builder) {
 	$builder->getByType(stdClass::class);
-}, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: extension.one, 25_service. If you want to overwrite service extension.one, give it proper name.');
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: 25_service, extension.one. If you want to overwrite service extension.one, give it proper name.');
 
 
 
