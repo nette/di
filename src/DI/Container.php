@@ -206,6 +206,7 @@ class Container
 			if (count($names = $this->meta[self::TYPES][$type][true]) === 1) {
 				return $this->getService($names[0]);
 			}
+			natsort($names);
 			throw new MissingServiceException("Multiple services of type $type found: " . implode(', ', $names) . '.');
 
 		} elseif ($throw) {

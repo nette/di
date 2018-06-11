@@ -235,6 +235,7 @@ class ContainerBuilder
 
 		} else {
 			$list = $types[$type][true];
+			natsort($list);
 			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
 				: '';

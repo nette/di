@@ -30,4 +30,4 @@ Assert::exception(function () use ($builder) {
 
 Assert::exception(function () use ($builder) {
 	$builder->getDefinitionByType(SplFileInfo::class);
-}, Nette\DI\ServiceCreationException::class, 'Multiple services of type SplFileInfo found: two, three');
+}, Nette\DI\ServiceCreationException::class, 'Multiple services of type SplFileInfo found: three, two');
