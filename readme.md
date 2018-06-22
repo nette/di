@@ -17,6 +17,8 @@ Nette DI is one of the most interesting part of framework. It is compiled DI con
 
 Documentation can be found on the [website](https://doc.nette.org/dependency-injection).
 
+If you like Nette, **[please make a donation now](https://nette.org/donate)**. Thank you!
+
 
 Installation
 ------------
