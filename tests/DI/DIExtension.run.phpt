@@ -20,6 +20,7 @@ $loader = new DI\Config\Loader;
 $config = $loader->load(Tester\FileMock::create('
 services:
 	std: {factory: stdClass, tags: [run]}
+	- {factory: stdClass, tags: [run]}
 ', 'neon'));
 
 eval($compiler->addConfig($config)->setClassName('Container1')->compile());

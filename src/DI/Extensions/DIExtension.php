@@ -62,7 +62,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach (array_filter($builder->findByTag('run')) as $name => $on) {
-			$initialize->addBody('$this->getService(?);', [$name]);
+			$initialize->addBody('$this->getService(?);', [(string) $name]);
 		}
 	}
 }
