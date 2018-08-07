@@ -62,6 +62,24 @@ test(function () {
 	$def->setArguments([1, 2]);
 	Assert::null($def->getType());
 	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+
+	// Demonstrate that setArguments call will always replace arguments.
+	$def->setArguments([1 => 200]);
+	Assert::equal(new Statement('stdClass', [1 => 200]), $def->getFactory());
+});
+
+test(function () {
+	// Test with factory being previously set.
+	$def1 = new ServiceDefinition;
+	$def1->setFactory('stdClass', ['foo', 'bar']);
+	$def1->setArgument(1, 'new');
+	Assert::equal(new Statement('stdClass', ['foo', 'new']), $def1->getFactory());
+
+	// Test with factory being set implicitly.
+	$def2 = new ServiceDefinition;
+	$def2->setArgument(1, 'new');
+	$def2->setArgument(2, 'bar');
+	Assert::equal(new Statement(null, [1 => 'new', 2 => 'bar']), $def2->getFactory());
 });
 
 test(function () {

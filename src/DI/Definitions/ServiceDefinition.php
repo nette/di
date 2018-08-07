@@ -96,6 +96,19 @@ final class ServiceDefinition extends Definition
 
 
 	/**
+	 * @return static
+	 */
+	public function setArgument($key, $value)
+	{
+		if (!$this->factory) {
+			$this->factory = new Statement($this->getType());
+		}
+		$this->factory->arguments[$key] = $value;
+		return $this;
+	}
+
+
+	/**
 	 * @param  Statement[]  $setup
 	 * @return static
 	 */
