@@ -142,6 +142,21 @@ final class ServiceDefinition
 
 
 	/**
+	 * @param  mixed  $key
+	 * @param  mixed  $value
+	 * @return static
+	 */
+	public function setArgument($key, $value)
+	{
+		if (!$this->factory) {
+			$this->factory = new Statement($this->type);
+		}
+		$this->factory->arguments[$key] = $value;
+		return $this;
+	}
+
+
+	/**
 	 * @param  Statement[]  $setup
 	 * @return static
 	 */
