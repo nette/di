@@ -52,6 +52,10 @@ test(function () {
 	$def->setArguments([1, 2]);
 	Assert::null($def->getType());
 	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+
+	// Demonstrate that setArguments call will always replace arguments.
+	$def->setArguments([1 => 200]);
+	Assert::equal(new Statement('Class', [1 => 200]), $def->getFactory());
 });
 
 test(function () {
