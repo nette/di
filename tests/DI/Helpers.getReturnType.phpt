@@ -17,6 +17,36 @@ namespace NS
 		}
 
 
+		public function classType(): B
+		{
+		}
+
+
+		public function nativeType(): string
+		{
+		}
+
+
+		public function selfType(): self
+		{
+		}
+
+
+		public function nullableClassType(): ?B
+		{
+		}
+
+
+		public function nullableNativeType(): ?string
+		{
+		}
+
+
+		public function nullableSelfType(): ?self
+		{
+		}
+
+
 		/** @return B */
 		public function annotationClassType()
 		{
@@ -63,6 +93,18 @@ namespace
 
 
 	Assert::null(Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'noType')));
+
+	Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'classType')));
+
+	Assert::same('string', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nativeType')));
+
+	Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'selfType')));
+
+	Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableClassType')));
+
+	Assert::same('string', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableNativeType')));
+
+	Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableSelfType')));
 
 	Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationClassType')));
 
