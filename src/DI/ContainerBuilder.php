@@ -422,7 +422,7 @@ class ContainerBuilder
 						if (!isset($hints[Reflection::getParameterType($arg)])) {
 							throw new ServiceCreationException("Type hint for \${$param->getName()} in $methodName doesn't match type hint in $class constructor.");
 						}
-					} else if ($hint !== Reflection::getParameterType($arg)) {
+					} elseif ($hint !== Reflection::getParameterType($arg)) {
 						throw new ServiceCreationException("Type hint for \${$param->getName()} in $methodName doesn't match type hint in $class constructor.");
 					}
 					$def->getFactory()->arguments[$arg->getPosition()] = self::literal('$' . $arg->getName());

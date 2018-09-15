@@ -60,10 +60,12 @@ class Picture
 {
 	public $shape;
 
+
 	public function __construct(IShape $shape)
 	{
 		$this->shape = $shape;
 	}
+
 
 	public function getName(): string
 	{
