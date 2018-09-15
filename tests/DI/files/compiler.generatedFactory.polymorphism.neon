@@ -1,0 +1,10 @@
+services:
+
+	circle:
+		implement: ICircleFactory
+
+	triangle:
+		implement: ITriangleFactory
+
+	ellipse:
+		implement: IEllipseFactory
