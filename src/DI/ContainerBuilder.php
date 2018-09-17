@@ -487,7 +487,7 @@ class ContainerBuilder
 			if (isset($e) || ($refClass && (!$reflection->isPublic()
 				|| ($refClass->isTrait() && !$reflection->isStatic())
 			))) {
-				throw new ServiceCreationException(sprintf("Method %s() used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $serviceName));
+				throw new ServiceCreationException(sprintf("Method %s() used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $serviceName), 0, $e ?? null);
 			}
 			$this->addDependency($reflection);
 
