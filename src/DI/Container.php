@@ -196,7 +196,7 @@ class Container
 	 * Resolves service by type.
 	 * @param  string  class or interface
 	 * @param  bool    throw exception if service doesn't exist?
-	 * @return object  service or null
+	 * @return object|null  service
 	 * @throws MissingServiceException
 	 */
 	public function getByType($type, $throw = true)
@@ -212,6 +212,7 @@ class Container
 		} elseif ($throw) {
 			throw new MissingServiceException("Service of type $type not found.");
 		}
+		return null;
 	}
 
 
