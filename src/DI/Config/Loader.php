@@ -24,7 +24,6 @@ class Loader
 
 	private $adapters = [
 		'php' => Adapters\PhpAdapter::class,
-		'ini' => Adapters\IniAdapter::class,
 		'neon' => Adapters\NeonAdapter::class,
 	];
 
