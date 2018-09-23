@@ -34,7 +34,11 @@ final class Helpers
 		if (is_array($var)) {
 			$res = [];
 			foreach ($var as $key => $val) {
-				$res[$key] = self::expand($val, $params, $recursive);
+				if (is_int($key) && is_string($val) && preg_match('#^\.\.\.(%[\w.-]*%)\z#i', $val, $matches)) {
+					$res = array_merge($res, self::expand($matches[1], $params, $recursive));
+				} else {
+					$res[$key] = self::expand($val, $params, $recursive);
+				}
 			}
 			return $res;
 
