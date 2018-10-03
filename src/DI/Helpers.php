@@ -34,7 +34,7 @@ final class Helpers
 		if (is_array($var)) {
 			$res = [];
 			foreach ($var as $key => $val) {
-				$res[$key] = self::expand($val, $params, $recursive);
+				$res[self::expand($key, $params, $recursive)] = self::expand($val, $params, $recursive);
 			}
 			return $res;
 

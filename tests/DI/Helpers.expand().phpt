@@ -23,6 +23,7 @@ Assert::same('a123b123c', Helpers::expand('a%key%b%key%c', ['key' => 123]));
 Assert::same(123, Helpers::expand('%key1.key2%', ['key1' => ['key2' => 123]]));
 Assert::same(123, Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => 123], true));
 Assert::same([123], Helpers::expand(['%key1%'], ['key1' => '%key2%', 'key2' => 123], true));
+Assert::same(['hello' => 123], Helpers::expand(['%key1%' => '%key2%'], ['key1' => 'hello', 'key2' => 123], true));
 Assert::same(
 	['key1' => 123, 'key2' => 'abc'],
 	Helpers::expand('%keyA%', [
