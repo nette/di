@@ -397,7 +397,21 @@ class Resolver
 	{
 		array_walk_recursive($arguments, function (&$val): void {
 			if ($val instanceof Statement) {
-				$val = $this->completeStatement($val, $this->currentServiceAllowed);
+				$entity = $val->getEntity();
+				if ($entity === 'typed' || $entity === 'tagged') {
+					$services = [];
+					$current = $this->currentService ? $this->currentService->getName() : null;
+					foreach ($val->arguments as $argument) {
+						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findByType($argument) as $name => $foo) {
+							if ($name !== $current) {
+								$services[] = new Reference($name);
+							}
+						}
+					}
+					$val = $this->completeArguments($services);
+				} else {
+					$val = $this->completeStatement($val, $this->currentServiceAllowed);
+				}
 
 			} elseif ($val instanceof Definition || $val instanceof Reference) {
 				$val = $this->normalizeEntity(new Statement($val));
