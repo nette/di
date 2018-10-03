@@ -1,0 +1,4 @@
+parameters:
+	bar: %foo%
+	foo: %foobar%
+	foobar: %bar%

@@ -1,5 +1,5 @@
 includes:
-	- loader.includes.child.ini
+	- loader.includes.child.neon
 	- loader.includes.child.php
 
 parameters:
