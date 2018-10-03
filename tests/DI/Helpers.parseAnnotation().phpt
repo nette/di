@@ -36,3 +36,29 @@ class TestClass2
 $rc = new ReflectionClass('TestClass2');
 
 Assert::same('', Helpers::parseAnnotation($rc, 'return'));
+
+
+/** @return
+var
+ */
+class TestClass3
+{
+}
+
+$rc = new ReflectionClass('TestClass3');
+
+Assert::same('', Helpers::parseAnnotation($rc, 'return'));
+
+
+/**
+ * @inject@var
+ */
+class TestClass4
+{
+}
+
+$rc = new ReflectionClass('TestClass4');
+
+Assert::same(null, Helpers::parseAnnotation($rc, 'inject'));
+Assert::same(null, Helpers::parseAnnotation($rc, 'injec'));
+Assert::same(null, Helpers::parseAnnotation($rc, 'var'));

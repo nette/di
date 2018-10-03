@@ -215,8 +215,8 @@ final class Helpers
 		if (!Reflection::areCommentsAvailable()) {
 			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
 		}
-		$name = preg_quote($name, '#');
-		if ($ref->getDocComment() && preg_match("#[\\s*]@$name(?:\\s++([^@]\\S*)?|$)#", trim($ref->getDocComment(), '/*'), $m)) {
+		$re = '#[\s*]@' . preg_quote($name, '#') . '(?=\s|$)(?:[ \t]+([^@\s]\S*))?#';
+		if ($ref->getDocComment() && preg_match($re, trim($ref->getDocComment(), '/*'), $m)) {
 			return $m[1] ?? '';
 		}
 		return null;
