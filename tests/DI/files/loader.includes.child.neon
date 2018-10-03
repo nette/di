@@ -1,4 +1,4 @@
-common:
-	parameters:
-		me: [loader.includes.child.neon]
-		scalar: 2
+parameters:
+	me: [loader.includes.child.neon]
+	scalar: 3
+	list:
