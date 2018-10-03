@@ -19,9 +19,7 @@ final class Helpers
 {
 	use Nette\StaticClass;
 
-	public const
-		EXTENDS_KEY = '_extends',
-		OVERWRITE = true;
+	public const PREVENT_MERGING = '_prevent_merging';
 
 
 	/**
@@ -35,10 +33,8 @@ final class Helpers
 				if (is_int($key)) {
 					$right[] = $val;
 				} else {
-					if (is_array($val) && isset($val[self::EXTENDS_KEY])) {
-						if ($val[self::EXTENDS_KEY] === self::OVERWRITE) {
-							unset($val[self::EXTENDS_KEY]);
-						}
+					if (is_array($val) && isset($val[self::PREVENT_MERGING])) {
+						unset($val[self::PREVENT_MERGING]);
 					} elseif (isset($right[$key])) {
 						$val = static::merge($val, $right[$key]);
 					}
@@ -57,21 +53,15 @@ final class Helpers
 
 
 	/**
-	 * Finds out and removes information about the parent.
+	 * Return true if array prevents merging and removes this information.
 	 * @return mixed
 	 */
-	public static function takeParent(&$data)
+	public static function takeParent(&$data): bool
 	{
-		if (is_array($data) && isset($data[self::EXTENDS_KEY])) {
-			$parent = $data[self::EXTENDS_KEY];
-			unset($data[self::EXTENDS_KEY]);
-			return $parent;
+		if (is_array($data) && isset($data[self::PREVENT_MERGING])) {
+			unset($data[self::PREVENT_MERGING]);
+			return true;
 		}
-	}
-
-
-	public static function isOverwriting(&$data): bool
-	{
-		return is_array($data) && ($data[self::EXTENDS_KEY] ?? null) === self::OVERWRITE;
+		return false;
 	}
 }
