@@ -180,6 +180,16 @@ class PhpGenerator
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', [$arguments[0]]);
 
+		} elseif ($entity === 'tags' || $entity === 'types') { // find by tag/type
+			$method = $entity === 'tags' ? 'findByTag' : 'findByType';
+			$services = [];
+			foreach ($arguments as $argument) {
+				foreach ($this->builder->$method($argument) as $key => $foo) {
+					$services[] = '@' . $key;
+				}
+			}
+			return $this->formatPhp('?', [$services]);
+
 		} elseif (is_string($entity)) { // class name
 			return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
 

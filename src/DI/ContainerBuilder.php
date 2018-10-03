@@ -575,7 +575,7 @@ class ContainerBuilder
 			$arguments = Helpers::autowireArguments($rm, $arguments, $this);
 			$entity = '@' . $service;
 
-		} elseif ($entity === 'not') { // operator
+		} elseif ($entity === 'not' || $entity === 'tags' || $entity === 'types') { // special
 
 		} elseif (is_string($entity)) { // class name
 			if (!class_exists($entity)) {
