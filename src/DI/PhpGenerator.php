@@ -13,7 +13,6 @@ use Nette;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
-use Nette\Utils\Strings;
 
 
 /**
@@ -171,10 +170,7 @@ class PhpGenerator
 		$entity = $statement->getEntity();
 		$arguments = $statement->arguments;
 
-		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
-			return $this->formatPhp($entity, $arguments);
-
-		} elseif ($service = $this->builder->getServiceName($entity)) { // factory calling
+		if ($service = $this->builder->getServiceName($entity)) { // factory calling
 			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($service), $arguments]);
 
 		} elseif ($entity === 'not') { // operator
