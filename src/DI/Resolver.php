@@ -391,7 +391,16 @@ class Resolver
 	{
 		array_walk_recursive($arguments, function (&$val): void {
 			if ($val instanceof Statement) {
-				$val = $this->completeStatement($val, $this->currentServiceAllowed);
+				$entity = $val->getEntity();
+				if ($entity === 'types' || $entity === 'tags') {
+					$services = [];
+					foreach ($val->arguments as $argument) {
+						$services = array_merge($services, $entity === 'tags' ? $this->findByTag($argument) : $this->findByType($argument));
+					}
+					$val = $this->completeArguments($services);
+				} else {
+					$val = $this->completeStatement($val, $this->currentServiceAllowed);
+				}
 
 			} elseif ($val instanceof Definition || $val instanceof Reference) {
 				$val = $this->normalizeEntity(new Statement($val));
@@ -486,6 +495,30 @@ class Resolver
 			return new Reference(Reference::SELF);
 		}
 		return new Reference($this->builder->getByType($type, true));
+	}
+
+
+	public function findByType(string $type): array
+	{
+		$list = [];
+		foreach ($this->builder->findByType($type) as $def) {
+			if ($def !== $this->currentService) {
+				$list[] = new Reference($def->getName());
+			}
+		}
+		return $list;
+	}
+
+
+	private function findByTag(string $tag): array
+	{
+		$list = [];
+		foreach ($this->builder->findByTag($tag) as $name => $foo) {
+			if ($name !== $this->currentService->getName()) {
+				$list[] = new Reference($name);
+			}
+		}
+		return $list;
 	}
 
 
