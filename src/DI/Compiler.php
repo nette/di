@@ -232,7 +232,7 @@ class Compiler
 	/** @internal */
 	public function generateCode(): string
 	{
-		$this->builder->prepareClassList();
+		$this->builder->resolve();
 
 		foreach ($this->extensions as $extension) {
 			$extension->beforeCompile();
