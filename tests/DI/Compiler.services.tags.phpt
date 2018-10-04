@@ -30,8 +30,8 @@ $prop->setAccessible(true);
 
 Assert::same([
 	'types' => [
-		'stdClass' => [1 => ['lorem']],
 		Nette\DI\Container::class => [1 => ['container']],
+		'stdClass' => [1 => ['lorem']],
 	],
 	'services' => ['container' => Nette\DI\Container::class, 'lorem' => 'stdClass'],
 	'tags' => [
