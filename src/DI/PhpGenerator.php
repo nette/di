@@ -59,7 +59,7 @@ class PhpGenerator
 
 		$meta = $containerClass->addProperty('meta')
 			->setVisibility('protected')
-			->setValue([Container::TYPES => $this->builder->getClassList()]);
+			->setValue($this->builder->exportMeta());
 
 		foreach ($definitions as $name => $def) {
 			$meta->value[Container::SERVICES][$name] = $def->getImplement() ?: $def->getType() ?: null;
@@ -106,7 +106,7 @@ class PhpGenerator
 		}
 
 		$entity = $def->getFactory()->getEntity();
-		$serviceRef = $this->builder->getServiceName($entity);
+		$serviceRef = $this->getServiceName($entity);
 		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
 			? new Statement(['@' . ContainerBuilder::THIS_CONTAINER, 'getService'], [$serviceRef])
 			: $def->getFactory();
@@ -170,7 +170,7 @@ class PhpGenerator
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments);
 
-		} elseif ($service = $this->builder->getServiceName($entity)) { // factory calling
+		} elseif ($service = $this->getServiceName($entity)) { // factory calling
 			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($service), $arguments]);
 
 		} elseif ($entity === 'not') { // operator
@@ -194,7 +194,7 @@ class PhpGenerator
 			if ($append = (substr($name, -2) === '[]')) {
 				$name = substr($name, 0, -2);
 			}
-			if ($this->builder->getServiceName($entity[0])) {
+			if ($this->getServiceName($entity[0])) {
 				$prop = $this->formatPhp('?->?', [$entity[0], $name]);
 			} else {
 				$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
@@ -203,12 +203,35 @@ class PhpGenerator
 				? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
 				: $prop;
 
-		} elseif ($service = $this->builder->getServiceName($entity[0])) { // service method
+		} elseif ($service = $this->getServiceName($entity[0])) { // service method
 			return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
 
 		} else { // static method
 			return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
 		}
+	}
+
+
+	/**
+	 * Converts @service or @\Class -> service name and checks its existence.
+	 */
+	private function getServiceName($arg): ?string
+	{
+		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
+			return null;
+		}
+		$service = substr($arg, 1);
+		if (Strings::contains($service, '\\')) {
+			$res = $this->builder->getByType($service);
+			if (!$res) {
+				throw new ServiceCreationException("Reference to missing service of type $service.");
+			}
+			return $res;
+		}
+		if (!$this->builder->hasDefinition($service)) {
+			throw new ServiceCreationException("Reference to missing service '$service'.");
+		}
+		return $service;
 	}
 
 
