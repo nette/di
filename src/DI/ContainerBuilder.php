@@ -49,6 +49,7 @@ class ContainerBuilder
 	public function __construct()
 	{
 		$this->autowiring = new Autowiring($this);
+		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
 	}
 
 
@@ -236,9 +237,6 @@ class ContainerBuilder
 			return;
 		}
 		$this->resolving = true;
-
-		unset($this->definitions[self::THIS_CONTAINER]);
-		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
 
 		$resolver = new Resolver($this);
 		foreach ($this->definitions as $def) {
