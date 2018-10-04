@@ -342,9 +342,9 @@ final class ServiceDefinition
 	/**
 	 * @internal
 	 */
-	public function setNotifier(callable $notifier)
+	public function setNotifier(?callable $notifier)
 	{
-		$this->notifier = $notifier;
+		$this->notifier = $notifier ?? 'pi';
 	}
 
 

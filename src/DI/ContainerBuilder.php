@@ -265,7 +265,6 @@ class ContainerBuilder
 	{
 		if ($this->classList !== false && $this->classListNeedsRefresh) {
 			$this->resolve();
-			$this->classListNeedsRefresh = false;
 		}
 		return $this->classList ?: [];
 	}
@@ -317,6 +316,8 @@ class ContainerBuilder
 		foreach ($this->definitions as $name => $def) {
 			$this->resolveServiceType($name);
 		}
+
+		$this->classListNeedsRefresh = false;
 
 		//  build auto-wiring list
 		$this->classList = $preferred = [];
@@ -520,6 +521,9 @@ class ContainerBuilder
 	public function complete(): void
 	{
 		$this->resolve();
+		foreach ($this->definitions as $def) {
+			$def->setNotifier(null);
+		}
 
 		foreach ($this->definitions as $name => $def) {
 			if ($def->isDynamic()) {
@@ -535,7 +539,6 @@ class ContainerBuilder
 
 			try {
 				$def->setFactory($this->completeStatement($factory));
-				$this->classListNeedsRefresh = false;
 
 				$this->currentService = $name;
 				$setups = $def->getSetup();
