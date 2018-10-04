@@ -175,9 +175,6 @@ class ContainerBuilder
 	}
 
 
-	/********************* class resolving ****************d*g**/
-
-
 	/**
 	 * Resolves service name by type.
 	 * @param  bool  $throw exception if service doesn't exist?
@@ -270,6 +267,9 @@ class ContainerBuilder
 	}
 
 
+	/********************* building ****************d*g**/
+
+
 	/**
 	 * Checks services, resolves types and rebuilts autowiring classlist.
 	 */
@@ -280,47 +280,59 @@ class ContainerBuilder
 
 		$this->classList = false;
 
-		foreach ($this->definitions as $name => $def) {
-			// prepare generated factories
-			if ($def->getImplement()) {
-				$this->resolveImplement($def);
-			}
-
-			if ($def->isDynamic()) {
-				if (!$def->getType()) {
-					throw new ServiceCreationException("Type is missing in definition of service '$name'.");
-				}
-				$def->setFactory(null);
-				continue;
-			}
-
-			// complete class-factory pairs
-			if (!$def->getEntity()) {
-				if (!$def->getType()) {
-					throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
-				}
-				$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
-			}
-
-			// auto-disable autowiring for aliases
-			if (
-				$def->getAutowired() === true
-				&& ($alias = $this->getServiceName($def->getFactory()->getEntity()))
-				&& (!$def->getImplement() || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->getImplement()))
-			) {
-				$def->setAutowired(false);
-			}
-		}
-
-		// resolve and check classes
-		foreach ($this->definitions as $name => $def) {
-			$this->resolveServiceType($name);
+		foreach ($this->definitions as $def) {
+			$this->resolveDefinition($def);
 		}
 
 		$this->classListNeedsRefresh = false;
 
 		//  build auto-wiring list
+		$this->rebuild();
+	}
+
+
+	private function resolveDefinition(ServiceDefinition $def): void
+	{
+		$name = $def->getName();
+
+		// prepare generated factories
+		if ($def->getImplement()) {
+			$this->resolveImplement($def);
+		}
+
+		if ($def->isDynamic()) {
+			if (!$def->getType()) {
+				throw new ServiceCreationException("Type is missing in definition of service '$name'.");
+			}
+			$def->setFactory(null);
+			return;
+		}
+
+		// complete class-factory pairs
+		if (!$def->getEntity()) {
+			if (!$def->getType()) {
+				throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
+			}
+			$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
+		}
+
+		// auto-disable autowiring for aliases
+		if (
+			$def->getAutowired() === true
+			&& ($alias = $this->getServiceName($def->getFactory()->getEntity()))
+			&& (!$def->getImplement() || (!Strings::contains($alias, '\\') && $this->definitions[$alias]->getImplement()))
+		) {
+			$def->setAutowired(false);
+		}
+
+		$this->resolveServiceType($name);
+	}
+
+
+	private function rebuild(): void
+	{
 		$this->classList = $preferred = [];
+
 		foreach ($this->definitions as $name => $def) {
 			if ($type = $def->getImplement() ?: $def->getType()) {
 				$defAutowired = $def->getAutowired();
@@ -442,7 +454,7 @@ class ContainerBuilder
 	}
 
 
-	private function resolveServiceType($name, array $recursive = []): ?string
+	private function resolveServiceType(string $name, array $recursive = []): ?string
 	{
 		if (isset($recursive[$name])) {
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
@@ -525,40 +537,46 @@ class ContainerBuilder
 			$def->setNotifier(null);
 		}
 
-		foreach ($this->definitions as $name => $def) {
-			if ($def->isDynamic()) {
-				continue;
-			}
+		foreach ($this->definitions as $def) {
+			$this->completeDefinition($def);
+		}
+	}
 
-			$this->currentService = null;
-			$entity = $def->getFactory()->getEntity();
-			$serviceRef = $this->getServiceName($entity);
-			$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
-				? new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$serviceRef])
-				: $def->getFactory();
 
-			try {
-				$def->setFactory($this->completeStatement($factory));
+	private function completeDefinition(ServiceDefinition $def): void
+	{
+		if ($def->isDynamic()) {
+			return;
+		}
 
-				$this->currentService = $name;
-				$setups = $def->getSetup();
-				foreach ($setups as &$setup) {
-					if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
-						$setup = new Statement(['@' . $name, $setup->getEntity()], $setup->arguments);
-					}
-					$setup = $this->completeStatement($setup);
+		$this->currentService = null;
+		$entity = $def->getFactory()->getEntity();
+		$serviceRef = $this->getServiceName($entity);
+		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
+			? new Statement(['@' . self::THIS_CONTAINER, 'getService'], [$serviceRef])
+			: $def->getFactory();
+
+		try {
+			$def->setFactory($this->completeStatement($factory));
+
+			$this->currentService = $def->getName();
+			$setups = $def->getSetup();
+			foreach ($setups as &$setup) {
+				if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
+					$setup = new Statement(['@self', $setup->getEntity()], $setup->arguments);
 				}
-				$def->setSetup($setups);
-
-			} catch (\Exception $e) {
-				$message = "Service '$name' (type of {$def->getType()}): " . $e->getMessage();
-				throw $e instanceof ServiceCreationException
-					? $e->setMessage($message)
-					: new ServiceCreationException($message, 0, $e);
-
-			} finally {
-				$this->currentService = null;
+				$setup = $this->completeStatement($setup);
 			}
+			$def->setSetup($setups);
+
+		} catch (\Exception $e) {
+			$message = "Service '{$def->getName()}' (type of {$def->getType()}): " . $e->getMessage();
+			throw $e instanceof ServiceCreationException
+				? $e->setMessage($message)
+				: new ServiceCreationException($message, 0, $e);
+
+		} finally {
+			$this->currentService = null;
 		}
 	}
 
@@ -693,7 +711,9 @@ class ContainerBuilder
 
 	public static function literal(string $code, array $args = null): Nette\PhpGenerator\PhpLiteral
 	{
-		return new Nette\PhpGenerator\PhpLiteral($args === null ? $code : PhpHelpers::formatArgs($code, $args));
+		return new Nette\PhpGenerator\PhpLiteral(
+			$args === null ? $code : PhpHelpers::formatArgs($code, $args)
+		);
 	}
 
 
