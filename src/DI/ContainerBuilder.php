@@ -264,7 +264,7 @@ class ContainerBuilder
 	public function getClassList(): array
 	{
 		if ($this->classList !== false && $this->classListNeedsRefresh) {
-			$this->prepareClassList();
+			$this->resolve();
 			$this->classListNeedsRefresh = false;
 		}
 		return $this->classList ?: [];
@@ -272,10 +272,9 @@ class ContainerBuilder
 
 
 	/**
-	 * Generates $dependencies, $classList and normalizes class names.
-	 * @internal
+	 * Checks services, resolves types and rebuilts autowiring classlist.
 	 */
-	public function prepareClassList(): void
+	public function resolve(): void
 	{
 		unset($this->definitions[self::THIS_CONTAINER]);
 		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
@@ -522,7 +521,7 @@ class ContainerBuilder
 
 	public function complete(): void
 	{
-		$this->prepareClassList();
+		$this->resolve();
 
 		foreach ($this->definitions as $name => $def) {
 			if ($def->isDynamic()) {
@@ -731,7 +730,7 @@ class ContainerBuilder
 			$service = $this->currentService;
 		}
 		if (Strings::contains($service, '\\')) {
-			if ($this->classList === false) { // may be disabled by prepareClassList
+			if ($this->classList === false) { // may be disabled by resolve()
 				return $service;
 			}
 			$res = $this->getByType($service);
@@ -783,5 +782,13 @@ class ContainerBuilder
 			}
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);
+	}
+
+
+	/** @deprecated use resolve() */
+	public function prepareClassList(): void
+	{
+		trigger_error(__METHOD__ . '() is deprecated, use resolve()', E_USER_DEPRECATED);
+		$this->resolve();
 	}
 }
