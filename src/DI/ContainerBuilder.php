@@ -575,7 +575,7 @@ class ContainerBuilder
 				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 			}
 			$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
-			$arguments = Helpers::autowireArguments($rm, $arguments, $this);
+			$arguments = Autowiring::completeArguments($rm, $arguments, $this);
 			$entity = '@' . $service;
 
 		} elseif ($entity === 'not') { // operator
@@ -590,7 +590,7 @@ class ContainerBuilder
 				throw new ServiceCreationException("Class $entity has $visibility constructor.");
 			} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
 				$this->addDependency($constructor);
-				$arguments = Helpers::autowireArguments($constructor, $arguments, $this);
+				$arguments = Autowiring::completeArguments($constructor, $arguments, $this);
 			} elseif ($arguments) {
 				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
 			}
@@ -610,7 +610,7 @@ class ContainerBuilder
 
 			$rf = new \ReflectionFunction($entity[1]);
 			$this->addDependency($rf);
-			$arguments = Helpers::autowireArguments($rf, $arguments, $this);
+			$arguments = Autowiring::completeArguments($rf, $arguments, $this);
 
 		} else {
 			if ($entity[0] instanceof Statement) {
@@ -766,7 +766,7 @@ class ContainerBuilder
 			throw new ServiceCreationException("$class::$method() is not callable.");
 		}
 		$this->addDependency($rm);
-		return Helpers::autowireArguments($rm, $arguments, $this);
+		return Autowiring::completeArguments($rm, $arguments, $this);
 	}
 
 
