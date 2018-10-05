@@ -79,7 +79,7 @@ final class InjectExtension extends DI\CompilerExtension
 				$res[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->getName();
 			}
 		}
-		uksort($res, function ($a, $b) use ($res) {
+		uksort($res, function (string $a, string $b) use ($res): int {
 			return $res[$a] === $res[$b]
 				? strcmp($a, $b)
 				: (is_a($res[$a], $res[$b], true) ? 1 : -1);
@@ -111,6 +111,7 @@ final class InjectExtension extends DI\CompilerExtension
 
 	/**
 	 * Calls all methods starting with with "inject" using autowiring.
+	 * @param  object  $service
 	 */
 	public static function callInjects(DI\Container $container, $service): void
 	{
@@ -129,7 +130,10 @@ final class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	/** @internal */
+	/**
+	 * @param  object|string  $class
+	 * @param  DI\Resolver|DI\Container  $container
+	 */
 	private static function checkType($class, string $name, ?string $type, $container = null): void
 	{
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));

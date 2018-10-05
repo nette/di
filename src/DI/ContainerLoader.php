@@ -47,6 +47,9 @@ class ContainerLoader
 	}
 
 
+	/**
+	 * @param  mixed  $key
+	 */
 	public function getClassName($key): string
 	{
 		return 'Container_' . substr(md5(serialize($key)), 0, 10);

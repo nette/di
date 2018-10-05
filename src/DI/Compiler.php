@@ -72,7 +72,7 @@ class Compiler
 	public function getExtensions(string $type = null): array
 	{
 		return $type
-			? array_filter($this->extensions, function ($item) use ($type) { return $item instanceof $type; })
+			? array_filter($this->extensions, function ($item) use ($type): bool { return $item instanceof $type; })
 			: $this->extensions;
 	}
 
