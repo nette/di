@@ -85,8 +85,8 @@ final class Helpers
 			}
 		}
 		if ($php) {
-			$res = array_filter($res, function ($val) { return $val !== ''; });
-			$res = array_map(function ($val) { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, true); }, $res);
+			$res = array_filter($res, function ($val): bool { return $val !== ''; });
+			$res = array_map(function ($val): string { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, true); }, $res);
 			return new PhpLiteral(implode(' . ', $res));
 		}
 		return implode('', $res);

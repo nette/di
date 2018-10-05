@@ -70,7 +70,7 @@ class ContainerBuilder
 			$definition = new ServiceDefinition;
 		}
 		$definition->setName($name);
-		$definition->setNotifier(function () {
+		$definition->setNotifier(function (): void {
 			$this->needsResolve = true;
 		});
 		return $this->definitions[$name] = $definition;
@@ -305,7 +305,7 @@ class ContainerBuilder
 	/** @deprecated */
 	public function formatPhp(string $statement, array $args): string
 	{
-		array_walk_recursive($args, function (&$val) {
+		array_walk_recursive($args, function (&$val): void {
 			if ($val instanceof Statement) {
 				$val = (new Resolver($this))->completeStatement($val);
 

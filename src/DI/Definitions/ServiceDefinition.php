@@ -125,6 +125,7 @@ final class ServiceDefinition
 
 
 	/**
+	 * @param  string|array|Definition|Reference|Statement  $factory
 	 * @return static
 	 */
 	public function setFactory($factory, array $args = [])
@@ -189,6 +190,7 @@ final class ServiceDefinition
 
 
 	/**
+	 * @param  string|array|Definition|Reference|Statement  $entity
 	 * @return static
 	 */
 	public function addSetup($entity, array $args = [])
@@ -342,7 +344,7 @@ final class ServiceDefinition
 	/**
 	 * @internal
 	 */
-	public function setNotifier(?callable $notifier)
+	public function setNotifier(?callable $notifier): void
 	{
 		$this->notifier = $notifier ?? 'pi';
 	}

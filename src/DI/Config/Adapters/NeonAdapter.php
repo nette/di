@@ -80,7 +80,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		array_walk_recursive(
 			$data,
-			function (&$val) {
+			function (&$val): void {
 				if ($val instanceof Statement) {
 					$val = self::statementToEntity($val);
 				}
@@ -94,7 +94,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		array_walk_recursive(
 			$val->arguments,
-			function (&$val) {
+			function (&$val): void {
 				if ($val instanceof Statement) {
 					$val = self::statementToEntity($val);
 				}
