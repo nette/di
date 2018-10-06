@@ -38,8 +38,9 @@ class Autowiring
 
 	/**
 	 * Resolves service name by type.
-	 * @param  bool  $throw exception if service doesn't exist?
-	 * @throws ServiceCreationException
+	 * @param  bool  $throw exception if service not found?
+	 * @throws MissingServiceException when not found
+	 * @throws ServiceCreationException when multiple found
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
 	{
@@ -109,37 +110,39 @@ class Autowiring
 		$this->classList = $preferred = [];
 
 		foreach ($this->builder->getDefinitions() as $name => $def) {
-			if ($type = $def->getImplement() ?: $def->getType()) {
-				$defAutowired = $def->getAutowired();
-				if (is_array($defAutowired)) {
-					foreach ($defAutowired as $k => $autowiredType) {
-						if ($autowiredType === ContainerBuilder::THIS_SERVICE) {
-							$defAutowired[$k] = $type;
-						} elseif (!is_a($type, $autowiredType, true)) {
-							throw new ServiceCreationException("Incompatible class $autowiredType in autowiring definition of service '$name'.");
-						}
-					}
-				}
+			if (!($type = $def->getImplement() ?: $def->getType())) {
+				continue;
+			}
 
-				foreach (class_parents($type) + class_implements($type) + [$type] as $parent) {
-					$autowired = $defAutowired && empty($this->excludedClasses[$parent]);
-					if ($autowired && is_array($defAutowired)) {
-						$autowired = false;
-						foreach ($defAutowired as $autowiredType) {
-							if (is_a($parent, $autowiredType, true)) {
-								if (empty($preferred[$parent]) && isset($this->classList[$parent][true])) {
-									$this->classList[$parent][false] = array_merge(...$this->classList[$parent]);
-									$this->classList[$parent][true] = [];
-								}
-								$preferred[$parent] = $autowired = true;
-								break;
-							}
-						}
-					} elseif (isset($preferred[$parent])) {
-						$autowired = false;
+			$defAutowired = $def->getAutowired();
+			if (is_array($defAutowired)) {
+				foreach ($defAutowired as $k => $autowiredType) {
+					if ($autowiredType === ContainerBuilder::THIS_SERVICE) {
+						$defAutowired[$k] = $type;
+					} elseif (!is_a($type, $autowiredType, true)) {
+						throw new ServiceCreationException("Incompatible class $autowiredType in autowiring definition of service '$name'.");
 					}
-					$this->classList[$parent][$autowired][] = (string) $name;
 				}
+			}
+
+			foreach (class_parents($type) + class_implements($type) + [$type] as $parent) {
+				$autowired = $defAutowired && empty($this->excludedClasses[$parent]);
+				if ($autowired && is_array($defAutowired)) {
+					$autowired = false;
+					foreach ($defAutowired as $autowiredType) {
+						if (is_a($parent, $autowiredType, true)) {
+							if (empty($preferred[$parent]) && isset($this->classList[$parent][true])) {
+								$this->classList[$parent][false] = array_merge(...$this->classList[$parent]);
+								$this->classList[$parent][true] = [];
+							}
+							$preferred[$parent] = $autowired = true;
+							break;
+						}
+					}
+				} elseif (isset($preferred[$parent])) {
+					$autowired = false;
+				}
+				$this->classList[$parent][$autowired][] = (string) $name;
 			}
 		}
 	}
