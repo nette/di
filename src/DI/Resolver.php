@@ -95,10 +95,6 @@ class Resolver
 			// resolve type
 			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
 			if ($type = $def->getType() ?: $factoryClass) {
-				if (!class_exists($type) && !interface_exists($type)) {
-					throw new ServiceCreationException("Class or interface '$type' not found.");
-				}
-				$type = Helpers::normalizeClass($type);
 				$def->setType($type);
 				if ($this->recursive->count() === 1) {
 					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
@@ -120,12 +116,6 @@ class Resolver
 	private function resolveImplement(ServiceDefinition $def): void
 	{
 		$interface = $def->getImplement();
-		if (!interface_exists($interface)) {
-			throw new ServiceCreationException("Interface $interface not found.");
-		}
-		$interface = Helpers::normalizeClass($interface);
-		$def->setImplement($interface);
-
 		$rc = new ReflectionClass($interface);
 		$this->addDependency($rc);
 		$method = $rc->hasMethod('create')

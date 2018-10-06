@@ -38,7 +38,7 @@ $builder->addDefinition('serviceFactoryViaClass')
 	->setFactory('@\Service');
 
 $builder->addDefinition('service')
-	->setType('Foo');
+	->setType('stdClass');
 
 
 $builder->addAlias('aliased.service', 'service');

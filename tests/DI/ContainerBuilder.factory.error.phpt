@@ -18,8 +18,7 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType('X')->setFactory('Unknown');
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of X): Class Unknown not found.");
+}, Nette\InvalidArgumentException::class, "Service 'one': Class or interface 'X' not found.");
 
 
 Assert::exception(function () {
@@ -55,8 +54,7 @@ Assert::exception(function () {
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Unknown')->setType('stdClass');
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of stdClass): Interface Unknown not found.");
+}, Nette\InvalidArgumentException::class, "Service 'one': Interface 'Unknown' not found.");
 
 
 interface Bad1
