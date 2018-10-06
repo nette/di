@@ -14,76 +14,91 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
+Assert::exception(function () {
+	$def = new ServiceDefinition;
+	$def->setType('Foo');
+}, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");
+
+Assert::exception(function () {
+	$def = new ServiceDefinition;
+	$def->setImplement('Foo');
+}, Nette\InvalidArgumentException::class, "Service '': Interface 'Foo' not found.");
+
+Assert::exception(function () {
+	$def = new ServiceDefinition;
+	$def->setImplement('stdClass');
+}, Nette\InvalidArgumentException::class, "Service '': Interface 'stdClass' not found.");
+
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setType('Class');
-	Assert::same('Class', $def->getType());
+	$def->setType('stdClass');
+	Assert::same('stdClass', $def->getType());
 	Assert::null($def->getFactory());
 
 	$def->setArguments([1, 2]);
-	Assert::same('Class', $def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::same('stdClass', $def->getType());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	Assert::error(function () use ($def) {
-		$def->setClass('Class', []);
+		$def->setClass('stdClass', []);
 	}, E_USER_DEPRECATED);
-	Assert::same('Class', $def->getType());
+	Assert::same('stdClass', $def->getType());
 	Assert::null($def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
 	Assert::error(function () use ($def) {
-		$def->setClass('Class', [1, 2]);
+		$def->setClass('stdClass', [1, 2]);
 	}, E_USER_DEPRECATED);
-	Assert::same('Class', $def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::same('stdClass', $def->getType());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setFactory('Class');
+	$def->setFactory('stdClass');
 	Assert::null($def->getType());
-	Assert::equal(new Statement('Class', []), $def->getFactory());
+	Assert::equal(new Statement('stdClass', []), $def->getFactory());
 
 	$def->setArguments([1, 2]);
 	Assert::null($def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setFactory('Class', [1, 2]);
+	$def->setFactory('stdClass', [1, 2]);
 	Assert::null($def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('Class', [1, 2]));
+	$def->setFactory(new Statement('stdClass', [1, 2]));
 	Assert::null($def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('Class', [1, 2]), [99]); // 99 is ignored
+	$def->setFactory(new Statement('stdClass', [1, 2]), [99]); // 99 is ignored
 	Assert::null($def->getType());
-	Assert::equal(new Statement('Class', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test(function () {
 	$def = new ServiceDefinition;
-	$def->addSetup('Class', [1, 2]);
-	$def->addSetup(new Statement('Class', [1, 2]));
-	$def->addSetup(new Statement('Class', [1, 2]), [99]); // 99 is ignored
+	$def->addSetup('stdClass', [1, 2]);
+	$def->addSetup(new Statement('stdClass', [1, 2]));
+	$def->addSetup(new Statement('stdClass', [1, 2]), [99]); // 99 is ignored
 	Assert::equal([
-		new Statement('Class', [1, 2]),
-		new Statement('Class', [1, 2]),
-		new Statement('Class', [1, 2]),
+		new Statement('stdClass', [1, 2]),
+		new Statement('stdClass', [1, 2]),
+		new Statement('stdClass', [1, 2]),
 	], $def->getSetup());
 });
 
@@ -103,8 +118,8 @@ test(function () {
 
 test(function () { // deep clone
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('Class', [1, 2]));
-	$def->addSetup(new Statement('Class', [1, 2]));
+	$def->setFactory(new Statement('stdClass', [1, 2]));
+	$def->addSetup(new Statement('stdClass', [1, 2]));
 
 	$dolly = clone $def;
 	Assert::notSame($dolly->getFactory(), $def->getFactory());

@@ -86,8 +86,7 @@ final class ServiceDefinition
 	 */
 	public function setClass(?string $type)
 	{
-		($this->notifier)();
-		$this->type = $type;
+		$this->setType($type);
 		if (func_num_args() > 1) {
 			trigger_error(__METHOD__ . '() second parameter $args is deprecated, use setFactory()', E_USER_DEPRECATED);
 			if ($args = func_get_arg(1)) {
@@ -103,7 +102,7 @@ final class ServiceDefinition
 	 */
 	public function getClass(): ?string
 	{
-		return $this->type;
+		return $this->getType();
 	}
 
 
@@ -113,7 +112,13 @@ final class ServiceDefinition
 	public function setType(?string $type)
 	{
 		($this->notifier)();
-		$this->type = $type;
+		if ($type === null) {
+			$this->type = null;
+		} elseif (!class_exists($type) && !interface_exists($type)) {
+			throw new Nette\InvalidArgumentException("Service '$this->name': Class or interface '$type' not found.");
+		} else {
+			$this->type = Nette\DI\Helpers::normalizeClass($type);
+		}
 		return $this;
 	}
 
@@ -130,7 +135,6 @@ final class ServiceDefinition
 	 */
 	public function setFactory($factory, array $args = [])
 	{
-		($this->notifier)();
 		$this->factory = $factory instanceof Statement ? $factory : new Statement($factory, $args);
 		return $this;
 	}
@@ -303,7 +307,13 @@ final class ServiceDefinition
 	public function setImplement(string $interface)
 	{
 		($this->notifier)();
-		$this->implement = $interface;
+		if ($interface === null) {
+			$this->implement = null;
+		} elseif (!interface_exists($interface)) {
+			throw new Nette\InvalidArgumentException("Service '$this->name': Interface '$interface' not found.");
+		} else {
+			$this->implement = Nette\DI\Helpers::normalizeClass($interface);
+		}
 		return $this;
 	}
 
