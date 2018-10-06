@@ -309,7 +309,7 @@ class Compiler
 	/**
 	 * Parses single service definition from configuration.
 	 */
-	public static function loadDefinition(Definitions\ServiceDefinition $definition, $config, string $name = null): void
+	public static function loadDefinition(Definitions\Definition $definition, $config, string $name = null): void
 	{
 		if ($config === null) {
 			return;

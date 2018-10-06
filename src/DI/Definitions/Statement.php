@@ -15,7 +15,7 @@ use Nette;
 /**
  * Assignment or calling statement.
  *
- * @property string|array|ServiceDefinition|Reference|null $entity
+ * @property string|array|Definition|Reference|null $entity
  */
 final class Statement
 {
@@ -24,19 +24,19 @@ final class Statement
 	/** @var array */
 	public $arguments;
 
-	/** @var string|array|ServiceDefinition|null */
+	/** @var string|array|Definition|null */
 	private $entity;
 
 
 	/**
-	 * @param  string|array|ServiceDefinition|Reference|null  $entity
+	 * @param  string|array|Definition|Reference|null  $entity
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
 		if (
 			!is_string($entity) // Class, @service, not, PHP literal, entity::member
-			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | ServiceDefinition | Reference, method | $property | $appender]
-			&& !$entity instanceof ServiceDefinition
+			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | Definition | Reference, method | $property | $appender]
+			&& !$entity instanceof Definition
 			&& !$entity instanceof Reference
 			&& $entity !== null
 		) {
@@ -47,7 +47,7 @@ final class Statement
 	}
 
 
-	/** @return string|array|ServiceDefinition|null */
+	/** @return string|array|Definition|null */
 	public function getEntity()
 	{
 		return $this->entity;

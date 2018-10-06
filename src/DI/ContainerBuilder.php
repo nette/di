@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
-use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Definition;
 
 
 /**
@@ -27,7 +27,7 @@ class ContainerBuilder
 	/** @var array */
 	public $parameters = [];
 
-	/** @var ServiceDefinition[] */
+	/** @var Definition[] */
 	private $definitions = [];
 
 	/** @var array of alias => service */
@@ -55,8 +55,9 @@ class ContainerBuilder
 
 	/**
 	 * Adds new service definition.
+	 * @return Definitions\ServiceDefinition
 	 */
-	public function addDefinition(string $name, ServiceDefinition $definition = null): ServiceDefinition
+	public function addDefinition(string $name, Definition $definition = null): Definition
 	{
 		$this->needsResolve = true;
 		if (!$name) { // builder is not ready for falsy names such as '0'
@@ -67,7 +68,7 @@ class ContainerBuilder
 			throw new Nette\InvalidStateException("Service '$name' has already been added.");
 		}
 		if (!$definition) {
-			$definition = new ServiceDefinition;
+			$definition = new Definitions\ServiceDefinition;
 		}
 		$definition->setName($name);
 		$definition->setNotifier(function (): void {
@@ -91,7 +92,7 @@ class ContainerBuilder
 	/**
 	 * Gets the service definition.
 	 */
-	public function getDefinition(string $name): ServiceDefinition
+	public function getDefinition(string $name): Definition
 	{
 		$service = $this->aliases[$name] ?? $name;
 		if (!isset($this->definitions[$service])) {
@@ -103,7 +104,7 @@ class ContainerBuilder
 
 	/**
 	 * Gets all service definitions.
-	 * @return ServiceDefinition[]
+	 * @return Definition[]
 	 */
 	public function getDefinitions(): array
 	{
@@ -188,7 +189,7 @@ class ContainerBuilder
 	/**
 	 * Gets the service definition of the specified type.
 	 */
-	public function getDefinitionByType(string $type): ServiceDefinition
+	public function getDefinitionByType(string $type): Definition
 	{
 		return $this->getDefinition($this->getByType($type, true));
 	}
@@ -196,7 +197,7 @@ class ContainerBuilder
 
 	/**
 	 * Gets the service names and definitions of the specified type.
-	 * @return ServiceDefinition[]  service name is key
+	 * @return Definition[]  service name is key
 	 */
 	public function findByType(string $type): array
 	{
@@ -323,7 +324,7 @@ class ContainerBuilder
 			if ($val instanceof Statement) {
 				$val = (new Resolver($this))->completeStatement($val);
 
-			} elseif ($val instanceof ServiceDefinition) {
+			} elseif ($val instanceof Definition) {
 				$val = new Definitions\Reference($val->getName());
 			}
 		});

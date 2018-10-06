@@ -10,8 +10,8 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\Reference;
-use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\Reflection;
@@ -51,7 +51,7 @@ class Resolver
 	}
 
 
-	public function resolveDefinition(ServiceDefinition $def): void
+	public function resolveDefinition(Definition $def): void
 	{
 		if ($this->recursive->contains($def)) {
 			$names = array_map(function ($item) { return $item->getName(); }, iterator_to_array($this->recursive));
@@ -113,7 +113,7 @@ class Resolver
 	}
 
 
-	private function resolveImplement(ServiceDefinition $def): void
+	private function resolveImplement(Definition $def): void
 	{
 		$interface = $def->getImplement();
 		$rc = new ReflectionClass($interface);
@@ -252,7 +252,7 @@ class Resolver
 	}
 
 
-	public function completeDefinition(ServiceDefinition $def): void
+	public function completeDefinition(Definition $def): void
 	{
 		if ($def->isDynamic()) {
 			return;
@@ -369,7 +369,7 @@ class Resolver
 				if ($val instanceof Statement) {
 					$val = $this->completeStatement($val);
 
-				} elseif ($val instanceof ServiceDefinition) {
+				} elseif ($val instanceof Definition) {
 					$val = $this->normalizeEntity($val);
 
 				} elseif ($val instanceof Reference) {
@@ -415,7 +415,7 @@ class Resolver
 			$item = &$entity;
 		}
 
-		if ($item instanceof ServiceDefinition) {
+		if ($item instanceof Definition) {
 			$item = new Reference(current(array_keys($this->builder->getDefinitions(), $item, true)));
 
 		} elseif ($ref = $this->normalizeReference($item)) { // @service|Reference -> resolved Reference
@@ -488,7 +488,7 @@ class Resolver
 	}
 
 
-	private function completeException(\Exception $e, ServiceDefinition $def): ServiceCreationException
+	private function completeException(\Exception $e, Definition $def): ServiceCreationException
 	{
 		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
 			return $e;

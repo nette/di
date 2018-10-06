@@ -62,9 +62,9 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 
 	private function findByType(string $type): array
 	{
-		return array_filter($this->getContainerBuilder()->getDefinitions(), function (Nette\DI\ServiceDefinition $def) use ($type): bool {
+		return array_filter($this->getContainerBuilder()->getDefinitions(), function (Definitions\Definition $def) use ($type): bool {
 			return is_a($def->getImplement(), $type, true)
-				|| ($def->getImplementMode() !== $def::IMPLEMENT_MODE_GET && is_a($def->getType(), $type, true));
+				|| ($def instanceof Definitions\ServiceDefinition && $def->getImplementMode() !== $def::IMPLEMENT_MODE_GET && is_a($def->getType(), $type, true));
 		});
 	}
 }
