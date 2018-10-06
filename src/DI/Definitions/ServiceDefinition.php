@@ -13,16 +13,14 @@ use Nette;
 
 
 /**
- * Definition used by ContainerBuilder.
+ * Definition of standard service.
  *
  * @property string|null $class
  * @property Statement|null $factory
  * @property Statement[] $setup
  */
-final class ServiceDefinition
+final class ServiceDefinition extends Definition
 {
-	use Nette\SmartObject;
-
 	public const
 		IMPLEMENT_MODE_CREATE = 'create',
 		IMPLEMENT_MODE_GET = 'get';
@@ -149,7 +147,7 @@ final class ServiceDefinition
 
 
 	/**
-	 * @return string|array|ServiceDefinition|null
+	 * @return string|array|Definition|null
 	 */
 	public function getEntity()
 	{

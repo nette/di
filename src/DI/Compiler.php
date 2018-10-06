@@ -267,7 +267,7 @@ class Compiler
 	/**
 	 * @deprecated
 	 */
-	public static function loadDefinition(Definitions\ServiceDefinition $definition, $config, string $name = null): void
+	public static function loadDefinition(Definitions\Definition $definition, $config, string $name = null): void
 	{
 		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		$processor = new Config\Processor;

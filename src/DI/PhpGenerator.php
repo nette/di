@@ -238,7 +238,7 @@ class PhpGenerator
 
 
 	/**
-	 * Converts parameters from ServiceDefinition to PhpGenerator.
+	 * Converts parameters from Definition to PhpGenerator.
 	 * @return Nette\PhpGenerator\Parameter[]
 	 */
 	private function convertParameters(array $parameters): array
