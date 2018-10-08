@@ -270,10 +270,11 @@ class Compiler
 
 
 	/**
-	 * Parses single service definition from configuration.
+	 * @deprecated
 	 */
 	public static function loadDefinition(Definitions\ServiceDefinition $definition, $config, string $name = null): void
 	{
+		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
 		(new Config\Processor)->updateDefinition($definition, $config, $name);
 	}
 }
