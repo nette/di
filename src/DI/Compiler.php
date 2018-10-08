@@ -271,10 +271,10 @@ class Compiler
 
 
 	/**
-	 * Parses single service definition from configuration.
+	 * @deprecated
 	 */
-	public static function loadDefinition(Definitions\Definition $definition, $config, string $name = null): void
+	public static function loadDefinition(): void
 	{
-		(new Config\Processor)->updateDefinition($definition, $config, $name);
+		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated.');
 	}
 }
