@@ -13,7 +13,7 @@ namespace Nette\DI\Config;
 /**
  * Adapter for reading and writing configuration files.
  */
-interface IAdapter
+interface Adapter
 {
 
 	/**

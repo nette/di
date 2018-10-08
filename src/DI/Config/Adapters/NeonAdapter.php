@@ -18,7 +18,7 @@ use Nette\Neon;
 /**
  * Reading and generating NEON files.
  */
-final class NeonAdapter implements Nette\DI\Config\IAdapter
+final class NeonAdapter implements Nette\DI\Config\Adapter
 {
 	use Nette\SmartObject;
 

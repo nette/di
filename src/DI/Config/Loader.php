@@ -88,7 +88,7 @@ class Loader
 
 	/**
 	 * Registers adapter for given file extension.
-	 * @param  string|IAdapter  $adapter
+	 * @param  string|Adapter  $adapter
 	 * @return static
 	 */
 	public function addAdapter(string $extension, $adapter)
@@ -98,7 +98,7 @@ class Loader
 	}
 
 
-	private function getAdapter(string $file): IAdapter
+	private function getAdapter(string $file): Adapter
 	{
 		$extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 		if (!isset($this->adapters[$extension])) {
