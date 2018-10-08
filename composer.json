@@ -30,7 +30,8 @@
 		"nette/bootstrap": "<2.4"
 	},
 	"autoload": {
-		"classmap": ["src/"]
+		"classmap": ["src/"],
+		"files": ["src/compatibility.php"]
 	},
 	"minimum-stability": "dev",
 	"extra": {

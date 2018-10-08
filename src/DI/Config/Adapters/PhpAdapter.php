@@ -15,7 +15,7 @@ use Nette;
 /**
  * Reading and generating PHP files.
  */
-final class PhpAdapter implements Nette\DI\Config\IAdapter
+final class PhpAdapter implements Nette\DI\Config\Adapter
 {
 	use Nette\SmartObject;
 
