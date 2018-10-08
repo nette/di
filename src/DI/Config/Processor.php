@@ -28,6 +28,14 @@ class Processor
 	 */
 	public function merge(array $mainConfig, array $config): array
 	{
+		if (isset($config['services'])) {
+			foreach ($config['services'] as $name => &$def) {
+				$def = $this->normalizeDefinition($def);
+				if (!empty($def['alteration']) && isset($mainConfig['services'][$name])) {
+					unset($def['alteration']);
+				}
+			}
+		}
 		return Helpers::merge($config, $mainConfig);
 	}
 
