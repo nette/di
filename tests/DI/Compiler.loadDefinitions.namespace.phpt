@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 $builder = new DI\ContainerBuilder;
 $config = (new DI\Config\Adapters\NeonAdapter)->load(__DIR__ . '/files/compiler.parseServices.namespace.neon');
 $config['services']['articlesList']['factory']->arguments[0] = new Reference('extension.articles');
-DI\Compiler::loadDefinitions($builder, $config['services'], 'blog');
+(new DI\Compiler($builder))->loadDefinitions($config['services'], 'blog');
 
 
 Assert::same('@blog.articles', $builder->getDefinition('blog.comments')->getFactory()->arguments[1]);
