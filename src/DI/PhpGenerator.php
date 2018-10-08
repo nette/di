@@ -28,9 +28,6 @@ class PhpGenerator
 	/** @var string */
 	private $className;
 
-	/** @var Nette\PhpGenerator\ClassType[] */
-	private $generatedClasses = [];
-
 	/** @var string */
 	private $currentService;
 
@@ -43,15 +40,13 @@ class PhpGenerator
 
 	/**
 	 * Generates PHP classes. First class is the container.
-	 * @return Nette\PhpGenerator\ClassType[]
 	 */
-	public function generate(string $className): array
+	public function generate(string $className): Nette\PhpGenerator\ClassType
 	{
 		$this->builder->complete();
 
-		$this->generatedClasses = [];
 		$this->className = $className;
-		$containerClass = $this->generatedClasses[] = new Nette\PhpGenerator\ClassType($this->className);
+		$containerClass = new Nette\PhpGenerator\ClassType($this->className);
 		$containerClass->setExtends(Container::class);
 		$containerClass->addMethod('__construct')
 			->addBody('$this->parameters = $params;')
@@ -93,7 +88,7 @@ class PhpGenerator
 		ksort($aliases);
 		$meta->value[Container::ALIASES] = $aliases;
 
-		return $this->generatedClasses;
+		return $containerClass;
 	}
 
 
