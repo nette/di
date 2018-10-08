@@ -262,6 +262,9 @@ class Compiler
 	 */
 	public function loadDefinitions(array $services, string $namespace = null): void
 	{
+		foreach ($services as &$def) {
+			$def = $this->configProcessor->normalizeDefinition($def);
+		}
 		if ($namespace) {
 			$services = $this->configProcessor->applyNamespace($services, $namespace);
 		}
@@ -275,6 +278,7 @@ class Compiler
 	public static function loadDefinition(Definitions\ServiceDefinition $definition, $config, string $name = null): void
 	{
 		trigger_error(__METHOD__ . '() is deprecated.', E_USER_DEPRECATED);
-		(new Config\Processor)->updateDefinition($definition, $config, $name);
+		$processor = new Config\Processor;
+		$processor->updateDefinition($definition, $processor->normalizeDefinition($config), $name);
 	}
 }
