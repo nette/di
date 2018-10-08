@@ -33,6 +33,9 @@ class Resolver
 	/** @var string|null */
 	private $currentService;
 
+	/** @var string[] */
+	private $recursive = [];
+
 
 	public function __construct(ContainerBuilder $builder)
 	{
@@ -136,7 +139,7 @@ class Resolver
 				$def->setFactory($def->getType(), $def->getFactory() ? $def->getFactory()->arguments : []);
 			}
 			if (
-				($class = $this->resolveEntityType($def->getFactory(), [$name => 1]))
+				($class = $this->resolveEntityType($def->getFactory()))
 				&& ($ctor = (new ReflectionClass($class))->getConstructor())
 			) {
 				foreach ($ctor->getParameters() as $param) {
@@ -169,41 +172,45 @@ class Resolver
 	}
 
 
-	private function resolveServiceType(string $name, array $recursive = []): ?string
+	private function resolveServiceType(string $name): ?string
 	{
-		if (isset($recursive[$name])) {
-			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($recursive))));
+		if (isset($this->recursive[$name])) {
+			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->recursive))));
 		}
-		$recursive[$name] = true;
+		try {
+			$this->recursive[$name] = true;
 
-		$def = $this->builder->getDefinition((string) $name);
-		$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity(), $recursive) : null; // call always to check entities
-		if ($type = $def->getType() ?: $factoryClass) {
-			if (!class_exists($type) && !interface_exists($type)) {
-				throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
-			}
-			$type = Helpers::normalizeClass($type);
-			$def->setType($type);
-			if (count($recursive) === 1) {
-				$this->addDependency(new ReflectionClass($factoryClass ?: $type));
-			}
+			$def = $this->builder->getDefinition((string) $name);
+			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
+			if ($type = $def->getType() ?: $factoryClass) {
+				if (!class_exists($type) && !interface_exists($type)) {
+					throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
+				}
+				$type = Helpers::normalizeClass($type);
+				$def->setType($type);
+				if (count($this->recursive) === 1) {
+					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
+				}
 
-		} elseif ($def->getAutowired()) {
-			throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
+			} elseif ($def->getAutowired()) {
+				throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
+			}
+		} finally {
+			unset($this->recursive[$name]);
 		}
 		return $type;
 	}
 
 
-	private function resolveEntityType($entity, array $recursive = []): ?string
+	private function resolveEntityType($entity): ?string
 	{
 		$definitions = $this->builder->getDefinitions();
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
-		$serviceName = current(array_slice(array_keys($recursive), -1));
+		$serviceName = current(array_slice(array_keys($this->recursive), -1));
 
 		if (is_array($entity)) {
 			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
-				$entity[0] = $this->resolveEntityType($entity[0], $recursive);
+				$entity[0] = $this->resolveEntityType($entity[0]);
 				if (!$entity[0]) {
 					return null;
 				}
@@ -234,7 +241,7 @@ class Resolver
 			}
 			return $definitions[$service]->getImplement()
 				?: $definitions[$service]->getType()
-				?: $this->resolveServiceType($service, $recursive);
+				?: $this->resolveServiceType($service);
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
