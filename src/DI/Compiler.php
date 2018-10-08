@@ -173,7 +173,7 @@ class Compiler
 	/** @internal */
 	public function processParameters(): void
 	{
-		$params = isset($this->config['parameters']) ? $this->config['parameters'] : [];
+		$params = $this->config['parameters'] ?? [];
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
 				? ContainerBuilder::literal('$this->parameters[?] \?\? ?', [$key, $params[$key]])
@@ -186,11 +186,11 @@ class Compiler
 	/** @internal */
 	public function processExtensions(): void
 	{
-		$this->config = Helpers::expand(array_diff_key($this->config, self::$reserved), $this->builder->parameters)
-			+ array_intersect_key($this->config, self::$reserved);
+		$config = array_diff_key($this->config, self::$reserved);
+		$config = Helpers::expand($config, $this->builder->parameters);
 
 		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
-			$extension->setConfig($this->config[$name] ?? []);
+			$extension->setConfig($config[$name] ?? []);
 			$extension->loadConfiguration();
 		}
 
@@ -198,8 +198,8 @@ class Compiler
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$extensions = array_diff_key($this->extensions, $first);
-		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
-			$extension->setConfig($this->config[$name] ?: []);
+		foreach (array_intersect_key($extensions, $config) as $name => $extension) {
+			$extension->setConfig($config[$name] ?: []);
 		}
 
 		foreach ($extensions as $extension) {
@@ -210,7 +210,7 @@ class Compiler
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
-		} elseif ($extra = key(array_diff_key($this->config, self::$reserved, $this->extensions))) {
+		} elseif ($extra = key(array_diff_key($config, $this->extensions))) {
 			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::$reserved + $this->extensions), $extra);
 			throw new Nette\InvalidStateException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
