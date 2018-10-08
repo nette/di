@@ -226,7 +226,7 @@ class Compiler
 	public function processServices(): void
 	{
 		foreach ($this->serviceConfigs as $config) {
-			self::loadDefinitions($this->builder, $config);
+			$this->loadDefinitions($config);
 		}
 	}
 
@@ -260,13 +260,12 @@ class Compiler
 	/**
 	 * Adds service definitions from configuration.
 	 */
-	public static function loadDefinitions(ContainerBuilder $builder, array $services, string $namespace = null): void
+	public function loadDefinitions(array $services, string $namespace = null): void
 	{
-		$processor = new Config\Processor;
 		if ($namespace) {
-			$services = $processor->applyNamespace($services, $namespace);
+			$services = $this->configProcessor->applyNamespace($services, $namespace);
 		}
-		$processor->loadDefinitions($builder, $services, $namespace);
+		$this->configProcessor->loadDefinitions($this->builder, $services, $namespace);
 	}
 
 
