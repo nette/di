@@ -166,9 +166,7 @@ class Compiler
 		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
-		$classes = $this->generateCode();
-		array_unshift($classes, 'declare(strict_types=1);');
-		return implode("\n\n\n", $classes);
+		return $this->generateCode();
 	}
 
 
@@ -232,7 +230,7 @@ class Compiler
 
 
 	/** @internal */
-	public function generateCode(): array
+	public function generateCode(): string
 	{
 		$this->builder->prepareClassList();
 
@@ -242,14 +240,15 @@ class Compiler
 		}
 
 		$generator = new PhpGenerator($this->builder);
-		$classes = $generator->generate($this->className);
-		$classes[0]->addMethod('initialize');
+		$class = $generator->generate($this->className);
+		$class->addMethod('initialize');
 		$this->dependencies->add($this->builder->getDependencies());
 
 		foreach ($this->extensions as $extension) {
-			$extension->afterCompile($classes[0]);
+			$extension->afterCompile($class);
 		}
-		return $classes;
+
+		return "declare(strict_types=1);\n\n\n" . $class->__toString();
 	}
 
 
