@@ -43,7 +43,10 @@ class ContainerBuilder
 	private $classList = [];
 
 	/** @var bool */
-	private $classListNeedsRefresh = true;
+	private $needsResolve = true;
+
+	/** @var bool */
+	private $resolving = false;
 
 	/** @var string[] of classes excluded from auto-wiring */
 	private $excludedClasses = [];
@@ -60,7 +63,7 @@ class ContainerBuilder
 	 */
 	public function addDefinition(string $name, ServiceDefinition $definition = null): ServiceDefinition
 	{
-		$this->classListNeedsRefresh = true;
+		$this->needsResolve = true;
 		if (!$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
@@ -73,7 +76,7 @@ class ContainerBuilder
 		}
 		$definition->setName($name);
 		$definition->setNotifier(function () {
-			$this->classListNeedsRefresh = true;
+			$this->needsResolve = true;
 		});
 		return $this->definitions[$name] = $definition;
 	}
@@ -84,7 +87,7 @@ class ContainerBuilder
 	 */
 	public function removeDefinition(string $name): void
 	{
-		$this->classListNeedsRefresh = true;
+		$this->needsResolve = true;
 		$name = $this->aliases[$name] ?? $name;
 		unset($this->definitions[$name]);
 	}
@@ -165,6 +168,7 @@ class ContainerBuilder
 	 */
 	public function addExcludedClasses(array $types)
 	{
+		$this->needsResolve = true;
 		foreach ($types as $type) {
 			if (class_exists($type) || interface_exists($type)) {
 				$type = Helpers::normalizeClass($type);
@@ -260,10 +264,10 @@ class ContainerBuilder
 	 */
 	public function getClassList(): array
 	{
-		if ($this->classList !== false && $this->classListNeedsRefresh) {
+		if ($this->needsResolve) {
 			$this->resolve();
 		}
-		return $this->classList ?: [];
+		return $this->classList;
 	}
 
 
@@ -275,19 +279,21 @@ class ContainerBuilder
 	 */
 	public function resolve(): void
 	{
+		if ($this->resolving) {
+			return;
+		}
+		$this->resolving = true;
+
 		unset($this->definitions[self::THIS_CONTAINER]);
 		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
-
-		$this->classList = false;
 
 		foreach ($this->definitions as $def) {
 			$this->resolveDefinition($def);
 		}
 
-		$this->classListNeedsRefresh = false;
-
-		//  build auto-wiring list
 		$this->rebuild();
+
+		$this->resolving = $this->needsResolve = false;
 	}
 
 
@@ -751,7 +757,7 @@ class ContainerBuilder
 			$service = $this->currentService;
 		}
 		if (Strings::contains($service, '\\')) {
-			if ($this->classList === false) { // may be disabled by resolve()
+			if ($this->resolving) {
 				return $service;
 			}
 			$res = $this->getByType($service);
