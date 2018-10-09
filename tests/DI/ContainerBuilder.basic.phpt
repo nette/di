@@ -7,6 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI;
+use Nette\DI\Definitions\Reference;
 use Tester\Assert;
 
 
@@ -63,6 +64,13 @@ $builder->addDefinition('seven')
 	->addSetup([$six, 'methodA'])
 	->addSetup('$service->methodA(?)', ['a']);
 
+$six = $builder->addDefinition('eight')
+	->setFactory('Service::create', [new Reference('container'), 'a', 'b'])
+	->addSetup([new Reference('self'), 'methodA'], [new Reference('eight'), new Reference('self')])
+	->addSetup([new Reference('eight'), 'methodB'])
+	->addSetup([new Reference('six'), 'methodC'])
+	->addSetup(new Reference('six'));
+
 
 $container = createContainer($builder);
 
@@ -110,3 +118,10 @@ Assert::same([
 	['__construct', [[$container->getService('six')]]],
 	['methodA', ['a']],
 ], $container->getService('seven')->methods);
+
+Assert::type(Service::class, $container->getService('eight'));
+Assert::same([
+	['__construct', [['a', 'b']]],
+	['methodA', [$container->getService('eight'), $container->getService('eight')]],
+	['methodB', []],
+], $container->getService('eight')->methods);

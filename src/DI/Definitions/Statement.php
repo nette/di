@@ -15,7 +15,7 @@ use Nette;
 /**
  * Assignment or calling statement.
  *
- * @property string|array|ServiceDefinition|null $entity
+ * @property string|array|ServiceDefinition|Reference|null $entity
  */
 final class Statement
 {
@@ -29,14 +29,15 @@ final class Statement
 
 
 	/**
-	 * @param  string|array|ServiceDefinition|null  $entity
+	 * @param  string|array|ServiceDefinition|Reference|null  $entity
 	 */
 	public function __construct($entity, array $arguments = [])
 	{
 		if (
 			!is_string($entity) // Class, @service, not, PHP literal, entity::member
-			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | ServiceDefinition, method | $property | $appender]
+			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | ServiceDefinition | Reference, method | $property | $appender]
 			&& !$entity instanceof ServiceDefinition
+			&& !$entity instanceof Reference
 			&& $entity !== null
 		) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');

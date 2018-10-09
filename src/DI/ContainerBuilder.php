@@ -324,7 +324,7 @@ class ContainerBuilder
 				$val = (new Resolver($this))->completeStatement($val);
 
 			} elseif ($val instanceof ServiceDefinition) {
-				$val = '@' . $val->getName();
+				$val = new Definitions\Reference($val->getName());
 			}
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);

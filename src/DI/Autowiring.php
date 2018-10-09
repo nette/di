@@ -189,9 +189,6 @@ class Autowiring
 						throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
 					}
 				} else {
-					if ($container instanceof Resolver) {
-						$res[$num] = '@' . $res[$num];
-					}
 					$optCount = 0;
 				}
 
