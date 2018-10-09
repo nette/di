@@ -290,7 +290,7 @@ class Resolver
 	public function completeStatement(Statement $statement): Statement
 	{
 		$entity = $this->normalizeEntity($statement->getEntity());
-		$arguments = $statement->arguments;
+		$arguments = $this->convertReferences($statement->arguments);
 		$definitions = $this->builder->getDefinitions();
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
@@ -374,20 +374,6 @@ class Resolver
 
 				} elseif ($val instanceof Reference) {
 					$val = $this->normalizeReference($val);
-
-				} elseif (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
-					$pair = explode('::', $val, 2);
-					$serviceRef = $this->normalizeReference($pair[0]);
-					if (!isset($pair[1])) { // @service
-						$val = $serviceRef;
-					} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
-						$val = ContainerBuilder::literal($this->builder->getDefinition($serviceRef->getValue())->getType() . '::' . $pair[1]);
-					} else { // @service::property
-						$val = new Statement([$serviceRef, '$' . $pair[1]]);
-					}
-
-				} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
-					$val = substr($val, 1);
 				}
 			});
 
@@ -501,5 +487,27 @@ class Resolver
 	{
 		$this->builder->addDependency($dep);
 		return $this;
+	}
+
+
+	private function convertReferences(array $arguments): array
+	{
+		array_walk_recursive($arguments, function (&$val): void {
+			if (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
+				$pair = explode('::', substr($val, 1), 2);
+				if (!isset($pair[1])) { // @service
+					$val = new Reference($pair[0]);
+				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
+					$ref = $this->normalizeReference(new Reference($pair[0]));
+					$val = ContainerBuilder::literal($this->builder->getDefinition($ref->getValue())->getType() . '::' . $pair[1]);
+				} else { // @service::property
+					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
+				}
+
+			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
+				$val = substr($val, 1);
+			}
+		});
+		return $arguments;
 	}
 }
