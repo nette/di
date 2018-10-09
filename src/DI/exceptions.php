@@ -31,3 +31,11 @@ class ServiceCreationException extends Nette\InvalidStateException
 		return $this;
 	}
 }
+
+
+/**
+ * Not allowed when container is resolving.
+ */
+class NotAllowedDuringResolvingException extends Nette\InvalidStateException
+{
+}
