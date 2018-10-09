@@ -14,7 +14,6 @@ use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\PhpGenerator\PhpLiteral;
-use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 
 
@@ -46,105 +45,53 @@ class PhpGenerator
 		$this->builder->complete();
 
 		$this->className = $className;
-		$containerClass = new Nette\PhpGenerator\ClassType($this->className);
-		$containerClass->setExtends(Container::class);
-		$containerClass->addMethod('__construct')
+		$class = new Nette\PhpGenerator\ClassType($this->className);
+		$class->setExtends(Container::class);
+		$class->addMethod('__construct')
 			->addBody('$this->parameters = $params;')
 			->addBody('$this->parameters += ?;', [$this->builder->parameters])
 			->addParameter('params', [])
 				->setTypeHint('array');
 
-		$containerClass->addProperty('meta')
+		$class->addProperty('meta')
 			->setVisibility('protected')
 			->setValue($this->builder->exportMeta());
 
 		$definitions = $this->builder->getDefinitions();
 		ksort($definitions);
 
-		foreach ($definitions as $name => $def) {
-			try {
-				$name = (string) $name;
-				$methodName = Container::getMethodName($name);
-				if (!PhpHelpers::isIdentifier($methodName)) {
-					throw new ServiceCreationException('Name contains invalid characters.');
-				}
-				$containerClass->addMethod($methodName)
-					->setReturnType($def->getImplement() ?: $def->getType())
-					->setBody($name === ContainerBuilder::THIS_CONTAINER ? 'return $this;' : $this->generateService($name))
-					->setParameters($def->getImplement() ? [] : $this->convertParameters($def->parameters));
-			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
-			}
+		foreach ($definitions as $def) {
+			$class->addMember($this->generateMethod($def));
 		}
 
-		return $containerClass;
+		$class->getMethod(Container::getMethodName(ContainerBuilder::THIS_CONTAINER))
+			->setReturnType($className)
+			->setBody('return $this;');
+
+		return $class;
 	}
 
 
-	/**
-	 * Generates body of service method.
-	 */
-	private function generateService(string $name): string
+	public function generateMethod(Definitions\Definition $def): Nette\PhpGenerator\Method
 	{
-		$def = $this->builder->getDefinition($name);
+		try {
+			$name = (string) $def->getName();
+			$method = new Nette\PhpGenerator\Method(Container::getMethodName($name));
+			$method->setVisibility('public');
+			$method->setReturnType($def->getImplement() ?: $def->getType());
+			$def->generateMethod($method, $this);
+			return $method;
 
-		if ($def->isDynamic()) {
-			return PhpHelpers::formatArgs('throw new Nette\\DI\\ServiceCreationException(?);',
-				["Unable to create dynamic service '$name', it must be added using addService()"]
-			);
+		} catch (\Exception $e) {
+			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 		}
-
-		$entity = $def->getFactory()->getEntity();
-		$code = '$service = ' . $this->formatStatement($def->getFactory()) . ";\n";
-
-		if (
-			$def->getSetup()
-			&& ($type = $def->getType())
-			&& !$entity instanceof Reference && $type !== $entity
-			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
-		) {
-			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $type) {\n"
-				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
-				["Unable to create service '$name', value returned by factory is not $type type."]
-			);
-		}
-
-		foreach ($def->getSetup() as $setup) {
-			$code .= $this->formatStatement($setup) . ";\n";
-		}
-
-		$code .= 'return $service;';
-
-		if (!$def->getImplement()) {
-			return $code;
-		}
-
-		$factoryClass = (new Nette\PhpGenerator\ClassType)
-			->addImplement($def->getImplement());
-
-		$factoryClass->addProperty('container')
-			->setVisibility('private');
-
-		$factoryClass->addMethod('__construct')
-			->addBody('$this->container = $container;')
-			->addParameter('container')
-				->setTypeHint($this->className);
-
-		$rm = new \ReflectionMethod($def->getImplement(), $def->getImplementMode());
-
-		$factoryClass->addMethod($def->getImplementMode())
-			->setParameters($this->convertParameters($def->parameters))
-			->setBody(str_replace('$this', '$this->container', $code))
-			->setReturnType(Reflection::getReturnType($rm) ?: $def->getType());
-
-		return 'return new class ($this) ' . $factoryClass . ';';
 	}
 
 
 	/**
 	 * Formats PHP code for class instantiating, function calling or property setting in PHP.
 	 */
-	private function formatStatement(Statement $statement): string
+	public function formatStatement(Statement $statement): string
 	{
 		$entity = $statement->getEntity();
 		$arguments = $statement->arguments;
@@ -229,7 +176,7 @@ class PhpGenerator
 	 * Converts parameters from Definition to PhpGenerator.
 	 * @return Nette\PhpGenerator\Parameter[]
 	 */
-	private function convertParameters(array $parameters): array
+	public function convertParameters(array $parameters): array
 	{
 		$res = [];
 		foreach ($parameters as $k => $v) {
@@ -243,5 +190,11 @@ class PhpGenerator
 			}
 		}
 		return $res;
+	}
+
+
+	public function getClassName(): ?string
+	{
+		return $this->className;
 	}
 }

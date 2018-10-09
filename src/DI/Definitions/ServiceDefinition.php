@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\PhpGenerator\Helpers as PhpHelpers;
+use Nette\Utils\Reflection;
 
 
 /**
@@ -225,6 +227,65 @@ final class ServiceDefinition extends Definition
 	{
 		trigger_error(__METHOD__ . "() is deprecated, use addTag('inject')", E_USER_DEPRECATED);
 		return $this->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, $state);
+	}
+
+
+	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	{
+		if ($this->isDynamic()) {
+			$method->setBody('throw new Nette\\DI\\ServiceCreationException(?);',
+				["Unable to create dynamic service '{$this->getName()}', it must be added using addService()"]
+			);
+			return;
+		}
+
+		$method->setParameters($this->getImplement() ? [] : $generator->convertParameters($this->parameters));
+
+		$entity = $this->getFactory()->getEntity();
+		$code = '$service = ' . $generator->formatStatement($this->getFactory()) . ";\n";
+
+		if (
+			$this->getSetup()
+			&& ($type = $this->getType())
+			&& !$entity instanceof Reference && $type !== $entity
+			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
+		) {
+			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $type) {\n"
+				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
+				["Unable to create service '{$this->getName()}', value returned by factory is not $type type."]
+			);
+		}
+
+		foreach ($this->getSetup() as $setup) {
+			$code .= $generator->formatStatement($setup) . ";\n";
+		}
+
+		$code .= 'return $service;';
+
+		if (!$this->getImplement()) {
+			$method->setBody($code);
+			return;
+		}
+
+		$factoryClass = (new Nette\PhpGenerator\ClassType)
+			->addImplement($this->getImplement());
+
+		$factoryClass->addProperty('container')
+			->setVisibility('private');
+
+		$factoryClass->addMethod('__construct')
+			->addBody('$this->container = $container;')
+			->addParameter('container')
+				->setTypeHint($generator->getClassName());
+
+		$rm = new \ReflectionMethod($this->getImplement(), $this->getImplementMode());
+
+		$factoryClass->addMethod($this->getImplementMode())
+			->setParameters($generator->convertParameters($this->parameters))
+			->setBody(str_replace('$this', '$this->container', $code))
+			->setReturnType(Reflection::getReturnType($rm) ?: $this->getType());
+
+		$method->setBody('return new class ($this) ' . $factoryClass . ';');
 	}
 
 
