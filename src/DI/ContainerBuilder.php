@@ -186,6 +186,9 @@ class ContainerBuilder
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
 	{
+		if ($this->resolving) {
+			throw new NotAllowedDuringResolvingException;
+		}
 		$type = Helpers::normalizeClass($type);
 
 		if (
@@ -231,6 +234,9 @@ class ContainerBuilder
 	 */
 	public function findByType(string $type): array
 	{
+		if ($this->resolving) {
+			throw new NotAllowedDuringResolvingException;
+		}
 		$type = Helpers::normalizeClass($type);
 		$found = [];
 		$types = $this->getClassList();
