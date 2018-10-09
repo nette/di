@@ -148,6 +148,9 @@ abstract class Definition
 	/********************* life cycle ****************d*g**/
 
 
+	abstract public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void;
+
+
 	final public function setNotifier(?callable $notifier): void
 	{
 		$this->notifier = $notifier;
