@@ -44,17 +44,17 @@ $builder->addDefinition('service2')
 	->setAutowired(false)
 	->setFactory('stdClass');
 
-$builder->addDefinition('one')
+$builder->addDefinition('one', new Nette\DI\Definitions\AccessorDefinition)
 	->setImplement('StdClassAccessor')
-	->setType('stdClass');
+	->setReference('stdClass');
 
-$builder->addDefinition('two')
+$builder->addDefinition('two', new Nette\DI\Definitions\AccessorDefinition)
 	->setImplement('AnnotatedAccessor');
 
-$builder->addDefinition('three')
+$builder->addDefinition('three', new Nette\DI\Definitions\AccessorDefinition)
 	->setImplement('StdClassAccessor')
 	->setAutowired(false)
-	->setFactory('@service2');
+	->setReference('@service2');
 
 $builder->addDefinition('four')
 	->setType('AccessorReceiver');

@@ -53,46 +53,10 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Unknown')->setType('stdClass');
+	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
+		->setImplement('Unknown');
 }, Nette\InvalidArgumentException::class, "Service 'one': Interface 'Unknown' not found.");
 
-
-interface Bad1
-{
-	public static function create();
-}
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Bad1')->setFactory('stdClass');
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Interface Bad1 must have just one non-static method create() or get().");
-
-
-interface Bad2
-{
-	public function createx();
-}
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('stdClass');
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Interface Bad2 must have just one non-static method create() or get().");
-
-
-interface Bad3
-{
-	public function other();
-
-	public function create();
-}
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Bad3')->setFactory('stdClass');
-	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Interface Bad3 must have just one non-static method create() or get().");
 
 
 interface Bad4
@@ -102,9 +66,10 @@ interface Bad4
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Bad4');
+	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
+		->setImplement('Bad4');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method Bad4::create() has not return type hint or annotation @return.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Method Bad4::create() has not return type hint or annotation @return.");
 
 
 interface Bad5
@@ -114,7 +79,8 @@ interface Bad5
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setImplement('Bad5')->setFactory('stdClass');
+	$builder->addDefinition('one', new Nette\DI\Definitions\AccessorDefinition)
+		->setImplement('Bad5');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method Bad5::get() must have no arguments.");
 

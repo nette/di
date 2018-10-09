@@ -33,11 +33,11 @@ class FactoryReceiver
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('one')
+$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass');
 
-$builder->addDefinition('two')
+$builder->addDefinition('two', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('AnnotatedFactory');
 
 $builder->addDefinition('three')

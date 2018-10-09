@@ -20,16 +20,16 @@ interface StdClassFactory
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('one')
+$builder->addDefinition('one', (new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
-	->addSetup('$a', [$builder::literal('$a')]);
+	->addSetup('$a', [$builder::literal('$a')]));
 
-$builder->addDefinition('two')
+$builder->addDefinition('two', (new Nette\DI\Definitions\FactoryDefinition)
 	->setParameters(['stdClass foo', 'array bar', 'foobar' => null])
 	->setImplement('StdClassFactory')
 	->setFactory('stdClass')
-	->addSetup('$a', [$builder::literal('$foo')]);
+	->addSetup('$a', [$builder::literal('$foo')]));
 
 $builder->addDefinition('three')
 	->setType('stdClass');

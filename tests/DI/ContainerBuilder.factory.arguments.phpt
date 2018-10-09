@@ -33,9 +33,9 @@ interface FooFactory
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('fooFactory')
-		->setImplement('FooFactory')
-		->setArguments(['bar']);
+$builder->addDefinition('fooFactory', new Nette\DI\Definitions\FactoryDefinition)
+	->setImplement('FooFactory')
+	->setArguments(['bar']);
 
 
 $container = createContainer($builder);

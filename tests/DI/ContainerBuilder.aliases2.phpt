@@ -29,11 +29,11 @@ interface ServiceFactory2
 
 $builder = new DI\ContainerBuilder;
 
-$builder->addDefinition('serviceFactory')
+$builder->addDefinition('serviceFactory', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory')
 	->setFactory('@service');
 
-$builder->addDefinition('serviceFactoryViaClass')
+$builder->addDefinition('serviceFactoryViaClass', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory2')
 	->setFactory('@\Service');
 

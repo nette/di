@@ -88,18 +88,17 @@ namespace
 
 	$builder = new DI\ContainerBuilder;
 
-	$builder->addDefinition('one')
+	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
-		->setType('stdClass');
+		->setFactory('stdClass');
 
-	$builder->addDefinition('two')
+	$builder->addDefinition('two', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
 		->setFactory('@one');
 
-	$builder->addDefinition('three')
+	$builder->addDefinition('three', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
-		->setFactory('@one::create') // alias
-		->setType('stdClass'); // type is needed
+		->setFactory('@one::create'); // alias
 
 	$builder->addDefinition('four')
 		->setType('A\Factory');

@@ -23,9 +23,8 @@ class Service extends ParentClass
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('one')
-	->setType('ParentClass')
-	->setDynamic(true);
+$builder->addDefinition('one', new Nette\DI\Definitions\DynamicDefinition)
+	->setType('ParentClass');
 
 
 // compile-time
