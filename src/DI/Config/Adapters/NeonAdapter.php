@@ -11,6 +11,7 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\DI\Config\Helpers;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Neon;
 
@@ -97,19 +98,30 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			function (&$val): void {
 				if ($val instanceof Statement) {
 					$val = self::statementToEntity($val);
+				} elseif ($val instanceof Reference) {
+					$val = '@' . $val->getValue();
 				}
 			}
 		);
-		if (is_array($val->getEntity()) && $val->getEntity()[0] instanceof Statement) {
-			return new Neon\Entity(
-				Neon\Neon::CHAIN,
-				[
-					self::statementToEntity($val->getEntity()[0]),
-					new Neon\Entity('::' . $val->getEntity()[1], $val->arguments),
-				]
-			);
-		} else {
-			return new Neon\Entity($val->getEntity(), $val->arguments);
+
+		$entity = $val->getEntity();
+		if ($entity instanceof Reference) {
+			$entity = '@' . $entity->getValue();
+		} elseif (is_array($entity)) {
+			if ($entity[0] instanceof Statement) {
+				return new Neon\Entity(
+					Neon\Neon::CHAIN,
+					[
+						self::statementToEntity($entity[0]),
+						new Neon\Entity('::' . $entity[1], $val->arguments),
+					]
+				);
+			} elseif ($entity[0] instanceof Reference) {
+				$entity = '@' . $entity[0]->getValue() . '::' . $entity[1];
+			} elseif (is_string($entity[0])) {
+				$entity = $entity[0] . '::' . $entity[1];
+			}
 		}
+		return new Neon\Entity($entity, $val->arguments);
 	}
 }

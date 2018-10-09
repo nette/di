@@ -1,12 +1,13 @@
 <?php
 
 /**
- * Test: Nette\DI\ContainerBuilder and generated factories errors.
+ * Test: Nette\DI\ContainerBuilder and errors in factory.
  */
 
 declare(strict_types=1);
 
 use Nette\DI;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Tester\Assert;
 
@@ -24,6 +25,14 @@ Assert::exception(function () {
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('@two');
+	$builder->addDefinition('two')->setFactory('Unknown');
+	$builder->complete();
+}, Nette\InvalidStateException::class, "Class Unknown used in service 'two' not found.");
+
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')->setFactory(new Reference('two'));
 	$builder->addDefinition('two')->setFactory('Unknown');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Class Unknown used in service 'two' not found.");

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
@@ -124,6 +125,10 @@ final class Helpers
 		if (is_string($config)) {
 			if (strncmp($config, '@extension.', 10) === 0) {
 				$config = '@' . $namespace . '.' . substr($config, 11);
+			}
+		} elseif ($config instanceof Reference) {
+			if (strncmp($config->getValue(), 'extension.', 9) === 0) {
+				$config = new Reference($namespace . '.' . substr($config->getValue(), 10));
 			}
 		} elseif ($config instanceof Statement) {
 			return new Statement(

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\PhpGenerator\PhpLiteral;
@@ -106,9 +107,8 @@ class PhpGenerator
 		}
 
 		$entity = $def->getFactory()->getEntity();
-		$serviceRef = $this->getServiceName($entity);
-		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
-			? new Statement(['@' . ContainerBuilder::THIS_CONTAINER, 'getService'], [$serviceRef])
+		$factory = $entity instanceof Reference && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
+			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$entity->getValue()])
 			: $def->getFactory();
 
 		$this->currentService = null;
@@ -117,7 +117,7 @@ class PhpGenerator
 		if (
 			$def->getSetup()
 			&& ($type = $def->getType())
-			&& !$serviceRef && $type !== $entity
+			&& !$entity instanceof Reference && $type !== $entity
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $type) {\n"
@@ -170,8 +170,8 @@ class PhpGenerator
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 			return $this->formatPhp($entity, $arguments);
 
-		} elseif ($service = $this->getServiceName($entity)) { // factory calling
-			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($service), $arguments]);
+		} elseif ($entity instanceof Reference) { // factory calling
+			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($entity->getValue()), $arguments]);
 
 		} elseif ($entity === 'not') { // operator
 			return $this->formatPhp('!?', [$arguments[0]]);
@@ -194,7 +194,7 @@ class PhpGenerator
 			if ($append = (substr($name, -2) === '[]')) {
 				$name = substr($name, 0, -2);
 			}
-			if ($this->getServiceName($entity[0])) {
+			if ($entity[0] instanceof Reference) {
 				$prop = $this->formatPhp('?->?', [$entity[0], $name]);
 			} else {
 				$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
@@ -203,35 +203,12 @@ class PhpGenerator
 				? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
 				: $prop;
 
-		} elseif ($service = $this->getServiceName($entity[0])) { // service method
+		} elseif ($entity[0] instanceof Reference) { // service method
 			return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
 
 		} else { // static method
 			return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
 		}
-	}
-
-
-	/**
-	 * Converts @service or @\Class -> service name and checks its existence.
-	 */
-	private function getServiceName($arg): ?string
-	{
-		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
-			return null;
-		}
-		$service = substr($arg, 1);
-		if (Strings::contains($service, '\\')) {
-			$res = $this->builder->getByType($service);
-			if (!$res) {
-				throw new ServiceCreationException("Reference to missing service of type $service.");
-			}
-			return $res;
-		}
-		if (!$this->builder->hasDefinition($service)) {
-			throw new ServiceCreationException("Reference to missing service '$service'.");
-		}
-		return $service;
 	}
 
 
@@ -245,17 +222,14 @@ class PhpGenerator
 			if ($val instanceof Statement) {
 				$val = new PhpLiteral($this->formatStatement($val));
 
-			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
-				$val = substr($val, 1);
-
-			} elseif (is_string($val) && substr($val, 0, 1) === '@' && strlen($val) > 1) { // service reference
-				$name = substr($val, 1);
+			} elseif ($val instanceof Reference) {
+				$name = $val->getValue();
 				if ($name === ContainerBuilder::THIS_CONTAINER) {
 					$val = new PhpLiteral('$this');
 				} elseif ($name === $this->currentService) {
 					$val = new PhpLiteral('$service');
 				} else {
-					$val = new PhpLiteral($this->formatStatement(new Statement(['@' . ContainerBuilder::THIS_CONTAINER, 'getService'], [$name])));
+					$val = new PhpLiteral($this->formatStatement(new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$name])));
 				}
 			}
 		});

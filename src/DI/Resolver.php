@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\ServiceDefinition;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
@@ -72,8 +73,8 @@ class Resolver
 		$definitions = $this->builder->getDefinitions();
 		if (
 			$def->getAutowired() === true
-			&& ($alias = $this->getServiceName($def->getFactory()->getEntity()))
-			&& (!$def->getImplement() || (!Strings::contains($alias, '\\') && $definitions[$alias]->getImplement()))
+			&& ($alias = $this->normalizeReference($def->getFactory()->getEntity()))
+			&& (!$def->getImplement() || ($alias->isName() && $definitions[$alias->getValue()]->getImplement()))
 		) {
 			$def->setAutowired(false);
 		}
@@ -121,8 +122,8 @@ class Resolver
 				throw new ServiceCreationException("Service accessor '$name' must have no setup.");
 			}
 			if (!$def->getEntity()) {
-				$def->setFactory('@\\' . ltrim($def->getType(), '\\'));
-			} elseif (!$this->getServiceName($def->getFactory()->getEntity())) {
+				$def->setFactory(Reference::fromType($def->getType()));
+			} elseif (!$this->normalizeReference($def->getFactory()->getEntity())) {
 				throw new ServiceCreationException("Invalid factory in service '$name' definition.");
 			}
 		}
@@ -203,7 +204,7 @@ class Resolver
 		$serviceName = current(array_slice(array_keys($this->recursive), -1));
 
 		if (is_array($entity)) {
-			if (($service = $this->getServiceName($entity[0])) || $entity[0] instanceof Statement) {
+			if ($entity[0] instanceof Reference || $entity[0] instanceof Statement) {
 				$entity[0] = $this->resolveEntityType($entity[0]);
 				if (!$entity[0]) {
 					return null;
@@ -229,10 +230,11 @@ class Resolver
 			}
 			return $type;
 
-		} elseif ($service = $this->getServiceName($entity)) { // alias or factory
-			if (Strings::contains($service, '\\')) { // @\Class
-				return $service;
+		} elseif ($entity instanceof Reference) { // alias or factory
+			if ($entity->isType()) { // @\Class
+				return $entity->getValue();
 			}
+			$service = $entity->getValue();
 			return $definitions[$service]->getImplement()
 				?: $definitions[$service]->getType()
 				?: $this->resolveServiceType($service);
@@ -255,9 +257,9 @@ class Resolver
 
 		$this->currentService = null;
 		$entity = $def->getFactory()->getEntity();
-		$serviceRef = $this->getServiceName($entity);
-		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
-			? new Statement(['@' . ContainerBuilder::THIS_CONTAINER, 'getService'], [$serviceRef])
+		$serviceRef = $this->normalizeReference($entity);
+		$factory = $serviceRef && $serviceRef->isName() && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
+			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
 			: $def->getFactory();
 
 		try {
@@ -267,7 +269,7 @@ class Resolver
 			$setups = $def->getSetup();
 			foreach ($setups as &$setup) {
 				if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
-					$setup = new Statement(['@self', $setup->getEntity()], $setup->arguments);
+					$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
 				}
 				$setup = $this->completeStatement($setup);
 			}
@@ -293,14 +295,13 @@ class Resolver
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 
-		} elseif ($service = $this->getServiceName($entity)) { // factory calling
+		} elseif ($entity instanceof Reference) { // factory calling
 			$params = [];
-			foreach ($definitions[$service]->parameters as $k => $v) {
+			foreach ($definitions[$entity->getValue()]->parameters as $k => $v) {
 				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 			}
 			$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
 			$arguments = $this->autowireArguments($rm, $arguments);
-			$entity = '@' . $service;
 
 		} elseif ($entity === 'not') { // special
 
@@ -337,8 +338,6 @@ class Resolver
 		} else {
 			if ($entity[0] instanceof Statement) {
 				$entity[0] = $this->completeStatement($entity[0]);
-			} elseif ($service = $this->getServiceName($entity[0])) { // service method
-				$entity[0] = '@' . $service;
 			}
 
 			if ($entity[1][0] === '$') { // property getter, setter or appender
@@ -347,9 +346,9 @@ class Resolver
 					throw new ServiceCreationException("Missing argument for $entity[1].");
 				}
 			} elseif (
-				$type = empty($service) || $entity[1] === 'create'
+				$type = !$entity[0] instanceof Reference || $entity[1] === 'create'
 					? $this->resolveEntityType($entity[0])
-					: $definitions[$service]->getType()
+					: $definitions[$entity[0]->getValue()]->getType()
 			) {
 				$rc = new ReflectionClass($type);
 				if ($rc->hasMethod($entity[1])) {
@@ -371,26 +370,33 @@ class Resolver
 					$val = $this->completeStatement($val);
 
 				} elseif ($val instanceof ServiceDefinition) {
-					$val = '@' . current(array_keys($this->builder->getDefinitions(), $val, true));
+					$val = $this->normalizeEntity($val);
+
+				} elseif ($val instanceof Reference) {
+					$val = $this->normalizeReference($val);
 
 				} elseif (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
 					$pair = explode('::', $val, 2);
-					$name = $this->getServiceName($pair[0]);
+					$serviceRef = $this->normalizeReference($pair[0]);
 					if (!isset($pair[1])) { // @service
-						$val = '@' . $name;
+						$val = $serviceRef;
 					} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
-						$val = ContainerBuilder::literal($this->builder->getDefinition($name)->getType() . '::' . $pair[1]);
+						$val = ContainerBuilder::literal($this->builder->getDefinition($serviceRef->getValue())->getType() . '::' . $pair[1]);
 					} else { // @service::property
-						$val = new Statement(['@' . $name, '$' . $pair[1]]);
+						$val = new Statement([$serviceRef, '$' . $pair[1]]);
 					}
+
+				} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
+					$val = substr($val, 1);
 				}
 			});
 
 		} catch (ServiceCreationException $e) {
-			if ((is_string($entity) || is_array($entity)) && !strpos($e->getMessage(), ' (used in')) {
-				$desc = is_string($entity)
-					? $entity . '::__construct'
-					: (is_string($entity[0]) ? ($entity[0] . '::') : 'method ') . $entity[1];
+			$toText = function ($x) { return $x instanceof Reference ? '@' . $x->getValue() : $x; } ;
+			if ((is_string($entity) || $entity instanceof Reference || is_array($entity)) && !strpos($e->getMessage(), ' (used in')) {
+				$desc = (is_string($entity) || $entity instanceof Reference)
+					? $toText($entity) . '::__construct'
+					: ((is_string($entity[0]) || $entity[0] instanceof Reference) ? ($toText($entity[0]) . '::') : 'method ') . $entity[1];
 				$e->setMessage($e->getMessage() . " (used in $desc)");
 			}
 			throw $e;
@@ -413,7 +419,7 @@ class Resolver
 
 
 	/**
-	 * @return string|array  Class, @service, [Class, member], [@service, member], [, globalFunc], [Statement, member]
+	 * @return string|array|Reference  literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member]
 	 */
 	private function normalizeEntity($entity)
 	{
@@ -421,12 +427,19 @@ class Resolver
 			$entity = explode('::', $entity);
 		}
 
-		if (is_array($entity) && $entity[0] instanceof ServiceDefinition) { // [ServiceDefinition, ...] -> [@serviceName, ...]
-			$entity[0] = '@' . current(array_keys($this->builder->getDefinitions(), $entity[0], true));
-
-		} elseif ($entity instanceof ServiceDefinition) { // ServiceDefinition -> @serviceName
-			$entity = '@' . current(array_keys($this->builder->getDefinitions(), $entity, true));
+		if (is_array($entity)) {
+			$item = &$entity[0];
+		} else {
+			$item = &$entity;
 		}
+
+		if ($item instanceof ServiceDefinition) {
+			$item = new Reference(current(array_keys($this->builder->getDefinitions(), $item, true)));
+
+		} elseif ($ref = $this->normalizeReference($item)) { // @service|Reference -> resolved Reference
+			$item = $ref;
+		}
+
 		return $entity;
 	}
 
@@ -434,20 +447,23 @@ class Resolver
 	/**
 	 * Converts @service or @\Class to service name (or type if not possible during resolving) and checks its existence.
 	 */
-	private function getServiceName($arg): ?string
+	private function normalizeReference($arg): ?Reference
 	{
-		if (!is_string($arg) || !preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
+		if ($arg instanceof Reference) {
+			$service = $arg->getValue();
+		} elseif (is_string($arg) && preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
+			$service = substr($arg, 1);
+		} else {
 			return null;
 		}
-		$service = substr($arg, 1);
-		if ($service === ContainerBuilder::THIS_SERVICE) {
+		if ($service === Reference::SELF) {
 			$service = $this->currentService;
 		}
 		if (Strings::contains($service, '\\')) {
 			try {
 				$res = $this->getByType($service);
 			} catch (NotAllowedDuringResolvingException $e) {
-				return $service;
+				return new Reference($service);
 			}
 			if (!$res) {
 				throw new ServiceCreationException("Reference to missing service of type $service.");
@@ -457,22 +473,22 @@ class Resolver
 		if (!$this->builder->hasDefinition($service)) {
 			throw new ServiceCreationException("Reference to missing service '$service'.");
 		}
-		return $service;
+		return new Reference($service);
 	}
 
 
 	/**
-	 * Resolves service name by type (taking into account local-autowiring).
+	 * Returns named reference to service resolved by type (taking into account local-autowiring).
 	 */
-	public function getByType(string $type): ?string
+	public function getByType(string $type): Reference
 	{
 		if (
 			$this->currentService !== null
 			&& is_a($this->builder->getDefinition((string) $this->currentService)->getType(), $type, true)
 		) {
-			return $this->currentService;
+			return new Reference($this->currentService);
 		}
-		return $this->builder->getByType($type, false);
+		return new Reference($this->builder->getByType($type, true));
 	}
 
 
