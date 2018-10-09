@@ -31,8 +31,14 @@ class Resolver
 	/** @var ContainerBuilder */
 	private $builder;
 
-	/** @var string|null */
+	/** @var Definition|null */
 	private $currentService;
+
+	/** @var string|null */
+	private $currentServiceType;
+
+	/** @var bool */
+	private $currentServiceAllowed;
 
 	/** @var \SplObjectStorage  circular reference detector */
 	private $recursive;
@@ -257,7 +263,10 @@ class Resolver
 			return;
 		}
 
-		$this->currentService = null;
+		$this->currentService = in_array($def, $this->builder->getDefinitions(), true) ? $def : null;
+		$this->currentServiceType = $def->getType();
+		$this->currentServiceAllowed = false;
+
 		$entity = $def->getFactory()->getEntity();
 		$serviceRef = $entity instanceof Reference ? $this->normalizeReference($entity) : null;
 		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
@@ -267,13 +276,12 @@ class Resolver
 		try {
 			$def->setFactory($this->completeStatement($factory));
 
-			$this->currentService = $def->getName();
 			$setups = $def->getSetup();
 			foreach ($setups as &$setup) {
 				if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
 					$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
 				}
-				$setup = $this->completeStatement($setup);
+				$setup = $this->completeStatement($setup, true);
 			}
 			$def->setSetup($setups);
 
@@ -281,13 +289,14 @@ class Resolver
 			throw $this->completeException($e, $def);
 
 		} finally {
-			$this->currentService = null;
+			$this->currentService = $this->currentServiceType = null;
 		}
 	}
 
 
-	public function completeStatement(Statement $statement): Statement
+	public function completeStatement(Statement $statement, bool $currentServiceAllowed = false): Statement
 	{
+		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
 		$definitions = $this->builder->getDefinitions();
@@ -336,7 +345,7 @@ class Resolver
 
 		} else {
 			if ($entity[0] instanceof Statement) {
-				$entity[0] = $this->completeStatement($entity[0]);
+				$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
 			}
 
 			if ($entity[1][0] === '$') { // property getter, setter or appender
@@ -366,7 +375,7 @@ class Resolver
 		try {
 			array_walk_recursive($arguments, function (&$val): void {
 				if ($val instanceof Statement) {
-					$val = $this->completeStatement($val);
+					$val = $this->completeStatement($val, $this->currentServiceAllowed);
 
 				} elseif ($val instanceof Definition || $val instanceof Reference) {
 					$val = $this->normalizeEntity(new Statement($val));
@@ -426,7 +435,7 @@ class Resolver
 	{
 		$service = $ref->getValue();
 		if ($ref->isSelf()) {
-			$service = $this->currentService;
+			$service = $this->currentService->getName();
 		} elseif ($ref->isName()) {
 			if (!$this->builder->hasDefinition($service)) {
 				throw new ServiceCreationException("Reference to missing service '$service'.");
@@ -454,10 +463,11 @@ class Resolver
 	public function getByType(string $type): Reference
 	{
 		if (
-			$this->currentService !== null
-			&& is_a($this->builder->getDefinition((string) $this->currentService)->getType(), $type, true)
+			$this->currentService
+			&& $this->currentServiceAllowed
+			&& is_a($this->currentServiceType, $type, true)
 		) {
-			return new Reference($this->currentService);
+			return new Reference($this->currentService->getName());
 		}
 		return new Reference($this->builder->getByType($type, true));
 	}
