@@ -49,7 +49,7 @@ class ContainerBuilder
 	public function __construct()
 	{
 		$this->autowiring = new Autowiring($this);
-		$this->addDefinition(self::THIS_CONTAINER)->setType(Container::class);
+		$this->addExternalDefinition(self::THIS_CONTAINER)->setType(Container::class);
 	}
 
 
@@ -75,6 +75,30 @@ class ContainerBuilder
 			$this->needsResolve = true;
 		});
 		return $this->definitions[$name] = $definition;
+	}
+
+
+	public function addAccessorDefinition(string $name): Definitions\AccessorDefinition
+	{
+		return $this->addDefinition($name, new Definitions\AccessorDefinition);
+	}
+
+
+	public function addFactoryDefinition(string $name): Definitions\FactoryDefinition
+	{
+		return $this->addDefinition($name, new Definitions\FactoryDefinition);
+	}
+
+
+	public function addLocatorDefinition(string $name): Definitions\LocatorDefinition
+	{
+		return $this->addDefinition($name, new Definitions\LocatorDefinition);
+	}
+
+
+	public function addExternalDefinition(string $name): Definitions\ExternalDefinition
+	{
+		return $this->addDefinition($name, new Definitions\ExternalDefinition);
 	}
 
 

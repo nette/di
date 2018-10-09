@@ -116,7 +116,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad5')->setFactory('stdClass');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method Bad5::get() must have no arguments.");
+}, Nette\DI\ServiceCreationException::class, "Service 'one': Method Bad5::get() must have no arguments.");
 
 
 class Bad6
@@ -130,7 +130,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad6::create');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method Bad6::create() is not callable.");
+}, Nette\DI\ServiceCreationException::class, "Service 'one': Method Bad6::create() is not callable.");
 
 
 class Bad7

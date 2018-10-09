@@ -64,7 +64,8 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	{
 		return array_filter($this->getContainerBuilder()->getDefinitions(), function (Definitions\Definition $def) use ($type): bool {
 			return is_a($def->getImplement(), $type, true)
-				|| ($def instanceof Definitions\ServiceDefinition && $def->getImplementMode() !== $def::IMPLEMENT_MODE_GET && is_a($def->getType(), $type, true));
+				|| ($def instanceof Definitions\ServiceDefinition && $def->getImplementMode() !== $def::IMPLEMENT_MODE_GET && is_a($def->getType(), $type, true))
+				|| ($def instanceof Definitions\FactoryDefinition && is_a($def->getResultType(), $type, true));
 		});
 	}
 }
