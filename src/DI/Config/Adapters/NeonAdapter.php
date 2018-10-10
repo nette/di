@@ -11,7 +11,7 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\DI\Config\Helpers;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\Statement;
 use Nette\Neon;
 
 

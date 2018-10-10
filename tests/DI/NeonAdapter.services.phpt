@@ -7,7 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI\Config\Adapters\NeonAdapter;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\Statement;
 use Tester\Assert;
 
 
@@ -23,7 +23,7 @@ Assert::equal(
 	[
 		new Statement('Class', [
 			'arg1',
-			new Nette\DI\Statement('Class2', ['arg2', 'arg3']),
+			new Statement('Class2', ['arg2', 'arg3']),
 		]),
 	],
 	$data

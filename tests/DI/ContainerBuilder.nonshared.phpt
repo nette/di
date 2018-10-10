@@ -23,7 +23,7 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory('Service', [new Nette\DI\Statement('@two', ['foo'])]);
+	->setFactory('Service', [new Nette\DI\Definitions\Statement('@two', ['foo'])]);
 
 $two = $builder->addDefinition('two')
 	->setParameters(['foo', 'bar' => false, 'array foobar' => null])

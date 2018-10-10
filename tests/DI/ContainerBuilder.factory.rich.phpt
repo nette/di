@@ -7,6 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI;
+use Nette\DI\Definitions\Statement;
 use Tester\Assert;
 
 
@@ -41,11 +42,11 @@ class Obj
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setFactory([new DI\Statement('Factory'), 'create'])
-	->addSetup([new DI\Statement('Factory'), 'mark'], ['@self']);
+	->setFactory([new Statement('Factory'), 'create'])
+	->addSetup([new Statement('Factory'), 'mark'], ['@self']);
 
 $two = $builder->addDefinition('two')
-	->setFactory([new DI\Statement([$one, 'foo'], [1]), 'foo'], [2]);
+	->setFactory([new Statement([$one, 'foo'], [1]), 'foo'], [2]);
 
 
 $container = createContainer($builder);

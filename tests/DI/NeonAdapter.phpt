@@ -7,7 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI\Config;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\Statement;
 use Tester\Assert;
 
 

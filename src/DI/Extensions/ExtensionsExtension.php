@@ -23,7 +23,7 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 			if (is_int($name)) {
 				$name = null;
 			}
-			if ($class instanceof Nette\DI\Statement) {
+			if ($class instanceof Nette\DI\Definitions\Statement) {
 				$rc = new \ReflectionClass($class->getEntity());
 				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->arguments));
 			} else {

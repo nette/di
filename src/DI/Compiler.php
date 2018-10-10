@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Statement;
 use Nette\Utils\Validators;
 
 
@@ -309,7 +310,7 @@ class Compiler
 	/**
 	 * Parses single service definition from configuration.
 	 */
-	public static function loadDefinition(ServiceDefinition $definition, $config, string $name = null): void
+	public static function loadDefinition(Definitions\ServiceDefinition $definition, $config, string $name = null): void
 	{
 		if ($config === null) {
 			return;
@@ -349,7 +350,7 @@ class Compiler
 		}
 
 		if (array_key_exists('class', $config)) {
-			Validators::assertField($config, 'class', 'string|Nette\DI\Statement|null');
+			Validators::assertField($config, 'class', 'string|Nette\DI\Definitions\Statement|null');
 			if ($config['class'] instanceof Statement) {
 				trigger_error("Service '$name': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
 			} else {
@@ -359,7 +360,7 @@ class Compiler
 		}
 
 		if (array_key_exists('factory', $config)) {
-			Validators::assertField($config, 'factory', 'callable|Nette\DI\Statement|null');
+			Validators::assertField($config, 'factory', 'callable|Nette\DI\Definitions\Statement|null');
 			$definition->setFactory($config['factory']);
 		}
 
@@ -378,7 +379,7 @@ class Compiler
 			}
 			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
-				Validators::assert($setup, 'callable|Nette\DI\Statement|array:1', "setup item #$id");
+				Validators::assert($setup, 'callable|Nette\DI\Definitions\Statement|array:1', "setup item #$id");
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
