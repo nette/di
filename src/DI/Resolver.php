@@ -83,12 +83,10 @@ class Resolver
 			}
 
 			// auto-disable autowiring for aliases
-			$definitions = $this->builder->getDefinitions();
 			if (
 				$def->getAutowired() === true
 				&& $def->getFactory()->getEntity() instanceof Reference
-				&& ($alias = $this->normalizeReference($def->getFactory()->getEntity()))
-				&& (!$def->getImplement() || ($alias->isName() && $definitions[$alias->getValue()]->getImplement()))
+				&& !$def->getImplement()
 			) {
 				$def->setAutowired(false);
 			}
