@@ -57,8 +57,8 @@ final class ServiceDefinition
 	/** @var string|null  create | get */
 	private $implementMode;
 
-	/** @var callable  'pi' is noop */
-	private $notifier = 'pi';
+	/** @var callable|null */
+	private $notifier;
 
 
 	/**
@@ -111,7 +111,9 @@ final class ServiceDefinition
 	 */
 	public function setType(?string $type)
 	{
-		($this->notifier)();
+		if ($this->notifier && $this->type !== $type) {
+			($this->notifier)();
+		}
 		if ($type === null) {
 			$this->type = null;
 		} elseif (!class_exists($type) && !interface_exists($type)) {
@@ -261,7 +263,9 @@ final class ServiceDefinition
 	 */
 	public function setAutowired($state = true)
 	{
-		($this->notifier)();
+		if ($this->notifier && $this->autowired !== $state) {
+			($this->notifier)();
+		}
 		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
 		return $this;
 	}
@@ -306,7 +310,9 @@ final class ServiceDefinition
 	 */
 	public function setImplement(string $interface)
 	{
-		($this->notifier)();
+		if ($this->notifier && $this->implement !== $interface) {
+			($this->notifier)();
+		}
 		if ($interface === null) {
 			$this->implement = null;
 		} elseif (!interface_exists($interface)) {
@@ -356,7 +362,7 @@ final class ServiceDefinition
 	 */
 	public function setNotifier(?callable $notifier): void
 	{
-		$this->notifier = $notifier ?? 'pi';
+		$this->notifier = $notifier;
 	}
 
 
@@ -364,7 +370,7 @@ final class ServiceDefinition
 	{
 		$this->factory = unserialize(serialize($this->factory));
 		$this->setup = unserialize(serialize($this->setup));
-		$this->notifier = 'pi';
+		$this->notifier = null;
 		$this->name = null;
 	}
 }
