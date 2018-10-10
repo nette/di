@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Nette\DI;
+namespace Nette\DI\Definitions;
 
 use Nette;
 

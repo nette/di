@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Nette\DI;
+namespace Nette\DI\Definitions;
 
 use Nette;
 
@@ -149,7 +149,7 @@ final class ServiceDefinition
 	{
 		foreach ($setup as $v) {
 			if (!$v instanceof Statement) {
-				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Statement[].');
+				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Definitions\Statement[].');
 			}
 		}
 		$this->setup = $setup;
@@ -313,7 +313,7 @@ final class ServiceDefinition
 	public function setInject(bool $state = true)
 	{
 		trigger_error(__METHOD__ . "() is deprecated, use addTag('inject')", E_USER_DEPRECATED);
-		return $this->addTag(Extensions\InjectExtension::TAG_INJECT, $state);
+		return $this->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, $state);
 	}
 
 

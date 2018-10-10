@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
 

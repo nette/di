@@ -11,6 +11,7 @@ namespace Nette\DI\Extensions;
 
 use Nette;
 use Nette\DI;
+use Nette\DI\Definitions;
 use Nette\Utils\Reflection;
 
 
@@ -32,14 +33,14 @@ final class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	private function updateDefinition(DI\ServiceDefinition $def): void
+	private function updateDefinition(Definitions\ServiceDefinition $def): void
 	{
 		$class = $def->getType();
 		$setups = $def->getSetup();
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
 			$builder = $this->getContainerBuilder();
-			$inject = new DI\Statement('$' . $property, ['@\\' . ltrim((string) $type, '\\')]);
+			$inject = new Definitions\Statement('$' . $property, ['@\\' . ltrim((string) $type, '\\')]);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;
@@ -52,7 +53,7 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		foreach (array_reverse(self::getInjectMethods($def->getType())) as $method) {
-			$inject = new DI\Statement($method);
+			$inject = new Definitions\Statement($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
 					$inject = $setup;

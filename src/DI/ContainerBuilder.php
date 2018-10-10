@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\Reflection;
 use Nette\Utils\Strings;

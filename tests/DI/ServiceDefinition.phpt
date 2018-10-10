@@ -6,8 +6,8 @@
 
 declare(strict_types=1);
 
-use Nette\DI\ServiceDefinition;
-use Nette\DI\Statement;
+use Nette\DI\Definitions\ServiceDefinition;
+use Nette\DI\Definitions\Statement;
 use Tester\Assert;
 
 

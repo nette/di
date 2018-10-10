@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
-
+use Nette\DI\Definitions;
 
 /**
  * Decorators for services.
@@ -43,7 +43,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 		foreach ($this->findByType($type) as $def) {
 			foreach ($setups as $setup) {
 				if (is_array($setup)) {
-					$setup = new Nette\DI\Statement(key($setup), array_values($setup));
+					$setup = new Definitions\Statement(key($setup), array_values($setup));
 				}
 				$def->addSetup($setup);
 			}
