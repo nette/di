@@ -82,7 +82,7 @@ namespace
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'array' not found. Is return type of A\\Factory::createArray() used in service 'a' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 'a': Class or interface 'array' not found. Is return type of A\\Factory::createArray() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -91,7 +91,7 @@ namespace
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'callable' not found. Is return type of A\\Factory::createCallable() used in service 'c' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 'c': Class or interface 'callable' not found. Is return type of A\\Factory::createCallable() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -100,7 +100,7 @@ namespace
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'string' not found. Is return type of A\\Factory::createString() used in service 's' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 's': Class or interface 'string' not found. Is return type of A\\Factory::createString() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -109,7 +109,7 @@ namespace
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'int' not found. Is return type of A\\Factory::createInt() used in service 'i' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 'i': Class or interface 'int' not found. Is return type of A\\Factory::createInt() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -118,7 +118,7 @@ namespace
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'bool' not found. Is return type of A\\Factory::createBool() used in service 'b' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 'b': Class or interface 'bool' not found. Is return type of A\\Factory::createBool() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -127,7 +127,7 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Class or interface 'float' not found. Is return type of A\\Factory::createFloat() used in service 'f' correct?");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Class or interface 'float' not found. Is return type of A\\Factory::createFloat() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -136,7 +136,7 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createObject');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Unknown type of service 'f', declare return type of factory method (for PHP 5 use annotation @return)");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown type, declare return type of factory method (for PHP 5 use annotation @return)");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -145,6 +145,6 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createMixed');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Unknown type of service 'f', declare return type of factory method (for PHP 5 use annotation @return)");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown type, declare return type of factory method (for PHP 5 use annotation @return)");
 
 }

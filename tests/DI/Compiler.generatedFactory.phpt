@@ -283,7 +283,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad2')->setFactory('Bad1');
 	$builder->complete();
-}, Nette\InvalidStateException::class, 'Type hint for $bar in Bad2::create() doesn\'t match type hint in Bad1 constructor.');
+}, Nette\InvalidStateException::class, "Service 'one': Type hint for \$bar in Bad2::create() doesn't match type hint in Bad1 constructor.");
 
 
 
@@ -303,7 +303,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad4')->setFactory('Bad3');
 	$builder->complete();
-}, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad4::create(), did you mean $bar?');
+}, Nette\InvalidStateException::class, "Service 'one': Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
 
 
 
@@ -323,7 +323,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setImplement('Bad6')->setFactory('Bad5');
 	$builder->complete();
-}, Nette\InvalidStateException::class, 'Unused parameter $baz when implementing method Bad6::create().');
+}, Nette\InvalidStateException::class, "Service 'one': Unused parameter \$baz when implementing method Bad6::create().");
 
 
 
@@ -337,4 +337,4 @@ Assert::exception(function () {
 	$builder->addDefinition('stdClass')->setFactory('stdClass');
 	$builder->addDefinition('one')->setImplement('Bad7')->setClass('stdClass')->addSetup('method');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service accessor 'one' must have no setup.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of stdClass): Service accessor must have no setup.");
