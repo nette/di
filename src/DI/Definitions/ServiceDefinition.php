@@ -30,6 +30,9 @@ final class ServiceDefinition
 	/** @var array */
 	public $parameters = [];
 
+	/** @var string|null */
+	private $name;
+
 	/** @var string|null  class or interface name */
 	private $type;
 
@@ -56,6 +59,25 @@ final class ServiceDefinition
 
 	/** @var callable  'pi' is noop */
 	private $notifier = 'pi';
+
+
+	/**
+	 * @return static
+	 */
+	public function setName(string $name)
+	{
+		if ($this->name) {
+			throw new Nette\InvalidStateException('Name already has been set.');
+		}
+		$this->name = $name;
+		return $this;
+	}
+
+
+	public function getName(): ?string
+	{
+		return $this->name;
+	}
 
 
 	/**
@@ -331,5 +353,6 @@ final class ServiceDefinition
 		$this->factory = unserialize(serialize($this->factory));
 		$this->setup = unserialize(serialize($this->setup));
 		$this->notifier = 'pi';
+		$this->name = null;
 	}
 }
