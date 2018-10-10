@@ -71,6 +71,7 @@ class ContainerBuilder
 		if (!$definition) {
 			$definition = new ServiceDefinition;
 		}
+		$definition->setName($name);
 		$definition->setNotifier(function () {
 			$this->classListNeedsRefresh = true;
 		});
@@ -284,7 +285,7 @@ class ContainerBuilder
 		foreach ($this->definitions as $name => $def) {
 			// prepare generated factories
 			if ($def->getImplement()) {
-				$this->resolveImplement($def, $name);
+				$this->resolveImplement($def);
 			}
 
 			if ($def->isDynamic()) {
@@ -357,8 +358,9 @@ class ContainerBuilder
 	}
 
 
-	private function resolveImplement(ServiceDefinition $def, $name): void
+	private function resolveImplement(ServiceDefinition $def): void
 	{
+		$name = $def->getName();
 		$interface = $def->getImplement();
 		if (!interface_exists($interface)) {
 			throw new ServiceCreationException("Interface $interface used in service '$name' not found.");
@@ -777,7 +779,7 @@ class ContainerBuilder
 				$val = $this->completeStatement($val);
 
 			} elseif ($val instanceof ServiceDefinition) {
-				$val = '@' . current(array_keys($this->getDefinitions(), $val, true));
+				$val = '@' . $val->getName();
 			}
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);
