@@ -53,39 +53,63 @@ class Resolver
 	public function resolveDefinition(ServiceDefinition $def): void
 	{
 		$name = $def->getName();
-
-		// prepare generated factories
-		if ($def->getImplement()) {
-			$this->resolveImplement($def);
+		if (isset($this->recursive[$name])) {
+			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->recursive))));
 		}
 
-		if ($def->isDynamic()) {
-			if (!$def->getType()) {
-				throw new ServiceCreationException("Type is missing in definition of service '$name'.");
+		try {
+			$this->recursive[$name] = true;
+
+			// prepare generated factories
+			if ($def->getImplement()) {
+				$this->resolveImplement($def);
 			}
-			$def->setFactory(null);
-			return;
-		}
 
-		// complete class-factory pairs
-		if (!$def->getEntity()) {
-			if (!$def->getType()) {
-				throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
+			if ($def->isDynamic()) {
+				if (!$def->getType()) {
+					throw new ServiceCreationException('Type is missing in definition of service.');
+				}
+				$def->setFactory(null);
+				return;
 			}
-			$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
-		}
 
-		// auto-disable autowiring for aliases
-		$definitions = $this->builder->getDefinitions();
-		if (
-			$def->getAutowired() === true
-			&& ($alias = $this->normalizeReference($def->getFactory()->getEntity()))
-			&& (!$def->getImplement() || ($alias->isName() && $definitions[$alias->getValue()]->getImplement()))
-		) {
-			$def->setAutowired(false);
-		}
+			// complete class-factory pairs
+			if (!$def->getEntity()) {
+				if (!$def->getType()) {
+					throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
+				}
+				$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
+			}
 
-		$this->resolveServiceType($name);
+			// auto-disable autowiring for aliases
+			$definitions = $this->builder->getDefinitions();
+			if (
+				$def->getAutowired() === true
+				&& ($alias = $this->normalizeReference($def->getFactory()->getEntity()))
+				&& (!$def->getImplement() || ($alias->isName() && $definitions[$alias->getValue()]->getImplement()))
+			) {
+				$def->setAutowired(false);
+			}
+
+			// resolve type
+			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
+			if ($type = $def->getType() ?: $factoryClass) {
+				if (!class_exists($type) && !interface_exists($type)) {
+					throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
+				}
+				$type = Helpers::normalizeClass($type);
+				$def->setType($type);
+				if (count($this->recursive) === 1) {
+					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
+				}
+
+			} elseif ($def->getAutowired()) {
+				throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
+			}
+
+		} finally {
+			unset($this->recursive[$name]);
+		}
 	}
 
 
@@ -173,33 +197,16 @@ class Resolver
 	}
 
 
-	private function resolveServiceType(string $name): ?string
+	public function resolveReferenceType(Reference $ref): ?string
 	{
-		if (isset($this->recursive[$name])) {
-			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->recursive))));
+		if (!$ref->isName()) {
+			return ltrim($ref->getValue(), '\\');
 		}
-		try {
-			$this->recursive[$name] = true;
-
-			$def = $this->builder->getDefinition((string) $name);
-			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
-			if ($type = $def->getType() ?: $factoryClass) {
-				if (!class_exists($type) && !interface_exists($type)) {
-					throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
-				}
-				$type = Helpers::normalizeClass($type);
-				$def->setType($type);
-				if (count($this->recursive) === 1) {
-					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
-				}
-
-			} elseif ($def->getAutowired()) {
-				throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
-			}
-		} finally {
-			unset($this->recursive[$name]);
+		$def = $this->builder->getDefinition($ref->getValue());
+		if (!$def->getType()) {
+			$this->resolveDefinition($def);
 		}
-		return $type;
+		return $def->getType();
 	}
 
 
@@ -241,9 +248,7 @@ class Resolver
 				return $entity->getValue();
 			}
 			$service = $entity->getValue();
-			return $definitions[$service]->getImplement()
-				?: $definitions[$service]->getType()
-				?: $this->resolveServiceType($service);
+			return $definitions[$service]->getImplement() ?: $this->resolveReferenceType($entity);
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
@@ -507,7 +512,7 @@ class Resolver
 					$val = new Reference($pair[0]);
 				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
 					$ref = $this->normalizeReference(new Reference($pair[0]));
-					$val = ContainerBuilder::literal($this->builder->getDefinition($ref->getValue())->getType() . '::' . $pair[1]);
+					$val = ContainerBuilder::literal($this->resolveReferenceType($ref) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
 				}
