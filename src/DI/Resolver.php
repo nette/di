@@ -299,7 +299,7 @@ class Resolver
 				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 			}
 			$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
-			$arguments = Autowiring::completeArguments($rm, $arguments, $this);
+			$arguments = $this->autowireArguments($rm, $arguments);
 			$entity = '@' . $service;
 
 		} elseif ($entity === 'not') { // special
@@ -313,8 +313,7 @@ class Resolver
 				$visibility = $rm->isProtected() ? 'protected' : 'private';
 				throw new ServiceCreationException("Class $entity has $visibility constructor.");
 			} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-				$this->addDependency($constructor);
-				$arguments = Autowiring::completeArguments($constructor, $arguments, $this);
+				$arguments = $this->autowireArguments($constructor, $arguments);
 			} elseif ($arguments) {
 				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
 			}
@@ -333,8 +332,7 @@ class Resolver
 			}
 
 			$rf = new \ReflectionFunction($entity[1]);
-			$this->addDependency($rf);
-			$arguments = Autowiring::completeArguments($rf, $arguments, $this);
+			$arguments = $this->autowireArguments($rf, $arguments);
 
 		} else {
 			if ($entity[0] instanceof Statement) {
@@ -353,7 +351,17 @@ class Resolver
 					? $this->resolveEntityType($entity[0])
 					: $definitions[$service]->getType()
 			) {
-				$arguments = $this->autowireArguments($type, $entity[1], $arguments);
+				$rc = new ReflectionClass($type);
+				if ($rc->hasMethod($entity[1])) {
+					$rm = $rc->getMethod($entity[1]);
+					if (!$rm->isPublic()) {
+						throw new ServiceCreationException("$type::$entity[1]() is not callable.");
+					}
+					$arguments = $this->autowireArguments($rm, $arguments);
+
+				} elseif (!Nette\Utils\Arrays::isList($arguments)) {
+					throw new ServiceCreationException("Unable to pass specified arguments to $type::$entity[1]().");
+				}
 			}
 		}
 
@@ -395,22 +403,12 @@ class Resolver
 	/**
 	 * Add missing arguments using autowiring.
 	 */
-	private function autowireArguments(string $class, string $method, array $arguments): array
+	private function autowireArguments(\ReflectionFunctionAbstract $function, array $arguments): array
 	{
-		$rc = new ReflectionClass($class);
-		if (!$rc->hasMethod($method)) {
-			if (!Nette\Utils\Arrays::isList($arguments)) {
-				throw new ServiceCreationException("Unable to pass specified arguments to $class::$method().");
-			}
-			return $arguments;
+		if (!$function->isClosure()) {
+			$this->addDependency($function);
 		}
-
-		$rm = $rc->getMethod($method);
-		if (!$rm->isPublic()) {
-			throw new ServiceCreationException("$class::$method() is not callable.");
-		}
-		$this->addDependency($rm);
-		return Autowiring::completeArguments($rm, $arguments, $this);
+		return Autowiring::completeArguments($function, $arguments, $this);
 	}
 
 
