@@ -70,7 +70,7 @@ class Resolver
 			// complete class-factory pairs
 			if (!$def->getEntity()) {
 				if (!$def->getType()) {
-					throw new ServiceCreationException("Factory and type are missing in definition of service '$name'.");
+					throw new ServiceCreationException('Factory and type are missing in definition of service.');
 				}
 				$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
 			}
@@ -89,7 +89,7 @@ class Resolver
 			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
 			if ($type = $def->getType() ?: $factoryClass) {
 				if (!class_exists($type) && !interface_exists($type)) {
-					throw new ServiceCreationException("Class or interface '$type' used in service '$name' not found.");
+					throw new ServiceCreationException("Class or interface '$type' not found.");
 				}
 				$type = Helpers::normalizeClass($type);
 				$def->setType($type);
@@ -98,8 +98,11 @@ class Resolver
 				}
 
 			} elseif ($def->getAutowired()) {
-				throw new ServiceCreationException("Unknown type of service '$name', declare return type of factory method (for PHP 5 use annotation @return)");
+				throw new ServiceCreationException('Unknown type, declare return type of factory method (for PHP 5 use annotation @return)');
 			}
+
+		} catch (\Exception $e) {
+			throw $this->completeException($e, $def);
 
 		} finally {
 			unset($this->recursive[$name]);
@@ -109,10 +112,9 @@ class Resolver
 
 	private function resolveImplement(ServiceDefinition $def): void
 	{
-		$name = $def->getName();
 		$interface = $def->getImplement();
 		if (!interface_exists($interface)) {
-			throw new ServiceCreationException("Interface $interface used in service '$name' not found.");
+			throw new ServiceCreationException("Interface $interface not found.");
 		}
 		$interface = Helpers::normalizeClass($interface);
 		$def->setImplement($interface);
@@ -124,7 +126,7 @@ class Resolver
 			: ($rc->hasMethod('get') ? $rc->getMethod('get') : null);
 
 		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
-			throw new ServiceCreationException("Interface $interface used in service '$name' must have just one non-static method create() or get().");
+			throw new ServiceCreationException("Interface $interface must have just one non-static method create() or get().");
 		}
 		$def->setImplementMode($rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
 		$methodName = Reflection::toString($method) . '()';
@@ -132,23 +134,23 @@ class Resolver
 		if (!$def->getType() && !$def->getEntity()) {
 			$returnType = Helpers::getReturnType($method);
 			if (!$returnType) {
-				throw new ServiceCreationException("Method $methodName used in service '$name' has not return type hint or annotation @return.");
+				throw new ServiceCreationException("Method $methodName has not return type hint or annotation @return.");
 			} elseif (!class_exists($returnType)) {
-				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method used in service '$name', class '$returnType' cannot be found.");
+				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method, class '$returnType' cannot be found.");
 			}
 			$def->setType($returnType);
 		}
 
 		if ($rc->hasMethod('get')) {
 			if ($method->getParameters()) {
-				throw new ServiceCreationException("Method $methodName used in service '$name' must have no arguments.");
+				throw new ServiceCreationException("Method $methodName must have no arguments.");
 			} elseif ($def->getSetup()) {
-				throw new ServiceCreationException("Service accessor '$name' must have no setup.");
+				throw new ServiceCreationException('Service accessor must have no setup.');
 			}
 			if (!$def->getEntity()) {
 				$def->setFactory(Reference::fromType($def->getType()));
 			} elseif (!$this->normalizeReference($def->getFactory()->getEntity())) {
-				throw new ServiceCreationException("Invalid factory in service '$name' definition.");
+				throw new ServiceCreationException('Invalid factory definition.');
 			}
 		}
 
@@ -208,7 +210,6 @@ class Resolver
 	{
 		$definitions = $this->builder->getDefinitions();
 		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
-		$serviceName = current(array_slice(array_keys($this->recursive), -1));
 
 		if (is_array($entity)) {
 			if ($entity[0] instanceof Reference || $entity[0] instanceof Statement) {
@@ -227,13 +228,13 @@ class Resolver
 			if (isset($e) || ($refClass && (!$reflection->isPublic()
 				|| ($refClass->isTrait() && !$reflection->isStatic())
 			))) {
-				throw new ServiceCreationException(sprintf("Method %s() used in service '%s' is not callable.", Nette\Utils\Callback::toString($entity), $serviceName), 0, $e ?? null);
+				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Nette\Utils\Callback::toString($entity)), 0, $e ?? null);
 			}
 			$this->addDependency($reflection);
 
 			$type = Helpers::getReturnType($reflection);
 			if ($type && !class_exists($type) && !interface_exists($type)) {
-				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Is return type of %s() used in service '%s' correct?", $type, Nette\Utils\Callback::toString($entity), $serviceName));
+				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Is return type of %s() correct?", $type, Nette\Utils\Callback::toString($entity)));
 			}
 			return $type;
 
@@ -246,7 +247,7 @@ class Resolver
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
-				throw new ServiceCreationException("Class $entity used in service '$serviceName' not found.");
+				throw new ServiceCreationException("Class $entity not found.");
 			}
 			return $entity;
 		}
@@ -281,10 +282,7 @@ class Resolver
 			$def->setSetup($setups);
 
 		} catch (\Exception $e) {
-			$message = "Service '{$def->getName()}' (type of {$def->getType()}): " . $e->getMessage();
-			throw $e instanceof ServiceCreationException
-				? $e->setMessage($message)
-				: new ServiceCreationException($message, 0, $e);
+			throw $this->completeException($e, $def);
 
 		} finally {
 			$this->currentService = null;
@@ -383,12 +381,8 @@ class Resolver
 			});
 
 		} catch (ServiceCreationException $e) {
-			$toText = function ($x) { return $x instanceof Reference ? '@' . $x->getValue() : $x; } ;
-			if ((is_string($entity) || $entity instanceof Reference || is_array($entity)) && !strpos($e->getMessage(), ' (used in')) {
-				$desc = (is_string($entity) || $entity instanceof Reference)
-					? $toText($entity) . '::__construct'
-					: ((is_string($entity[0]) || $entity[0] instanceof Reference) ? ($toText($entity[0]) . '::') : 'method ') . $entity[1];
-				$e->setMessage($e->getMessage() . " (used in $desc)");
+			if (!strpos($e->getMessage(), ' (used in')) {
+				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
 			}
 			throw $e;
 		}
@@ -492,6 +486,42 @@ class Resolver
 	{
 		$this->builder->addDependency($dep);
 		return $this;
+	}
+
+
+	private function completeException(\Exception $e, ServiceDefinition $def): ServiceCreationException
+	{
+		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
+			return $e;
+		} else {
+			$message = "Service '{$def->getName()}'" . ($def->getType() ? " (type of {$def->getType()})" : '') . ': ' . $e->getMessage();
+			return $e instanceof ServiceCreationException
+				? $e->setMessage($message)
+				: new ServiceCreationException($message, 0, $e);
+		}
+	}
+
+
+	private function entityToString($entity): string
+	{
+		$referenceToText = function (Reference $ref): string {
+			return $ref->isSelf() && $this->currentService
+				? '@' . $this->currentService->getName()
+				: '@' . $ref->getValue();
+		};
+		if (is_string($entity)) {
+			return $entity . '::__construct';
+		} elseif ($entity instanceof Reference) {
+			$entity = $referenceToText($entity);
+		} elseif (is_array($entity)) {
+			if ($entity[0] instanceof Reference) {
+				$entity[0] = $referenceToText($entity[0]);
+			} elseif (!is_string($entity[0])) {
+				return 'method ' . $entity[1];
+			}
+			return implode('::', $entity);
+		}
+		return (string) $entity;
 	}
 
 
