@@ -191,10 +191,12 @@ class Resolver
 
 	private function resolveReferenceType(Reference $ref): ?string
 	{
-		if (!$ref->isName()) {
+		if ($ref->isSelf()) {
+			return $this->currentServiceType;
+		} elseif ($ref->isType()) {
 			return $ref->getValue();
 		}
-		$def = $this->builder->getDefinition($ref->getValue());
+		$def = $this->resolveReference($ref);
 		if (!$def->getType()) {
 			$this->resolveDefinition($def);
 		}
@@ -204,7 +206,6 @@ class Resolver
 
 	private function resolveEntityType(Statement $statement): ?string
 	{
-		$definitions = $this->builder->getDefinitions();
 		$entity = $this->normalizeEntity($statement);
 
 		if (is_array($entity)) {
@@ -238,8 +239,7 @@ class Resolver
 			if ($entity->isType()) { // @\Class
 				return $entity->getValue();
 			}
-			$service = $entity->getValue();
-			return $definitions[$service]->getImplement() ?: $this->resolveReferenceType($entity);
+			return $this->resolveReference($entity)->getImplement() ?: $this->resolveReferenceType($entity);
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
@@ -293,13 +293,12 @@ class Resolver
 		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
-		$definitions = $this->builder->getDefinitions();
 
 		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
 
 		} elseif ($entity instanceof Reference) { // factory calling
 			$params = [];
-			foreach ($definitions[$entity->getValue()]->parameters as $k => $v) {
+			foreach ($this->resolveReference($entity)->parameters as $k => $v) {
 				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 			}
 			$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
@@ -350,7 +349,7 @@ class Resolver
 			} elseif (
 				$type = !$entity[0] instanceof Reference || $entity[1] === 'create'
 					? $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
-					: $definitions[$entity[0]->getValue()]->getType()
+					: $this->resolveReferenceType($entity[0])
 			) {
 				$rc = new ReflectionClass($type);
 				if ($rc->hasMethod($entity[1])) {
@@ -413,8 +412,8 @@ class Resolver
 
 		if ($item instanceof Definition) {
 			$item = new Reference(current(array_keys($this->builder->getDefinitions(), $item, true)));
-
-		} elseif ($item instanceof Reference) {
+		}
+		if ($item instanceof Reference) {
 			$item = $this->normalizeReference($item);
 		}
 
@@ -423,17 +422,20 @@ class Resolver
 
 
 	/**
-	 * Normalizes typed or 'self' reference to named reference (or typed if is not possible during resolving) and checks existence of service.
+	 * Normalizes reference to 'self' or named reference (or leaves it typed if it is not possible during resolving) and checks existence of service.
 	 */
 	private function normalizeReference(Reference $ref): Reference
 	{
 		$service = $ref->getValue();
 		if ($ref->isSelf()) {
-			$service = $this->currentService->getName();
+			return $ref;
 		} elseif ($ref->isName()) {
 			if (!$this->builder->hasDefinition($service)) {
 				throw new ServiceCreationException("Reference to missing service '$service'.");
 			}
+			return $this->currentService && $service === $this->currentService->getName()
+				? new Reference(Reference::SELF)
+				: $ref;
 		} else {
 			try {
 				$res = $this->getByType($service);
@@ -445,12 +447,19 @@ class Resolver
 			}
 			return $res;
 		}
-		return new Reference($service);
+	}
+
+
+	private function resolveReference(Reference $ref): Definition
+	{
+		return $ref->isSelf()
+			? $this->currentService
+			: $this->builder->getDefinition($ref->getValue());
 	}
 
 
 	/**
-	 * Returns named reference to service resolved by type (taking into account local-autowiring).
+	 * Returns named reference to service resolved by type (or 'self' reference for local-autowiring).
 	 */
 	public function getByType(string $type): Reference
 	{
@@ -459,7 +468,7 @@ class Resolver
 			&& $this->currentServiceAllowed
 			&& is_a($this->currentServiceType, $type, true)
 		) {
-			return new Reference($this->currentService->getName());
+			return new Reference(Reference::SELF);
 		}
 		return new Reference($this->builder->getByType($type, true));
 	}
@@ -521,8 +530,7 @@ class Resolver
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
 				} elseif (preg_match('#^[A-Z][A-Z0-9_]*\z#', $pair[1], $m)) { // @service::CONSTANT
-					$ref = $this->normalizeReference(new Reference($pair[0]));
-					$val = ContainerBuilder::literal($this->resolveReferenceType($ref) . '::' . $pair[1]);
+					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
 				}

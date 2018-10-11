@@ -29,9 +29,6 @@ class PhpGenerator
 	/** @var string */
 	private $className;
 
-	/** @var string */
-	private $currentService;
-
 
 	public function __construct(ContainerBuilder $builder)
 	{
@@ -107,7 +104,6 @@ class PhpGenerator
 		}
 
 		$entity = $def->getFactory()->getEntity();
-		$this->currentService = null;
 		$code = '$service = ' . $this->formatStatement($def->getFactory()) . ";\n";
 
 		if (
@@ -122,7 +118,6 @@ class PhpGenerator
 			);
 		}
 
-		$this->currentService = $name;
 		foreach ($def->getSetup() as $setup) {
 			$code .= $this->formatStatement($setup) . ";\n";
 		}
@@ -220,12 +215,12 @@ class PhpGenerator
 
 			} elseif ($val instanceof Reference) {
 				$name = $val->getValue();
-				if ($name === ContainerBuilder::THIS_CONTAINER) {
-					$val = new PhpLiteral('$this');
-				} elseif ($name === $this->currentService) {
+				if ($val->isSelf()) {
 					$val = new PhpLiteral('$service');
+				} elseif ($name === ContainerBuilder::THIS_CONTAINER) {
+					$val = new PhpLiteral('$this');
 				} else {
-					$val = new PhpLiteral($this->formatStatement(new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$name])));
+					$val = ContainerBuilder::literal('$this->getService(?)', [$name]);
 				}
 			}
 		});
