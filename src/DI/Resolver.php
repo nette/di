@@ -14,7 +14,6 @@ use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
-use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 use ReflectionClass;
@@ -145,31 +144,12 @@ class Resolver
 
 	public function completeDefinition(Definition $def): void
 	{
-		if ($def->isDynamic()) {
-			return;
-		}
-
 		$this->currentService = in_array($def, $this->builder->getDefinitions(), true) ? $def : null;
 		$this->currentServiceType = $def->getType();
 		$this->currentServiceAllowed = false;
 
-		$entity = $def->getFactory()->getEntity();
-		$serviceRef = $entity instanceof Reference ? $this->normalizeReference($entity) : null;
-		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
-			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
-			: $def->getFactory();
-
 		try {
-			$def->setFactory($this->completeStatement($factory));
-
-			$setups = $def->getSetup();
-			foreach ($setups as &$setup) {
-				if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
-					$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
-				}
-				$setup = $this->completeStatement($setup, true);
-			}
-			$def->setSetup($setups);
+			$def->complete($this);
 
 			if ($def->getType()) {
 				$this->addDependency(new \ReflectionClass($def->getType()));

@@ -351,6 +351,31 @@ final class ServiceDefinition extends Definition
 	}
 
 
+	public function complete(Nette\DI\Resolver $resolver): void
+	{
+		if ($this->isDynamic()) {
+			return;
+		}
+
+		$entity = $this->getFactory()->getEntity();
+		$serviceRef = $entity instanceof Reference ? $resolver->normalizeReference($entity) : null;
+		$factory = $serviceRef && !$this->getFactory()->arguments && !$this->getSetup() && $this->getImplementMode() !== $this::IMPLEMENT_MODE_CREATE
+			? new Statement([new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
+			: $this->getFactory();
+
+		$this->setFactory($resolver->completeStatement($factory));
+
+		$setups = $this->getSetup();
+		foreach ($setups as &$setup) {
+			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
+				$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
+			}
+			$setup = $resolver->completeStatement($setup, true);
+		}
+		$this->setSetup($setups);
+	}
+
+
 	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
 	{
 		if ($this->isDynamic()) {
