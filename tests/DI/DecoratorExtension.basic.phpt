@@ -74,9 +74,9 @@ Assert::same(
 Assert::true($builder->getDefinition('one')->getTag('inject'));
 
 Assert::equal([
-	new Statement([new Reference('one'), 'setup'], ['Service']),
-	new Statement([new Reference('one'), 'setup'], ['Object']),
-	new Statement([new Reference('one'), 'setup'], ['Iface']),
-	new Statement([new Reference('one'), 'setup']),
-	new Statement([new Reference('one'), '$a'], [10]),
+	new Statement([new Reference('self'), 'setup'], ['Service']),
+	new Statement([new Reference('self'), 'setup'], ['Object']),
+	new Statement([new Reference('self'), 'setup'], ['Iface']),
+	new Statement([new Reference('self'), 'setup']),
+	new Statement([new Reference('self'), '$a'], [10]),
 ], $builder->getDefinition('one')->getSetup());

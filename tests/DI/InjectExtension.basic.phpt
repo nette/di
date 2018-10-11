@@ -112,31 +112,31 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
-	new Statement([new Reference('last.one'), 'injectA']),
-	new Statement([new Reference('last.one'), 'injectB']),
-	new Statement([new Reference('last.one'), 'injectC']),
-	new Statement([new Reference('last.one'), 'injectD']),
-	new Statement([new Reference('last.one'), '$e'], [new Reference('a')]),
-	new Statement([new Reference('last.one'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('last.one'), '$a'], [new Reference('std')]),
+	new Statement([new Reference('self'), 'injectA']),
+	new Statement([new Reference('self'), 'injectB']),
+	new Statement([new Reference('self'), 'injectC']),
+	new Statement([new Reference('self'), 'injectD']),
+	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
+	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('last.one')->getSetup());
 
 Assert::equal([
-	new Statement([new Reference('ext.one'), 'injectA']),
-	new Statement([new Reference('ext.one'), 'injectB']),
-	new Statement([new Reference('ext.one'), 'injectC']),
-	new Statement([new Reference('ext.one'), 'injectD']),
-	new Statement([new Reference('ext.one'), '$e'], [new Reference('a')]),
-	new Statement([new Reference('ext.one'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('ext.one'), '$a'], [new Reference('std')]),
+	new Statement([new Reference('self'), 'injectA']),
+	new Statement([new Reference('self'), 'injectB']),
+	new Statement([new Reference('self'), 'injectC']),
+	new Statement([new Reference('self'), 'injectD']),
+	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
+	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('ext.one')->getSetup());
 
 Assert::equal([
-	new Statement([new Reference('two'), 'injectA']),
-	new Statement([new Reference('two'), 'injectB'], [1]),
-	new Statement([new Reference('two'), 'injectC']),
-	new Statement([new Reference('two'), 'injectD']),
-	new Statement([new Reference('two'), '$e'], [new Reference('b')]),
-	new Statement([new Reference('two'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('two'), '$a'], [new Reference('std')]),
+	new Statement([new Reference('self'), 'injectA']),
+	new Statement([new Reference('self'), 'injectB'], [1]),
+	new Statement([new Reference('self'), 'injectC']),
+	new Statement([new Reference('self'), 'injectD']),
+	new Statement([new Reference('self'), '$e'], [new Reference('b')]),
+	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('two')->getSetup());
