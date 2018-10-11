@@ -151,6 +151,9 @@ abstract class Definition
 	abstract public function resolveType(Nette\DI\Resolver $resolver): void;
 
 
+	abstract public function complete(Nette\DI\Resolver $resolver): void;
+
+
 	abstract public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void;
 
 
