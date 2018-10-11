@@ -28,23 +28,11 @@ final class ServiceDefinition extends Definition
 	/** @var array */
 	public $parameters = [];
 
-	/** @var string|null */
-	private $name;
-
-	/** @var string|null  class or interface name */
-	private $type;
-
 	/** @var Statement|null */
 	private $factory;
 
 	/** @var Statement[] */
 	private $setup = [];
-
-	/** @var array */
-	private $tags = [];
-
-	/** @var bool|string[] */
-	private $autowired = true;
 
 	/** @var bool */
 	private $dynamic = false;
@@ -55,32 +43,9 @@ final class ServiceDefinition extends Definition
 	/** @var string|null  create | get */
 	private $implementMode;
 
-	/** @var callable|null */
-	private $notifier;
-
 
 	/**
-	 * @return static
-	 */
-	public function setName(string $name)
-	{
-		if ($this->name) {
-			throw new Nette\InvalidStateException('Name already has been set.');
-		}
-		$this->name = $name;
-		return $this;
-	}
-
-
-	public function getName(): ?string
-	{
-		return $this->name;
-	}
-
-
-	/**
-	 * @return static
-	 * @deprecated Use setType() instead.
+	 * @deprecated Use setType()
 	 */
 	public function setClass(?string $type)
 	{
@@ -96,36 +61,11 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @deprecated Use getType() instead.
-	 */
-	public function getClass(): ?string
-	{
-		return $this->getType();
-	}
-
-
-	/**
 	 * @return static
 	 */
 	public function setType(?string $type)
 	{
-		if ($this->notifier && $this->type !== $type) {
-			($this->notifier)();
-		}
-		if ($type === null) {
-			$this->type = null;
-		} elseif (!class_exists($type) && !interface_exists($type)) {
-			throw new Nette\InvalidArgumentException("Service '$this->name': Class or interface '$type' not found.");
-		} else {
-			$this->type = Nette\DI\Helpers::normalizeClass($type);
-		}
-		return $this;
-	}
-
-
-	public function getType(): ?string
-	{
-		return $this->type;
+		return parent::setType($type);
 	}
 
 
@@ -161,7 +101,7 @@ final class ServiceDefinition extends Definition
 	public function setArguments(array $args = [])
 	{
 		if (!$this->factory) {
-			$this->factory = new Statement($this->type);
+			$this->factory = new Statement($this->getType());
 		}
 		$this->factory->arguments = $args;
 		return $this;
@@ -223,73 +163,6 @@ final class ServiceDefinition extends Definition
 	/**
 	 * @return static
 	 */
-	public function setTags(array $tags)
-	{
-		$this->tags = $tags;
-		return $this;
-	}
-
-
-	public function getTags(): array
-	{
-		return $this->tags;
-	}
-
-
-	/**
-	 * @return static
-	 */
-	public function addTag(string $tag, $attr = true)
-	{
-		$this->tags[$tag] = $attr;
-		return $this;
-	}
-
-
-	/**
-	 * @return mixed
-	 */
-	public function getTag(string $tag)
-	{
-		return $this->tags[$tag] ?? null;
-	}
-
-
-	/**
-	 * @param  bool|string|string[]  $state
-	 * @return static
-	 */
-	public function setAutowired($state = true)
-	{
-		if ($this->notifier && $this->autowired !== $state) {
-			($this->notifier)();
-		}
-		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
-		return $this;
-	}
-
-
-	/**
-	 * @return bool|string[]
-	 */
-	public function isAutowired()
-	{
-		return $this->autowired;
-	}
-
-
-	/**
-	 * @return bool|string[]
-	 */
-	public function getAutowired()
-	{
-		return $this->autowired;
-	}
-
-
-	/**
-	 * @return static
-	 */
 	public function setDynamic(bool $state = true)
 	{
 		$this->dynamic = $state;
@@ -308,13 +181,13 @@ final class ServiceDefinition extends Definition
 	 */
 	public function setImplement(string $interface)
 	{
-		if ($this->notifier && $this->implement !== $interface) {
-			($this->notifier)();
+		if ($this->implement !== $interface) {
+			$this->setType($this->getType()); // calls notifier
 		}
 		if ($interface === null) {
 			$this->implement = null;
 		} elseif (!interface_exists($interface)) {
-			throw new Nette\InvalidArgumentException("Service '$this->name': Interface '$interface' not found.");
+			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface '$interface' not found.");
 		} else {
 			$this->implement = Nette\DI\Helpers::normalizeClass($interface);
 		}
@@ -355,20 +228,10 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @internal
-	 */
-	public function setNotifier(?callable $notifier): void
-	{
-		$this->notifier = $notifier;
-	}
-
-
 	public function __clone()
 	{
+		parent::__clone();
 		$this->factory = unserialize(serialize($this->factory));
 		$this->setup = unserialize(serialize($this->setup));
-		$this->notifier = null;
-		$this->name = null;
 	}
 }
