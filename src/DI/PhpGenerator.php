@@ -23,6 +23,8 @@ use Nette\Utils\Strings;
  */
 class PhpGenerator
 {
+	use Nette\SmartObject;
+
 	/** @var ContainerBuilder */
 	private $builder;
 
