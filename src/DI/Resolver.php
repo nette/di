@@ -34,13 +34,14 @@ class Resolver
 	/** @var string|null */
 	private $currentService;
 
-	/** @var string[] */
-	private $recursive = [];
+	/** @var \SplObjectStorage  circular reference detector */
+	private $recursive;
 
 
 	public function __construct(ContainerBuilder $builder)
 	{
 		$this->builder = $builder;
+		$this->recursive = new \SplObjectStorage;
 	}
 
 
@@ -52,13 +53,13 @@ class Resolver
 
 	public function resolveDefinition(ServiceDefinition $def): void
 	{
-		$name = $def->getName();
-		if (isset($this->recursive[$name])) {
-			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->recursive))));
+		if ($this->recursive->contains($def)) {
+			$names = array_map(function ($item) { return $item->getName(); }, iterator_to_array($this->recursive));
+			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', $names)));
 		}
 
 		try {
-			$this->recursive[$name] = true;
+			$this->recursive->attach($def);
 
 			// prepare generated factories
 			if ($def->getImplement()) {
@@ -99,7 +100,7 @@ class Resolver
 				}
 				$type = Helpers::normalizeClass($type);
 				$def->setType($type);
-				if (count($this->recursive) === 1) {
+				if ($this->recursive->count() === 1) {
 					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
 				}
 
@@ -111,7 +112,7 @@ class Resolver
 			throw $this->completeException($e, $def);
 
 		} finally {
-			unset($this->recursive[$name]);
+			$this->recursive->detach($def);
 		}
 	}
 
