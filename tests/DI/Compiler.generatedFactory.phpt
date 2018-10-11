@@ -155,10 +155,11 @@ class TestExtension extends DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition('fooFactory2', new Nette\DI\Definitions\FactoryDefinition)
-			->setFactory('Foo')
 			->setParameters(['Baz baz' => null])
 			->setImplement('IFooFactory')
-			->setArguments([1 => $builder::literal('$baz')]);
+			->getCreatedDefinition()
+				->setFactory('Foo')
+				->setArguments([1 => $builder::literal('$baz')]);
 
 		// see definition by config in Compiler::parseService()
 	}
@@ -283,7 +284,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('Bad2')
-		->setFactory('Bad1');
+		->getCreatedDefinition()
+			->setFactory('Bad1');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type hint for \$bar in Bad2::create() doesn't match type hint in Bad1 constructor.");
 
@@ -305,7 +307,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('Bad4')
-		->setFactory('Bad3');
+		->getCreatedDefinition()
+			->setFactory('Bad3');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
 
@@ -327,7 +330,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('Bad6')
-		->setFactory('Bad5');
+		->getCreatedDefinition()
+			->setFactory('Bad5');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
 

@@ -31,11 +31,13 @@ $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('serviceFactory', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory')
-	->setFactory('@service');
+	->getCreatedDefinition()
+		->setFactory('@service');
 
 $builder->addDefinition('serviceFactoryViaClass', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory2')
-	->setFactory('@\Service');
+	->getCreatedDefinition()
+		->setFactory('@\Service');
 
 $builder->addDefinition('service')
 	->setType('stdClass');

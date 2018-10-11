@@ -38,12 +38,14 @@ $builder->addDefinition('aliasForFactoryViaClass')
 $builder->addDefinition('aliasedFactory', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory')
 	->setAutowired(false)
-	->setFactory('@serviceFactory');
+	->getCreatedDefinition()
+		->setFactory('@serviceFactory');
 
 $builder->addDefinition('aliasedFactoryViaClass', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory')
 	->setAutowired(false)
-	->setFactory('@\ServiceFactory');
+	->getCreatedDefinition()
+		->setFactory('@\ServiceFactory');
 
 $builder->addDefinition('aliasedService')
 	->setFactory('@service');
@@ -53,11 +55,13 @@ $builder->addDefinition('aliasedServiceViaClass')
 
 $builder->addDefinition('serviceFactory', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory')
-	->setFactory('@service');
+	->getCreatedDefinition()
+		->setFactory('@service');
 
 $builder->addDefinition('serviceFactoryViaClass', new Nette\DI\Definitions\FactoryDefinition)
 	->setImplement('ServiceFactory2')
-	->setFactory('@\Service');
+	->getCreatedDefinition()
+		->setFactory('@\Service');
 
 $builder->addDefinition('service')
 	->setType('Service');

@@ -90,15 +90,18 @@ namespace
 
 	$builder->addDefinition('one', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
-		->setFactory('stdClass');
+		->getCreatedDefinition()
+			->setFactory('stdClass');
 
 	$builder->addDefinition('two', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
-		->setFactory('@one');
+		->getCreatedDefinition()
+			->setFactory('@one');
 
 	$builder->addDefinition('three', new Nette\DI\Definitions\FactoryDefinition)
 		->setImplement('StdClassFactory')
-		->setFactory('@one::create'); // alias
+		->getCreatedDefinition()
+			->setFactory('@one::create'); // alias
 
 	$builder->addDefinition('four')
 		->setType('A\Factory');
