@@ -477,8 +477,6 @@ class ContainerBuilder
 				$entity[0] = $this->resolveEntityType($entity[0], $recursive);
 				if (!$entity[0]) {
 					return null;
-				} elseif (isset($this->definitions[$service]) && $this->definitions[$service]->getImplement()) { // @Implement::create
-					return $entity[1] === 'create' ? $this->resolveServiceType($service, $recursive) : null;
 				}
 			}
 

@@ -98,7 +98,8 @@ namespace
 
 	$builder->addDefinition('three')
 		->setImplement('StdClassFactory')
-		->setFactory('@one::create'); // alias
+		->setFactory('@one::create') // alias
+		->setType('stdClass'); // type is needed
 
 	$builder->addDefinition('four')
 		->setType('A\Factory');
