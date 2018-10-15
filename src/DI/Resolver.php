@@ -405,10 +405,6 @@ class Resolver
 	 */
 	private function normalizeEntity($entity)
 	{
-		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) { // Class::method -> [Class, method]
-			$entity = explode('::', $entity);
-		}
-
 		if (is_array($entity)) {
 			$item = &$entity[0];
 		} else {

@@ -20,4 +20,4 @@ DI\Compiler::loadDefinitions($builder, $config['services'], 'blog');
 
 Assert::same('@blog.articles', $builder->getDefinition('blog.comments')->getFactory()->arguments[1]);
 Assert::equal(new Reference('blog.articles'), $builder->getDefinition('blog.articlesList')->getFactory()->arguments[0]);
-Assert::equal('@blog.comments', $builder->getDefinition('blog.commentsControl')->getFactory()->arguments[0]->getEntity());
+Assert::equal(new Reference('blog.comments'), $builder->getDefinition('blog.commentsControl')->getFactory()->arguments[0]->getEntity());

@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\Utils\Strings;
 
 
 /**
@@ -24,7 +25,7 @@ final class Statement
 	/** @var array */
 	public $arguments;
 
-	/** @var string|array|Definition|null */
+	/** @var string|array|Definition|Reference|null */
 	private $entity;
 
 
@@ -34,20 +35,36 @@ final class Statement
 	public function __construct($entity, array $arguments = [])
 	{
 		if (
-			!is_string($entity) // Class, @service, not, PHP literal, entity::member
-			&& !(is_array($entity) && isset($entity[0], $entity[1])) // [Class | @service | '' | Statement | Definition | Reference, method | $property | $appender]
+			$entity !== null
+			&& !is_string($entity) // Class, @service, not, tags, types, PHP literal, entity::member
 			&& !$entity instanceof Definition
 			&& !$entity instanceof Reference
-			&& $entity !== null
-		) {
+			&& !(is_array($entity)
+				&& array_keys($entity) === [0, 1]
+				&& (is_string($entity[0])
+					|| $entity[0] instanceof self
+					|| $entity[0] instanceof Reference
+					|| $entity[0] instanceof Definition)
+		)) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}
+
+		// normalize Class::method to [Class, method]
+		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) {
+			$entity = explode('::', $entity);
+		}
+		if (is_string($entity) && substr($entity, 0, 1) === '@') { // normalize @service to Reference
+			$entity = new Reference(substr($entity, 1));
+		} elseif (is_array($entity) && is_string($entity[0]) && substr($entity[0], 0, 1) === '@') {
+			$entity[0] = new Reference(substr($entity[0], 1));
+		}
+
 		$this->entity = $entity;
 		$this->arguments = $arguments;
 	}
 
 
-	/** @return string|array|Definition|null */
+	/** @return string|array|Definition|Reference|null */
 	public function getEntity()
 	{
 		return $this->entity;
