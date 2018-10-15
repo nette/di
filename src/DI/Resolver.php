@@ -370,15 +370,7 @@ class Resolver
 		}
 
 		try {
-			array_walk_recursive($arguments, function (&$val): void {
-				if ($val instanceof Statement) {
-					$val = $this->completeStatement($val, $this->currentServiceAllowed);
-
-				} elseif ($val instanceof Definition || $val instanceof Reference) {
-					$val = $this->normalizeEntity(new Statement($val));
-				}
-			});
-
+			$arguments = $this->completeArguments($arguments);
 		} catch (ServiceCreationException $e) {
 			if (!strpos($e->getMessage(), ' (used in')) {
 				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
@@ -387,6 +379,20 @@ class Resolver
 		}
 
 		return new Statement($entity, $arguments);
+	}
+
+
+	private function completeArguments(array $arguments): array
+	{
+		array_walk_recursive($arguments, function (&$val): void {
+			if ($val instanceof Statement) {
+				$val = $this->completeStatement($val, $this->currentServiceAllowed);
+
+			} elseif ($val instanceof Definition || $val instanceof Reference) {
+				$val = $this->normalizeEntity(new Statement($val));
+			}
+		});
+		return $arguments;
 	}
 
 
