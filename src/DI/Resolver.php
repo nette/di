@@ -95,8 +95,8 @@ class Resolver
 			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()) : null; // call always to check entities
 			if ($type = $def->getType() ?: $factoryClass) {
 				$def->setType($type);
-				if ($this->recursive->count() === 1) {
-					$this->addDependency(new ReflectionClass($factoryClass ?: $type));
+				if ($factoryClass && $this->recursive->count() === 1) {
+					$this->addDependency(new ReflectionClass($factoryClass));
 				}
 
 			} elseif ($def->getAutowired()) {
@@ -278,6 +278,10 @@ class Resolver
 				$setup = $this->completeStatement($setup, true);
 			}
 			$def->setSetup($setups);
+
+			if ($def->getType()) {
+				$this->addDependency(new \ReflectionClass($def->getType()));
+			}
 
 		} catch (\Exception $e) {
 			throw $this->completeException($e, $def);
