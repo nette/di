@@ -80,6 +80,7 @@ class Resolver
 			$definitions = $this->builder->getDefinitions();
 			if (
 				$def->getAutowired() === true
+				&& $def->getFactory()->getEntity() instanceof Reference
 				&& ($alias = $this->normalizeReference($def->getFactory()->getEntity()))
 				&& (!$def->getImplement() || ($alias->isName() && $definitions[$alias->getValue()]->getImplement()))
 			) {
@@ -140,7 +141,7 @@ class Resolver
 			}
 			if (!$def->getEntity()) {
 				$def->setFactory(Reference::fromType($def->getType()));
-			} elseif (!$this->normalizeReference($def->getFactory()->getEntity())) {
+			} elseif (!$def->getFactory()->getEntity() instanceof Reference) {
 				throw new ServiceCreationException('Invalid factory definition.');
 			}
 		}
@@ -254,7 +255,7 @@ class Resolver
 
 		$this->currentService = null;
 		$entity = $def->getFactory()->getEntity();
-		$serviceRef = $this->normalizeReference($entity);
+		$serviceRef = $entity instanceof Reference ? $this->normalizeReference($entity) : null;
 		$factory = $serviceRef && $serviceRef->isName() && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
 			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
 			: $def->getFactory();
@@ -408,8 +409,8 @@ class Resolver
 		if ($item instanceof Definition) {
 			$item = new Reference(current(array_keys($this->builder->getDefinitions(), $item, true)));
 
-		} elseif ($ref = $this->normalizeReference($item)) { // @service|Reference -> resolved Reference
-			$item = $ref;
+		} elseif ($item instanceof Reference) {
+			$item = $this->normalizeReference($item);
 		}
 
 		return $entity;
@@ -417,21 +418,18 @@ class Resolver
 
 
 	/**
-	 * Converts @service or @\Class to service name (or type if not possible during resolving) and checks its existence.
+	 * Normalizes typed or 'self' reference to named reference (or typed if is not possible during resolving) and checks existence of service.
 	 */
-	private function normalizeReference($arg): ?Reference
+	private function normalizeReference(Reference $ref): Reference
 	{
-		if ($arg instanceof Reference) {
-			$service = $arg->getValue();
-		} elseif (is_string($arg) && preg_match('#^@[\w\\\\.][^:]*\z#', $arg)) {
-			$service = substr($arg, 1);
-		} else {
-			return null;
-		}
-		if ($service === Reference::SELF) {
+		$service = $ref->getValue();
+		if ($ref->isSelf()) {
 			$service = $this->currentService;
-		}
-		if (Strings::contains($service, '\\')) {
+		} elseif ($ref->isName()) {
+			if (!$this->builder->hasDefinition($service)) {
+				throw new ServiceCreationException("Reference to missing service '$service'.");
+			}
+		} else {
 			try {
 				$res = $this->getByType($service);
 			} catch (NotAllowedDuringResolvingException $e) {
@@ -441,9 +439,6 @@ class Resolver
 				throw new ServiceCreationException("Reference to missing service of type $service.");
 			}
 			return $res;
-		}
-		if (!$this->builder->hasDefinition($service)) {
-			throw new ServiceCreationException("Reference to missing service '$service'.");
 		}
 		return new Reference($service);
 	}
