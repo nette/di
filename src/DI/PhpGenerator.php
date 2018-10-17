@@ -107,12 +107,8 @@ class PhpGenerator
 		}
 
 		$entity = $def->getFactory()->getEntity();
-		$factory = $entity instanceof Reference && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
-			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$entity->getValue()])
-			: $def->getFactory();
-
 		$this->currentService = null;
-		$code = '$service = ' . $this->formatStatement($factory) . ";\n";
+		$code = '$service = ' . $this->formatStatement($def->getFactory()) . ";\n";
 
 		if (
 			$def->getSetup()
