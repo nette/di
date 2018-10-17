@@ -262,7 +262,7 @@ class Resolver
 		$this->currentService = null;
 		$entity = $def->getFactory()->getEntity();
 		$serviceRef = $entity instanceof Reference ? $this->normalizeReference($entity) : null;
-		$factory = $serviceRef && $serviceRef->isName() && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
+		$factory = $serviceRef && !$def->getFactory()->arguments && !$def->getSetup() && $def->getImplementMode() !== $def::IMPLEMENT_MODE_CREATE
 			? new Statement([new Reference(ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
 			: $def->getFactory();
 
