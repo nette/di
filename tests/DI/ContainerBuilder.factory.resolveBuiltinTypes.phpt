@@ -136,7 +136,7 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createObject');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown type, declare return type of factory method (for PHP 5 use annotation @return)");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Type of service is unknown.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -145,6 +145,6 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createMixed');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown type, declare return type of factory method (for PHP 5 use annotation @return)");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Type of service is unknown.");
 
 }

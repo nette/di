@@ -148,6 +148,9 @@ abstract class Definition
 	/********************* life cycle ****************d*g**/
 
 
+	abstract public function resolveType(Nette\DI\Resolver $resolver): void;
+
+
 	abstract public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void;
 
 

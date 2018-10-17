@@ -10,6 +10,8 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Definitions\Reference;
+use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\Reflection;
 
@@ -227,6 +229,125 @@ final class ServiceDefinition extends Definition
 	{
 		trigger_error(__METHOD__ . "() is deprecated, use addTag('inject')", E_USER_DEPRECATED);
 		return $this->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, $state);
+	}
+
+
+	public function resolveType(Nette\DI\Resolver $resolver): void
+	{
+		// prepare generated factories
+		if ($this->getImplement()) {
+			$this->resolveImplement($resolver);
+		}
+
+		if ($this->isDynamic()) {
+			if (!$this->getType()) {
+				throw new ServiceCreationException('Type is missing in definition of service.');
+			}
+			$this->setFactory(null);
+			return;
+		}
+
+		// complete class-factory pairs
+		if (!$this->getEntity()) {
+			if (!$this->getType()) {
+				throw new ServiceCreationException('Factory and type are missing in definition of service.');
+			}
+			$this->setFactory($this->getType(), ($factory = $this->getFactory()) ? $factory->arguments : []);
+		}
+
+		// auto-disable autowiring for aliases
+		if (
+			$this->getAutowired() === true
+			&& $this->getFactory()->getEntity() instanceof Reference
+			&& !$this->getImplement()
+		) {
+			$this->setAutowired(false);
+		}
+
+		if (!$this->getType() && $this->getFactory()) {
+			$type = $resolver->resolveEntityType($this->getFactory());
+			if ($type) {
+				$this->setType($type);
+				$resolver->addDependency(new \ReflectionClass($type));
+			}
+		}
+	}
+
+
+	private function resolveImplement(Nette\DI\Resolver $resolver): void
+	{
+		$interface = $this->getImplement();
+		$rc = new \ReflectionClass($interface);
+		$resolver->addDependency($rc);
+		$method = $rc->hasMethod('create')
+			? $rc->getMethod('create')
+			: ($rc->hasMethod('get') ? $rc->getMethod('get') : null);
+
+		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
+			throw new ServiceCreationException("Interface $interface must have just one non-static method create() or get().");
+		}
+		$this->setImplementMode($rc->hasMethod('create') ? $this::IMPLEMENT_MODE_CREATE : $this::IMPLEMENT_MODE_GET);
+		$methodName = Reflection::toString($method) . '()';
+
+		if (!$this->getType() && !$this->getEntity()) {
+			$returnType = Nette\DI\Helpers::getReturnType($method);
+			if (!$returnType) {
+				throw new ServiceCreationException("Method $methodName has not return type hint or annotation @return.");
+			} elseif (!class_exists($returnType)) {
+				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method, class '$returnType' cannot be found.");
+			}
+			$this->setType($returnType);
+		}
+
+		if ($rc->hasMethod('get')) {
+			if ($method->getParameters()) {
+				throw new ServiceCreationException("Method $methodName must have no arguments.");
+			} elseif ($this->getSetup()) {
+				throw new ServiceCreationException('Service accessor must have no setup.');
+			}
+			if (!$this->getEntity()) {
+				$this->setFactory(Reference::fromType($this->getType()));
+			} elseif (!$this->getFactory()->getEntity() instanceof Reference) {
+				throw new ServiceCreationException('Invalid factory definition.');
+			}
+		}
+
+		if (!$this->parameters) {
+			$ctorParams = [];
+			if (!$this->getEntity()) {
+				$this->setFactory($this->getType(), $this->getFactory() ? $this->getFactory()->arguments : []);
+			}
+			if (
+				($class = $resolver->resolveEntityType($this->getFactory()))
+				&& ($ctor = (new \ReflectionClass($class))->getConstructor())
+			) {
+				foreach ($ctor->getParameters() as $param) {
+					$ctorParams[$param->getName()] = $param;
+				}
+			}
+
+			foreach ($method->getParameters() as $param) {
+				$hint = Reflection::getParameterType($param);
+				if (isset($ctorParams[$param->getName()])) {
+					$arg = $ctorParams[$param->getName()];
+					$argHint = Reflection::getParameterType($arg);
+					if ($hint !== $argHint && !is_a($hint, $argHint, true)) {
+						throw new ServiceCreationException("Type hint for \${$param->getName()} in $methodName doesn't match type hint in $class constructor.");
+					}
+					$this->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
+				} elseif (!$this->getSetup()) {
+					$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($ctorParams), $param->getName());
+					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $methodName" . ($hint ? ", did you mean \${$hint}?" : '.'));
+				}
+				$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== null);
+				$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->getName();
+				if ($param->isDefaultValueAvailable()) {
+					$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
+				} else {
+					$this->parameters[] = $paramDef;
+				}
+			}
+		}
 	}
 
 

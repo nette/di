@@ -67,130 +67,16 @@ class Resolver
 		try {
 			$this->recursive->attach($def);
 
-			// prepare generated factories
-			if ($def->getImplement()) {
-				$this->resolveImplement($def);
+			$def->resolveType($this);
+
+			if (!$def->getType() && $def->getAutowired()) {
+				throw new ServiceCreationException('Type of service is unknown.');
 			}
-
-			if ($def->isDynamic()) {
-				if (!$def->getType()) {
-					throw new ServiceCreationException('Type is missing in definition of service.');
-				}
-				$def->setFactory(null);
-				return;
-			}
-
-			// complete class-factory pairs
-			if (!$def->getEntity()) {
-				if (!$def->getType()) {
-					throw new ServiceCreationException('Factory and type are missing in definition of service.');
-				}
-				$def->setFactory($def->getType(), ($factory = $def->getFactory()) ? $factory->arguments : []);
-			}
-
-			// auto-disable autowiring for aliases
-			if (
-				$def->getAutowired() === true
-				&& $def->getFactory()->getEntity() instanceof Reference
-				&& !$def->getImplement()
-			) {
-				$def->setAutowired(false);
-			}
-
-			// resolve type
-			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()) : null; // call always to check entities
-			if ($type = $def->getType() ?: $factoryClass) {
-				$def->setType($type);
-				if ($factoryClass && $this->recursive->count() === 1) {
-					$this->addDependency(new ReflectionClass($factoryClass));
-				}
-
-			} elseif ($def->getAutowired()) {
-				throw new ServiceCreationException('Unknown type, declare return type of factory method (for PHP 5 use annotation @return)');
-			}
-
 		} catch (\Exception $e) {
 			throw $this->completeException($e, $def);
 
 		} finally {
 			$this->recursive->detach($def);
-		}
-	}
-
-
-	private function resolveImplement(Definition $def): void
-	{
-		$interface = $def->getImplement();
-		$rc = new ReflectionClass($interface);
-		$this->addDependency($rc);
-		$method = $rc->hasMethod('create')
-			? $rc->getMethod('create')
-			: ($rc->hasMethod('get') ? $rc->getMethod('get') : null);
-
-		if (count($rc->getMethods()) !== 1 || !$method || $method->isStatic()) {
-			throw new ServiceCreationException("Interface $interface must have just one non-static method create() or get().");
-		}
-		$def->setImplementMode($rc->hasMethod('create') ? $def::IMPLEMENT_MODE_CREATE : $def::IMPLEMENT_MODE_GET);
-		$methodName = Reflection::toString($method) . '()';
-
-		if (!$def->getType() && !$def->getEntity()) {
-			$returnType = Helpers::getReturnType($method);
-			if (!$returnType) {
-				throw new ServiceCreationException("Method $methodName has not return type hint or annotation @return.");
-			} elseif (!class_exists($returnType)) {
-				throw new ServiceCreationException("Check a type hint or annotation @return of the $methodName method, class '$returnType' cannot be found.");
-			}
-			$def->setType($returnType);
-		}
-
-		if ($rc->hasMethod('get')) {
-			if ($method->getParameters()) {
-				throw new ServiceCreationException("Method $methodName must have no arguments.");
-			} elseif ($def->getSetup()) {
-				throw new ServiceCreationException('Service accessor must have no setup.');
-			}
-			if (!$def->getEntity()) {
-				$def->setFactory(Reference::fromType($def->getType()));
-			} elseif (!$def->getFactory()->getEntity() instanceof Reference) {
-				throw new ServiceCreationException('Invalid factory definition.');
-			}
-		}
-
-		if (!$def->parameters) {
-			$ctorParams = [];
-			if (!$def->getEntity()) {
-				$def->setFactory($def->getType(), $def->getFactory() ? $def->getFactory()->arguments : []);
-			}
-			if (
-				($class = $this->resolveEntityType($def->getFactory()))
-				&& ($ctor = (new ReflectionClass($class))->getConstructor())
-			) {
-				foreach ($ctor->getParameters() as $param) {
-					$ctorParams[$param->getName()] = $param;
-				}
-			}
-
-			foreach ($method->getParameters() as $param) {
-				$hint = Reflection::getParameterType($param);
-				if (isset($ctorParams[$param->getName()])) {
-					$arg = $ctorParams[$param->getName()];
-					$argHint = Reflection::getParameterType($arg);
-					if ($hint !== $argHint && !is_a($hint, $argHint, true)) {
-						throw new ServiceCreationException("Type hint for \${$param->getName()} in $methodName doesn't match type hint in $class constructor.");
-					}
-					$def->getFactory()->arguments[$arg->getPosition()] = ContainerBuilder::literal('$' . $arg->getName());
-				} elseif (!$def->getSetup()) {
-					$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($ctorParams), $param->getName());
-					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $methodName" . ($hint ? ", did you mean \${$hint}?" : '.'));
-				}
-				$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== null);
-				$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->getName();
-				if ($param->isDefaultValueAvailable()) {
-					$def->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
-				} else {
-					$def->parameters[] = $paramDef;
-				}
-			}
 		}
 	}
 
@@ -210,7 +96,7 @@ class Resolver
 	}
 
 
-	private function resolveEntityType(Statement $statement): ?string
+	public function resolveEntityType(Statement $statement): ?string
 	{
 		$entity = $this->normalizeEntity($statement);
 
@@ -459,7 +345,7 @@ class Resolver
 	/**
 	 * Normalizes reference to 'self' or named reference (or leaves it typed if it is not possible during resolving) and checks existence of service.
 	 */
-	private function normalizeReference(Reference $ref): Reference
+	public function normalizeReference(Reference $ref): Reference
 	{
 		$service = $ref->getValue();
 		if ($ref->isSelf()) {

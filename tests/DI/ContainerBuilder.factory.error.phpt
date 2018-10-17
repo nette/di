@@ -144,7 +144,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad7::create');
 	$builder->complete();
-}, Nette\DI\ServiceCreationException::class, "Service 'one': Unknown type, declare return type of factory method (for PHP 5 use annotation @return)");
+}, Nette\DI\ServiceCreationException::class, "Service 'one': Type of service is unknown.");
 
 
 class Bad8
