@@ -149,48 +149,54 @@ class PhpGenerator
 		$entity = $statement->getEntity();
 		$arguments = $statement->arguments;
 
-		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
-			return $this->formatPhp($entity, $arguments);
+		switch (true) {
+			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
+				return $this->formatPhp($entity, $arguments);
 
-		} elseif ($entity instanceof Reference) { // factory calling
-			return $this->formatPhp('$this->?(...?)', [Container::getMethodName($entity->getValue()), $arguments]);
+			case $entity === 'not':
+				return $this->formatPhp('!?', [$arguments[0]]);
 
-		} elseif ($entity === 'not') { // operator
-			return $this->formatPhp('!?', [$arguments[0]]);
+			case is_string($entity): // create class
+				return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
 
-		} elseif (is_string($entity)) { // class name
-			return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
+			case $entity instanceof Reference:
+				return $this->formatPhp('$this->?(...?)', [Container::getMethodName($entity->getValue()), $arguments]);
 
-		} elseif ($entity[0] === '') { // globalFunc
-			return $this->formatPhp("$entity[1](...?)", [$arguments]);
+			case is_array($entity):
+				switch (true) {
+					case $entity[1][0] === '$': // property getter, setter or appender
+						$name = substr($entity[1], 1);
+						if ($append = (substr($name, -2) === '[]')) {
+							$name = substr($name, 0, -2);
+						}
+						if ($entity[0] instanceof Reference) {
+							$prop = $this->formatPhp('?->?', [$entity[0], $name]);
+						} else {
+							$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
+						}
+						return $arguments
+							? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
+							: $prop;
 
-		} elseif ($entity[0] instanceof Statement) {
-			$inner = $this->formatPhp('?', [$entity[0]]);
-			if (substr($inner, 0, 4) === 'new ') {
-				$inner = "($inner)";
-			}
-			return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);
+					case $entity[0] instanceof Statement:
+						$inner = $this->formatPhp('?', [$entity[0]]);
+						if (substr($inner, 0, 4) === 'new ') {
+							$inner = "($inner)";
+						}
+						return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);
 
-		} elseif ($entity[1][0] === '$') { // property getter, setter or appender
-			$name = substr($entity[1], 1);
-			if ($append = (substr($name, -2) === '[]')) {
-				$name = substr($name, 0, -2);
-			}
-			if ($entity[0] instanceof Reference) {
-				$prop = $this->formatPhp('?->?', [$entity[0], $name]);
-			} else {
-				$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
-			}
-			return $arguments
-				? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
-				: $prop;
+					case $entity[0] instanceof Reference:
+						return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
 
-		} elseif ($entity[0] instanceof Reference) { // service method
-			return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
+					case $entity[0] === '': // function call
+						return $this->formatPhp("$entity[1](...?)", [$arguments]);
 
-		} else { // static method
-			return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
+					case is_string($entity[0]): // static method call
+						return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
+				}
 		}
+
+		throw Nette\InvalidStateException;
 	}
 
 
