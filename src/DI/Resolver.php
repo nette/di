@@ -298,75 +298,80 @@ class Resolver
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
 
-		if (is_string($entity) && Strings::contains($entity, '?')) { // PHP literal
+		switch (true) {
+			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
+			case $entity === 'not':
+				break;
 
-		} elseif ($entity instanceof Reference) { // factory calling
-			$params = [];
-			foreach ($this->resolveReference($entity)->parameters as $k => $v) {
-				$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
-			}
-			$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
-			$arguments = $this->autowireArguments($rm, $arguments);
-
-		} elseif ($entity === 'not') { // special
-
-		} elseif (is_string($entity)) { // class name
-			if (!class_exists($entity)) {
-				throw new ServiceCreationException("Class $entity not found.");
-			} elseif ((new ReflectionClass($entity))->isAbstract()) {
-				throw new ServiceCreationException("Class $entity is abstract.");
-			} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
-				$visibility = $rm->isProtected() ? 'protected' : 'private';
-				throw new ServiceCreationException("Class $entity has $visibility constructor.");
-			} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-				$arguments = $this->autowireArguments($constructor, $arguments);
-			} elseif ($arguments) {
-				throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
-			}
-
-		} elseif (!Nette\Utils\Arrays::isList($entity) || count($entity) !== 2) {
-			throw new ServiceCreationException(sprintf('Expected class, method or property, %s given.', PhpHelpers::dump($entity)));
-
-		} elseif (!preg_match('#^\$?(\\\\?' . PhpHelpers::PHP_IDENT . ')+(\[\])?\z#', $entity[1])) {
-			throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
-
-		} elseif ($entity[0] === '') { // globalFunc
-			if (!Nette\Utils\Arrays::isList($arguments)) {
-				throw new ServiceCreationException("Unable to pass specified arguments to $entity[0].");
-			} elseif (!function_exists($entity[1])) {
-				throw new ServiceCreationException("Function $entity[1] doesn't exist.");
-			}
-
-			$rf = new \ReflectionFunction($entity[1]);
-			$arguments = $this->autowireArguments($rf, $arguments);
-
-		} else {
-			if ($entity[0] instanceof Statement) {
-				$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
-			}
-
-			if ($entity[1][0] === '$') { // property getter, setter or appender
-				Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
-				if (!$arguments && substr($entity[1], -2) === '[]') {
-					throw new ServiceCreationException("Missing argument for $entity[1].");
+			case is_string($entity): // create class
+				if (!class_exists($entity)) {
+					throw new ServiceCreationException("Class $entity not found.");
+				} elseif ((new ReflectionClass($entity))->isAbstract()) {
+					throw new ServiceCreationException("Class $entity is abstract.");
+				} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
+					$visibility = $rm->isProtected() ? 'protected' : 'private';
+					throw new ServiceCreationException("Class $entity has $visibility constructor.");
+				} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
+					$arguments = $this->autowireArguments($constructor, $arguments);
+				} elseif ($arguments) {
+					throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
 				}
-			} elseif (
-				$type = !$entity[0] instanceof Reference || $entity[1] === 'create'
-					? $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
-					: $this->resolveReferenceType($entity[0])
-			) {
-				$rc = new ReflectionClass($type);
-				if ($rc->hasMethod($entity[1])) {
-					$rm = $rc->getMethod($entity[1]);
-					if (!$rm->isPublic()) {
-						throw new ServiceCreationException("$type::$entity[1]() is not callable.");
-					}
-					$arguments = $this->autowireArguments($rm, $arguments);
+				break;
 
-				} elseif (!Nette\Utils\Arrays::isList($arguments)) {
-					throw new ServiceCreationException("Unable to pass specified arguments to $type::$entity[1]().");
+			case $entity instanceof Reference:
+				$params = [];
+				foreach ($this->resolveReference($entity)->parameters as $k => $v) {
+					$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
 				}
-			}
+				$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
+				$arguments = $this->autowireArguments($rm, $arguments);
+				break;
+
+			case is_array($entity):
+				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::PHP_IDENT . ')+(\[\])?\z#', $entity[1])) {
+					throw new ServiceCreationException("Expected function, method or property name, '$entity[1]' given.");
+				}
+
+				switch (true) {
+					case $entity[0] === '': // function call
+						if (!Nette\Utils\Arrays::isList($arguments)) {
+							throw new ServiceCreationException("Unable to pass specified arguments to $entity[0].");
+						} elseif (!function_exists($entity[1])) {
+							throw new ServiceCreationException("Function $entity[1] doesn't exist.");
+						}
+						$rf = new \ReflectionFunction($entity[1]);
+						$arguments = $this->autowireArguments($rf, $arguments);
+						break;
+
+					case $entity[0] instanceof Statement:
+						$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
+						// break omitted
+
+					case is_string($entity[0]): // static method call
+					case $entity[0] instanceof Reference:
+						if ($entity[1][0] === '$') { // property getter, setter or appender
+							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+							if (!$arguments && substr($entity[1], -2) === '[]') {
+								throw new ServiceCreationException("Missing argument for $entity[1].");
+							}
+						} elseif (
+							$type = $entity[0] instanceof Reference && $entity[1] !== 'create'
+								? $this->resolveReferenceType($entity[0])
+								: $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
+						) {
+							$rc = new ReflectionClass($type);
+							if ($rc->hasMethod($entity[1])) {
+								$rm = $rc->getMethod($entity[1]);
+								if (!$rm->isPublic()) {
+									throw new ServiceCreationException("$type::$entity[1]() is not callable.");
+								}
+								$arguments = $this->autowireArguments($rm, $arguments);
+
+							} elseif (!Nette\Utils\Arrays::isList($arguments)) {
+								throw new ServiceCreationException("Unable to pass specified arguments to $type::$entity[1]().");
+							}
+						}
+				}
 		}
 
 		try {
