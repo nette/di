@@ -66,7 +66,7 @@ class PhpGenerator
 			->setValue([Container::TYPES => $this->builder->getClassList()]);
 
 		foreach ($definitions as $name => $def) {
-			$meta->value[Container::SERVICES][$name] = $def->getType() ?: null;
+			$meta->value[Container::SERVICES][$name] = $def->getImplement() ?: $def->getType() ?: null;
 			foreach ($def->getTags() as $tag => $value) {
 				$meta->value[Container::TAGS][$tag][$name] = $value;
 			}
