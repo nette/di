@@ -88,7 +88,7 @@ class Resolver
 			}
 
 			// resolve type
-			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()->getEntity()) : null; // call always to check entities
+			$factoryClass = $def->getFactory() ? $this->resolveEntityType($def->getFactory()) : null; // call always to check entities
 			if ($type = $def->getType() ?: $factoryClass) {
 				$def->setType($type);
 				if ($this->recursive->count() === 1) {
@@ -198,14 +198,14 @@ class Resolver
 	}
 
 
-	private function resolveEntityType($entity): ?string
+	private function resolveEntityType(Statement $statement): ?string
 	{
 		$definitions = $this->builder->getDefinitions();
-		$entity = $this->normalizeEntity($entity instanceof Statement ? $entity->getEntity() : $entity);
+		$entity = $this->normalizeEntity($statement);
 
 		if (is_array($entity)) {
 			if ($entity[0] instanceof Reference || $entity[0] instanceof Statement) {
-				$entity[0] = $this->resolveEntityType($entity[0]);
+				$entity[0] = $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]));
 				if (!$entity[0]) {
 					return null;
 				}
@@ -284,7 +284,7 @@ class Resolver
 
 	public function completeStatement(Statement $statement): Statement
 	{
-		$entity = $this->normalizeEntity($statement->getEntity());
+		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
 		$definitions = $this->builder->getDefinitions();
 
@@ -342,7 +342,7 @@ class Resolver
 				}
 			} elseif (
 				$type = !$entity[0] instanceof Reference || $entity[1] === 'create'
-					? $this->resolveEntityType($entity[0])
+					? $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
 					: $definitions[$entity[0]->getValue()]->getType()
 			) {
 				$rc = new ReflectionClass($type);
@@ -364,11 +364,8 @@ class Resolver
 				if ($val instanceof Statement) {
 					$val = $this->completeStatement($val);
 
-				} elseif ($val instanceof Definition) {
-					$val = $this->normalizeEntity($val);
-
-				} elseif ($val instanceof Reference) {
-					$val = $this->normalizeReference($val);
+				} elseif ($val instanceof Definition || $val instanceof Reference) {
+					$val = $this->normalizeEntity(new Statement($val));
 				}
 			});
 
@@ -398,8 +395,9 @@ class Resolver
 	/**
 	 * @return string|array|Reference  literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member]
 	 */
-	private function normalizeEntity($entity)
+	private function normalizeEntity(Statement $statement)
 	{
+		$entity = $statement->getEntity();
 		if (is_array($entity)) {
 			$item = &$entity[0];
 		} else {
