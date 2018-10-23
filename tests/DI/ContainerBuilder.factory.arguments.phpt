@@ -33,8 +33,9 @@ interface FooFactory
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addDefinition('fooFactory')
-		->setImplement('FooFactory')
+$builder->addFactoryDefinition('fooFactory')
+	->setImplement('FooFactory')
+	->getResultDefinition()
 		->setArguments(['bar']);
 
 

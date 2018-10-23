@@ -88,18 +88,21 @@ namespace
 
 	$builder = new DI\ContainerBuilder;
 
-	$builder->addDefinition('one')
+	$builder->addFactoryDefinition('one')
 		->setImplement('StdClassFactory')
-		->setType('stdClass');
+		->getResultDefinition()
+			->setFactory('stdClass');
 
-	$builder->addDefinition('two')
+	$builder->addFactoryDefinition('two')
 		->setImplement('StdClassFactory')
-		->setFactory('@one');
+		->getResultDefinition()
+			->setFactory('@one');
 
-	$builder->addDefinition('three')
+	$builder->addFactoryDefinition('three')
 		->setImplement('StdClassFactory')
-		->setFactory('@one::create') // alias
-		->setType('stdClass'); // type is needed
+		->getResultDefinition()
+			->setFactory('@one::create') // alias
+			->setType('stdClass'); // type is needed
 
 	$builder->addDefinition('four')
 		->setType('A\Factory');

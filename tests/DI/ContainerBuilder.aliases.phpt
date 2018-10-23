@@ -35,15 +35,17 @@ $builder->addDefinition('aliasForFactory')
 $builder->addDefinition('aliasForFactoryViaClass')
 	->setFactory('@\ServiceFactory');
 
-$builder->addDefinition('aliasedFactory')
+$builder->addFactoryDefinition('aliasedFactory')
 	->setImplement('ServiceFactory')
 	->setAutowired(false)
-	->setFactory('@serviceFactory');
+	->getResultDefinition()
+		->setFactory('@serviceFactory');
 
-$builder->addDefinition('aliasedFactoryViaClass')
+$builder->addFactoryDefinition('aliasedFactoryViaClass')
 	->setImplement('ServiceFactory')
 	->setAutowired(false)
-	->setFactory('@\ServiceFactory');
+	->getResultDefinition()
+		->setFactory('@\ServiceFactory');
 
 $builder->addDefinition('aliasedService')
 	->setFactory('@service');
@@ -51,13 +53,15 @@ $builder->addDefinition('aliasedService')
 $builder->addDefinition('aliasedServiceViaClass')
 	->setFactory('@\Service');
 
-$builder->addDefinition('serviceFactory')
+$builder->addFactoryDefinition('serviceFactory')
 	->setImplement('ServiceFactory')
-	->setFactory('@service');
+	->getResultDefinition()
+		->setFactory('@service');
 
-$builder->addDefinition('serviceFactoryViaClass')
+$builder->addFactoryDefinition('serviceFactoryViaClass')
 	->setImplement('ServiceFactory2')
-	->setFactory('@\Service');
+	->getResultDefinition()
+		->setFactory('@\Service');
 
 $builder->addDefinition('service')
 	->setType('Service');

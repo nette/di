@@ -31,9 +31,9 @@ interface Factory
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
 	->setType('Service');
-$child = $builder->addDefinition('acc')
+$child = $builder->addAccessorDefinition('acc')
 	->setImplement('Accessor');
-$two = $builder->addDefinition('fac')
+$two = $builder->addFactoryDefinition('fac')
 	->setImplement('Factory');
 
 $container = createContainer($builder);

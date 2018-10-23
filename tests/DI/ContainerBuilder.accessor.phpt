@@ -44,17 +44,17 @@ $builder->addDefinition('service2')
 	->setAutowired(false)
 	->setFactory('stdClass');
 
-$builder->addDefinition('one')
+$builder->addAccessorDefinition('one')
 	->setImplement('StdClassAccessor')
-	->setType('stdClass');
+	->setReference('stdClass');
 
-$builder->addDefinition('two')
+$builder->addAccessorDefinition('two')
 	->setImplement('AnnotatedAccessor');
 
-$builder->addDefinition('three')
+$builder->addAccessorDefinition('three')
 	->setImplement('StdClassAccessor')
 	->setAutowired(false)
-	->setFactory('@service2');
+	->setReference('@service2');
 
 $builder->addDefinition('four')
 	->setType('AccessorReceiver');
