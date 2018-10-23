@@ -22,12 +22,7 @@ Assert::exception(function () {
 Assert::exception(function () {
 	$def = new ServiceDefinition;
 	$def->setImplement('Foo');
-}, Nette\InvalidArgumentException::class, "Service '': Interface 'Foo' not found.");
-
-Assert::exception(function () {
-	$def = new ServiceDefinition;
-	$def->setImplement('stdClass');
-}, Nette\InvalidArgumentException::class, "Service '': Interface 'stdClass' not found.");
+}, Nette\DeprecatedException::class);
 
 test(function () {
 	$def = new ServiceDefinition;
