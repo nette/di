@@ -189,6 +189,16 @@ class Autowiring
 					$optCount = 0;
 				}
 
+			} elseif (
+				$container instanceof Resolver
+				&& $method instanceof \ReflectionMethod
+				&& $parameter->isArray()
+				&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $paramName . '#', (string) $method->getDocComment(), $m)
+				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
+				&& (class_exists($type) || interface_exists($type))
+			) {
+				$res[$num] = $container->findByType($type);
+
 			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
 				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
