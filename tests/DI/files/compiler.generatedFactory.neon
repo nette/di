@@ -11,6 +11,9 @@ services:
 		factory: Article(%title%)
 		implement: IArticleFactory
 		parameters: [title]
+		setup:
+			- method(@self::ABC)
+			- $prop = @self::ABC
 
 	article2:
 		implement: IArticleFactory

@@ -54,12 +54,21 @@ interface IArticleFactory
 
 class Article
 {
+	public const ABC = 123;
+
 	public $title;
+	public $method;
 
 
 	public function __construct($title)
 	{
 		$this->title = $title;
+	}
+
+
+	public function method($arg)
+	{
+		$this->method = $arg;
 	}
 }
 
@@ -177,6 +186,8 @@ Assert::type(IArticleFactory::class, $container->getService('article'));
 $article = $container->getService('article')->create('nemam');
 Assert::type(Article::class, $article);
 Assert::same('nemam', $article->title);
+Assert::same(123, $article->method);
+Assert::same(123, $article->prop);
 
 
 Assert::type(IFooFactory::class, $container->getService('fooFactory1'));
