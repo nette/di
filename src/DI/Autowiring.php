@@ -171,7 +171,9 @@ class Autowiring
 
 			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
 				try {
-					$res[$num] = $container->getByType($type, false);
+					$res[$num] = $container->getByType($type);
+				} catch (MissingServiceException $e) {
+					$res[$num] = null;
 				} catch (ServiceCreationException $e) {
 					throw new ServiceCreationException("{$e->getMessage()} (needed by $$paramName in $methodName)", 0, $e);
 				}
