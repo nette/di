@@ -429,7 +429,7 @@ class Resolver
 		if (!$function->isClosure()) {
 			$this->addDependency($function);
 		}
-		return Autowiring::completeArguments($function, $arguments, $this);
+		return Autowiring::completeArguments($function, $arguments, $this, $this->currentService);
 	}
 
 

@@ -153,7 +153,7 @@ class Autowiring
 	 * @param  Resolver|Container  $container
 	 * @throws ServiceCreationException
 	 */
-	public static function completeArguments(\ReflectionFunctionAbstract $method, array $arguments, $container): array
+	public static function completeArguments(\ReflectionFunctionAbstract $method, array $arguments, $container, Definitions\Definition $current = null): array
 	{
 		$optCount = 0;
 		$num = -1;
@@ -190,6 +190,21 @@ class Autowiring
 					}
 				} else {
 					$optCount = 0;
+				}
+
+			} elseif (
+				$container instanceof Resolver
+				&& $method instanceof \ReflectionMethod
+				&& $parameter->isArray()
+				&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $paramName . '#', (string) $method->getDocComment(), $m)
+				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
+				&& (class_exists($type) || interface_exists($type))
+			) {
+				$res[$num] = [];
+				foreach ($container->getContainerBuilder()->findByType($type) as $def) {
+					if ($def !== $current) {
+						$res[$num][] = $def;
+					}
 				}
 
 			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
