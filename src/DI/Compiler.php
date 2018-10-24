@@ -262,6 +262,9 @@ class Compiler
 	 */
 	public function loadDefinitions(array $services, string $namespace = null): void
 	{
+		foreach ($services as &$def) {
+			$def = $this->configProcessor->normalizeStructure($def);
+		}
 		if ($namespace) {
 			$services = $this->configProcessor->applyNamespace($services, $namespace);
 		}

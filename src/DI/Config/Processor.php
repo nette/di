@@ -42,26 +42,50 @@ class Processor
 	}
 
 
+	public function normalizeStructure($def): array
+	{
+		if ($def === null || $def === false) {
+			return (array) $def;
+
+		} elseif (is_string($def) && interface_exists($def)) {
+			return ['implement' => $def];
+
+		} elseif ($def instanceof Statement && is_string($def->getEntity()) && interface_exists($def->getEntity())) {
+			return ['implement' => $def->getEntity(), 'factory' => array_shift($def->arguments)];
+
+		} elseif (!is_array($def) || isset($def[0], $def[1])) {
+			return ['factory' => $def];
+
+		} elseif (is_array($def)) {
+			return $def;
+
+		} else {
+			throw new Nette\InvalidStateException('Unexpected format of service definition');
+		}
+	}
+
+
 	/**
-	 * Adds service definitions from configuration.
+	 * Adds service normalized definitions from configuration.
 	 */
 	public function loadDefinitions(array $services): void
 	{
 		foreach ($services as $name => $def) {
 			if (is_int($name)) {
-				$postfix = $def instanceof Statement && is_string($def->getEntity()) ? '.' . $def->getEntity() : (is_scalar($def) ? ".$def" : '');
+				$factory = $def['factory'] ?? null;
+				$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity() : (is_scalar($factory) ? ".$factory" : '');
 				$name = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
 			} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
 				$name = $this->builder->getByType(substr($name, 1), true);
 			}
 
-			if ($def === false) {
+			if ($def === [false]) {
 				$this->builder->removeDefinition($name);
 				continue;
 			}
 
 			$params = $this->builder->parameters;
-			if (is_array($def) && isset($def['parameters'])) {
+			if (isset($def['parameters'])) {
 				foreach ((array) $def['parameters'] as $k => $v) {
 					$v = explode(' ', is_int($k) ? $v : $k);
 					$params[end($v)] = $this->builder::literal('$' . end($v));
@@ -69,7 +93,7 @@ class Processor
 			}
 			$def = Nette\DI\Helpers::expand($def, $params);
 
-			if (is_array($def) && !empty($def['alteration']) && !$this->builder->hasDefinition($name)) {
+			if (!empty($def['alteration']) && !$this->builder->hasDefinition($name)) {
 				throw new ServiceCreationException("Service '$name': missing original definition for alteration.");
 			}
 			if (Helpers::takeParent($def)) {
@@ -91,21 +115,8 @@ class Processor
 	/**
 	 * Parses single service definition from configuration.
 	 */
-	public function updateDefinition(Nette\DI\Definitions\ServiceDefinition $definition, $config, string $name = null): void
+	public function updateDefinition(Nette\DI\Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
-		if ($config === null) {
-			return;
-
-		} elseif (is_string($config) && interface_exists($config)) {
-			$config = ['implement' => $config];
-
-		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
-			$config = ['implement' => $config->getEntity(), 'factory' => array_shift($config->arguments)];
-
-		} elseif (!is_array($config) || isset($config[0], $config[1])) {
-			$config = ['factory' => $config];
-		}
-
 		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'external', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
