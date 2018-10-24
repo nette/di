@@ -368,7 +368,7 @@ class Compiler
 			unset($config['create']);
 		}
 
-		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
+		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'imported', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectHelpers::getSuggestion($known, $error);
@@ -442,6 +442,10 @@ class Compiler
 		if (isset($config['autowired'])) {
 			Validators::assertField($config, 'autowired', 'bool|string|array');
 			$definition->setAutowired($config['autowired']);
+		}
+
+		if (isset($config['imported'])) {
+			$config['dynamic'] = $config['imported'];
 		}
 
 		if (isset($config['dynamic'])) {

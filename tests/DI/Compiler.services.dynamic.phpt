@@ -23,6 +23,17 @@ services:
 		dynamic: true
 ');
 
+Assert::exception(function () use ($container) {
+	$container->getService('one');
+}, Nette\DI\ServiceCreationException::class, "Unable to create dynamic service 'one', it must be added using addService()");
+
+
+$container = createContainer(new DI\Compiler, '
+services:
+	one:
+		type: Service
+		imported: true
+');
 
 Assert::exception(function () use ($container) {
 	$container->getService('one');
