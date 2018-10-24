@@ -54,19 +54,12 @@ class PhpGenerator
 			->addParameter('params', [])
 				->setTypeHint('array');
 
-		$definitions = $this->builder->getDefinitions();
-		ksort($definitions);
-
-		$meta = $containerClass->addProperty('meta')
+		$containerClass->addProperty('meta')
 			->setVisibility('protected')
 			->setValue($this->builder->exportMeta());
 
-		foreach ($definitions as $name => $def) {
-			$meta->value[Container::SERVICES][$name] = $def->getImplement() ?: $def->getType() ?: null;
-			foreach ($def->getTags() as $tag => $value) {
-				$meta->value[Container::TAGS][$tag][$name] = $value;
-			}
-		}
+		$definitions = $this->builder->getDefinitions();
+		ksort($definitions);
 
 		foreach ($definitions as $name => $def) {
 			try {
@@ -83,10 +76,6 @@ class PhpGenerator
 				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 			}
 		}
-
-		$aliases = $this->builder->getAliases();
-		ksort($aliases);
-		$meta->value[Container::ALIASES] = $aliases;
 
 		return $containerClass;
 	}

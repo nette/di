@@ -292,7 +292,21 @@ class ContainerBuilder
 	 */
 	public function exportMeta(): array
 	{
-		return [Container::TYPES => $this->autowiring->getClassList()];
+		$meta[Container::TYPES] = $this->autowiring->getClassList();
+
+		$defs = $this->definitions;
+		ksort($defs);
+		foreach ($defs as $name => $def) {
+			$meta[Container::SERVICES][$name] = $def->getImplement() ?: $def->getType();
+			foreach ($def->getTags() as $tag => $value) {
+				$meta[Container::TAGS][$tag][$name] = $value;
+			}
+		}
+
+		$meta[Container::ALIASES] = $this->aliases;
+		ksort($meta[Container::ALIASES]);
+
+		return $meta;
 	}
 
 
