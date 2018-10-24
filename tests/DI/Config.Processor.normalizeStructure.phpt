@@ -35,6 +35,12 @@ Assert::same(['factory' => $statement], $processor->normalizeStructure($statemen
 $statement = new Statement(Iface::class, ['foo']);
 Assert::same(['implement' => Iface::class, 'factory' => 'foo'], $processor->normalizeStructure($statement));
 
+$statement = new Statement(Iface::class, ['stdClass', 'stdClass']);
+Assert::same(['implement' => Iface::class, 'references' => ['stdClass', 'stdClass']], $processor->normalizeStructure($statement));
+
+$statement = new Statement(Iface::class, ['tagged' => 123]);
+Assert::same(['implement' => Iface::class, 'tagged' => 123], $processor->normalizeStructure($statement));
+
 
 // aliases
 Assert::same(['type' => 'val'], $processor->normalizeStructure(['class' => 'val']));
