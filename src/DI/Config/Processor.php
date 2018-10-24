@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Config;
 
 use Nette;
+use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Extensions;
 use Nette\DI\ServiceCreationException;
@@ -22,6 +23,21 @@ use Nette\Utils\Validators;
 class Processor
 {
 	use Nette\SmartObject;
+
+	private $scheme = [
+		'fields' => [
+			'type' => 'string|Nette\DI\Definitions\Statement',
+			'factory' => 'callable|Nette\DI\Definitions\Statement',
+			'arguments' => 'array',
+			'setup' => 'list',
+			'parameters' => 'array',
+			'inject' => 'bool',
+			'autowired' => 'bool|string|array',
+			'tags' => 'array',
+			'external' => 'bool',
+			'implement' => 'string',
+		],
+	];
 
 	/** @var Nette\DI\ContainerBuilder */
 	private $builder;
@@ -87,44 +103,25 @@ class Processor
 	 */
 	public function loadDefinitions(array $services): void
 	{
-		foreach ($services as $name => $def) {
-			if (is_int($name)) {
-				$factory = $def['factory'] ?? null;
-				$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity() : (is_scalar($factory) ? ".$factory" : '');
-				$name = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
-			} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
-				$name = $this->builder->getByType(substr($name, 1), true);
-			}
+		try {
+			foreach ($services as $name => $config) {
+				$name = $this->createDefinitionName($name, $config);
 
-			if ($def === [false]) {
-				$this->builder->removeDefinition($name);
-				continue;
-			}
-
-			$params = $this->builder->parameters;
-			if (isset($def['parameters'])) {
-				foreach ((array) $def['parameters'] as $k => $v) {
-					$v = explode(' ', is_int($k) ? $v : $k);
-					$params[end($v)] = $this->builder::literal('$' . end($v));
+				if ($config === [false]) {
+					$this->builder->removeDefinition($name);
+					continue;
+				} elseif (!empty($config['alteration']) && !$this->builder->hasDefinition($name)) {
+					throw new ServiceCreationException('missing original definition for alteration.');
 				}
-			}
-			$def = Nette\DI\Helpers::expand($def, $params);
+				unset($config['alteration']);
 
-			if (!empty($def['alteration']) && !$this->builder->hasDefinition($name)) {
-				throw new ServiceCreationException("Service '$name': missing original definition for alteration.");
+				$config = $this->prepareConfig($config);
+				$definition = $this->retrieveDefinition($name, $config);
+				$this->validateConfig($config, $this->scheme['fields']);
+				$this->updateDefinition($definition, $config, $name);
 			}
-			if (Helpers::takeParent($def)) {
-				$this->builder->removeDefinition($name);
-			}
-			$definition = $this->builder->hasDefinition($name)
-				? $this->builder->getDefinition($name)
-				: $this->builder->addDefinition($name);
-
-			try {
-				$this->updateDefinition($definition, $def, $name);
-			} catch (\Exception $e) {
-				throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
-			}
+		} catch (\Exception $e) {
+			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 		}
 	}
 
@@ -132,26 +129,14 @@ class Processor
 	/**
 	 * Parses single service definition from configuration.
 	 */
-	public function updateDefinition(Nette\DI\Definitions\ServiceDefinition $definition, array $config, string $name = null): void
+	private function updateDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
-		$known = ['type', 'factory', 'arguments', 'setup', 'autowired', 'external', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
-		if ($error = array_diff(array_keys($config), $known)) {
-			$hints = array_filter(array_map(function ($error) use ($known) {
-				return Nette\Utils\ObjectHelpers::getSuggestion($known, $error);
-			}, $error));
-			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
-			throw new Nette\InvalidStateException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
-		}
-
-		$config = Nette\DI\Helpers::filterArguments($config);
-
 		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
 			$definition->setType(null);
 			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
-			Validators::assertField($config, 'type', 'string|Nette\DI\Definitions\Statement|null');
 			if ($config['type'] instanceof Statement) {
 				trigger_error("Service '$name': option 'type' or 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
 			} else {
@@ -161,12 +146,10 @@ class Processor
 		}
 
 		if (array_key_exists('factory', $config)) {
-			Validators::assertField($config, 'factory', 'callable|Nette\DI\Definitions\Statement|null');
 			$definition->setFactory($config['factory']);
 		}
 
 		if (array_key_exists('arguments', $config)) {
-			Validators::assertField($config, 'arguments', 'array');
 			$arguments = $config['arguments'];
 			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments) && $definition->getFactory()) {
 				$arguments += $definition->getFactory()->arguments;
@@ -178,7 +161,6 @@ class Processor
 			if (Helpers::takeParent($config['setup'])) {
 				$definition->setSetup([]);
 			}
-			Validators::assertField($config, 'setup', 'list');
 			foreach ($config['setup'] as $id => $setup) {
 				Validators::assert($setup, 'callable|Nette\DI\Definitions\Statement|array:1', "setup item #$id");
 				if (is_array($setup)) {
@@ -189,33 +171,27 @@ class Processor
 		}
 
 		if (isset($config['parameters'])) {
-			Validators::assertField($config, 'parameters', 'array');
 			$definition->setParameters($config['parameters']);
 		}
 
 		if (isset($config['implement'])) {
-			Validators::assertField($config, 'implement', 'string');
 			$definition->setImplement($config['implement']);
 			$definition->setAutowired(true);
 		}
 
 		if (isset($config['autowired'])) {
-			Validators::assertField($config, 'autowired', 'bool|string|array');
 			$definition->setAutowired($config['autowired']);
 		}
 
 		if (isset($config['external'])) {
-			Validators::assertField($config, 'external', 'bool');
 			$definition->setDynamic($config['external']);
 		}
 
 		if (isset($config['inject'])) {
-			Validators::assertField($config, 'inject', 'bool');
 			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
 		}
 
 		if (isset($config['tags'])) {
-			Validators::assertField($config, 'tags', 'array');
 			if (Helpers::takeParent($config['tags'])) {
 				$definition->setTags([]);
 			}
@@ -225,6 +201,25 @@ class Processor
 				} else {
 					$definition->addTag($tag, $attrs);
 				}
+			}
+		}
+	}
+
+
+	private function validateFields(array $config, array $fields): void
+	{
+		$expected = array_keys($fields);
+		if ($error = array_diff(array_keys($config), $expected)) {
+			$hints = array_filter(array_map(function ($error) use ($expected) {
+				return Nette\Utils\ObjectHelpers::getSuggestion($expected, $error);
+			}, $error));
+			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
+			throw new Nette\InvalidStateException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
+		}
+
+		foreach ($fields as $field => $expected) {
+			if (isset($config[$field])) {
+				Validators::assertField($config, $field, $expected);
 			}
 		}
 	}
@@ -244,5 +239,45 @@ class Processor
 			$services[$name] = $def;
 		}
 		return $services;
+	}
+
+
+	private function createDefinitionName($name, array $config): string
+	{
+		if (is_int($name)) {
+			$factory = $config['factory'] ?? null;
+			$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity(
+				) : (is_scalar($factory) ? ".$factory" : '');
+			$name = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
+		} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
+			$name = $this->builder->getByType(substr($name, 1), true);
+		}
+		return $name;
+	}
+
+
+	private function prepareConfig(array $config): array
+	{
+		$params = $this->builder->parameters;
+		if (isset($config['parameters'])) {
+			foreach ((array) $config['parameters'] as $k => $v) {
+				$v = explode(' ', is_int($k) ? $v : $k);
+				$params[end($v)] = $this->builder::literal('$' . end($v));
+			}
+		}
+		$config = Nette\DI\Helpers::expand($config, $params);
+		$config = Nette\DI\Helpers::filterArguments($config);
+		return $config;
+	}
+
+
+	private function retrieveDefinition(string $name, array &$config): Definitions\ServiceDefinition
+	{
+		if (Helpers::takeParent($config)) {
+			$this->builder->removeDefinition($name);
+		}
+		return $this->builder->hasDefinition($name)
+			? $this->builder->getDefinition($name)
+			: $this->builder->addDefinition($name);
 	}
 }
