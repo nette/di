@@ -24,18 +24,63 @@ class Processor
 {
 	use Nette\SmartObject;
 
-	private $scheme = [
-		'fields' => [
-			'type' => 'string|Nette\DI\Definitions\Statement',
-			'factory' => 'callable|Nette\DI\Definitions\Statement',
-			'arguments' => 'array',
-			'setup' => 'list',
-			'parameters' => 'array',
-			'inject' => 'bool',
-			'autowired' => 'bool|string|array',
-			'tags' => 'array',
-			'external' => 'bool',
-			'implement' => 'string',
+	private $schemes = [
+		Definitions\ServiceDefinition::class => [
+			'method' => 'updateServiceDefinition',
+			'fields' => [
+				'type' => 'string|Nette\DI\Definitions\Statement',
+				'factory' => 'callable|Nette\DI\Definitions\Statement',
+				'arguments' => 'array',
+				'setup' => 'list',
+				'parameters' => 'array',
+				'inject' => 'bool',
+				'autowired' => 'bool|string|array',
+				'tags' => 'array',
+			],
+		],
+		Definitions\AccessorDefinition::class => [
+			'method' => 'updateAccessorDefinition',
+			'fields' => [
+				'type' => 'string',
+				'implement' => 'string',
+				'factory' => 'callable|Nette\DI\Definitions\Statement',
+				'autowired' => 'bool|string|array',
+				'tags' => 'array',
+			],
+		],
+		Definitions\FactoryDefinition::class => [
+			'method' => 'updateFactoryDefinition',
+			'fields' => [
+				'type' => 'string',
+				'factory' => 'callable|Nette\DI\Definitions\Statement',
+				'implement' => 'string',
+				'arguments' => 'array',
+				'setup' => 'list',
+				'parameters' => 'array',
+				'references' => 'array',
+				'tagged' => 'string',
+				'autowired' => 'bool|string|array',
+				'tags' => 'array',
+			],
+		],
+		Definitions\LocatorDefinition::class => [
+			'method' => 'updateLocatorDefinition',
+			'fields' => [
+				'implement' => 'string',
+				'references' => 'array',
+				'tagged' => 'string',
+				'autowired' => 'bool|string|array',
+				'tags' => 'array',
+			],
+		],
+		Definitions\ExternalDefinition::class => [
+			'method' => 'updateExternalDefinition',
+			'fields' => [
+				'type' => 'string',
+				'external' => 'bool',
+				'autowired' => 'bool|string|array',
+				'tags' => 'array',
+			],
 		],
 	];
 
@@ -75,7 +120,15 @@ class Processor
 			return ['implement' => $def];
 
 		} elseif ($def instanceof Statement && is_string($def->getEntity()) && interface_exists($def->getEntity())) {
-			return ['implement' => $def->getEntity(), 'factory' => array_shift($def->arguments)];
+			$res = ['implement' => $def->getEntity()];
+			if (array_keys($def->arguments) === ['tagged']) {
+				$res += $def->arguments;
+			} elseif (count($def->arguments) > 1) {
+				$res['references'] = $def->arguments;
+			} else {
+				$res['factory'] = array_shift($def->arguments);
+			}
+			return $res;
 
 		} elseif (!is_array($def) || isset($def[0], $def[1])) {
 			return ['factory' => $def];
@@ -116,9 +169,11 @@ class Processor
 				unset($config['alteration']);
 
 				$config = $this->prepareConfig($config);
-				$definition = $this->retrieveDefinition($name, $config);
-				$this->validateConfig($config, $this->scheme['fields']);
-				$this->updateDefinition($definition, $config, $name);
+				$def = $this->retrieveDefinition($name, $config);
+				$scheme = $this->schemes[get_class($def)];
+				$this->validateFields($config, $scheme['fields']);
+				$this->{$scheme['method']}($def, $config, $name);
+				$this->updateDefinition($def, $config);
 			}
 		} catch (\Exception $e) {
 			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
@@ -129,7 +184,7 @@ class Processor
 	/**
 	 * Parses single service definition from configuration.
 	 */
-	private function updateDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
+	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
 		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
 			$definition->setType(null);
@@ -174,21 +229,96 @@ class Processor
 			$definition->setParameters($config['parameters']);
 		}
 
+		if (isset($config['inject'])) {
+			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
+		}
+	}
+
+
+	private function updateAccessorDefinition(Definitions\AccessorDefinition $definition, array $config): void
+	{
+		if (isset($config['implement'])) {
+			$definition->setImplement($config['implement']);
+		}
+
+		if ($ref = $config['factory'] ?? $config['type'] ?? null) {
+			$definition->setReference($ref);
+		}
+	}
+
+
+	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, array $config): void
+	{
+		$resultDef = $definition->getResultDefinition();
+
 		if (isset($config['implement'])) {
 			$definition->setImplement($config['implement']);
 			$definition->setAutowired(true);
 		}
 
+		if (array_key_exists('factory', $config)) {
+			$resultDef->setFactory($config['factory']);
+		}
+
+		if (array_key_exists('type', $config)) {
+			$resultDef->setFactory($config['type']);
+		}
+
+		if (array_key_exists('arguments', $config)) {
+			$arguments = $config['arguments'];
+			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments) && $definition->getFactory()) {
+				$arguments += $resultDef->getFactory()->arguments;
+			}
+			$resultDef->setArguments($arguments);
+		}
+
+		if (isset($config['setup'])) {
+			if (Helpers::takeParent($config['setup'])) {
+				$resultDef->setSetup([]);
+			}
+			foreach ($config['setup'] as $id => $setup) {
+				Validators::assert($setup, 'callable|Nette\DI\Definitions\Statement|array:1', "setup item #$id");
+				if (is_array($setup)) {
+					$setup = new Statement(key($setup), array_values($setup));
+				}
+				$resultDef->addSetup($setup);
+			}
+		}
+
+		if (isset($config['parameters'])) {
+			$definition->setParameters($config['parameters']);
+		}
+	}
+
+
+	private function updateLocatorDefinition(Definitions\LocatorDefinition $definition, array $config): void
+	{
+		if (isset($config['implement'])) {
+			$definition->setImplement($config['implement']);
+		}
+
+		if (isset($config['references'])) {
+			$definition->setReferences($config['references']);
+		}
+
+		if (isset($config['tagged'])) {
+			$definition->setTagged($config['tagged']);
+		}
+	}
+
+
+	private function updateExternalDefinition(Definitions\ExternalDefinition $definition, array $config): void
+	{
+		if (array_key_exists('type', $config)) {
+			$definition->setType($config['type']);
+		}
+	}
+
+
+	private function updateDefinition(Definitions\Definition $definition, array $config): void
+	{
 		if (isset($config['autowired'])) {
 			$definition->setAutowired($config['autowired']);
-		}
-
-		if (isset($config['external'])) {
-			$definition->setDynamic($config['external']);
-		}
-
-		if (isset($config['inject'])) {
-			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
 		}
 
 		if (isset($config['tags'])) {
@@ -271,13 +401,28 @@ class Processor
 	}
 
 
-	private function retrieveDefinition(string $name, array &$config): Definitions\ServiceDefinition
+	private function retrieveDefinition(string $name, array &$config): Definitions\Definition
 	{
 		if (Helpers::takeParent($config)) {
 			$this->builder->removeDefinition($name);
 		}
-		return $this->builder->hasDefinition($name)
-			? $this->builder->getDefinition($name)
-			: $this->builder->addDefinition($name);
+
+		if ($this->builder->hasDefinition($name)) {
+			return $this->builder->getDefinition($name);
+
+		} elseif (isset($config['implement'], $config['references']) || isset($config['implement'], $config['tagged'])) {
+			return $this->builder->addLocatorDefinition($name);
+
+		} elseif (isset($config['implement'])) {
+			return method_exists($config['implement'], 'create')
+				? $this->builder->addFactoryDefinition($name)
+				: $this->builder->addAccessorDefinition($name);
+
+		} elseif (isset($config['external'])) {
+			return $this->builder->addExternalDefinition($name);
+
+		} else {
+			return $this->builder->addDefinition($name);
+		}
 	}
 }
