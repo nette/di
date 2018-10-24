@@ -184,14 +184,15 @@ final class ServiceDefinition extends Definition
 			if (!$this->getType()) {
 				throw new ServiceCreationException('Factory and type are missing in definition of service.');
 			}
-			$this->setFactory($this->getType(), ($factory = $this->getFactory()) ? $factory->arguments : []);
+			$this->setFactory($this->getType(), $this->factory->arguments ?? []);
 
 		} elseif (!$this->getType()) {
-			$type = $resolver->resolveEntityType($this->getFactory());
-			if ($type) {
-				$this->setType($type);
-				$resolver->addDependency(new \ReflectionClass($type));
+			$type = $resolver->resolveEntityType($this->factory);
+			if (!$type) {
+				throw new ServiceCreationException('Unknown service type, specify it or declare return type of factory.');
 			}
+			$this->setType($type);
+			$resolver->addDependency(new \ReflectionClass($type));
 		}
 
 		// auto-disable autowiring for aliases
@@ -203,33 +204,31 @@ final class ServiceDefinition extends Definition
 
 	public function complete(Nette\DI\Resolver $resolver): void
 	{
-		$entity = $this->getFactory()->getEntity();
-		$serviceRef = $entity instanceof Reference ? $resolver->normalizeReference($entity) : null;
-		$factory = $serviceRef && !$this->getFactory()->arguments && !$this->getSetup()
-			? new Statement([new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER), 'getService'], [$serviceRef->getValue()])
-			: $this->getFactory();
+		$entity = $this->factory->getEntity();
+		if ($entity instanceof Reference && !$this->factory->arguments && !$this->setup) {
+			$ref = $resolver->normalizeReference($entity);
+			$this->setFactory([new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER), 'getService'], [$ref->getValue()]);
+		}
 
-		$this->setFactory($resolver->completeStatement($factory));
+		$this->factory = $resolver->completeStatement($this->factory);
 
-		$setups = $this->getSetup();
-		foreach ($setups as &$setup) {
+		foreach ($this->setup as &$setup) {
 			if (is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false) { // auto-prepend @self
 				$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
 			}
 			$setup = $resolver->completeStatement($setup, true);
 		}
-		$this->setSetup($setups);
 	}
 
 
 	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
 	{
-		$entity = $this->getFactory()->getEntity();
-		$code = '$service = ' . $generator->formatStatement($this->getFactory()) . ";\n";
+		$entity = $this->factory->getEntity();
+		$code = '$service = ' . $generator->formatStatement($this->factory) . ";\n";
 		$type = $this->getType();
 
 		if (
-			$this->getSetup()
+			$this->setup
 			&& $type !== $entity
 			&& !(is_array($entity) && $entity[0] instanceof Reference && $entity[0]->getValue() === Nette\DI\ContainerBuilder::THIS_CONTAINER)
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
@@ -240,7 +239,7 @@ final class ServiceDefinition extends Definition
 			);
 		}
 
-		foreach ($this->getSetup() as $setup) {
+		foreach ($this->setup as $setup) {
 			$code .= $generator->formatStatement($setup) . ";\n";
 		}
 
