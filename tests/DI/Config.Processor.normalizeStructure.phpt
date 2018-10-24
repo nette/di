@@ -34,3 +34,12 @@ Assert::same(['factory' => $statement], $processor->normalizeStructure($statemen
 
 $statement = new Statement(Iface::class, ['foo']);
 Assert::same(['implement' => Iface::class, 'factory' => 'foo'], $processor->normalizeStructure($statement));
+
+
+// aliases
+Assert::same(['type' => 'val'], $processor->normalizeStructure(['class' => 'val']));
+Assert::same(['external' => 'val'], $processor->normalizeStructure(['dynamic' => 'val']));
+
+Assert::exception(function () use ($processor) {
+	$processor->normalizeStructure(['class' => 'val', 'type' => 'val']);
+}, Nette\InvalidStateException::class, "Options 'class' and 'type' are aliases, use only 'type'.");

@@ -57,6 +57,15 @@ class Processor
 			return ['factory' => $def];
 
 		} elseif (is_array($def)) {
+			foreach (['class' => 'type', 'dynamic' => 'external'] as $alias => $original) {
+				if (array_key_exists($alias, $def)) {
+					if (array_key_exists($original, $def)) {
+						throw new Nette\InvalidStateException("Options '$alias' and '$original' are aliases, use only '$original'.");
+					}
+					$def[$original] = $def[$alias];
+					unset($def[$alias]);
+				}
+			}
 			return $def;
 
 		} else {
@@ -117,7 +126,7 @@ class Processor
 	 */
 	public function updateDefinition(Nette\DI\Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
-		$known = ['type', 'class', 'factory', 'arguments', 'setup', 'autowired', 'dynamic', 'external', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
+		$known = ['type', 'factory', 'arguments', 'setup', 'autowired', 'external', 'inject', 'parameters', 'implement', 'run', 'tags', 'alteration'];
 		if ($error = array_diff(array_keys($config), $known)) {
 			$hints = array_filter(array_map(function ($error) use ($known) {
 				return Nette\Utils\ObjectHelpers::getSuggestion($known, $error);
@@ -128,27 +137,19 @@ class Processor
 
 		$config = Nette\DI\Helpers::filterArguments($config);
 
-		if (array_key_exists('class', $config) || array_key_exists('factory', $config)) {
+		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
 			$definition->setType(null);
 			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
-			Validators::assertField($config, 'type', 'string|null');
-			$definition->setType($config['type']);
-			if (array_key_exists('class', $config)) {
-				throw new Nette\InvalidStateException("Unexpected 'class' when 'type' is used.");
-			}
-		}
-
-		if (array_key_exists('class', $config)) {
-			Validators::assertField($config, 'class', 'string|Nette\DI\Definitions\Statement|null');
-			if ($config['class'] instanceof Statement) {
-				trigger_error("Service '$name': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
+			Validators::assertField($config, 'type', 'string|Nette\DI\Definitions\Statement|null');
+			if ($config['type'] instanceof Statement) {
+				trigger_error("Service '$name': option 'type' or 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
 			} else {
-				$definition->setType($config['class']);
+				$definition->setType($config['type']);
 			}
-			$definition->setFactory($config['class']);
+			$definition->setFactory($config['type']);
 		}
 
 		if (array_key_exists('factory', $config)) {
@@ -196,12 +197,8 @@ class Processor
 		}
 
 		if (isset($config['external'])) {
-			$config['dynamic'] = $config['external'];
-		}
-
-		if (isset($config['dynamic'])) {
-			Validators::assertField($config, 'dynamic', 'bool');
-			$definition->setDynamic($config['dynamic']);
+			Validators::assertField($config, 'external', 'bool');
+			$definition->setDynamic($config['external']);
 		}
 
 		if (isset($config['inject'])) {
