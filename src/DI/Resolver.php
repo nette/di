@@ -127,10 +127,7 @@ class Resolver
 			return $type;
 
 		} elseif ($entity instanceof Reference) { // alias or factory
-			if ($entity->isType()) { // @\Class
-				return $entity->getValue();
-			}
-			return $this->resolveReference($entity)->getImplement() ?: $this->resolveReferenceType($entity);
+			return $this->resolveReferenceType($entity);
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
@@ -225,7 +222,7 @@ class Resolver
 								throw new ServiceCreationException("Missing argument for $entity[1].");
 							}
 						} elseif (
-							$type = $entity[0] instanceof Reference && $entity[1] !== 'create'
+							$type = $entity[0] instanceof Reference
 								? $this->resolveReferenceType($entity[0])
 								: $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
 						) {

@@ -110,7 +110,7 @@ class Autowiring
 		$this->classList = $preferred = [];
 
 		foreach ($this->builder->getDefinitions() as $name => $def) {
-			if (!($type = $def->getImplement() ?: $def->getType())) {
+			if (!($type = $def->getType())) {
 				continue;
 			}
 
