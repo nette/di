@@ -256,11 +256,7 @@ final class ServiceDefinition extends Definition
 		}
 
 		// auto-disable autowiring for aliases
-		if (
-			$this->getAutowired() === true
-			&& $this->getFactory()->getEntity() instanceof Reference
-			&& !$this->getImplement()
-		) {
+		if ($this->getAutowired() === true && $this->getEntity() instanceof Reference) {
 			$this->setAutowired(false);
 		}
 

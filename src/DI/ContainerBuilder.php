@@ -320,7 +320,7 @@ class ContainerBuilder
 		$defs = $this->definitions;
 		ksort($defs);
 		foreach ($defs as $name => $def) {
-			$meta[Container::SERVICES][$name] = $def->getImplement() ?: $def->getType();
+			$meta[Container::SERVICES][$name] = $def->getType();
 			foreach ($def->getTags() as $tag => $value) {
 				$meta[Container::TAGS][$tag][$name] = $value;
 			}
