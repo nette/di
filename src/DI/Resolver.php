@@ -167,7 +167,10 @@ class Resolver
 
 		switch (true) {
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
+				break;
+
 			case $entity === 'not':
+				$entity = ['', '!'];
 				break;
 
 			case is_string($entity): // create class
@@ -186,6 +189,7 @@ class Resolver
 				break;
 
 			case $entity instanceof Reference:
+				$entity = [new Reference(ContainerBuilder::THIS_CONTAINER), Container::getMethodName($entity->getValue())];
 				break;
 
 			case is_array($entity):

@@ -100,14 +100,8 @@ class PhpGenerator
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
 				return $this->formatPhp($entity, $arguments);
 
-			case $entity === 'not':
-				return $this->formatPhp('!?', [$arguments[0]]);
-
 			case is_string($entity): // create class
 				return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
-
-			case $entity instanceof Reference:
-				return $this->formatPhp('$this->?(...?)', [Container::getMethodName($entity->getValue()), $arguments]);
 
 			case is_array($entity):
 				switch (true) {
