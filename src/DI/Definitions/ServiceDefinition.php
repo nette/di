@@ -24,9 +24,6 @@ use Nette\PhpGenerator\Helpers as PhpHelpers;
  */
 final class ServiceDefinition extends Definition
 {
-	/** @var array */
-	public $parameters = [];
-
 	/** @var Statement|null */
 	private $factory;
 
@@ -135,18 +132,21 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @return static
+	 * @deprecated
 	 */
 	public function setParameters(array $params)
 	{
-		$this->parameters = $params;
-		return $this;
+		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated.', $this->getName(), __METHOD__));
 	}
 
 
+	/**
+	 * @deprecated
+	 */
 	public function getParameters(): array
 	{
-		return $this->parameters;
+		trigger_error(sprintf('Service %s: %s() is deprecated.', $this->getName(), __METHOD__), E_USER_DEPRECATED);
+		return [];
 	}
 
 
@@ -224,8 +224,6 @@ final class ServiceDefinition extends Definition
 
 	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
 	{
-		$method->setParameters($generator->convertParameters($this->parameters));
-
 		$entity = $this->getFactory()->getEntity();
 		$code = '$service = ' . $generator->formatStatement($this->getFactory()) . ";\n";
 		$type = $this->getType();

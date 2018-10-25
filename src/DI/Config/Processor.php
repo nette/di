@@ -32,7 +32,6 @@ class Processor
 				'factory' => 'callable|Nette\DI\Definitions\Statement',
 				'arguments' => 'array',
 				'setup' => 'list',
-				'parameters' => 'array',
 				'inject' => 'bool',
 				'autowired' => 'bool|string|array',
 				'tags' => 'array',
@@ -223,10 +222,6 @@ class Processor
 				}
 				$definition->addSetup($setup);
 			}
-		}
-
-		if (isset($config['parameters'])) {
-			$definition->setParameters($config['parameters']);
 		}
 
 		if (isset($config['inject'])) {
