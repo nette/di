@@ -42,7 +42,7 @@ class Container
 
 	public function __construct(array $params = [])
 	{
-		$this->parameters = $params + $this->parameters;
+		$this->parameters = $params ?: $this->parameters;
 	}
 
 
