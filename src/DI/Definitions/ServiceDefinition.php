@@ -389,10 +389,10 @@ final class ServiceDefinition extends Definition
 
 		$entity = $this->getFactory()->getEntity();
 		$code = '$service = ' . $generator->formatStatement($this->getFactory()) . ";\n";
+		$type = $this->getType();
 
 		if (
 			$this->getSetup()
-			&& ($type = $this->getType())
 			&& !$entity instanceof Reference && $type !== $entity
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
 		) {

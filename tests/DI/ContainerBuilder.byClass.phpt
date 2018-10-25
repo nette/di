@@ -87,6 +87,7 @@ $builder->addDefinition('four')
 	->setFactory('@\AnnotatedFactory::create');
 
 $builder->addDefinition('five')
+	->setType('stdClass')
 	->setAutowired(false)
 	->setFactory('@\IFactory::create');
 

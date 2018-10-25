@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassFactory
 {
-	function create(stdClass $a, array $b, $c = null);
+	function create(stdClass $a, array $b, $c = null): stdClass;
 }
 
 

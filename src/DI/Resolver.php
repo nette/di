@@ -68,7 +68,7 @@ class Resolver
 
 			$def->resolveType($this);
 
-			if (!$def->getType() && $def->getAutowired()) {
+			if (!$def->getType()) {
 				throw new ServiceCreationException('Type of service is unknown.');
 			}
 		} catch (\Exception $e) {
@@ -151,9 +151,7 @@ class Resolver
 		try {
 			$def->complete($this);
 
-			if ($def->getType()) {
-				$this->addDependency(new \ReflectionClass($def->getType()));
-			}
+			$this->addDependency(new \ReflectionClass($def->getType()));
 
 		} catch (\Exception $e) {
 			throw $this->completeException($e, $def);
