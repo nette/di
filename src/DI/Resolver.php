@@ -186,12 +186,6 @@ class Resolver
 				break;
 
 			case $entity instanceof Reference:
-				$params = [];
-				foreach ($this->resolveReference($entity)->parameters as $k => $v) {
-					$params[] = preg_replace('#\w+\z#', '\$$0', (is_int($k) ? $v : $k)) . (is_int($k) ? '' : ' = ' . PhpHelpers::dump($v));
-				}
-				$rm = new \ReflectionFunction(eval('return function(' . implode(', ', $params) . ') {};'));
-				$arguments = $this->autowireArguments($rm, $arguments);
 				break;
 
 			case is_array($entity):
