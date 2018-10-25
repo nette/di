@@ -230,7 +230,8 @@ final class ServiceDefinition extends Definition
 
 		if (
 			$this->getSetup()
-			&& !$entity instanceof Reference && $type !== $entity
+			&& $type !== $entity
+			&& !(is_array($entity) && $entity[0] instanceof Reference && $entity[0]->getValue() === Nette\DI\ContainerBuilder::THIS_CONTAINER)
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $type) {\n"
