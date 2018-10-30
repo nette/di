@@ -63,6 +63,12 @@ class Compiler
 		} elseif (isset($this->extensions[$name]) || isset(self::$reserved[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
 		}
+		$lname = strtolower($name);
+		foreach (array_keys($this->extensions + self::$reserved) as $nm) {
+			if ($lname === strtolower((string) $nm)) {
+				throw new Nette\InvalidArgumentException("Name of extension '$name' has the same name as '$nm' in a case-insensitive manner.");
+			}
+		}
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
 		return $this;
 	}

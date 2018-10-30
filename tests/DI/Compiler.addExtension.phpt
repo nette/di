@@ -34,3 +34,10 @@ Assert::exception(function () {
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->addExtension('foo', new FooExtension);
 }, Nette\InvalidArgumentException::class, "Name 'foo' is already used or reserved.");
+
+
+Assert::exception(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('foo', new FooExtension);
+	$compiler->addExtension('Foo', new FooExtension);
+}, Nette\InvalidArgumentException::class, "Name of extension 'Foo' has the same name as 'foo' in a case-insensitive manner.");

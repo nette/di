@@ -67,6 +67,12 @@ class ContainerBuilder
 		if (isset($this->definitions[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' has already been added.");
 		}
+		$lname = strtolower($name);
+		foreach ($this->definitions as $nm => $foo) {
+			if ($lname === strtolower((string) $nm)) {
+				throw new Nette\InvalidStateException("Service '$name' has the same name as '$nm' in a case-insensitive manner.");
+			}
+		}
 		if (!$definition) {
 			$definition = new Definitions\ServiceDefinition;
 		}
