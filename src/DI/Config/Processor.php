@@ -374,10 +374,10 @@ class Processor
 	private function createDefinitionName($name, array $config): string
 	{
 		if (is_int($name)) {
-			$factory = $config['factory'] ?? null;
-			$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity(
-				) : (is_scalar($factory) ? ".$factory" : '');
-			$name = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
+			$counter = 1;
+			do {
+				$name = (string) $counter++;
+			} while ($this->builder->hasDefinition($name));
 		} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
 			$name = $this->builder->getByType(substr($name, 1), true);
 		}
