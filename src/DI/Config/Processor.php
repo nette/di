@@ -435,6 +435,8 @@ class Processor
 				unset($args[$k]);
 			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
 				$args[$k] = constant(ltrim($v, ':'));
+			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+\z#', $v)) {
+				$args[$k] = new Definitions\Reference(substr($v, 1));
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof Statement) {

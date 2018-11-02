@@ -27,6 +27,11 @@ Assert::same(
 );
 
 Assert::equal(
+	['a', 'b', new Nette\DI\Definitions\Reference('service')],
+	Processor::filterArguments(['a', 'b', '@service'])
+);
+
+Assert::equal(
 	[new Statement('class', ['a', 2 => Nette\DI\ContainerBuilder::THIS_CONTAINER])],
 	Processor::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])])
 );
