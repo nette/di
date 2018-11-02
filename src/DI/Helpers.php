@@ -95,23 +95,11 @@ final class Helpers
 
 
 	/**
-	 * Removes ... and process constants recursively.
+	 * @depreaced moved to Nette\DI\Config\Processor::filterArguments()
 	 */
 	public static function filterArguments(array $args): array
 	{
-		foreach ($args as $k => $v) {
-			if ($v === '...') {
-				unset($args[$k]);
-			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
-				$args[$k] = constant(ltrim($v, ':'));
-			} elseif (is_array($v)) {
-				$args[$k] = self::filterArguments($v);
-			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments([$v->getEntity()]);
-				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
-			}
-		}
-		return $args;
+		return Config\Processor::filterArguments($args);
 	}
 
 

@@ -185,6 +185,8 @@ class Processor
 	 */
 	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
+		$config = self::filterArguments($config);
+
 		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
 			$definition->setType(null);
 			$definition->setFactory(null);
@@ -244,6 +246,8 @@ class Processor
 
 	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, array $config): void
 	{
+		$config = self::filterArguments($config);
+
 		$resultDef = $definition->getResultDefinition();
 
 		if (isset($config['implement'])) {
@@ -391,7 +395,6 @@ class Processor
 			}
 		}
 		$config = Nette\DI\Helpers::expand($config, $params);
-		$config = Nette\DI\Helpers::filterArguments($config);
 		return $config;
 	}
 
@@ -419,5 +422,26 @@ class Processor
 		} else {
 			return $this->builder->addDefinition($name);
 		}
+	}
+
+
+	/**
+	 * Removes ... and process constants recursively.
+	 */
+	public static function filterArguments(array $args): array
+	{
+		foreach ($args as $k => $v) {
+			if ($v === '...') {
+				unset($args[$k]);
+			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*\z#', $v, $m)) {
+				$args[$k] = constant(ltrim($v, ':'));
+			} elseif (is_array($v)) {
+				$args[$k] = self::filterArguments($v);
+			} elseif ($v instanceof Statement) {
+				$tmp = self::filterArguments([$v->getEntity()]);
+				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
+			}
+		}
+		return $args;
 	}
 }
