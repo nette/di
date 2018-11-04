@@ -460,7 +460,7 @@ class ContainerBuilder
 					}
 					$def->getFactory()->arguments[$arg->getPosition()] = self::literal('$' . $arg->getName());
 				} elseif (!$def->getSetup()) {
-					$hint = Nette\Utils\ObjectMixin::getSuggestion(array_keys($ctorParams), $param->getName());
+					$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($ctorParams), $param->getName());
 					throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $methodName" . ($hint ? ", did you mean \${$hint}?" : '.'));
 				}
 				$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== null);
