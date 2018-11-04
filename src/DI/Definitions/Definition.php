@@ -139,6 +139,21 @@ abstract class Definition
 	}
 
 
+	/**
+	 * @return static
+	 */
+	public function setExported(bool $state = true)
+	{
+		return $this->addTag('nette.exported', $state);
+	}
+
+
+	public function isExported(): bool
+	{
+		return (bool) $this->getTag('nette.exported');
+	}
+
+
 	public function __clone()
 	{
 		$this->notifier = $this->name = null;
