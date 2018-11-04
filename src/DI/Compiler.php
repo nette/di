@@ -275,9 +275,11 @@ class Compiler
 	public static function loadDefinitions(ContainerBuilder $builder, array $services, $namespace = null)
 	{
 		$depths = [];
+		$sort = false;
 		foreach ($services as $name => $def) {
 			$path = [];
 			while (Config\Helpers::isInheriting($def)) {
+				$sort = true;
 				$path[] = $def;
 				$def = isset($services[$def[Config\Helpers::EXTENDS_KEY]]) ? $services[$def[Config\Helpers::EXTENDS_KEY]] : [];
 				if (in_array($def, $path, true)) {
@@ -286,7 +288,9 @@ class Compiler
 			}
 			$depths[$name] = count($path) + preg_match('#^@[\w\\\\]+\z#', $name);
 		}
-		@array_multisort($depths, $services); // @ may trigger E_NOTICE: Object of class Nette\DI\Statement could not be converted to int
+		if ($sort) {
+			@array_multisort($depths, $services); // @ may trigger E_NOTICE: Object of class Nette\DI\Statement could not be converted to int
+		}
 
 		foreach ($services as $name => $def) {
 			if (is_int($name)) {
