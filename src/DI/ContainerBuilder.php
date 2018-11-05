@@ -588,7 +588,14 @@ class ContainerBuilder
 				$def->setSetup($setups);
 
 			} catch (\Exception $e) {
-				$message = "Service '$name' (type of {$def->getType()}): " . $e->getMessage();
+				$type = $def->getType();
+				if (!$type) {
+					$message = "Service '$name': " . $e->getMessage();
+				} elseif (ctype_digit($name)) {
+					$message = "Service of type $type: " . str_replace("$type::", '', $e->getMessage());
+				} else {
+					$message = "Service '$name' (type of $type): " . str_replace("$type::", '', $e->getMessage());
+				}
 				throw $e instanceof ServiceCreationException
 					? $e->setMessage($message)
 					: new ServiceCreationException($message, 0, $e);
@@ -702,8 +709,9 @@ class ContainerBuilder
 		} catch (ServiceCreationException $e) {
 			if ((is_string($entity) || is_array($entity)) && !strpos($e->getMessage(), ' (used in')) {
 				$desc = is_string($entity)
-					? $entity . '::__construct'
-					: (is_string($entity[0]) ? ($entity[0] . '::') : 'method ') . $entity[1];
+					? $entity . '::__construct()'
+					: (is_string($entity[0]) ? ($entity[0] . '::') : '')
+						. $entity[1] . (strpos($entity[1], '$') === false ? '()' : '');
 				$e->setMessage($e->getMessage() . " (used in $desc)");
 			}
 			throw $e;
