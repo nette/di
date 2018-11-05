@@ -391,7 +391,15 @@ class Resolver
 		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
 			return $e;
 		} else {
-			$message = "Service '{$def->getName()}'" . ($def->getType() ? " (type of {$def->getType()})" : '') . ': ' . $e->getMessage();
+			$name = $def->getName();
+			$type = $def->getType();
+			if (!$type) {
+				$message = "Service '$name': " . $e->getMessage();
+			} elseif (!$name || ctype_digit($name)) {
+				$message = "Service of type $type: " . str_replace("$type::", '', $e->getMessage());
+			} else {
+				$message = "Service '$name' (type of $type): " . str_replace("$type::", '', $e->getMessage());
+			}
 			return $e instanceof ServiceCreationException
 				? $e->setMessage($message)
 				: new ServiceCreationException($message, 0, $e);
@@ -407,14 +415,17 @@ class Resolver
 				: '@' . $ref->getValue();
 		};
 		if (is_string($entity)) {
-			return $entity . '::__construct';
+			return $entity . '::__construct()';
 		} elseif ($entity instanceof Reference) {
 			$entity = $referenceToText($entity);
 		} elseif (is_array($entity)) {
+			if (strpos($entity[1], '$') === false) {
+				$entity[1] .= '()';
+			}
 			if ($entity[0] instanceof Reference) {
 				$entity[0] = $referenceToText($entity[0]);
 			} elseif (!is_string($entity[0])) {
-				return 'method ' . $entity[1];
+				return $entity[1];
 			}
 			return implode('::', $entity);
 		}
