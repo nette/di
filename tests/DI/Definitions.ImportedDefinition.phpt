@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: ExternalDefinition
+ * Test: ImportedDefinition
  */
 
 declare(strict_types=1);
 
-use Nette\DI\Definitions\ExternalDefinition;
+use Nette\DI\Definitions\ImportedDefinition;
 use Tester\Assert;
 
 
@@ -14,20 +14,20 @@ require __DIR__ . '/../bootstrap.php';
 
 
 Assert::exception(function () {
-	$def = new ExternalDefinition;
+	$def = new ImportedDefinition;
 	$def->setType('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");
 
 
 Assert::exception(function () {
-	$def = new ExternalDefinition;
+	$def = new ImportedDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 }, Nette\DI\ServiceCreationException::class, "Service '': Type of service is unknown.");
 
 
 test(function () {
-	$def = new ExternalDefinition;
+	$def = new ImportedDefinition;
 	$def->setName('abc');
 	$def->setType('stdClass');
 
@@ -43,6 +43,6 @@ test(function () {
 	Assert::match(
 'public function createServiceAbc(): void
 {
-	throw new Nette\DI\ServiceCreationException(\'Unable to create external service \\\'abc\\\', it must be added using addService()\');
+	throw new Nette\DI\ServiceCreationException(\'Unable to create imported service \\\'abc\\\', it must be added using addService()\');
 }', $method->__toString());
 });

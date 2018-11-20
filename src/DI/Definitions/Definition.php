@@ -200,7 +200,7 @@ abstract class Definition
 
 
 	/**
-	 * @deprecated Use '$def instanceof Nette\DI\Definitions\ExternalDefinition'
+	 * @deprecated Use '$def instanceof Nette\DI\Definitions\ImportedDefinition'
 	 */
 	public function isDynamic(): bool
 	{

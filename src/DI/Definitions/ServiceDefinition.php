@@ -151,11 +151,11 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @deprecated use $builder->addExternalDefinition(...)
+	 * @deprecated use $builder->addImportedDefinition(...)
 	 */
 	public function setDynamic(): void
 	{
-		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated, use $builder->addExternalDefinition(...)', $this->getName(), __METHOD__));
+		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated, use $builder->addImportedDefinition(...)', $this->getName(), __METHOD__));
 	}
 
 

@@ -44,7 +44,7 @@ Assert::same(['implement' => Iface::class, 'tagged' => 123], $processor->normali
 
 // aliases
 Assert::same(['type' => 'val'], $processor->normalizeStructure(['class' => 'val']));
-Assert::same(['external' => 'val'], $processor->normalizeStructure(['dynamic' => 'val']));
+Assert::same(['imported' => 'val'], $processor->normalizeStructure(['dynamic' => 'val']));
 
 Assert::exception(function () use ($processor) {
 	$processor->normalizeStructure(['class' => 'val', 'type' => 'val']);

@@ -14,9 +14,9 @@ use Nette\DI\PhpGenerator;
 
 
 /**
- * External service injected to the container.
+ * Imported service injected to the container.
  */
-final class ExternalDefinition extends Definition
+final class ImportedDefinition extends Definition
 {
 	/**
 	 * @return static
@@ -42,13 +42,13 @@ final class ExternalDefinition extends Definition
 		$method->setReturnType('void')
 			->setBody(
 				'throw new Nette\\DI\\ServiceCreationException(?);',
-				["Unable to create external service '{$this->getName()}', it must be added using addService()"]
+				["Unable to create imported service '{$this->getName()}', it must be added using addService()"]
 			);
 	}
 
 
 	/**
-	 * @deprecated use '$def instanceof ExternalDefinition'
+	 * @deprecated use '$def instanceof ImportedDefinition'
 	 */
 	public function isDynamic(): bool
 	{

@@ -23,7 +23,7 @@ class Service extends ParentClass
 
 
 $builder = new DI\ContainerBuilder;
-$builder->addExternalDefinition('one')
+$builder->addImportedDefinition('one')
 	->setType('ParentClass');
 
 
@@ -38,7 +38,7 @@ Assert::false($container->isCreated('one'));
 
 Assert::exception(function () use ($container) {
 	$container->getService('one');
-}, Nette\DI\ServiceCreationException::class, "Unable to create external service 'one', it must be added using addService()");
+}, Nette\DI\ServiceCreationException::class, "Unable to create imported service 'one', it must be added using addService()");
 
 
 Assert::exception(function () use ($container) {

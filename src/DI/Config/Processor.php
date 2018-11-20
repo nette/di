@@ -72,11 +72,11 @@ class Processor
 				'tags' => 'array',
 			],
 		],
-		Definitions\ExternalDefinition::class => [
-			'method' => 'updateExternalDefinition',
+		Definitions\ImportedDefinition::class => [
+			'method' => 'updateImportedDefinition',
 			'fields' => [
 				'type' => 'string',
-				'external' => 'bool',
+				'imported' => 'bool',
 				'autowired' => 'bool|string|array',
 				'tags' => 'array',
 			],
@@ -133,7 +133,7 @@ class Processor
 			return ['factory' => $def];
 
 		} elseif (is_array($def)) {
-			foreach (['class' => 'type', 'dynamic' => 'external'] as $alias => $original) {
+			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
 				if (array_key_exists($alias, $def)) {
 					if (array_key_exists($original, $def)) {
 						throw new Nette\InvalidStateException("Options '$alias' and '$original' are aliases, use only '$original'.");
@@ -306,7 +306,7 @@ class Processor
 	}
 
 
-	private function updateExternalDefinition(Definitions\ExternalDefinition $definition, array $config): void
+	private function updateImportedDefinition(Definitions\ImportedDefinition $definition, array $config): void
 	{
 		if (array_key_exists('type', $config)) {
 			$definition->setType($config['type']);
@@ -416,8 +416,8 @@ class Processor
 				? $this->builder->addFactoryDefinition($name)
 				: $this->builder->addAccessorDefinition($name);
 
-		} elseif (isset($config['external'])) {
-			return $this->builder->addExternalDefinition($name);
+		} elseif (isset($config['imported'])) {
+			return $this->builder->addImportedDefinition($name);
 
 		} else {
 			return $this->builder->addDefinition($name);

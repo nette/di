@@ -49,7 +49,7 @@ class ContainerBuilder
 	public function __construct()
 	{
 		$this->autowiring = new Autowiring($this);
-		$this->addExternalDefinition(self::THIS_CONTAINER)->setType(Container::class);
+		$this->addImportedDefinition(self::THIS_CONTAINER)->setType(Container::class);
 	}
 
 
@@ -96,9 +96,9 @@ class ContainerBuilder
 	}
 
 
-	public function addExternalDefinition(string $name): Definitions\ExternalDefinition
+	public function addImportedDefinition(string $name): Definitions\ImportedDefinition
 	{
-		return $this->addDefinition($name, new Definitions\ExternalDefinition);
+		return $this->addDefinition($name, new Definitions\ImportedDefinition);
 	}
 
 
