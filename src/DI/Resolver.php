@@ -305,7 +305,11 @@ class Resolver
 		}
 
 		if ($item instanceof Definition) {
-			$item = new Reference(current(array_keys($this->builder->getDefinitions(), $item, true)));
+			$name = current(array_keys($this->builder->getDefinitions(), $item, true));
+			if ($name == false) {
+				throw new ServiceCreationException("Service '{$item->getName()}' not found in definitions.");
+			}
+			$item = new Reference((string) $name);
 		}
 		if ($item instanceof Reference) {
 			$item = $this->normalizeReference($item);
