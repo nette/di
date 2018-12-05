@@ -57,25 +57,30 @@ class ContainerBuilder
 	 * Adds new service definition.
 	 * @return Definitions\ServiceDefinition
 	 */
-	public function addDefinition(string $name, Definition $definition = null): Definition
+	public function addDefinition(?string $name, Definition $definition = null): Definition
 	{
 		$this->needsResolve = true;
-		if (!$name) { // builder is not ready for falsy names such as '0'
+		if ($name === null) {
+			for ($i = 1; isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]); $i++);
+			$name = '0' . $i; // prevents converting to integer in array key
+
+		} elseif (!$name) { // builder is not ready for falsy names such as '0'
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
-		}
-		$name = $this->aliases[$name] ?? $name;
-		if (isset($this->definitions[$name])) {
-			throw new Nette\InvalidStateException("Service '$name' has already been added.");
-		}
-		$lname = strtolower($name);
-		foreach ($this->definitions as $nm => $foo) {
-			if ($lname === strtolower((string) $nm)) {
-				throw new Nette\InvalidStateException("Service '$name' has the same name as '$nm' in a case-insensitive manner.");
+
+		} else {
+			$name = $this->aliases[$name] ?? $name;
+			if (isset($this->definitions[$name])) {
+				throw new Nette\InvalidStateException("Service '$name' has already been added.");
+			}
+			$lname = strtolower($name);
+			foreach ($this->definitions as $nm => $foo) {
+				if ($lname === strtolower((string) $nm)) {
+					throw new Nette\InvalidStateException("Service '$name' has the same name as '$nm' in a case-insensitive manner.");
+				}
 			}
 		}
-		if (!$definition) {
-			$definition = new Definitions\ServiceDefinition;
-		}
+
+		$definition = $definition ?: new Definitions\ServiceDefinition;
 		$definition->setName($name);
 		$definition->setNotifier(function (): void {
 			$this->needsResolve = true;
@@ -84,25 +89,25 @@ class ContainerBuilder
 	}
 
 
-	public function addAccessorDefinition(string $name): Definitions\AccessorDefinition
+	public function addAccessorDefinition(?string $name): Definitions\AccessorDefinition
 	{
 		return $this->addDefinition($name, new Definitions\AccessorDefinition);
 	}
 
 
-	public function addFactoryDefinition(string $name): Definitions\FactoryDefinition
+	public function addFactoryDefinition(?string $name): Definitions\FactoryDefinition
 	{
 		return $this->addDefinition($name, new Definitions\FactoryDefinition);
 	}
 
 
-	public function addLocatorDefinition(string $name): Definitions\LocatorDefinition
+	public function addLocatorDefinition(?string $name): Definitions\LocatorDefinition
 	{
 		return $this->addDefinition($name, new Definitions\LocatorDefinition);
 	}
 
 
-	public function addImportedDefinition(string $name): Definitions\ImportedDefinition
+	public function addImportedDefinition(?string $name): Definitions\ImportedDefinition
 	{
 		return $this->addDefinition($name, new Definitions\ImportedDefinition);
 	}
