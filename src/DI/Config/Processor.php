@@ -157,7 +157,7 @@ class Processor
 	public function loadDefinitions(array $configList): void
 	{
 		foreach ($configList as $key => $config) {
-			$this->loadDefinition($this->convertKeyToName($key, $config), $config);
+			$this->loadDefinition($this->convertKeyToName($key), $config);
 		}
 	}
 
@@ -183,7 +183,7 @@ class Processor
 			$this->{$scheme['method']}($def, $config, $name);
 			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
-			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+			throw new ServiceCreationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
 		}
 	}
 
@@ -362,15 +362,12 @@ class Processor
 	}
 
 
-	private function convertKeyToName($key, array $config): string
+	private function convertKeyToName($key): ?string
 	{
 		if (is_int($key)) {
-			$factory = $config['factory'] ?? null;
-			$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity(
-				) : (is_scalar($factory) ? ".$factory" : '');
-			$key = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
+			return null;
 		} elseif (preg_match('#^@[\w\\\\]+\z#', $key)) {
-			$key = $this->builder->getByType(substr($key, 1), true);
+			return $this->builder->getByType(substr($key, 1), true);
 		}
 		return $key;
 	}
@@ -390,13 +387,13 @@ class Processor
 	}
 
 
-	private function retrieveDefinition(string $name, array &$config): Definitions\Definition
+	private function retrieveDefinition(?string $name, array &$config): Definitions\Definition
 	{
 		if (Helpers::takeParent($config)) {
 			$this->builder->removeDefinition($name);
 		}
 
-		if ($this->builder->hasDefinition($name)) {
+		if ($name && $this->builder->hasDefinition($name)) {
 			return $this->builder->getDefinition($name);
 
 		} elseif (isset($config['implement'], $config['references']) || isset($config['implement'], $config['tagged'])) {
