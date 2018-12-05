@@ -175,7 +175,7 @@ class Processor
 				$this->updateDefinition($def, $config);
 			}
 		} catch (\Exception $e) {
-			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+			throw new ServiceCreationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
 		}
 	}
 
@@ -371,13 +371,10 @@ class Processor
 	}
 
 
-	private function createDefinitionName($name, array $config): string
+	private function createDefinitionName($name, array $config): ?string
 	{
 		if (is_int($name)) {
-			$counter = 1;
-			do {
-				$name = (string) $counter++;
-			} while ($this->builder->hasDefinition($name));
+			return null;
 		} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
 			$name = $this->builder->getByType(substr($name, 1), true);
 		}
@@ -399,13 +396,13 @@ class Processor
 	}
 
 
-	private function retrieveDefinition(string $name, array &$config): Definitions\Definition
+	private function retrieveDefinition(?string $name, array &$config): Definitions\Definition
 	{
 		if (Helpers::takeParent($config)) {
 			$this->builder->removeDefinition($name);
 		}
 
-		if ($this->builder->hasDefinition($name)) {
+		if ($name && $this->builder->hasDefinition($name)) {
 			return $this->builder->getDefinition($name);
 
 		} elseif (isset($config['implement'], $config['references']) || isset($config['implement'], $config['tagged'])) {
