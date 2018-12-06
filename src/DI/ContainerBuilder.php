@@ -321,19 +321,19 @@ class ContainerBuilder
 	 */
 	public function exportMeta(): array
 	{
-		$meta[Container::TYPES] = $this->autowiring->getClassList();
+		$meta['types'] = $this->autowiring->getClassList();
 
 		$defs = $this->definitions;
 		ksort($defs);
 		foreach ($defs as $name => $def) {
-			$meta[Container::SERVICES][$name] = $def->getType();
+			$meta['services'][$name] = $def->getType();
 			foreach ($def->getTags() as $tag => $value) {
-				$meta[Container::TAGS][$tag][$name] = $value;
+				$meta['tags'][$tag][$name] = $value;
 			}
 		}
 
-		$meta[Container::ALIASES] = $this->aliases;
-		ksort($meta[Container::ALIASES]);
+		$meta['aliases'] = $this->aliases;
+		ksort($meta['aliases']);
 
 		return $meta;
 	}

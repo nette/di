@@ -54,7 +54,7 @@ Assert::error(function () use (&$container) {
 				- method( [Lorem, method], 'Lorem::add', Lorem::add )
 				- method( not(true) )
 				- method( @lorem::var, @self::var, @container::parameters )
-				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
+				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT )
 
 		dolor:
 			factory: Lorem(::MY_FAILING_CONSTANT_TEST)
@@ -86,4 +86,4 @@ Assert::same([false], $lorem->args[4]);
 Assert::same([$lorem->var, $lorem->var, $container->parameters], $lorem->args[5]);
 
 // service constant
-Assert::same([Lorem::DOLOR_SIT, Lorem::DOLOR_SIT, DI\Container::TAGS], $lorem->args[6]);
+Assert::same([Lorem::DOLOR_SIT, Lorem::DOLOR_SIT], $lorem->args[6]);

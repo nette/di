@@ -59,14 +59,12 @@ class ContainerPanel implements Tracy\IBarPanel
 		$registry = $this->getContainerProperty('registry');
 		$file = (new \ReflectionClass($container))->getFileName();
 		$tags = [];
-		$meta = $this->getContainerProperty('meta');
-		$services = $meta[Container::SERVICES];
+		$types = $this->getContainerProperty('types');
+		$services = $this->getContainerProperty('services');
 		ksort($services);
-		if (isset($meta[Container::TAGS])) {
-			foreach ($meta[Container::TAGS] as $tag => $tmp) {
-				foreach ($tmp as $service => $val) {
-					$tags[$service][$tag] = $val;
-				}
+		foreach ($this->getContainerProperty('tags') as $tag => $tmp) {
+			foreach ($tmp as $service => $val) {
+				$tags[$service][$tag] = $val;
 			}
 		}
 

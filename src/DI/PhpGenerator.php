@@ -53,9 +53,11 @@ class PhpGenerator
 			->addParameter('params', [])
 				->setTypeHint('array');
 
-		$class->addProperty('meta')
-			->setVisibility('protected')
-			->setValue($this->builder->exportMeta());
+		foreach ($this->builder->exportMeta() as $key => $value) {
+			$class->addProperty($key)
+				->setVisibility('protected')
+				->setValue($value);
+		}
 
 		$definitions = $this->builder->getDefinitions();
 		ksort($definitions);

@@ -15,14 +15,13 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-	protected $meta = [
-		'services' => [
-			'one' => 'One',
-			'two' => 'Two',
-		],
-		'aliases' => [
-			'three' => 'one',
-		],
+	protected $services = [
+		'one' => 'One',
+		'two' => 'Two',
+	];
+
+	protected $aliases = [
+		'three' => 'one',
 	];
 }
 

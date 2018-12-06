@@ -42,7 +42,7 @@ use Tracy\Helpers;
 		<tbody>
 		<?php foreach ($services as $name => $type): ?>
 		<?php $name = (string) $name ?>
-		<?php $autowired = !empty($meta[Nette\DI\Container::TYPES][$type][true]) && in_array($name, $meta[Nette\DI\Container::TYPES][$type][true], true) ?>
+		<?php $autowired = !empty($types[$type][true]) && in_array($name, $types[$type][true], true) ?>
 		<tr>
 			<td class="<?= isset($registry[$name]) ? 'created' : '' ?>"><?= htmlspecialchars($name) ?></td>
 			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : 'no' ?></td>
