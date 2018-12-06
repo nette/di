@@ -17,14 +17,14 @@ class MyContainer extends Container
 {
 	protected function createServiceOne()
 	{
-		return null;
+		return new stdClass;
 	}
 }
 
 
 $container = new MyContainer;
 
-Assert::true($container->hasService('one'));
+Assert::false($container->hasService('one'));
 
 $container->addService('one', new stdClass);
 

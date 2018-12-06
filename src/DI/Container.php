@@ -130,9 +130,7 @@ class Container
 	public function hasService(string $name): bool
 	{
 		$name = $this->aliases[$name] ?? $name;
-		return isset($this->instances[$name])
-			|| (method_exists($this, $method = self::getMethodName($name))
-				&& (new \ReflectionMethod($this, $method))->getName() === $method);
+		return isset($this->types[$name]) || isset($this->instances[$name]);
 	}
 
 
@@ -161,7 +159,7 @@ class Container
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
 
-		} elseif (!method_exists($this, $method) || (new \ReflectionMethod($this, $method))->getName() !== $method) {
+		} elseif (!isset($this->types[$name])) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
 
@@ -273,7 +271,6 @@ class Container
 
 	public static function getMethodName(string $name): string
 	{
-		$uname = ucfirst($name);
-		return 'createService' . ($name === $uname ? '__' : '') . str_replace('.', '__', $uname);
+		return 'createService' . str_replace('.', '__', ucfirst($name));
 	}
 }
