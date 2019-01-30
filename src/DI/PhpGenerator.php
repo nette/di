@@ -263,7 +263,8 @@ class PhpGenerator
 			$tmp = explode(' ', is_int($k) ? $v : $k);
 			$param = $res[] = new Nette\PhpGenerator\Parameter(end($tmp));
 			if (!is_int($k)) {
-				$param->setOptional(true)->setDefaultValue($v);
+				@$param->setOptional(true); // @ deprecated in nette/php-generator 3.1
+				$param->setDefaultValue($v);
 			}
 			if (isset($tmp[1])) {
 				$param->setTypeHint($tmp[0]);
