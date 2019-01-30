@@ -83,11 +83,11 @@ class DependencyChecker
 	public static function isExpired(int $version, array $files, array &$phpFiles, array $classes, array $functions, string $hash): bool
 	{
 		try {
-			$current = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
+			$currentFiles = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
 			$origPhpFiles = $phpFiles;
 			$phpFiles = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
 			return $version !== self::VERSION
-				|| $files !== $current
+				|| $files !== $currentFiles
 				|| ($phpFiles !== $origPhpFiles && $hash !== self::calculateHash($classes, $functions));
 		} catch (\ReflectionException $e) {
 			return true;
@@ -131,14 +131,20 @@ class DependencyChecker
 
 		$flip = array_flip($classes);
 		foreach ($functions as $name) {
-			$method = strpos($name, '::') ? new ReflectionMethod($name) : new \ReflectionFunction($name);
-			$class = $method instanceof ReflectionMethod ? $method->getDeclaringClass() : null;
-			if ($class && isset($flip[$class->getName()])) {
-				continue;
+			if (strpos($name, '::')) {
+				$method = new ReflectionMethod($name);
+				$class = $method->getDeclaringClass();
+				if (isset($flip[$class->getName()])) {
+					continue;
+				}
+				$uses = Reflection::getUseStatements($class);
+			} else {
+				$method = new \ReflectionFunction($name);
+				$uses = null;
 			}
 			$hash[] = [
 				$name,
-				$class ? Reflection::getUseStatements($method->getDeclaringClass()) : null,
+				$uses,
 				$method->getDocComment(),
 				self::hashParameters($method),
 				$method->hasReturnType()
