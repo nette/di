@@ -82,24 +82,24 @@ class DependencyChecker
 	 */
 	public static function isExpired(int $version, array $files, array &$phpFiles, array $classes, array $functions, string $hash): bool
 	{
-		$current = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
-		$origPhpFiles = $phpFiles;
-		$phpFiles = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
-		return $version !== self::VERSION
-			|| $files !== $current
-			|| ($phpFiles !== $origPhpFiles && $hash !== self::calculateHash($classes, $functions));
+		try {
+			$current = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
+			$origPhpFiles = $phpFiles;
+			$phpFiles = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
+			return $version !== self::VERSION
+				|| $files !== $current
+				|| ($phpFiles !== $origPhpFiles && $hash !== self::calculateHash($classes, $functions));
+		} catch (\ReflectionException $e) {
+			return true;
+		}
 	}
 
 
-	private static function calculateHash(array $classes, array $functions): ?string
+	private static function calculateHash(array $classes, array $functions): string
 	{
 		$hash = [];
 		foreach ($classes as $name) {
-			try {
-				$class = new ReflectionClass($name);
-			} catch (\ReflectionException $e) {
-				return null;
-			}
+			$class = new ReflectionClass($name);
 			$hash[] = [
 				$name,
 				Reflection::getUseStatements($class),
@@ -131,11 +131,7 @@ class DependencyChecker
 
 		$flip = array_flip($classes);
 		foreach ($functions as $name) {
-			try {
-				$method = strpos($name, '::') ? new ReflectionMethod($name) : new \ReflectionFunction($name);
-			} catch (\ReflectionException $e) {
-				return null;
-			}
+			$method = strpos($name, '::') ? new ReflectionMethod($name) : new \ReflectionFunction($name);
 			$class = $method instanceof ReflectionMethod ? $method->getDeclaringClass() : null;
 			if ($class && isset($flip[$class->getName()])) {
 				continue;
