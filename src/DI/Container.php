@@ -206,6 +206,18 @@ class Container
 
 
 	/**
+	 * Gets the autowired service names of the specified type.
+	 * @return string[]
+	 * @internal
+	 */
+	public function findAutowired(string $type): array
+	{
+		$type = Helpers::normalizeClass($type);
+		return array_merge($this->wiring[$type][0] ?? [], $this->wiring[$type][1] ?? []);
+	}
+
+
+	/**
 	 * Gets the service names of the specified type.
 	 * @return string[]
 	 */

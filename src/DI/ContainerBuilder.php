@@ -201,7 +201,7 @@ class ContainerBuilder
 
 
 	/**
-	 * Resolves service name by type.
+	 * Resolves autowired service name by type.
 	 * @param  bool  $throw exception if service doesn't exist?
 	 * @throws ServiceCreationException
 	 */
@@ -213,11 +213,23 @@ class ContainerBuilder
 
 
 	/**
-	 * Gets the service definition of the specified type.
+	 * Gets autowired service definition of the specified type.
 	 */
 	public function getDefinitionByType(string $type): Definition
 	{
 		return $this->getDefinition($this->getByType($type, true));
+	}
+
+
+	/**
+	 * Gets the autowired service names and definitions of the specified type.
+	 * @return Definition[]  service name is key
+	 * @internal
+	 */
+	public function findAutowired(string $type): array
+	{
+		$this->needResolved();
+		return $this->autowiring->findByType($type);
 	}
 
 

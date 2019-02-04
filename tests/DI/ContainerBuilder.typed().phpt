@@ -43,6 +43,9 @@ services:
 	s2: Service
 	s3: ServiceChild
 	s4: stdClass
+	s5:
+		factory: Service
+		autowired: no
 ');
 
 $foo = $container->getService('f1');

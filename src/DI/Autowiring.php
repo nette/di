@@ -204,7 +204,7 @@ class Autowiring
 				&& (class_exists($type) || interface_exists($type))
 			) {
 				$res[$num] = [];
-				foreach ($container->getContainerBuilder()->findByType($type) as $def) {
+				foreach ($container->getContainerBuilder()->findAutowired($type) as $def) {
 					if ($def !== $current) {
 						$res[$num][] = $def;
 					}
