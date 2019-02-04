@@ -41,6 +41,6 @@ services:
 
 $builder = $compiler->getContainerBuilder();
 
-Assert::true($builder->getDefinition('foo')->getTag('inject'));
+Assert::true($builder->getDefinition('foo')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));
 
 Assert::true($builder->getDefinition('foo')->getTag('a'));
