@@ -41,6 +41,11 @@ Assert::null($builder->getByType('IBar'));
 Assert::null($builder->getByType('Foo'));
 Assert::null($builder->getByType('IFoo'));
 
+Assert::same(['bar'], array_keys($builder->findAutowired('Bar')));
+Assert::same([], array_keys($builder->findAutowired('IBar')));
+Assert::same([], array_keys($builder->findAutowired('Foo')));
+Assert::same([], array_keys($builder->findAutowired('IFoo')));
+
 Assert::same(['bar'], array_keys($builder->findByType('Bar')));
 Assert::same(['bar'], array_keys($builder->findByType('IBar')));
 Assert::same(['bar'], array_keys($builder->findByType('Foo')));

@@ -54,6 +54,9 @@ $builder->addDefinition('s3')
 	->setType('ServiceChild');
 $builder->addDefinition('s4')
 	->setType('stdClass');
+$builder->addDefinition('s5')
+	->setType('Service')
+	->setAutowired(false);
 
 $container = createContainer($builder);
 

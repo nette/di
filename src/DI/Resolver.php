@@ -261,7 +261,7 @@ class Resolver
 					$services = [];
 					$current = $this->currentService ? $this->currentService->getName() : null;
 					foreach ($val->arguments as $argument) {
-						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findByType($argument) as $name => $foo) {
+						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findAutowired($argument) as $name => $foo) {
 							if ($name !== $current) {
 								$services[] = new Reference($name);
 							}
