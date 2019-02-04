@@ -70,7 +70,10 @@ class Container
 		} elseif (!is_object($service)) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
 
-		} elseif (isset($this->types[$name]) && !$service instanceof $this->types[$name]) {
+		} elseif (!isset($this->types[$name])) {
+			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
+
+		} elseif (!$service instanceof $this->types[$name]) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->types[$name], get_class($service)));
 		}
 

@@ -27,8 +27,8 @@ $container = new Container;
 test(function () use ($container) {
 	$one = new Service;
 	$two = new Service;
-	$container->addService('one', $one);
-	$container->addService('two', $two);
+	@$container->addService('one', $one); // @ triggers service should be defined as "imported"
+	@$container->addService('two', $two); // @ triggers service should be defined as "imported"
 
 	Assert::true($container->hasService('one'));
 	Assert::true($container->isCreated('one'));
