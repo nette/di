@@ -19,19 +19,20 @@ class Container
 {
 	use Nette\SmartObject;
 
-	public const TAGS = 'tags';
-
-	public const TYPES = 'types';
-
-	public const SERVICES = 'services';
-
-	public const ALIASES = 'aliases';
-
 	/** @var array  user parameters */
 	public $parameters = [];
 
-	/** @var array[] */
-	protected $meta = [];
+	/** @var string[]  services name => type (complete list of available services) */
+	protected $types = [];
+
+	/** @var string[]  alias => service name */
+	protected $aliases = [];
+
+	/** @var array[]  tag name => service name => tag value */
+	protected $tags = [];
+
+	/** @var array[]  type => autowired? => services */
+	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
 	private $instances = [];
@@ -62,15 +63,15 @@ class Container
 		if (!$name) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
-		$name = $this->meta[self::ALIASES][$name] ?? $name;
+		$name = $this->aliases[$name] ?? $name;
 		if (isset($this->instances[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' already exists.");
 
 		} elseif (!is_object($service)) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
 
-		} elseif (isset($this->meta[self::SERVICES][$name]) && !$service instanceof $this->meta[self::SERVICES][$name]) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->meta[self::SERVICES][$name], get_class($service)));
+		} elseif (isset($this->types[$name]) && !$service instanceof $this->types[$name]) {
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->types[$name], get_class($service)));
 		}
 
 		$this->instances[$name] = $service;
@@ -83,7 +84,7 @@ class Container
 	 */
 	public function removeService(string $name): void
 	{
-		$name = $this->meta[self::ALIASES][$name] ?? $name;
+		$name = $this->aliases[$name] ?? $name;
 		unset($this->instances[$name]);
 	}
 
@@ -96,8 +97,8 @@ class Container
 	public function getService(string $name)
 	{
 		if (!isset($this->instances[$name])) {
-			if (isset($this->meta[self::ALIASES][$name])) {
-				return $this->getService($this->meta[self::ALIASES][$name]);
+			if (isset($this->aliases[$name])) {
+				return $this->getService($this->aliases[$name]);
 			}
 			$this->instances[$name] = $this->createService($name);
 		}
@@ -111,11 +112,11 @@ class Container
 	 */
 	public function getServiceType(string $name): string
 	{
-		if (isset($this->meta[self::ALIASES][$name])) {
-			return $this->getServiceType($this->meta[self::ALIASES][$name]);
+		if (isset($this->aliases[$name])) {
+			return $this->getServiceType($this->aliases[$name]);
 
-		} elseif (isset($this->meta[self::SERVICES][$name])) {
-			return $this->meta[self::SERVICES][$name];
+		} elseif (isset($this->types[$name])) {
+			return $this->types[$name];
 
 		} else {
 			throw new MissingServiceException("Service '$name' not found.");
@@ -128,7 +129,7 @@ class Container
 	 */
 	public function hasService(string $name): bool
 	{
-		$name = $this->meta[self::ALIASES][$name] ?? $name;
+		$name = $this->aliases[$name] ?? $name;
 		return isset($this->instances[$name])
 			|| (method_exists($this, $method = self::getMethodName($name))
 				&& (new \ReflectionMethod($this, $method))->getName() === $method);
@@ -143,7 +144,7 @@ class Container
 		if (!$this->hasService($name)) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
-		$name = $this->meta[self::ALIASES][$name] ?? $name;
+		$name = $this->aliases[$name] ?? $name;
 		return isset($this->instances[$name]);
 	}
 
@@ -155,7 +156,7 @@ class Container
 	 */
 	public function createService(string $name, array $args = [])
 	{
-		$name = $this->meta[self::ALIASES][$name] ?? $name;
+		$name = $this->aliases[$name] ?? $name;
 		$method = self::getMethodName($name);
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
@@ -189,8 +190,8 @@ class Container
 	public function getByType(string $type, bool $throw = true)
 	{
 		$type = Helpers::normalizeClass($type);
-		if (!empty($this->meta[self::TYPES][$type][true])) {
-			if (count($names = $this->meta[self::TYPES][$type][true]) === 1) {
+		if (!empty($this->wiring[$type][true])) {
+			if (count($names = $this->wiring[$type][true]) === 1) {
 				return $this->getService($names[0]);
 			}
 			natsort($names);
@@ -210,9 +211,9 @@ class Container
 	public function findByType(string $type): array
 	{
 		$type = Helpers::normalizeClass($type);
-		return empty($this->meta[self::TYPES][$type])
+		return empty($this->wiring[$type])
 			? []
-			: array_merge(...array_values($this->meta[self::TYPES][$type]));
+			: array_merge(...array_values($this->wiring[$type]));
 	}
 
 
@@ -222,7 +223,7 @@ class Container
 	 */
 	public function findByTag(string $tag): array
 	{
-		return $this->meta[self::TAGS][$tag] ?? [];
+		return $this->tags[$tag] ?? [];
 	}
 
 
