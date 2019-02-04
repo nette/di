@@ -31,7 +31,7 @@ class Container
 	/** @var array[]  tag name => service name => tag value */
 	protected $tags = [];
 
-	/** @var array[]  type => autowired? => services */
+	/** @var array[]  type => level => services */
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
@@ -191,8 +191,8 @@ class Container
 	public function getByType(string $type, bool $throw = true)
 	{
 		$type = Helpers::normalizeClass($type);
-		if (!empty($this->wiring[$type][true])) {
-			if (count($names = $this->wiring[$type][true]) === 1) {
+		if (!empty($this->wiring[$type][0])) {
+			if (count($names = $this->wiring[$type][0]) === 1) {
 				return $this->getService($names[0]);
 			}
 			natsort($names);
