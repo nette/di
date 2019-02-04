@@ -236,7 +236,13 @@ class ContainerBuilder
 		} elseif ($this->needsResolve) {
 			$this->resolve();
 		}
-		return $this->autowiring->findByType($type);
+		$found = [];
+		foreach ($this->definitions as $name => $def) {
+			if (is_a($def->getType(), $type, true)) {
+				$found[$name] = $def;
+			}
+		}
+		return $found;
 	}
 
 
