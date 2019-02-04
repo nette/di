@@ -33,8 +33,8 @@ class Container
 	/** @var array[] */
 	protected $meta = [];
 
-	/** @var object[]  storage for shared objects */
-	private $registry = [];
+	/** @var object[]  service name => instance */
+	private $instances = [];
 
 	/** @var array circular reference detector */
 	private $creating;
@@ -63,7 +63,7 @@ class Container
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
 		}
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
-		if (isset($this->registry[$name])) {
+		if (isset($this->instances[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' already exists.");
 
 		} elseif (!is_object($service)) {
@@ -73,7 +73,7 @@ class Container
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->meta[self::SERVICES][$name], get_class($service)));
 		}
 
-		$this->registry[$name] = $service;
+		$this->instances[$name] = $service;
 		return $this;
 	}
 
@@ -84,7 +84,7 @@ class Container
 	public function removeService(string $name): void
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
-		unset($this->registry[$name]);
+		unset($this->instances[$name]);
 	}
 
 
@@ -95,13 +95,13 @@ class Container
 	 */
 	public function getService(string $name)
 	{
-		if (!isset($this->registry[$name])) {
+		if (!isset($this->instances[$name])) {
 			if (isset($this->meta[self::ALIASES][$name])) {
 				return $this->getService($this->meta[self::ALIASES][$name]);
 			}
-			$this->registry[$name] = $this->createService($name);
+			$this->instances[$name] = $this->createService($name);
 		}
-		return $this->registry[$name];
+		return $this->instances[$name];
 	}
 
 
@@ -129,7 +129,7 @@ class Container
 	public function hasService(string $name): bool
 	{
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
-		return isset($this->registry[$name])
+		return isset($this->instances[$name])
 			|| (method_exists($this, $method = self::getMethodName($name))
 				&& (new \ReflectionMethod($this, $method))->getName() === $method);
 	}
@@ -144,7 +144,7 @@ class Container
 			throw new MissingServiceException("Service '$name' not found.");
 		}
 		$name = $this->meta[self::ALIASES][$name] ?? $name;
-		return isset($this->registry[$name]);
+		return isset($this->instances[$name]);
 	}
 
 

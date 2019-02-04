@@ -56,7 +56,7 @@ class ContainerPanel implements Tracy\IBarPanel
 	public function getPanel(): string
 	{
 		$container = $this->container;
-		$registry = $this->getContainerProperty('registry');
+		$instances = $this->getContainerProperty('instances');
 		$file = (new \ReflectionClass($container))->getFileName();
 		$tags = [];
 		$meta = $this->getContainerProperty('meta');
