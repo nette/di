@@ -29,6 +29,6 @@ Assert::exception(function () use ($container) {
 }, Nette\DI\MissingServiceException::class, "Service 'one' not found.");
 
 Assert::exception(function () use ($container, $service) {
-	$container->addService('one', $service);
+	@$container->addService('one', $service); // @ triggers service should be defined as "imported"
 	$container->addService('one', $service);
 }, Nette\InvalidStateException::class, "Service 'one' already exists.");
