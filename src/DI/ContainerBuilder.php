@@ -207,11 +207,7 @@ class ContainerBuilder
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
 	{
-		if ($this->resolving) {
-			throw new NotAllowedDuringResolvingException;
-		} elseif ($this->needsResolve) {
-			$this->resolve();
-		}
+		$this->needResolved();
 		return $this->autowiring->getByType($type, $throw);
 	}
 
@@ -231,11 +227,7 @@ class ContainerBuilder
 	 */
 	public function findByType(string $type): array
 	{
-		if ($this->resolving) {
-			throw new NotAllowedDuringResolvingException;
-		} elseif ($this->needsResolve) {
-			$this->resolve();
-		}
+		$this->needResolved();
 		$found = [];
 		foreach ($this->definitions as $name => $def) {
 			if (is_a($def->getType(), $type, true)) {
@@ -283,6 +275,16 @@ class ContainerBuilder
 		$this->autowiring->rebuild();
 
 		$this->resolving = $this->needsResolve = false;
+	}
+
+
+	private function needResolved(): void
+	{
+		if ($this->resolving) {
+			throw new NotAllowedDuringResolvingException;
+		} elseif ($this->needsResolve) {
+			$this->resolve();
+		}
 	}
 
 
