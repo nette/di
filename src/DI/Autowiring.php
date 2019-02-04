@@ -115,11 +115,11 @@ class Autowiring
 				continue;
 			}
 
-			$defAutowired = $def->getAutowired();
-			if (is_array($defAutowired)) {
-				foreach ($defAutowired as $k => $autowiredType) {
+			$autowired = $def->getAutowired();
+			if (is_array($autowired)) {
+				foreach ($autowired as $k => $autowiredType) {
 					if ($autowiredType === ContainerBuilder::THIS_SERVICE) {
-						$defAutowired[$k] = $type;
+						$autowired[$k] = $type;
 					} elseif (!is_a($type, $autowiredType, true)) {
 						throw new ServiceCreationException("Incompatible class $autowiredType in autowiring definition of service '$name'.");
 					}
@@ -127,23 +127,24 @@ class Autowiring
 			}
 
 			foreach (class_parents($type) + class_implements($type) + [$type] as $parent) {
-				$autowired = $defAutowired && empty($this->excludedClasses[$parent]);
-				if ($autowired && is_array($defAutowired)) {
-					$autowired = false;
-					foreach ($defAutowired as $autowiredType) {
+				if (!$autowired || isset($this->excludedClasses[$parent])) {
+					continue;
+				} elseif (is_array($autowired)) {
+					$priority = false;
+					foreach ($autowired as $autowiredType) {
 						if (is_a($parent, $autowiredType, true)) {
 							if (empty($preferred[$parent]) && isset($this->highPriority[$parent])) {
 								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent], $this->highPriority[$parent]);
 								$this->highPriority[$parent] = [];
 							}
-							$preferred[$parent] = $autowired = true;
+							$preferred[$parent] = $priority = true;
 							break;
 						}
 					}
-				} elseif (isset($preferred[$parent])) {
-					$autowired = false;
+				} else {
+					$priority = empty($preferred[$parent]);
 				}
-				$list = $autowired ? 'highPriority' : 'lowPriority';
+				$list = $priority ? 'highPriority' : 'lowPriority';
 				$this->$list[$parent][] = (string) $name;
 			}
 		}

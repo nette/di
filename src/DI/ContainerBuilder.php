@@ -339,11 +339,22 @@ class ContainerBuilder
 		$meta['aliases'] = $this->aliases;
 		ksort($meta['aliases']);
 
+		$all = [];
+		foreach ($this->definitions as $name => $def) {
+			if ($type = $def->getType()) {
+				foreach (class_parents($type) + class_implements($type) + [$type] as $class) {
+					$all[$class][] = $name;
+				}
+			}
+		}
+
 		[$low, $high] = $this->autowiring->getClassList();
 
-		foreach ($low + $high as $class => $foo) {
+		$res = [];
+		foreach ($all as $class => $names) {
 			$meta['wiring'][$class] = array_filter([
-				$low[$class] ?? [], 
+				array_diff($names, $low[$class] ?? [], $high[$class] ?? []),
+				$low[$class] ?? [],
 				$high[$class] ?? [],
 			]);
 		}
