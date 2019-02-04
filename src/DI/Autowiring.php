@@ -23,10 +23,13 @@ class Autowiring
 	/** @var ContainerBuilder */
 	private $builder;
 
-	/** @var array */
-	private $classList = [];
+	/** @var array[]  type => services, used by getByType() */
+	private $highPriority = [];
 
-	/** @var string[] of classes excluded from auto-wiring */
+	/** @var array[]  type => services, used by findByType() */
+	private $lowPriority = [];
+
+	/** @var string[] of classes excluded from autowiring */
 	private $excludedClasses = [];
 
 
@@ -45,18 +48,18 @@ class Autowiring
 	public function getByType(string $type, bool $throw = false): ?string
 	{
 		$type = Helpers::normalizeClass($type);
-		$types = $this->classList;
-		if (empty($types[$type][true])) {
+		$types = $this->highPriority;
+		if (empty($types[$type])) {
 			if ($throw) {
 				throw new MissingServiceException("Service of type '$type' not found.");
 			}
 			return null;
 
-		} elseif (count($types[$type][true]) === 1) {
-			return $types[$type][true][0];
+		} elseif (count($types[$type]) === 1) {
+			return $types[$type][0];
 
 		} else {
-			$list = $types[$type][true];
+			$list = $types[$type];
 			natsort($list);
 			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
@@ -73,15 +76,13 @@ class Autowiring
 	public function findByType(string $type): array
 	{
 		$type = Helpers::normalizeClass($type);
-		$found = [];
-		$types = $this->classList;
 		$definitions = $this->builder->getDefinitions();
-		if (!empty($types[$type])) {
-			foreach (array_merge(...array_values($types[$type])) as $name) {
-				$found[$name] = $definitions[$name];
-			}
+		$names = array_merge($this->highPriority[$type] ?? [], $this->lowPriority[$type] ?? []);
+		$res = [];
+		foreach ($names as $name) {
+			$res[$name] = $definitions[$name];
 		}
-		return $found;
+		return $res;
 	}
 
 
@@ -101,13 +102,13 @@ class Autowiring
 
 	public function getClassList(): array
 	{
-		return $this->classList;
+		return [$this->lowPriority, $this->highPriority];
 	}
 
 
 	public function rebuild(): void
 	{
-		$this->classList = $preferred = [];
+		$this->lowPriority = $this->highPriority = $preferred = [];
 
 		foreach ($this->builder->getDefinitions() as $name => $def) {
 			if (!($type = $def->getType())) {
@@ -131,9 +132,9 @@ class Autowiring
 					$autowired = false;
 					foreach ($defAutowired as $autowiredType) {
 						if (is_a($parent, $autowiredType, true)) {
-							if (empty($preferred[$parent]) && isset($this->classList[$parent][true])) {
-								$this->classList[$parent][false] = array_merge(...$this->classList[$parent]);
-								$this->classList[$parent][true] = [];
+							if (empty($preferred[$parent]) && isset($this->highPriority[$parent])) {
+								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent], $this->highPriority[$parent]);
+								$this->highPriority[$parent] = [];
 							}
 							$preferred[$parent] = $autowired = true;
 							break;
@@ -142,7 +143,8 @@ class Autowiring
 				} elseif (isset($preferred[$parent])) {
 					$autowired = false;
 				}
-				$this->classList[$parent][$autowired][] = (string) $name;
+				$list = $autowired ? 'highPriority' : 'lowPriority';
+				$this->$list[$parent][] = (string) $name;
 			}
 		}
 	}
