@@ -58,7 +58,7 @@ Assert::exception(function () use ($container) {
 }, Nette\DI\MissingServiceException::class, 'Service of type unknown not found.');
 
 
-Assert::same(['one', 'child'], $container->findByType('Service'));
+Assert::same(['child', 'one'], $container->findByType('Service'));
 Assert::same(['child'], $container->findByType('Child'));
-Assert::same(['two', 'three'], $container->findByType('Service2'));
+Assert::same(['three', 'two'], $container->findByType('Service2'));
 Assert::same([], $container->findByType('unknown'));
