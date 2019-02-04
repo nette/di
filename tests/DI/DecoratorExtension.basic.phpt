@@ -67,11 +67,11 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::same(
-	['a' => true, 'tag' => 2, 'inject' => true, 'Iface' => true],
+	['a' => true, 'tag' => 2, DI\Extensions\InjectExtension::TAG_INJECT => true, 'Iface' => true],
 	$builder->getDefinition('one')->getTags()
 );
 
-Assert::true($builder->getDefinition('one')->getTag('inject'));
+Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));
 
 Assert::equal([
 	new Statement([new Reference('self'), 'setup'], ['Service']),
