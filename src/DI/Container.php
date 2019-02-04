@@ -191,8 +191,8 @@ class Container
 	public function getByType(string $type, bool $throw = true)
 	{
 		$type = Helpers::normalizeClass($type);
-		if (!empty($this->wiring[$type][true])) {
-			if (count($names = $this->wiring[$type][true]) === 1) {
+		if (!empty($this->wiring[$type][2])) {
+			if (count($names = $this->wiring[$type][2]) === 1) {
 				return $this->getService($names[0]);
 			}
 			natsort($names);
