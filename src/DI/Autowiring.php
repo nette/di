@@ -145,7 +145,7 @@ class Autowiring
 					$priority = empty($preferred[$parent]);
 				}
 				$list = $priority ? 'highPriority' : 'lowPriority';
-				$this->$list[$parent][] = (string) $name;
+				$this->$list[$parent][] = $name;
 			}
 		}
 	}

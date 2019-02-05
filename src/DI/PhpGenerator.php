@@ -77,7 +77,7 @@ class PhpGenerator
 	public function generateMethod(Definitions\Definition $def): Nette\PhpGenerator\Method
 	{
 		try {
-			$name = (string) $def->getName();
+			$name = $def->getName();
 			$method = new Nette\PhpGenerator\Method(Container::getMethodName($name));
 			$method->setVisibility('public');
 			$method->setReturnType($def->getType());
