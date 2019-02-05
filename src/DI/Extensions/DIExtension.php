@@ -62,6 +62,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach (array_filter($builder->findByTag('run')) as $name => $on) {
+			trigger_error("Tag 'run' used in service '$name' definition is deprecated.", E_USER_DEPRECATED);
 			$initialize->addBody('$this->getService(?);', [$name]);
 		}
 	}
