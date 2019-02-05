@@ -74,7 +74,7 @@ class ContainerBuilder
 			}
 			$lname = strtolower($name);
 			foreach ($this->definitions as $nm => $foo) {
-				if ($lname === strtolower((string) $nm)) {
+				if ($lname === strtolower($nm)) {
 					throw new Nette\InvalidStateException("Service '$name' has the same name as '$nm' in a case-insensitive manner.");
 				}
 			}

@@ -309,7 +309,7 @@ class Resolver
 			if ($name == false) {
 				throw new ServiceCreationException("Service '{$item->getName()}' not found in definitions.");
 			}
-			$item = new Reference((string) $name);
+			$item = new Reference($name);
 		}
 		if ($item instanceof Reference) {
 			$item = $this->normalizeReference($item);
