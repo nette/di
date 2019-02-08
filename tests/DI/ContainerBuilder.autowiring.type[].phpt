@@ -69,3 +69,16 @@ Assert::same([
 ], $foo->bars);
 Assert::same([], $foo->foos);
 Assert::same(['default'], $foo->strings);
+
+
+// runtime
+
+$foo2 = $container->createInstance('Foo');
+Assert::type(Foo::class, $foo2);
+Assert::same([
+	$container->getService('s1'),
+	$container->getService('s2'),
+	$container->getService('s3'),
+], $foo2->bars);
+Assert::same([$foo], $foo2->foos); // difference
+Assert::same(['default'], $foo2->strings);
