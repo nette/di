@@ -22,9 +22,9 @@ class DependencyChecker
 {
 	use Nette\SmartObject;
 
-	public const VERSION = 1;
+	public const VERSION = 2;
 
-	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
+	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string|array */
 	private $dependencies = [];
 
 
@@ -44,10 +44,13 @@ class DependencyChecker
 	 */
 	public function export(): array
 	{
-		$files = $phpFiles = $classes = $functions = [];
+		$files = $phpFiles = $classes = $functions = $callbacks = [];
 		foreach ($this->dependencies as $dep) {
 			if (is_string($dep)) {
 				$files[] = $dep;
+
+			} elseif (is_array($dep) && isset($dep[0]) && Nette\Utils\Callback::isStatic($dep[0])) {
+				$callbacks[] = $dep;
 
 			} elseif ($dep instanceof ReflectionClass) {
 				if (empty($classes[$name = $dep->getName()])) {
@@ -70,28 +73,30 @@ class DependencyChecker
 
 		$classes = array_keys($classes);
 		$functions = array_unique($functions, SORT_REGULAR);
-		$hash = self::calculateHash($classes, $functions);
+		$reflectionHash = self::calculateReflectionHash($classes, $functions);
+		$callbackHash = self::calculateCallbackHash($callbacks);
 		$files = @array_map('filemtime', array_combine($files, $files)); // @ - file may not exist
 		$phpFiles = @array_map('filemtime', array_combine($phpFiles, $phpFiles)); // @ - file may not exist
-		return [self::VERSION, $files, $phpFiles, $classes, $functions, $hash];
+		return [self::VERSION, $files, $phpFiles, $classes, $functions, $reflectionHash, $callbacks, $callbackHash];
 	}
 
 
 	/**
 	 * Are dependencies expired?
 	 */
-	public static function isExpired(int $version, array $files, array &$phpFiles, array $classes, array $functions, string $hash): bool
+	public static function isExpired(int $version, array $files, array &$phpFiles, array $classes, array $functions, string $reflectionHash, array $callbacks = [], string $callbackHash = ''): bool
 	{
 		$current = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
 		$origPhpFiles = $phpFiles;
 		$phpFiles = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
 		return $version !== self::VERSION
 			|| $files !== $current
-			|| ($phpFiles !== $origPhpFiles && $hash !== self::calculateHash($classes, $functions));
+			|| ($phpFiles !== $origPhpFiles && $reflectionHash !== self::calculateReflectionHash($classes, $functions))
+			|| $callbackHash !== self::calculateCallbackHash($callbacks);
 	}
 
 
-	private static function calculateHash(array $classes, array $functions): ?string
+	private static function calculateReflectionHash(array $classes, array $functions): ?string
 	{
 		$hash = [];
 		foreach ($classes as $name) {
@@ -149,6 +154,18 @@ class DependencyChecker
 					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
 					: null,
 			];
+		}
+
+		return md5(serialize($hash));
+	}
+
+
+	private static function calculateCallbackHash(array $callbacks): string
+	{
+		$hash = [];
+
+		foreach ($callbacks as $callback) {
+			$hash[] = [$callback, call_user_func(...$callback)];
 		}
 
 		return md5(serialize($hash));
