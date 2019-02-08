@@ -196,17 +196,17 @@ class Autowiring
 				}
 
 			} elseif (
-				$container instanceof Resolver
-				&& $method instanceof \ReflectionMethod
+				$method instanceof \ReflectionMethod
 				&& $parameter->isArray()
 				&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $paramName . '#', (string) $method->getDocComment(), $m)
 				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 				&& (class_exists($type) || interface_exists($type))
 			) {
+				$src = $container instanceof Resolver ? $container->getContainerBuilder() : $container;
 				$res[$num] = [];
-				foreach ($container->getContainerBuilder()->findAutowired($type) as $def) {
-					if ($def !== $current) {
-						$res[$num][] = $def;
+				foreach ($src->findAutowired($type) as $item) {
+					if ($item !== $current) {
+						$res[$num][] = $item;
 					}
 				}
 
