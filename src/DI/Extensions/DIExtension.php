@@ -18,7 +18,7 @@ use Nette;
 final class DIExtension extends Nette\DI\CompilerExtension
 {
 	public $defaults = [
-		'debugger' => true,
+		'debugger' => null,
 		'excluded' => [],
 		'parentClass' => null,
 	];
@@ -32,6 +32,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 
 	public function __construct(bool $debugMode = false)
 	{
+		$this->defaults['debugger'] = interface_exists(\Tracy\IBarPanel::class);
 		$this->debugMode = $debugMode;
 		$this->time = microtime(true);
 	}
