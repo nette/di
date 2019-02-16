@@ -23,7 +23,7 @@
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",
-		"tracy/tracy": "^2.3"
+		"tracy/tracy": "^2.6"
 	},
 	"conflict": {
 		"nette/nette": "<2.2",

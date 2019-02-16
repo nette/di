@@ -7,6 +7,8 @@ use Nette;
 use Tracy\Dumper;
 use Tracy\Helpers;
 
+$snapshot = [];
+
 ?>
 <style class="tracy-debug">
 	#tracy-debug .nette-ContainerPanel table {
@@ -48,7 +50,7 @@ use Tracy\Helpers;
 			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : 'no' ?></td>
 			<td>
 				<?php if (isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container): ?>
-					<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true]); ?>
+					<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::SNAPSHOT => &$snapshot]); ?>
 				<?php elseif (isset($instances[$name])): ?>
 					<code><?= get_class($instances[$name]) ?></code>
 				<?php elseif (is_string($type)): ?>
@@ -60,6 +62,8 @@ use Tracy\Helpers;
 		<?php endforeach ?>
 		</tbody>
 	</table>
+
+	<meta itemprop=tracy <?= Dumper::formatSnapshotAttribute($snapshot) ?>>
 
 	<h2>Parameters</h2>
 
