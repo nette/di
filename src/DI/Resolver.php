@@ -14,6 +14,7 @@ use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
+use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 use ReflectionClass;
@@ -182,7 +183,8 @@ class Resolver
 					$visibility = $rm->isProtected() ? 'protected' : 'private';
 					throw new ServiceCreationException("Class $entity has $visibility constructor.");
 				} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-					$arguments = $this->autowireArguments($constructor, $arguments);
+					$arguments = self::autowireArguments($constructor, $arguments, $this, $this->currentService);
+					$this->addDependency($constructor);
 				} elseif ($arguments) {
 					throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
 				}
@@ -205,7 +207,8 @@ class Resolver
 							throw new ServiceCreationException("Function $entity[1] doesn't exist.");
 						}
 						$rf = new \ReflectionFunction($entity[1]);
-						$arguments = $this->autowireArguments($rf, $arguments);
+						$arguments = self::autowireArguments($rf, $arguments, $this, $this->currentService);
+						$this->addDependency($rf);
 						break;
 
 					case $entity[0] instanceof Statement:
@@ -230,7 +233,8 @@ class Resolver
 								if (!$rm->isPublic()) {
 									throw new ServiceCreationException("$type::$entity[1]() is not callable.");
 								}
-								$arguments = $this->autowireArguments($rm, $arguments);
+								$arguments = self::autowireArguments($rm, $arguments, $this, $this->currentService);
+								$this->addDependency($rm);
 
 							} elseif (!Nette\Utils\Arrays::isList($arguments)) {
 								throw new ServiceCreationException("Unable to pass specified arguments to $type::$entity[1]().");
@@ -277,18 +281,6 @@ class Resolver
 			}
 		});
 		return $arguments;
-	}
-
-
-	/**
-	 * Add missing arguments using autowiring.
-	 */
-	private function autowireArguments(\ReflectionFunctionAbstract $function, array $arguments): array
-	{
-		if (!$function->isClosure()) {
-			$this->addDependency($function);
-		}
-		return Autowiring::completeArguments($function, $arguments, $this, $this->currentService);
 	}
 
 
@@ -451,5 +443,89 @@ class Resolver
 			}
 		});
 		return $arguments;
+	}
+
+
+	/**
+	 * Add missing arguments using autowiring.
+	 * @param  Resolver|Container  $resolver
+	 * @throws ServiceCreationException
+	 */
+	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, $resolver, Definitions\Definition $current = null): array
+	{
+		$optCount = 0;
+		$num = -1;
+		$res = [];
+		$methodName = Reflection::toString($method) . '()';
+
+		foreach ($method->getParameters() as $num => $parameter) {
+			$paramName = $parameter->getName();
+			if (!$parameter->isVariadic() && array_key_exists($paramName, $arguments)) {
+				$res[$num] = $arguments[$paramName];
+				unset($arguments[$paramName], $arguments[$num]);
+				$optCount = 0;
+
+			} elseif (array_key_exists($num, $arguments)) {
+				$res[$num] = $arguments[$num];
+				unset($arguments[$num]);
+				$optCount = 0;
+
+			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
+				try {
+					$res[$num] = $resolver->getByType($type);
+				} catch (MissingServiceException $e) {
+					$res[$num] = null;
+				} catch (ServiceCreationException $e) {
+					throw new ServiceCreationException("{$e->getMessage()} (needed by $$paramName in $methodName)", 0, $e);
+				}
+				if ($res[$num] === null) {
+					if ($parameter->allowsNull()) {
+						$optCount++;
+					} elseif (class_exists($type) || interface_exists($type)) {
+						throw new ServiceCreationException("Service of type $type needed by $$paramName in $methodName not found. Did you register it in configuration file?");
+					} else {
+						throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
+					}
+				} else {
+					$optCount = 0;
+				}
+
+			} elseif (
+				$method instanceof \ReflectionMethod
+				&& $parameter->isArray()
+				&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $paramName . '#', (string) $method->getDocComment(), $m)
+				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
+				&& (class_exists($type) || interface_exists($type))
+			) {
+				$src = $resolver instanceof self ? $resolver->getContainerBuilder() : $resolver;
+				$res[$num] = [];
+				foreach ($src->findAutowired($type) as $item) {
+					if ($item !== $current) {
+						$res[$num][] = $item;
+					}
+				}
+
+			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
+				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
+				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
+				$optCount++;
+
+			} else {
+				throw new ServiceCreationException("Parameter $$paramName in $methodName has no class type hint or default value, so its value must be specified.");
+			}
+		}
+
+		// extra parameters
+		while (array_key_exists(++$num, $arguments)) {
+			$res[$num] = $arguments[$num];
+			unset($arguments[$num]);
+			$optCount = 0;
+		}
+		if ($arguments) {
+			throw new ServiceCreationException("Unable to pass specified arguments to $methodName.");
+		}
+
+		return $optCount ? array_slice($res, 0, -$optCount) : $res;
 	}
 }
