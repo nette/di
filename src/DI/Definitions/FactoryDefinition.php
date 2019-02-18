@@ -246,7 +246,7 @@ final class FactoryDefinition extends Definition
 			if (isset($ctorParams[$param->getName()])) {
 				$arg = $ctorParams[$param->getName()];
 				$argHint = Reflection::getParameterType($arg);
-				if ($hint !== $argHint && !is_a($hint, $argHint, true)) {
+				if ($hint !== $argHint && !is_a($hint, (string) $argHint, true)) {
 					throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::create() doesn't match type hint in $class constructor.");
 				}
 				$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
