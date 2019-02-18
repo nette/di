@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Test: Nette\DI\Autowiring::completeArguments()
+ * Test: Nette\DI\Resolver::autowireArguments()
  */
 
 declare(strict_types=1);
 
-use Nette\DI\Autowiring;
+use Nette\DI\Resolver;
 use Tester\Assert;
 
 
@@ -37,10 +37,10 @@ $container = new Container;
 
 Assert::equal(
 	[new Test, new Test],
-	Autowiring::completeArguments(new ReflectionMethod('Test', 'method'), [], $container)
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'method'), [], $container)
 );
 
 Assert::equal(
 	[new Test, new Test],
-	Autowiring::completeArguments(new ReflectionMethod('Test', 'methodNullable'), [], $container)
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodNullable'), [], $container)
 );
