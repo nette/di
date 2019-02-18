@@ -18,7 +18,7 @@ use Nette\Utils\Validators;
 
 
 /**
- * Configuration processor
+ * Processor for configuration of service definitions.
  */
 class Processor
 {
@@ -94,55 +94,56 @@ class Processor
 
 
 	/**
-	 * Normalizes and merges configurations.
+	 * Normalizes and merges configuration of list of service definitions. Left has higher priority.
 	 */
-	public function merge(array $mainConfig, array $config): array
+	public function mergeConfigs(array $left, ?array $right): array
 	{
-		if (isset($config['services'])) {
-			foreach ($config['services'] as $name => &$def) {
-				$def = $this->normalizeStructure($def);
-				if (!empty($def['alteration']) && isset($mainConfig['services'][$name])) {
-					unset($def['alteration']);
-				}
+		foreach ($left as $key => &$def) {
+			$def = $this->normalizeConfig($def);
+			if (!empty($def['alteration']) && isset($right[$key])) {
+				unset($def['alteration']);
 			}
 		}
-		return Helpers::merge($config, $mainConfig);
+		return Helpers::merge($left, $right);
 	}
 
 
-	public function normalizeStructure($def): array
+	/**
+	 * Normalizes configuration of service definition.
+	 */
+	public function normalizeConfig($config): array
 	{
-		if ($def === null || $def === false) {
-			return (array) $def;
+		if ($config === null || $config === false) {
+			return (array) $config;
 
-		} elseif (is_string($def) && interface_exists($def)) {
-			return ['implement' => $def];
+		} elseif (is_string($config) && interface_exists($config)) {
+			return ['implement' => $config];
 
-		} elseif ($def instanceof Statement && is_string($def->getEntity()) && interface_exists($def->getEntity())) {
-			$res = ['implement' => $def->getEntity()];
-			if (array_keys($def->arguments) === ['tagged']) {
-				$res += $def->arguments;
-			} elseif (count($def->arguments) > 1) {
-				$res['references'] = $def->arguments;
+		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
+			$res = ['implement' => $config->getEntity()];
+			if (array_keys($config->arguments) === ['tagged']) {
+				$res += $config->arguments;
+			} elseif (count($config->arguments) > 1) {
+				$res['references'] = $config->arguments;
 			} else {
-				$res['factory'] = array_shift($def->arguments);
+				$res['factory'] = array_shift($config->arguments);
 			}
 			return $res;
 
-		} elseif (!is_array($def) || isset($def[0], $def[1])) {
-			return ['factory' => $def];
+		} elseif (!is_array($config) || isset($config[0], $config[1])) {
+			return ['factory' => $config];
 
-		} elseif (is_array($def)) {
+		} elseif (is_array($config)) {
 			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
-				if (array_key_exists($alias, $def)) {
-					if (array_key_exists($original, $def)) {
+				if (array_key_exists($alias, $config)) {
+					if (array_key_exists($original, $config)) {
 						throw new Nette\InvalidStateException("Options '$alias' and '$original' are aliases, use only '$original'.");
 					}
-					$def[$original] = $def[$alias];
-					unset($def[$alias]);
+					$config[$original] = $config[$alias];
+					unset($config[$alias]);
 				}
 			}
-			return $def;
+			return $config;
 
 		} else {
 			throw new Nette\InvalidStateException('Unexpected format of service definition');
@@ -151,29 +152,36 @@ class Processor
 
 
 	/**
-	 * Adds service normalized definitions from configuration.
+	 * Loads list of service definitions from normalized configuration.
 	 */
-	public function loadDefinitions(array $services): void
+	public function loadDefinitions(array $configList): void
+	{
+		foreach ($configList as $key => $config) {
+			$this->loadDefinition($this->convertKeyToName($key, $config), $config);
+		}
+	}
+
+
+	/**
+	 * Loads service definition from normalized configuration.
+	 */
+	private function loadDefinition(?string $name, array $config): void
 	{
 		try {
-			foreach ($services as $name => $config) {
-				$name = $this->createDefinitionName($name, $config);
-
-				if ($config === [false]) {
-					$this->builder->removeDefinition($name);
-					continue;
-				} elseif (!empty($config['alteration']) && !$this->builder->hasDefinition($name)) {
-					throw new ServiceCreationException('missing original definition for alteration.');
-				}
-				unset($config['alteration']);
-
-				$config = $this->prepareConfig($config);
-				$def = $this->retrieveDefinition($name, $config);
-				$scheme = $this->schemes[get_class($def)];
-				$this->validateFields($config, $scheme['fields']);
-				$this->{$scheme['method']}($def, $config, $name);
-				$this->updateDefinition($def, $config);
+			if ($config === [false]) {
+				$this->builder->removeDefinition($name);
+				return;
+			} elseif (!empty($config['alteration']) && !$this->builder->hasDefinition($name)) {
+				throw new ServiceCreationException('missing original definition for alteration.');
 			}
+			unset($config['alteration']);
+
+			$config = $this->expandParameters($config);
+			$def = $this->retrieveDefinition($name, $config);
+			$scheme = $this->schemes[get_class($def)];
+			$this->validateFields($config, $scheme['fields']);
+			$this->{$scheme['method']}($def, $config, $name);
+			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
 			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 		}
@@ -181,11 +189,11 @@ class Processor
 
 
 	/**
-	 * Parses single service definition from configuration.
+	 * Updates service definition according to normalized configuration.
 	 */
 	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
 	{
-		$config = self::filterArguments($config);
+		$config = self::processArguments($config);
 
 		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
 			$definition->setType(null);
@@ -246,7 +254,7 @@ class Processor
 
 	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, array $config): void
 	{
-		$config = self::filterArguments($config);
+		$config = self::processArguments($config);
 
 		$resultDef = $definition->getResultDefinition();
 
@@ -354,38 +362,21 @@ class Processor
 	}
 
 
-	/**
-	 * Replaces @extension with and prepends service names with namespace.
-	 */
-	public function applyNamespace(array $services, string $namespace): array
+	private function convertKeyToName($key, array $config): string
 	{
-		foreach ($services as $name => $def) {
-			$def = Nette\DI\Helpers::prefixServiceName($def, $namespace);
-			if (is_string($name)) {
-				unset($services[$name]);
-				$name = $namespace . '.' . $name;
-			}
-			$services[$name] = $def;
-		}
-		return $services;
-	}
-
-
-	private function createDefinitionName($name, array $config): string
-	{
-		if (is_int($name)) {
+		if (is_int($key)) {
 			$factory = $config['factory'] ?? null;
 			$postfix = $factory instanceof Statement && is_string($factory->getEntity()) ? '.' . $factory->getEntity(
 				) : (is_scalar($factory) ? ".$factory" : '');
-			$name = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
-		} elseif (preg_match('#^@[\w\\\\]+\z#', $name)) {
-			$name = $this->builder->getByType(substr($name, 1), true);
+			$key = (count($this->builder->getDefinitions()) + 1) . preg_replace('#\W+#', '_', $postfix);
+		} elseif (preg_match('#^@[\w\\\\]+\z#', $key)) {
+			$key = $this->builder->getByType(substr($key, 1), true);
 		}
-		return $name;
+		return $key;
 	}
 
 
-	private function prepareConfig(array $config): array
+	private function expandParameters(array $config): array
 	{
 		$params = $this->builder->parameters;
 		if (isset($config['parameters'])) {
@@ -426,9 +417,9 @@ class Processor
 
 
 	/**
-	 * Removes ... and process constants recursively.
+	 * Removes ... and resolves constants in arguments recursively.
 	 */
-	public static function filterArguments(array $args): array
+	public static function processArguments(array $args): array
 	{
 		foreach ($args as $k => $v) {
 			if ($v === '...') {
@@ -438,10 +429,10 @@ class Processor
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+\z#', $v)) {
 				$args[$k] = new Definitions\Reference(substr($v, 1));
 			} elseif (is_array($v)) {
-				$args[$k] = self::filterArguments($v);
+				$args[$k] = self::processArguments($v);
 			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments([$v->getEntity()]);
-				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
+				$tmp = self::processArguments([$v->getEntity()]);
+				$args[$k] = new Statement($tmp[0], self::processArguments($v->arguments));
 			}
 		}
 		return $args;

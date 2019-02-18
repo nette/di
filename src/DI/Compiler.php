@@ -106,7 +106,11 @@ class Compiler
 	 */
 	public function addConfig(array $config)
 	{
-		$this->config = $this->configProcessor->merge($this->config, $config);
+		if (isset($config[self::SERVICES])) {
+			$this->config[self::SERVICES] = $this->configProcessor->mergeConfigs($config[self::SERVICES], $this->config[self::SERVICES] ?? null);
+			unset($config[self::SERVICES]);
+		}
+		$this->config = Config\Helpers::merge($config, $this->config);
 		return $this;
 	}
 
@@ -259,7 +263,7 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		$configList = array_map([$this->configProcessor, 'normalizeStructure'], $configList);
+		$configList = array_map([$this->configProcessor, 'normalizeConfig'], $configList);
 		$this->configProcessor->loadDefinitions($configList);
 	}
 

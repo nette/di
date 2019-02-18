@@ -95,11 +95,11 @@ final class Helpers
 
 
 	/**
-	 * @depreaced moved to Nette\DI\Config\Processor::filterArguments()
+	 * @depreaced moved to Nette\DI\Config\Processor::processArguments()
 	 */
 	public static function filterArguments(array $args): array
 	{
-		return Config\Processor::filterArguments($args);
+		return Config\Processor::processArguments($args);
 	}
 
 
