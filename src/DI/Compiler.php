@@ -225,7 +225,7 @@ class Compiler
 	/** @internal */
 	public function processServices(): void
 	{
-		$this->loadDefinitions($this->config['services'] ?? []);
+		$this->loadDefinitionsFromConfig($this->config['services'] ?? []);
 	}
 
 
@@ -252,29 +252,30 @@ class Compiler
 	}
 
 
-	/********************* tools ****************d*g**/
-
-
 	/**
-	 * Adds service definitions from configuration.
+	 * Loads list of service definitions from configuration.
 	 */
-	public function loadDefinitions(array $services, string $namespace = null): void
+	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		foreach ($services as &$def) {
-			$def = $this->configProcessor->normalizeStructure($def);
-		}
-		if ($namespace) {
-			$services = $this->configProcessor->applyNamespace($services, $namespace);
-		}
-		$this->configProcessor->loadDefinitions($services, $namespace);
+		$configList = array_map([$this->configProcessor, 'normalizeStructure'], $configList);
+		$this->configProcessor->loadDefinitions($configList);
 	}
 
 
 	/**
-	 * @deprecated
+	 * @deprecated use non-static Compiler::loadDefinitionsFromConfig()
+	 */
+	public static function loadDefinitions(): void
+	{
+		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');
+	}
+
+
+	/**
+	 * @deprecated use non-static Compiler::loadDefinitionsFromConfig()
 	 */
 	public static function loadDefinition(): void
 	{
-		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated.');
+		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');
 	}
 }
