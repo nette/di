@@ -28,11 +28,11 @@ test(function () {
 	$def = new ServiceDefinition;
 	$def->setType('stdClass');
 	Assert::same('stdClass', $def->getType());
-	Assert::null($def->getFactory());
+	Assert::null($def->getEntity());
 
 	$def->setArguments([1, 2]);
 	Assert::same('stdClass', $def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::null($def->getEntity());
 });
 
 test(function () {
@@ -41,7 +41,7 @@ test(function () {
 		$def->setClass('stdClass', []);
 	}, E_USER_DEPRECATED);
 	Assert::same('stdClass', $def->getType());
-	Assert::null($def->getFactory());
+	Assert::null($def->getEntity());
 });
 
 test(function () {

@@ -215,7 +215,7 @@ class Processor
 
 		if (array_key_exists('arguments', $config)) {
 			$arguments = $config['arguments'];
-			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments) && $definition->getFactory()) {
+			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $definition->getFactory()->arguments;
 			}
 			$definition->setArguments($arguments);
@@ -273,7 +273,7 @@ class Processor
 
 		if (array_key_exists('arguments', $config)) {
 			$arguments = $config['arguments'];
-			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments) && $resultDef->getFactory()) {
+			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $resultDef->getFactory()->arguments;
 			}
 			$resultDef->setArguments($arguments);
