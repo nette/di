@@ -35,7 +35,7 @@ class Loader
 	/**
 	 * Reads configuration from file.
 	 */
-	public function load(string $file): array
+	public function load(string $file, callable $receiver = null): array
 	{
 		if (!is_file($file) || !is_readable($file)) {
 			throw new Nette\FileNotFoundException("File '$file' is missing or is not readable.");
@@ -50,19 +50,23 @@ class Loader
 		$data = $this->getAdapter($file)->load($file);
 
 		$merged = [];
+		$receiver = $receiver ?: function (array $data) use (&$merged): void {
+			$merged = Helpers::merge($data, $merged); // for back compatibility
+		};
+
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
 			foreach ($data[self::INCLUDES_KEY] as $include) {
 				if (!preg_match('#([a-z]+:)?[/\\\\]#Ai', $include)) {
 					$include = dirname($file) . '/' . $include;
 				}
-				$merged = Helpers::merge($this->load($include), $merged);
+				$receiver($this->load($include, $receiver), $include);
 			}
 		}
 		unset($data[self::INCLUDES_KEY], $this->loadedFiles[$file]);
 
-
-		return Helpers::merge($data, $merged);
+		$receiver($data, $file);
+		return $merged;
 	}
 
 

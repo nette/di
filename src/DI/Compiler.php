@@ -122,8 +122,23 @@ class Compiler
 	public function loadConfig(string $file, Config\Loader $loader = null)
 	{
 		$loader = $loader ?: new Config\Loader;
-		$this->addConfig($loader->load($file));
-		$this->dependencies->add($loader->getDependencies());
+		$loader->load($file, function (array $data, $file): void {
+			$this->addConfig($data);
+			$this->dependencies->add([$file]);
+		});
+		return $this;
+
+
+		$merged = [];
+		foreach ($data[self::INCLUDES] ?? [] as $include) {
+			if (!preg_match('#([a-z]+:)?[/\\\\]#Ai', $include)) {
+				$include = dirname($file) . '/' . $include;
+			}
+			$merged = Config\Helpers::merge($this->loadConfig($include, $loader), $merged);
+		}
+		$merged = Helpers::merge($data, $merged);
+		$this->addConfig($merged);
+		$this->dependencies->add($file);
 		return $this;
 	}
 

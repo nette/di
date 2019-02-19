@@ -1,29 +1,31 @@
 <?php
 
 /**
- * Test: Nette\DI\Config\Loader: including files
+ * Test: Nette\DI\Compiler: including files
  */
 
 declare(strict_types=1);
 
-use Nette\DI\Config;
+use Nette\DI\Compiler;
 use Tester\Assert;
 
 
 require __DIR__ . '/../bootstrap.php';
 
 
-$config = new Config\Loader;
-$data = $config->load('files/loader.includes.neon');
+$compiler = new Compiler;
+$compiler->loadConfig('files/loader.includes.neon');
 
 Assert::same([
-	'files/loader.includes.neon',
 	'files/loader.includes.child.neon',
-	'files/loader.includes.child.php',
 	__DIR__ . DIRECTORY_SEPARATOR . 'files/loader.includes.grandchild.neon',
-], $config->getDependencies());
+	'files/loader.includes.child.php',
+	'files/loader.includes.neon',
+], array_keys($compiler->exportDependencies()[1]));
+
 
 Assert::same([
+	'services' => ['a' => ['factory' => 'stdClass', 'autowired' => false]],
 	'parameters' => [
 		'me' => [
 			'loader.includes.child.neon',
@@ -34,5 +36,4 @@ Assert::same([
 		'list' => [5, 6, 1, 2],
 		'force' => [1, 2],
 	],
-	'services' => ['a' => ['autowired' => false]],
-], $data);
+], $compiler->getConfig());
