@@ -19,16 +19,22 @@ use Nette\PhpGenerator\Helpers as PhpHelpers;
  * Definition of standard service.
  *
  * @property string|null $class
- * @property Statement|null $factory
+ * @property Statement $factory
  * @property Statement[] $setup
  */
 final class ServiceDefinition extends Definition
 {
-	/** @var Statement|null */
+	/** @var Statement */
 	private $factory;
 
 	/** @var Statement[] */
 	private $setup = [];
+
+
+	public function __construct()
+	{
+		$this->factory = new Statement(null);
+	}
 
 
 	/**
@@ -67,7 +73,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function getFactory(): ?Statement
+	public function getFactory(): Statement
 	{
 		return $this->factory;
 	}
@@ -78,7 +84,7 @@ final class ServiceDefinition extends Definition
 	 */
 	public function getEntity()
 	{
-		return $this->factory ? $this->factory->getEntity() : null;
+		return $this->factory->getEntity();
 	}
 
 
@@ -87,9 +93,6 @@ final class ServiceDefinition extends Definition
 	 */
 	public function setArguments(array $args = [])
 	{
-		if (!$this->factory) {
-			$this->factory = new Statement($this->getType());
-		}
 		$this->factory->arguments = $args;
 		return $this;
 	}
@@ -100,9 +103,6 @@ final class ServiceDefinition extends Definition
 	 */
 	public function setArgument($key, $value)
 	{
-		if (!$this->factory) {
-			$this->factory = new Statement($this->getType());
-		}
 		$this->factory->arguments[$key] = $value;
 		return $this;
 	}
