@@ -122,7 +122,9 @@ class Compiler
 	public function loadConfig(string $file, Config\Loader $loader = null)
 	{
 		$loader = $loader ?: new Config\Loader;
-		$this->addConfig($loader->load($file));
+		foreach ($loader->load($file, false) as $data) {
+			$this->addConfig($data);
+		}
 		$this->dependencies->add($loader->getDependencies());
 		return $this;
 	}

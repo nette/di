@@ -2,3 +2,6 @@ parameters:
 	me: [loader.includes.child.neon]
 	scalar: 3
 	list:
+
+services:
+	a: stdClass
