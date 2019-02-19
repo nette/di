@@ -96,6 +96,21 @@ abstract class CompilerExtension
 	}
 
 
+	/**
+	 * Loads list of service definitions from configuration.
+	 * Prefixes its names and replaces @extension with name in definition.
+	 */
+	public function loadDefinitionsFromConfig(array $configList): void
+	{
+		$res = [];
+		foreach ($configList as $key => $config) {
+			$key = is_string($key) ? $this->name . '.' . $key : $key;
+			$res[$key] = Helpers::prefixServiceName($config, $this->name);
+		}
+		$this->compiler->loadDefinitionsFromConfig($res);
+	}
+
+
 	protected function createLoader(): Config\Loader
 	{
 		return new Config\Loader;
