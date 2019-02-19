@@ -19,6 +19,11 @@ class Compiler
 {
 	use Nette\SmartObject;
 
+	private const
+		SERVICES = 'services',
+		PARAMETERS = 'parameters',
+		RESERVED = [self::SERVICES => true, self::PARAMETERS => true];
+
 	/** @var CompilerExtension[] */
 	private $extensions = [];
 
@@ -40,9 +45,6 @@ class Compiler
 	/** @var string[] */
 	private $dynamicParams = [];
 
-	/** @var array reserved section names */
-	private static $reserved = ['services' => 1, 'parameters' => 1];
-
 
 	public function __construct(ContainerBuilder $builder = null)
 	{
@@ -60,11 +62,11 @@ class Compiler
 	{
 		if ($name === null) {
 			$name = '_' . count($this->extensions);
-		} elseif (isset($this->extensions[$name]) || isset(self::$reserved[$name])) {
+		} elseif (isset($this->extensions[$name]) || isset(self::RESERVED[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
 		}
 		$lname = strtolower($name);
-		foreach (array_keys($this->extensions + self::$reserved) as $nm) {
+		foreach (array_keys($this->extensions + self::RESERVED) as $nm) {
 			if ($lname === strtolower((string) $nm)) {
 				throw new Nette\InvalidArgumentException("Name of extension '$name' has the same name as '$nm' in a case-insensitive manner.");
 			}
@@ -175,7 +177,7 @@ class Compiler
 	/** @internal */
 	public function processParameters(): void
 	{
-		$params = $this->config['parameters'] ?? [];
+		$params = $this->config[self::PARAMETERS] ?? [];
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
 				? ContainerBuilder::literal('$this->parameters[?] \?\? ?', [$key, $params[$key]])
@@ -188,7 +190,7 @@ class Compiler
 	/** @internal */
 	public function processExtensions(): void
 	{
-		$config = array_diff_key($this->config, self::$reserved);
+		$config = array_diff_key($this->config, self::RESERVED);
 		$config = Helpers::expand($config, $this->builder->parameters);
 
 		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
@@ -213,7 +215,7 @@ class Compiler
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
 		} elseif ($extra = key(array_diff_key($config, $this->extensions))) {
-			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::$reserved + $this->extensions), $extra);
+			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::RESERVED + $this->extensions), $extra);
 			throw new Nette\InvalidStateException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')
@@ -225,7 +227,7 @@ class Compiler
 	/** @internal */
 	public function processServices(): void
 	{
-		$this->loadDefinitionsFromConfig($this->config['services'] ?? []);
+		$this->loadDefinitionsFromConfig($this->config[self::SERVICES] ?? []);
 	}
 
 
