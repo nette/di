@@ -186,7 +186,7 @@ final class ServiceDefinition extends Definition
 	 */
 	public function setInject(bool $state = true)
 	{
-		trigger_error(sprintf("Service %s: %s() is deprecated, use addTag('inject')", $this->getName(), __METHOD__), E_USER_DEPRECATED);
+		trigger_error(sprintf('Service %s: %s() is deprecated, use addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT)', $this->getName(), __METHOD__), E_USER_DEPRECATED);
 		return $this->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, $state);
 	}
 
