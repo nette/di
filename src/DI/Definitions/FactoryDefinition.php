@@ -74,7 +74,7 @@ final class FactoryDefinition extends Definition
 
 
 	/**
-	 * @return ServiceDefinition
+	 * @return Definition
 	 */
 	public function getResultDefinition(): Definition
 	{
