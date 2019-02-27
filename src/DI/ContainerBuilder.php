@@ -256,7 +256,7 @@ class ContainerBuilder
 
 
 	/**
-	 * Gets the service objects of the specified tag.
+	 * Gets the service names and tag values.
 	 * @return array of [service name => tag attributes]
 	 */
 	public function findByTag(string $tag): array
