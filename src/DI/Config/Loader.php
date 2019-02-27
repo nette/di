@@ -53,9 +53,7 @@ class Loader
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
 			foreach ($data[self::INCLUDES_KEY] as $include) {
-				if (!preg_match('#([a-z]+:)?[/\\\\]#Ai', $include)) {
-					$include = dirname($file) . '/' . $include;
-				}
+				$include = $this->expandIncludedFile($include, $file);
 				$res = Helpers::merge($this->load($include, $merge), $res);
 			}
 		}
@@ -87,6 +85,17 @@ class Loader
 	public function getDependencies(): array
 	{
 		return array_unique($this->dependencies);
+	}
+
+
+	/**
+	 * Expands included file name.
+	 */
+	public function expandIncludedFile(string $includedFile, string $mainFile): string
+	{
+		return preg_match('#([a-z]+:)?[/\\\\]#Ai', $includedFile) // is absolute
+			? $includedFile
+			: dirname($mainFile) . '/' . $includedFile;
 	}
 
 
