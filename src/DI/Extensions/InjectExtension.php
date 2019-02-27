@@ -26,7 +26,11 @@ final class InjectExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if ($def->getTag(self::TAG_INJECT) && $def->getType()) {
+			if (
+				$def->getTag(self::TAG_INJECT)
+				&& ($def = $def instanceof Definitions\FactoryDefinition ? $def->getResultDefinition() : $def)
+				&& ($def instanceof Definitions\ServiceDefinition)
+			) {
 				$this->updateDefinition($def);
 			}
 		}
