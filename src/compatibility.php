@@ -7,6 +7,6 @@
 
 declare(strict_types=1);
 
-class_alias('Nette\DI\Config\Adapter', 'Nette\DI\Config\IAdapter');
-class_alias('Nette\DI\Definitions\Statement', 'Nette\DI\Statement');
-class_alias('Nette\DI\Definitions\ServiceDefinition', 'Nette\DI\ServiceDefinition');
+class_alias(Nette\DI\Config\Adapter::class, Nette\DI\Config\IAdapter::class);
+class_alias(Nette\DI\Definitions\Statement::class, Nette\DI\Statement::class);
+class_alias(Nette\DI\Definitions\ServiceDefinition::class, Nette\DI\ServiceDefinition::class);
