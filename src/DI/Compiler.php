@@ -247,6 +247,8 @@ class Compiler
 			$this->dependencies->add([(new \ReflectionClass($extension))->getFileName()]);
 		}
 
+		$this->builder->complete();
+
 		$generator = new PhpGenerator($this->builder);
 		$class = $generator->generate($this->className);
 		$class->addMethod('initialize');

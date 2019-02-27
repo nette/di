@@ -42,8 +42,6 @@ class PhpGenerator
 	 */
 	public function generate(string $className): Nette\PhpGenerator\ClassType
 	{
-		$this->builder->complete();
-
 		$this->className = $className;
 		$class = new Nette\PhpGenerator\ClassType($this->className);
 		$class->setExtends(Container::class);
