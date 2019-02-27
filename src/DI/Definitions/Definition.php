@@ -60,7 +60,7 @@ abstract class Definition
 	 */
 	protected function setType(?string $type)
 	{
-		if ($this->notifier && $this->type !== $type) {
+		if ($this->autowired && $this->notifier && $this->type !== $type) {
 			($this->notifier)();
 		}
 		if ($type === null) {
