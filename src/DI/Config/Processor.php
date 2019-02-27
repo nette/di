@@ -58,6 +58,7 @@ class Processor
 				'parameters' => 'array',
 				'references' => 'array',
 				'tagged' => 'string',
+				'inject' => 'bool',
 				'autowired' => 'bool|string|array',
 				'tags' => 'array',
 			],
@@ -294,6 +295,10 @@ class Processor
 
 		if (isset($config['parameters'])) {
 			$definition->setParameters($config['parameters']);
+		}
+
+		if (isset($config['inject'])) {
+			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
 		}
 	}
 
