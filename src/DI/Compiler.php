@@ -22,7 +22,8 @@ class Compiler
 
 	private const
 		SERVICES = 'services',
-		PARAMETERS = 'parameters';
+		PARAMETERS = 'parameters',
+		DI = 'di';
 
 	/** @var CompilerExtension[] */
 	private $extensions = [];
@@ -171,6 +172,18 @@ class Compiler
 	public function exportDependencies(): array
 	{
 		return $this->dependencies->export();
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function addExportedTag(string $tag)
+	{
+		if (isset($this->extensions[self::DI])) {
+			$this->extensions[self::DI]->exportedTags[$tag] = true;
+		}
+		return $this;
 	}
 
 
