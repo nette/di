@@ -57,8 +57,8 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$ext = new MyExtension;
-	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1, 'd' => 1], 'name');
-}, Nette\InvalidStateException::class, "Unknown configuration option 'name › c', did you mean 'name › a'?");
+	$ext->validateConfig(['a' => 1, 'b' => 1], ['c' => 1, 'd' => 1], 'name.x');
+}, Nette\InvalidStateException::class, "Unknown configuration option 'name › x › c', did you mean 'name › x › a'?");
 
 Assert::exception(function () {
 	$ext = new MyExtension;
