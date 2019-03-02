@@ -77,3 +77,16 @@ test(function () {
 	', ['dynamic' => 123]);
 	Assert::same(['dynamic' => 123, 'expand' => 'hello123'], $container->parameters);
 });
+
+
+test(function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['dynamic']);
+	$container = createContainer($compiler, '
+	parameters:
+		dynamic: default
+		expand: %dynamic.item%
+
+	', ['dynamic' => ['item' => 123]]);
+	Assert::same(123, $container->parameters['expand']);
+});
