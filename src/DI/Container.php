@@ -286,6 +286,9 @@ class Container
 
 	public static function getMethodName(string $name): string
 	{
+		if ($name === '') {
+			throw new Nette\InvalidArgumentException('Service name must be a non-empty string.');
+		}
 		return 'createService' . str_replace('.', '__', ucfirst($name));
 	}
 }
