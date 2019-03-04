@@ -20,6 +20,9 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	/** @var string[] */
 	public $exportedTags = [];
 
+	/** @var string[] */
+	public $exportedTypes = [];
+
 	/** @var bool */
 	private $debugMode;
 
@@ -47,6 +50,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			public $parameters = true;
 			/** @var string[]|bool|null */
 			public $tags = true;
+			/** @var string[]|bool|null */
+			public $types = true;
 		};
 		$this->config->debugger = interface_exists(\Tracy\IBarPanel::class);
 	}
@@ -74,6 +79,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		}
 
 		$this->restrictTags($class);
+		$this->restrictTypes($class);
 
 		if ($this->debugMode && $this->config->debugger) {
 			$this->enableTracyIntegration($class);
@@ -92,6 +98,20 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		} elseif ($prop = $class->getProperties()['tags'] ?? null) {
 			$prop->value = array_intersect_key($prop->value, $this->exportedTags + array_flip((array) $option));
 		}
+	}
+
+
+	private function restrictTypes(Nette\PhpGenerator\ClassType $class): void
+	{
+		$option = $this->config->export->types;
+		if ($option === true) {
+			return;
+		}
+		$prop = $class->getProperty('wiring');
+		$prop->value = array_intersect_key(
+			$prop->value,
+			$this->exportedTypes + (is_array($option) ? array_flip($option) : [])
+		);
 	}
 
 
