@@ -17,8 +17,8 @@ $service = new stdClass;
 $container = new Container;
 
 Assert::exception(function () use ($container, $service) {
-	$container->addService(null, $service);
-}, TypeError::class);
+	$container->addService('', $service);
+}, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string.');
 
 Assert::exception(function () use ($container) {
 	$container->addService('one', null);

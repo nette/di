@@ -40,10 +40,14 @@ class Container
 	/** @var array circular reference detector */
 	private $creating;
 
+	/** @var array */
+	private $methods;
+
 
 	public function __construct(array $params = [])
 	{
-		$this->parameters = $params + $this->parameters;
+		$this->parameters = $params;
+		$this->methods = array_flip(get_class_methods($this));
 	}
 
 
@@ -60,9 +64,6 @@ class Container
 	 */
 	public function addService(string $name, $service)
 	{
-		if (!$name) {
-			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($name)));
-		}
 		$name = $this->aliases[$name] ?? $name;
 		if (isset($this->instances[$name])) {
 			throw new Nette\InvalidStateException("Service '$name' already exists.");
@@ -70,11 +71,11 @@ class Container
 		} elseif (!is_object($service)) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
 
-		} elseif (!isset($this->types[$name])) {
+		} elseif (!isset($this->methods[self::getMethodName($name)])) {
 			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
 
-		} elseif (!$service instanceof $this->types[$name]) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $this->types[$name], get_class($service)));
+		} elseif (($type = $this->getServiceType($name)) && !$service instanceof $type) {
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $type, get_class($service)));
 		}
 
 		$this->instances[$name] = $service;
@@ -115,11 +116,15 @@ class Container
 	 */
 	public function getServiceType(string $name): string
 	{
+		$method = self::getMethodName($name);
 		if (isset($this->aliases[$name])) {
 			return $this->getServiceType($this->aliases[$name]);
 
 		} elseif (isset($this->types[$name])) {
 			return $this->types[$name];
+
+		} elseif (isset($this->methods[$method])) {
+			return (string) (new \ReflectionMethod($this, $method))->getReturnType();
 
 		} else {
 			throw new MissingServiceException("Service '$name' not found.");
@@ -133,7 +138,7 @@ class Container
 	public function hasService(string $name): bool
 	{
 		$name = $this->aliases[$name] ?? $name;
-		return isset($this->types[$name]) || isset($this->instances[$name]);
+		return isset($this->methods[self::getMethodName($name)]) || isset($this->instances[$name]);
 	}
 
 
@@ -162,7 +167,7 @@ class Container
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
 
-		} elseif (!isset($this->types[$name])) {
+		} elseif (!isset($this->methods[$method])) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
 

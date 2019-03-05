@@ -56,11 +56,18 @@ class ContainerPanel implements Tracy\IBarPanel
 	public function getPanel(): string
 	{
 		$container = $this->container;
-		$file = (new \ReflectionClass($container))->getFileName();
+		$rc = new \ReflectionClass($container);
+		$file = $rc->getFileName();
 		$tags = [];
 		$instances = $this->getContainerProperty('instances');
 		$wiring = $this->getContainerProperty('wiring');
-		$types = $this->getContainerProperty('types');
+		$types = [];
+		foreach ($rc->getMethods() as $method) {
+			if (preg_match('#^createService(.+)#', $method->getName(), $m) && $method->getReturnType()) {
+				$types[lcfirst(str_replace('__', '.', $m[1]))] = (string) $method->getReturnType();
+			}
+		}
+		$types = $this->getContainerProperty('types') + $types;
 		ksort($types);
 		foreach ($this->getContainerProperty('tags') as $tag => $tmp) {
 			foreach ($tmp as $service => $val) {

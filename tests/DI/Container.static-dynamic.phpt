@@ -24,7 +24,7 @@ class MyContainer extends Container
 
 $container = new MyContainer;
 
-Assert::false($container->hasService('one'));
+Assert::true($container->hasService('one'));
 
 @$container->addService('one', new stdClass); // @ triggers service should be defined as "imported"
 

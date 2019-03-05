@@ -75,7 +75,7 @@ $six = $builder->addDefinition('eight')
 $container = createContainer($builder);
 
 Assert::type(Service::class, $container->getService('one'));
-Assert::false($container->hasService('One'));
+Assert::true($container->hasService('One')); // limitation, first character is case insensitive
 Assert::false($container->hasService('oNe'));
 
 Assert::same([

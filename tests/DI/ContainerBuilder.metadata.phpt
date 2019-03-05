@@ -42,7 +42,7 @@ Assert::same(
 );
 
 Assert::same(
-	['container' => Nette\DI\Container::class, 'lorem' => 'stdClass'],
+	['container' => Nette\DI\Container::class],
 	getPropertyValue($container, 'types')
 );
 

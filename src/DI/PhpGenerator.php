@@ -46,7 +46,7 @@ class PhpGenerator
 		$class = new Nette\PhpGenerator\ClassType($this->className);
 		$class->setExtends(Container::class);
 		$class->addMethod('__construct')
-			->addBody('$this->parameters = $params;')
+			->addBody('parent::__construct($params);')
 			->addBody('$this->parameters += ?;', [$this->builder->parameters])
 			->addParameter('params', [])
 				->setTypeHint('array');

@@ -15,14 +15,19 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-	protected $types = [
-		'one' => 'One',
-		'two' => 'Two',
-	];
-
 	protected $aliases = [
 		'three' => 'one',
 	];
+
+
+	public function createServiceOne(): One
+	{
+	}
+
+
+	public function createServiceTwo(): Two
+	{
+	}
 }
 
 

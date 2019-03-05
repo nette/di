@@ -15,9 +15,6 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-	protected $types = ['one' => true, 'two' => true];
-
-
 	protected function createServiceOne()
 	{
 		return $this->getService('two');
