@@ -74,7 +74,11 @@ class PhpGenerator
 
 	public function toString(Nette\PhpGenerator\ClassType $class): string
 	{
-		return "declare(strict_types=1);\n\n\n" . $class->__toString();
+		return '/** @noinspection PhpParamsInspection,PhpMethodMayBeStaticInspection */
+
+declare(strict_types=1);
+
+' . $class->__toString();
 	}
 
 
