@@ -258,7 +258,7 @@ class Compiler
 			$extension->afterCompile($class);
 		}
 
-		return "declare(strict_types=1);\n\n\n" . $class->__toString();
+		return $generator->toString($class);
 	}
 
 
