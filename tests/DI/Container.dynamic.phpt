@@ -15,10 +15,6 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	public static function create()
-	{
-		return new static;
-	}
 }
 
 
@@ -41,3 +37,36 @@ test(function () use ($container) {
 	Assert::same(Service::class, $container->getServiceType('one'));
 	Assert::same(Service::class, $container->getServiceType('two'));
 });
+
+
+// closure
+test(function () use ($container) {
+	@$container->addService('four', function () { // @ triggers service should be defined as "imported"
+		return new Service;
+	});
+
+	Assert::true($container->hasService('four'));
+	Assert::false($container->isCreated('four'));
+	Assert::true($container->getService('four') instanceof Service);
+	Assert::true($container->isCreated('four'));
+	Assert::same($container->getService('four'), $container->getService('four')); // shared
+
+	Assert::same('', $container->getServiceType('four'));
+});
+
+
+// closure with typehint
+test(function () use ($container) {
+	@$container->addService('five', function (): Service { // @ triggers service should be defined as "imported"
+		return new Service;
+	});
+
+	Assert::same(Service::class, $container->getServiceType('five'));
+});
+
+
+// bad closure
+Assert::exception(function () use ($container) {
+	@$container->addService('six', function () {}); // @ triggers service should be defined as "imported"
+	$container->getService('six');
+}, Nette\UnexpectedValueException::class, "Unable to create service 'six', value returned by closure is not object.");

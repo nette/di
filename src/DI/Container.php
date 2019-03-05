@@ -59,7 +59,7 @@ class Container
 
 	/**
 	 * Adds the service to the container.
-	 * @param  object  $service
+	 * @param  object  $service  service or its factory
 	 * @return static
 	 */
 	public function addService(string $name, $service)
@@ -70,16 +70,27 @@ class Container
 
 		} elseif (!is_object($service)) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
-
-		} elseif (!isset($this->methods[self::getMethodName($name)])) {
-			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
-			$this->types[$name] = get_class($service);
-
-		} elseif (($type = $this->getServiceType($name)) && !$service instanceof $type) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $type, get_class($service)));
 		}
 
-		$this->instances[$name] = $service;
+		$type = $service instanceof \Closure
+			? (string) (new \ReflectionFunction($service))->getReturnType()
+			: get_class($service);
+
+		if (!isset($this->methods[self::getMethodName($name)])) {
+			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
+			$this->types[$name] = $type;
+
+		} elseif (($expectedType = $this->getServiceType($name)) && !is_a($type, $expectedType, true)) {
+			throw new Nette\InvalidArgumentException("Service '$name' must be instance of $expectedType, " . ($type ? "$type given." : 'add typehint to closure.'));
+		}
+
+		if ($service instanceof \Closure) {
+			$this->methods[self::getMethodName($name)] = $service;
+			$this->types[$name] = $type;
+		} else {
+			$this->instances[$name] = $service;
+		}
+
 		return $this;
 	}
 
@@ -165,23 +176,24 @@ class Container
 	{
 		$name = $this->aliases[$name] ?? $name;
 		$method = self::getMethodName($name);
+		$cb = $this->methods[$method] ?? null;
 		if (isset($this->creating[$name])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for services: %s.', implode(', ', array_keys($this->creating))));
 
-		} elseif (!isset($this->methods[$method])) {
+		} elseif ($cb === null) {
 			throw new MissingServiceException("Service '$name' not found.");
 		}
 
 		try {
 			$this->creating[$name] = true;
-			$service = $this->$method(...$args);
+			$service = $cb instanceof \Closure ? $cb(...$args) : $this->$method(...$args);
 
 		} finally {
 			unset($this->creating[$name]);
 		}
 
 		if (!is_object($service)) {
-			throw new Nette\UnexpectedValueException("Unable to create service '$name', value returned by method $method() is not object.");
+			throw new Nette\UnexpectedValueException("Unable to create service '$name', value returned by " . ($cb instanceof \Closure ? 'closure' : "method $method()") . ' is not object.');
 		}
 
 		return $service;

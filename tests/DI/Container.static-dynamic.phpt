@@ -19,16 +19,75 @@ class MyContainer extends Container
 	{
 		return new stdClass;
 	}
+
+
+	protected function createServiceTypehint(): stdClass
+	{
+		return new stdClass;
+	}
 }
 
 
-$container = new MyContainer;
+test(function () {
+	$container = new MyContainer;
 
-Assert::true($container->hasService('one'));
+	Assert::true($container->hasService('one'));
 
-$container->addService('one', new stdClass);
+	$container->addService('one', new stdClass);
 
-Assert::true($container->hasService('one'));
+	Assert::true($container->hasService('one'));
+	Assert::same('', $container->getServiceType('one'));
 
-Assert::type(stdClass::class, $container->getService('one'));
-Assert::same($container->getService('one'), $container->getService('one')); // shared
+	Assert::type(stdClass::class, $container->getService('one'));
+	Assert::same($container->getService('one'), $container->getService('one')); // shared
+});
+
+
+test(function () { // closure
+	$container = new MyContainer;
+
+	$container->addService('one', function () { return new stdClass; });
+
+	Assert::true($container->hasService('one'));
+	Assert::same('', $container->getServiceType('one'));
+	Assert::type(stdClass::class, $container->getService('one'));
+	Assert::same($container->getService('one'), $container->getService('one')); // shared
+});
+
+
+test(function () { // closure & typehint
+	$container = new MyContainer;
+
+	$container->addService('one', function (): stdClass { return new stdClass; });
+
+	Assert::same(stdClass::class, $container->getServiceType('one'));
+	Assert::true($container->hasService('one'));
+	Assert::type(stdClass::class, $container->getService('one'));
+});
+
+
+test(function () { // closure & matching typehint
+	$container = new MyContainer;
+
+	class MyClass extends stdClass
+	{
+	}
+
+	$container->addService('typehint', function (): MyClass { return new MyClass; });
+
+	Assert::same(MyClass::class, $container->getServiceType('typehint'));
+	Assert::true($container->hasService('typehint'));
+	Assert::type(MyClass::class, $container->getService('typehint'));
+});
+
+
+Assert::exception(function () { // closure & wrong typehint
+	$container = new MyContainer;
+	$container->addService('typehint', function () { return new DateTime; });
+}, Nette\InvalidArgumentException::class, "Service 'typehint' must be instance of stdClass, add typehint to closure.");
+
+
+Assert::exception(function () { // closure & wrong typehint
+	$container = new MyContainer;
+	$container->addService('typehint', function (): DateTime { return new DateTime; });
+}, Nette\InvalidArgumentException::class, "Service 'typehint' must be instance of stdClass, DateTime given.");
