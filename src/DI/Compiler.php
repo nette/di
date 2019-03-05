@@ -36,6 +36,9 @@ class Compiler
 	/** @var array */
 	private $config = [];
 
+	/** @var string */
+	private $sources = '';
+
 	/** @var DependencyChecker */
 	private $dependencies;
 
@@ -111,6 +114,7 @@ class Compiler
 			unset($config[self::SERVICES]);
 		}
 		$this->config = Config\Helpers::merge($config, $this->config);
+		$this->sources .= "// source: array\n";
 		return $this;
 	}
 
@@ -121,11 +125,13 @@ class Compiler
 	 */
 	public function loadConfig(string $file, Config\Loader $loader = null)
 	{
+		$sources = $this->sources . "// source: $file\n";
 		$loader = $loader ?: new Config\Loader;
 		foreach ($loader->load($file, false) as $data) {
 			$this->addConfig($data);
 		}
 		$this->dependencies->add($loader->getDependencies());
+		$this->sources = $sources;
 		return $this;
 	}
 
@@ -258,7 +264,7 @@ class Compiler
 			$extension->afterCompile($class);
 		}
 
-		return $generator->toString($class);
+		return $this->sources . "\n" . $generator->toString($class);
 	}
 
 
