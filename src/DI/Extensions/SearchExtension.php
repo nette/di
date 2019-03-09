@@ -11,6 +11,7 @@ namespace Nette\DI\Extensions;
 
 use Nette;
 use Nette\Loaders\RobotLoader;
+use Nette\Schema\Expect;
 use Nette\Utils\Arrays;
 
 
@@ -19,21 +20,6 @@ use Nette\Utils\Arrays;
  */
 final class SearchExtension extends Nette\DI\CompilerExtension
 {
-	/** @var array */
-	private $defaults = [
-		'in' => null,
-		'files' => [],
-		'classes' => [],
-		'extends' => [],
-		'implements' => [],
-		'exclude' => [
-			'classes' => [],
-			'extends' => [],
-			'implements' => [],
-		],
-		'tags' => [],
-	];
-
 	/** @var array */
 	private $classes = [];
 
@@ -47,44 +33,60 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	}
 
 
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		return Expect::arrayOf(
+			Expect::structure([
+				'in' => Expect::string()->required(),
+				'files' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+				'classes' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+				'extends' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+				'implements' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+				'exclude' => Expect::structure([
+					'classes' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+					'extends' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+					'implements' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
+				]),
+				'tags' => Expect::array(),
+			])
+		)->before(function ($val) {
+			return is_string($val['in'] ?? null)
+				? ['default' => $val]
+				: $val;
+		});
+	}
+
+
 	public function loadConfiguration()
 	{
-		$batches = is_string($this->config['in'] ?? null)
-			? ['default' => $this->config]
-			: $this->config;
-
-		foreach (array_filter($batches) as $name => $batch) {
-			$batch = $this->validateConfig($this->defaults, $batch, $this->prefix((string) $name));
-			$batch['exclude'] = $this->validateConfig($this->defaults['exclude'], $batch['exclude'], $this->prefix("$name.exclude"));
-
-			$in = $batch['in'];
-			if (!is_string($in) || !is_dir($in)) {
-				throw new Nette\DI\InvalidConfigurationException("Option '{$this->name} › {$name} › in' must be valid directory name, " . (is_string($in) ? "'$in'" : gettype($in)) . ' given.');
+		foreach (array_filter($this->config) as $name => $batch) {
+			if (!is_dir($batch->in)) {
+				throw new Nette\DI\InvalidConfigurationException("Option '{$this->name} › {$name} › in' must be valid directory name, '{$batch->in}' given.");
 			}
 
 			foreach ($this->findClasses($batch) as $class) {
-				$this->classes[$class] = array_merge($this->classes[$class] ?? [], $batch['tags']);
+				$this->classes[$class] = array_merge($this->classes[$class] ?? [], $batch->tags);
 			}
 		}
 	}
 
 
-	public function findClasses(array $config): array
+	public function findClasses(\stdClass $config): array
 	{
 		$robot = new RobotLoader;
 		$robot->setTempDirectory($this->tempDir);
-		$robot->addDirectory($config['in']);
-		$robot->acceptFiles = (array) ($config['files'] ?: '*.php');
+		$robot->addDirectory($config->in);
+		$robot->acceptFiles = $config->files ?: ['*.php'];
 		$robot->reportParseErrors(false);
 		$robot->refresh();
 		$classes = array_unique(array_keys($robot->getIndexedClasses()));
 		$classes = array_filter($classes, 'class_exists');
 
-		$exclude = $config['exclude'];
-		$acceptRE = self::buildNameRegexp((array) $config['classes']);
-		$rejectRE = self::buildNameRegexp((array) $exclude['classes']);
-		$acceptParent = array_merge((array) $config['extends'], (array) $config['implements']);
-		$rejectParent = array_merge((array) $exclude['extends'], (array) $exclude['implements']);
+		$exclude = $config->exclude;
+		$acceptRE = self::buildNameRegexp($config->classes);
+		$rejectRE = self::buildNameRegexp($exclude->classes);
+		$acceptParent = array_merge($config->extends, $config->implements);
+		$rejectParent = array_merge($exclude->extends, $exclude->implements);
 
 		$found = [];
 		foreach ($classes as $class) {

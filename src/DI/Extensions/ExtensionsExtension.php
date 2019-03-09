@@ -17,6 +17,12 @@ use Nette;
  */
 final class ExtensionsExtension extends Nette\DI\CompilerExtension
 {
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		return Nette\Schema\Expect::arrayOf('string|Nette\DI\Definitions\Statement');
+	}
+
+
 	public function loadConfiguration()
 	{
 		foreach ($this->getConfig() as $name => $class) {

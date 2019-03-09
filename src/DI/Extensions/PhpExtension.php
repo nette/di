@@ -17,15 +17,18 @@ use Nette;
  */
 final class PhpExtension extends Nette\DI\CompilerExtension
 {
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		return Nette\Schema\Expect::arrayOf('scalar');
+	}
+
+
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$initialize = $class->getMethod('initialize');
 		foreach ($this->getConfig() as $name => $value) {
 			if ($value === null) {
 				continue;
-
-			} elseif (!is_scalar($value)) {
-				throw new Nette\InvalidStateException("Configuration value for directive '$name' is not scalar.");
 
 			} elseif ($name === 'include_path') {
 				$initialize->addBody('set_include_path(?);', [str_replace(';', PATH_SEPARATOR, $value)]);

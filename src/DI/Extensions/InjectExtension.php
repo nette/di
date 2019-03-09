@@ -23,6 +23,12 @@ final class InjectExtension extends DI\CompilerExtension
 	public const TAG_INJECT = 'nette.inject';
 
 
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		return Nette\Schema\Expect::structure([]);
+	}
+
+
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
