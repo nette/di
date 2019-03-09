@@ -17,12 +17,6 @@ use Nette;
  */
 final class DIExtension extends Nette\DI\CompilerExtension
 {
-	public $defaults = [
-		'debugger' => null,
-		'excluded' => [],
-		'parentClass' => null,
-	];
-
 	/** @var bool */
 	private $debugMode;
 
@@ -32,30 +26,38 @@ final class DIExtension extends Nette\DI\CompilerExtension
 
 	public function __construct(bool $debugMode = false)
 	{
-		$this->defaults['debugger'] = interface_exists(\Tracy\IBarPanel::class);
 		$this->debugMode = $debugMode;
 		$this->time = microtime(true);
+
+		$this->config = new class {
+			/** @var bool */
+			public $debugger = true;
+			/** @var array */
+			public $excluded = [];
+			/** @var ?string */
+			public $parentClass;
+		};
+		$this->config->debugger = interface_exists(\Tracy\IBarPanel::class);
 	}
 
 
 	public function loadConfiguration()
 	{
-		$config = $this->validateConfig($this->defaults);
 		$builder = $this->getContainerBuilder();
-		$builder->addExcludedClasses($config['excluded']);
+		$builder->addExcludedClasses($this->config->excluded);
 	}
 
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
-		if ($this->config['parentClass']) {
-			$class->setExtends($this->config['parentClass']);
+		if ($this->config->parentClass) {
+			$class->setExtends($this->config->parentClass);
 		}
 
 		$initialize = $class->getMethod('initialize');
 		$builder = $this->getContainerBuilder();
 
-		if ($this->debugMode && $this->config['debugger']) {
+		if ($this->debugMode && $this->config->debugger) {
 			Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
 			$initialize->addBody($builder->formatPhp('?;', [
 				new Nette\DI\Definitions\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)]),

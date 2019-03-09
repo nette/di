@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Config\Expect;
 use Nette\DI\Definitions;
 
 /**
@@ -17,23 +18,26 @@ use Nette\DI\Definitions;
  */
 final class DecoratorExtension extends Nette\DI\CompilerExtension
 {
-	public $defaults = [
-		'setup' => [],
-		'tags' => [],
-		'inject' => null,
-	];
+	public function getConfigSchema(): Nette\DI\Config\Schema
+	{
+		return Expect::arrayOf(
+			Expect::structure([
+				'setup' => Expect::list(),
+				'tags' => Expect::array(),
+				'inject' => Expect::bool(),
+			])
+		);
+	}
 
 
 	public function beforeCompile()
 	{
-		foreach ($this->getConfig() as $type => $info) {
-			$info = $this->validateConfig($this->defaults, $info, $this->prefix($type));
-			if ($info['inject'] !== null) {
-				$info['tags'][InjectExtension::TAG_INJECT] = $info['inject'];
+		foreach ($this->config as $type => $info) {
+			if ($info->inject !== null) {
+				$info->tags[InjectExtension::TAG_INJECT] = $info->inject;
 			}
-			$info = Nette\DI\Config\Processor::processArguments($info);
-			$this->addSetups($type, (array) $info['setup']);
-			$this->addTags($type, (array) $info['tags']);
+			$this->addSetups($type, Nette\DI\Config\Processor::processArguments($info->setup));
+			$this->addTags($type, Nette\DI\Config\Processor::processArguments($info->tags));
 		}
 	}
 
