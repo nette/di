@@ -65,8 +65,20 @@ abstract class CompilerExtension
 
 
 	/**
+	 * Returns configuration schema.
+	 */
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		return is_object($this->config)
+			? Nette\Schema\Expect::from($this->config)
+			: Nette\Schema\Expect::array();
+	}
+
+
+	/**
 	 * Checks whether $config contains only $expected items and returns combined array.
 	 * @throws Nette\InvalidStateException
+	 * @deprecated  use getConfigSchema()
 	 */
 	public function validateConfig(array $expected, array $config = null, string $name = null): array
 	{
@@ -79,7 +91,7 @@ abstract class CompilerExtension
 			$extra = $hint ? key($extra) : implode("', '{$name} › ", array_keys($extra));
 			throw new Nette\DI\InvalidConfigurationException("Unknown configuration option '{$name} › {$extra}'" . ($hint ? ", did you mean '{$name} › {$hint}'?" : '.'));
 		}
-		return Config\Helpers::merge($config, $expected);
+		return Nette\Schema\Helpers::merge($config, $expected);
 	}
 
 

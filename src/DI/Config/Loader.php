@@ -57,7 +57,7 @@ class Loader
 			$includes = Nette\DI\Helpers::expand($data[self::INCLUDES_KEY], $this->parameters);
 			foreach ($includes as $include) {
 				$include = $this->expandIncludedFile($include, $file);
-				$res = Helpers::merge($this->load($include, $merge), $res);
+				$res = Nette\Schema\Helpers::merge($this->load($include, $merge), $res);
 			}
 		}
 		unset($data[self::INCLUDES_KEY], $this->loadedFiles[$file]);
@@ -65,7 +65,7 @@ class Loader
 		if ($merge === false) {
 			$res[] = $data;
 		} else {
-			$res = Helpers::merge($data, $res);
+			$res = Nette\Schema\Helpers::merge($data, $res);
 		}
 		return $res;
 	}

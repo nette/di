@@ -14,6 +14,7 @@ use Nette;
 
 /**
  * Configuration helpers.
+ * @deprecated
  */
 final class Helpers
 {
@@ -28,29 +29,7 @@ final class Helpers
 	 */
 	public static function merge($left, $right)
 	{
-		if (is_array($left) && isset($left[self::PREVENT_MERGING])) {
-			unset($left[self::PREVENT_MERGING]);
-			return $left;
-		}
-
-		if (is_array($left) && is_array($right)) {
-			$index = 0;
-			foreach ($left as $key => $val) {
-				if ($key === $index) {
-					$right[] = $val;
-					$index++;
-				} else {
-					$right[$key] = static::merge($val, $right[$key] ?? null);
-				}
-			}
-			return $right;
-
-		} elseif ($left === null && is_array($right)) {
-			return $right;
-
-		} else {
-			return $left;
-		}
+		return Nette\Schema\Helpers::merge($left, $right);
 	}
 
 
