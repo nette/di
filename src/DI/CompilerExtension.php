@@ -65,6 +65,15 @@ abstract class CompilerExtension
 
 
 	/**
+	 * Returns configuration schema.
+	 */
+	public function getConfigSchema(): Config\Schema
+	{
+		return new Config\Expect;
+	}
+
+
+	/**
 	 * Checks whether $config contains only $expected items and returns combined array.
 	 * @throws Nette\InvalidStateException
 	 */
