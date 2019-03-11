@@ -17,17 +17,16 @@
 	"require": {
 		"php": ">=7.1",
 		"ext-tokenizer": "*",
-		"nette/neon": "^2.3.3 || ~3.0.0",
+		"nette/neon": "^3.0",
 		"nette/php-generator": "^3.2",
-		"nette/utils": "^2.5 || ~3.0.0"
+		"nette/utils": "^3.0"
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",
 		"tracy/tracy": "^2.3"
 	},
 	"conflict": {
-		"nette/nette": "<2.2",
-		"nette/bootstrap": "<2.4"
+		"nette/bootstrap": "<3.0"
 	},
 	"autoload": {
 		"classmap": ["src/"],
