@@ -72,7 +72,7 @@ abstract class CompilerExtension
 			$name = $name ? str_replace('.', ' › ', $name) : $this->name;
 			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($expected), key($extra));
 			$extra = $hint ? key($extra) : implode("', '{$name} › ", array_keys($extra));
-			throw new Nette\InvalidStateException("Unknown configuration option '{$name} › {$extra}'" . ($hint ? ", did you mean '{$name} › {$hint}'?" : '.'));
+			throw new Nette\DI\InvalidConfigurationException("Unknown configuration option '{$name} › {$extra}'" . ($hint ? ", did you mean '{$name} › {$hint}'?" : '.'));
 		}
 		return Config\Helpers::merge($config, $expected);
 	}

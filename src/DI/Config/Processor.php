@@ -13,7 +13,6 @@ use Nette;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Extensions;
-use Nette\DI\ServiceCreationException;
 use Nette\Utils\Validators;
 
 
@@ -138,7 +137,7 @@ class Processor
 			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
 				if (array_key_exists($alias, $config)) {
 					if (array_key_exists($original, $config)) {
-						throw new Nette\InvalidStateException("Options '$alias' and '$original' are aliases, use only '$original'.");
+						throw new Nette\DI\InvalidConfigurationException("Options '$alias' and '$original' are aliases, use only '$original'.");
 					}
 					$config[$original] = $config[$alias];
 					unset($config[$alias]);
@@ -147,7 +146,7 @@ class Processor
 			return $config;
 
 		} else {
-			throw new Nette\InvalidStateException('Unexpected format of service definition');
+			throw new Nette\DI\InvalidConfigurationException('Unexpected format of service definition');
 		}
 	}
 
@@ -173,7 +172,7 @@ class Processor
 				$this->builder->removeDefinition($name);
 				return;
 			} elseif (!empty($config['alteration']) && !$this->builder->hasDefinition($name)) {
-				throw new ServiceCreationException('missing original definition for alteration.');
+				throw new Nette\DI\InvalidConfigurationException('missing original definition for alteration.');
 			}
 			unset($config['alteration']);
 
@@ -184,7 +183,7 @@ class Processor
 			$this->{$scheme['method']}($def, $config, $name);
 			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
-			throw new ServiceCreationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
+			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
 		}
 	}
 
@@ -356,7 +355,7 @@ class Processor
 				return Nette\Utils\ObjectHelpers::getSuggestion($expected, $error);
 			}, $error));
 			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
-			throw new Nette\InvalidStateException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
+			throw new Nette\DI\InvalidConfigurationException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
 		}
 
 		foreach ($fields as $field => $expected) {

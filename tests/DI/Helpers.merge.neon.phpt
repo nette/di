@@ -37,8 +37,8 @@ Assert::same(['item' => []], merge('item!: []', 'item: []'));
 
 Assert::exception(function () {
 	merge('item!: 231', 'item:');
-}, Nette\InvalidStateException::class);
+}, Nette\DI\InvalidConfigurationException::class);
 
 Assert::exception(function () {
 	merge('item!: 231', 'item: 231');
-}, Nette\InvalidStateException::class);
+}, Nette\DI\InvalidConfigurationException::class);
