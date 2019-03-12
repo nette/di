@@ -15,9 +15,20 @@ require __DIR__ . '/../bootstrap.php';
 
 $processor = new Processor(new Nette\DI\ContainerBuilder);
 
-Assert::same(
+Assert::equal(
 	[
-		'foo' => ['factory' => 'class'],
+		'foo' => (object) [
+			'type' => null,
+			'factory' => 'class',
+			'arguments' => [],
+			'setup' => [],
+			'inject' => null,
+			'autowired' => null,
+			'tags' => [],
+			'reset' => [],
+			'alteration' => null,
+			'defType' => 'service',
+		],
 	],
 	$processor->processSchema([[
 		'foo' => 'class',

@@ -25,7 +25,7 @@ Assert::same([
 ], array_keys($compiler->exportDependencies()[1]));
 
 
-Assert::same([
+Assert::equal([
 	'parameters' => [
 		'me' => [
 			'loader.includes.child.neon',
@@ -36,5 +36,18 @@ Assert::same([
 		'list' => [5, 6, 1, 2],
 		'force' => [1, 2],
 	],
-	'services' => ['a' => ['factory' => 'stdClass', 'autowired' => false]],
+	'services' => [
+		'a' => (object) [
+			'type' => null,
+			'factory' => 'stdClass',
+			'arguments' => [],
+			'setup' => [],
+			'inject' => null,
+			'autowired' => false,
+			'tags' => [],
+			'reset' => [],
+			'alteration' => null,
+			'defType' => 'service',
+		],
+	],
 ], $compiler->getConfig());
