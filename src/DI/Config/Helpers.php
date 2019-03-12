@@ -28,17 +28,17 @@ final class Helpers
 	 */
 	public static function merge($left, $right)
 	{
+		if (is_array($left) && isset($left[self::PREVENT_MERGING])) {
+			unset($left[self::PREVENT_MERGING]);
+			return $left;
+		}
+
 		if (is_array($left) && is_array($right)) {
 			foreach ($left as $key => $val) {
 				if (is_int($key)) {
 					$right[] = $val;
 				} else {
-					if (is_array($val) && isset($val[self::PREVENT_MERGING])) {
-						unset($val[self::PREVENT_MERGING]);
-					} elseif (isset($right[$key])) {
-						$val = static::merge($val, $right[$key]);
-					}
-					$right[$key] = $val;
+					$right[$key] = static::merge($val, $right[$key] ?? null);
 				}
 			}
 			return $right;
