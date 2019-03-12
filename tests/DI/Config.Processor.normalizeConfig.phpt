@@ -48,4 +48,4 @@ Assert::same(['imported' => 'val'], $processor->normalizeConfig(['dynamic' => 'v
 
 Assert::exception(function () use ($processor) {
 	$processor->normalizeConfig(['class' => 'val', 'type' => 'val']);
-}, Nette\InvalidStateException::class, "Options 'class' and 'type' are aliases, use only 'type'.");
+}, Nette\DI\InvalidConfigurationException::class, "Options 'class' and 'type' are aliases, use only 'type'.");

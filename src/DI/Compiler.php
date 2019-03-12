@@ -228,7 +228,7 @@ class Compiler
 
 		} elseif ($extra = key(array_diff_key($config, $this->extensions))) {
 			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::RESERVED + $this->extensions), $extra);
-			throw new Nette\InvalidStateException(
+			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')
 			);

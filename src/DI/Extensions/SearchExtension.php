@@ -59,7 +59,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 			$in = $batch['in'];
 			if (!is_string($in) || !is_dir($in)) {
-				throw new Nette\InvalidStateException("Option '{$this->name} › {$name} › in' must be valid directory name, " . (is_string($in) ? "'$in'" : gettype($in)) . ' given.');
+				throw new Nette\DI\InvalidConfigurationException("Option '{$this->name} › {$name} › in' must be valid directory name, " . (is_string($in) ? "'$in'" : gettype($in)) . ' given.');
 			}
 
 			foreach ($this->findClasses($batch) as $class) {

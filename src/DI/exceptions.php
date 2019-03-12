@@ -39,3 +39,11 @@ class ServiceCreationException extends Nette\InvalidStateException
 class NotAllowedDuringResolvingException extends Nette\InvalidStateException
 {
 }
+
+
+/**
+ * Error in configuration.
+ */
+class InvalidConfigurationException extends Nette\InvalidStateException
+{
+}
