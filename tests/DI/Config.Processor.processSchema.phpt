@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\Config\Processor::mergeConfigs()
+ * Test: Nette\DI\Config\Processor::processSchema()
  */
 
 declare(strict_types=1);
@@ -19,7 +19,7 @@ Assert::same(
 	[
 		'foo' => ['factory' => 'class'],
 	],
-	$processor->mergeConfigs([
+	$processor->processSchema([[
 		'foo' => 'class',
-	], [])
+	], []])
 );

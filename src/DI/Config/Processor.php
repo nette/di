@@ -94,17 +94,21 @@ class Processor
 
 
 	/**
-	 * Normalizes and merges configuration of list of service definitions. Left has higher priority.
+	 * Normalizes and merges configuration of list of service definitions.
 	 */
-	public function mergeConfigs(array $left, ?array $right): array
+	public function processSchema(array $configs): array
 	{
-		foreach ($left as $key => &$def) {
-			$def = $this->normalizeConfig($def, $key);
-			if (!empty($def['alteration']) && isset($right[$key])) {
-				unset($def['alteration']);
+		$flat = null;
+		foreach ($configs as $config) {
+			foreach ($config as $key => &$def) {
+				$def = $this->normalizeConfig($def, $key);
+				if (!empty($def['alteration']) && isset($flat[$key])) {
+					unset($def['alteration']);
+				}
 			}
+			$flat = Helpers::merge($config, $flat);
 		}
-		return Helpers::merge($left, $right);
+		return (array) $flat;
 	}
 
 

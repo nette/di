@@ -32,6 +32,7 @@ Assert::same(
 		'parameters' => [
 			'item1' => 1,
 		],
+		'services' => [],
 	],
 	$compiler->getConfig()
 );

@@ -250,10 +250,9 @@ class Compiler
 	/** @internal */
 	public function processServices(): void
 	{
-		foreach ($this->configs[self::SERVICES] ?? [] as $config) {
-			$this->config[self::SERVICES] = $this->configProcessor->mergeConfigs($config, $this->config[self::SERVICES] ?? null);
-		}
-		$this->loadDefinitionsFromConfig($this->config[self::SERVICES] ?? []);
+		$config = $this->configProcessor->processSchema($this->configs[self::SERVICES] ?? []);
+		$this->config[self::SERVICES] = $config;
+		$this->configProcessor->loadDefinitions($config);
 	}
 
 
@@ -287,8 +286,8 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		$configList = array_map([$this->configProcessor, 'normalizeConfig'], $configList);
-		$this->configProcessor->loadDefinitions($configList);
+		$config = $this->configProcessor->processSchema([$configList]);
+		$this->configProcessor->loadDefinitions($config);
 	}
 
 
