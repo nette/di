@@ -27,7 +27,7 @@ class Processor
 		Definitions\ServiceDefinition::class => [
 			'method' => 'updateServiceDefinition',
 			'fields' => [
-				'type' => 'string|Nette\DI\Definitions\Statement',
+				'type' => 'string',
 				'factory' => 'callable|Nette\DI\Definitions\Statement',
 				'arguments' => 'array',
 				'setup' => 'list',
@@ -99,7 +99,7 @@ class Processor
 	public function mergeConfigs(array $left, ?array $right): array
 	{
 		foreach ($left as $key => &$def) {
-			$def = $this->normalizeConfig($def);
+			$def = $this->normalizeConfig($def, $key);
 			if (!empty($def['alteration']) && isset($right[$key])) {
 				unset($def['alteration']);
 			}
@@ -111,7 +111,7 @@ class Processor
 	/**
 	 * Normalizes configuration of service definition.
 	 */
-	public function normalizeConfig($config): array
+	public function normalizeConfig($config, $key = null): array
 	{
 		if ($config === null || $config === false) {
 			return (array) $config;
@@ -134,6 +134,17 @@ class Processor
 			return ['factory' => $config];
 
 		} elseif (is_array($config)) {
+			if (isset($config['class']) && !isset($config['type'])) {
+				if ($config['class'] instanceof Statement) {
+					trigger_error("Service '$key': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
+					$config['factory'] = $config['class'];
+					unset($config['class']);
+				} elseif (!isset($config['factory'])) {
+					$config['factory'] = $config['class'];
+					unset($config['class']);
+				}
+			}
+
 			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
 				if (array_key_exists($alias, $config)) {
 					if (array_key_exists($original, $config)) {
@@ -180,7 +191,7 @@ class Processor
 			$def = $this->retrieveDefinition($name, $config);
 			$scheme = $this->schemes[get_class($def)];
 			$this->validateFields($config, $scheme['fields']);
-			$this->{$scheme['method']}($def, $config, $name);
+			$this->{$scheme['method']}($def, $config);
 			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
 			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
@@ -191,26 +202,17 @@ class Processor
 	/**
 	 * Updates service definition according to normalized configuration.
 	 */
-	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config, string $name = null): void
+	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config): void
 	{
 		$config = self::processArguments($config);
 
-		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
+		if (array_key_exists('factory', $config)) {
+			$definition->setFactory($config['factory']);
 			$definition->setType(null);
-			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
-			if ($config['type'] instanceof Statement) {
-				trigger_error("Service '$name': option 'type' or 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
-			} else {
-				$definition->setType($config['type']);
-			}
-			$definition->setFactory($config['type']);
-		}
-
-		if (array_key_exists('factory', $config)) {
-			$definition->setFactory($config['factory']);
+			$definition->setType($config['type']);
 		}
 
 		if (array_key_exists('arguments', $config)) {

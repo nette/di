@@ -18,6 +18,10 @@ services:
 		factory: IpsumFactory::create(2)
 	one8!:
 		factory: Ipsum
+	one9:
+		type: Ipsum
+	one10:
+		class: Ipsum
 
 	two1:
 		factory: Ipsum
@@ -42,6 +46,10 @@ services:
 	two10:
 		factory: Factory::createLorem(2)
 		arguments: [1: new]
+	two11:
+		type: Ipsum
+	two12:
+		class: Ipsum
 
 	three1:
 		factory: Ipsum
@@ -59,3 +67,7 @@ services:
 		arguments: [2]
 	three7:
 		factory: IpsumFactory::create(2)
+	three8:
+		type: Ipsum
+	three9:
+		class: Ipsum
