@@ -15,6 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $compiler = new Compiler;
 $compiler->loadConfig('files/loader.includes.neon');
+$compiler->compile();
 
 Assert::same([
 	'files/loader.includes.neon',
@@ -25,7 +26,6 @@ Assert::same([
 
 
 Assert::same([
-	'services' => ['a' => ['factory' => 'stdClass', 'autowired' => false]],
 	'parameters' => [
 		'me' => [
 			'loader.includes.child.neon',
@@ -36,4 +36,5 @@ Assert::same([
 		'list' => [5, 6, 1, 2],
 		'force' => [1, 2],
 	],
+	'services' => ['a' => ['factory' => 'stdClass', 'autowired' => false]],
 ], $compiler->getConfig());

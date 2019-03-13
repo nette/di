@@ -21,26 +21,17 @@ Assert::same(
 
 
 $compiler->addConfig([
-	'item1' => 1,
-]);
-
-Assert::same(
-	[
+	'parameters' => [
 		'item1' => 1,
 	],
-	$compiler->getConfig()
-);
-
-
-$compiler->loadConfig(Tester\FileMock::create('
-item1: 11
-item2: 2
-', 'neon'));
+]);
+$compiler->compile();
 
 Assert::same(
 	[
-		'item1' => 11,
-		'item2' => 2,
+		'parameters' => [
+			'item1' => 1,
+		],
 	],
 	$compiler->getConfig()
 );
