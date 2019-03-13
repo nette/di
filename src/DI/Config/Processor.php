@@ -195,9 +195,9 @@ class Processor
 	{
 		$config = self::processArguments($config);
 
-		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
+		if (array_key_exists('factory', $config)) {
+			$definition->setFactory($config['factory']);
 			$definition->setType(null);
-			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
@@ -206,11 +206,6 @@ class Processor
 			} else {
 				$definition->setType($config['type']);
 			}
-			$definition->setFactory($config['type']);
-		}
-
-		if (array_key_exists('factory', $config)) {
-			$definition->setFactory($config['factory']);
 		}
 
 		if (array_key_exists('arguments', $config)) {
