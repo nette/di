@@ -72,6 +72,16 @@ class PhpGenerator
 	}
 
 
+	public function toString(Nette\PhpGenerator\ClassType $class): string
+	{
+		return '/** @noinspection PhpParamsInspection,PhpMethodMayBeStaticInspection */
+
+declare(strict_types=1);
+
+' . $class->__toString();
+	}
+
+
 	public function generateMethod(Definitions\Definition $def): Nette\PhpGenerator\Method
 	{
 		try {

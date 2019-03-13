@@ -497,9 +497,11 @@ class Resolver
 				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 				&& (class_exists($type) || interface_exists($type))
 			) {
-				$src = $resolver instanceof self ? $resolver->getContainerBuilder() : $resolver;
+				$list = $resolver instanceof self
+					? $resolver->getContainerBuilder()->findAutowired($type)
+					: array_map([$resolver, 'getService'], $resolver->findAutowired($type));
 				$res[$num] = [];
-				foreach ($src->findAutowired($type) as $item) {
+				foreach ($list as $item) {
 					if ($item !== $current) {
 						$res[$num][] = $item;
 					}

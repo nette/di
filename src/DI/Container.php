@@ -31,7 +31,7 @@ class Container
 	/** @var array[]  tag name => service name => tag value */
 	protected $tags = [];
 
-	/** @var array[]  type => autowired? => services */
+	/** @var array[]  type => level => services */
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
@@ -213,10 +213,7 @@ class Container
 	public function findAutowired(string $type): array
 	{
 		$type = Helpers::normalizeClass($type);
-		return array_map(
-			[$this, 'getService'],
-			array_merge($this->wiring[$type][2] ?? [], $this->wiring[$type][1] ?? [])
-		);
+		return array_merge($this->wiring[$type][0] ?? [], $this->wiring[$type][1] ?? []);
 	}
 
 
@@ -289,6 +286,9 @@ class Container
 
 	public static function getMethodName(string $name): string
 	{
+		if ($name === '') {
+			throw new Nette\InvalidArgumentException('Service name must be a non-empty string.');
+		}
 		return 'createService' . str_replace('.', '__', ucfirst($name));
 	}
 }

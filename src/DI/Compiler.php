@@ -36,6 +36,9 @@ class Compiler
 	/** @var array */
 	private $config = [];
 
+	/** @var string */
+	private $sources = '';
+
 	/** @var DependencyChecker */
 	private $dependencies;
 
@@ -111,6 +114,7 @@ class Compiler
 			unset($config[self::SERVICES]);
 		}
 		$this->config = Config\Helpers::merge($config, $this->config);
+		$this->sources .= "// source: array\n";
 		return $this;
 	}
 
@@ -121,11 +125,13 @@ class Compiler
 	 */
 	public function loadConfig(string $file, Config\Loader $loader = null)
 	{
+		$sources = $this->sources . "// source: $file\n";
 		$loader = $loader ?: new Config\Loader;
 		foreach ($loader->load($file, false) as $data) {
 			$this->addConfig($data);
 		}
 		$this->dependencies->add($loader->getDependencies());
+		$this->sources = $sources;
 		return $this;
 	}
 
@@ -222,7 +228,7 @@ class Compiler
 
 		} elseif ($extra = key(array_diff_key($config, $this->extensions))) {
 			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::RESERVED + $this->extensions), $extra);
-			throw new Nette\InvalidStateException(
+			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')
 			);
@@ -258,7 +264,7 @@ class Compiler
 			$extension->afterCompile($class);
 		}
 
-		return "declare(strict_types=1);\n\n\n" . $class->__toString();
+		return $this->sources . "\n" . $generator->toString($class);
 	}
 
 

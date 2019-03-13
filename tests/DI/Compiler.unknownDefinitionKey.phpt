@@ -22,4 +22,4 @@ Assert::throws(function () {
 			setups: []
 			foo: bar
 	');
-}, Nette\InvalidStateException::class, "Unknown key 'autowire', 'setups', 'foo' in definition of service, did you mean 'autowired', 'setup'?");
+}, Nette\DI\InvalidConfigurationException::class, "Unknown key 'autowire', 'setups', 'foo' in definition of service, did you mean 'autowired', 'setup'?");

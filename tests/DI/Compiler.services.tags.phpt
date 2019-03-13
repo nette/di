@@ -35,8 +35,8 @@ services:
 
 Assert::same(
 	[
-		Nette\DI\Container::class => [2 => ['container']],
-		stdClass::class => [2 => ['lorem']],
+		Nette\DI\Container::class => [['container']],
+		stdClass::class => [['lorem']],
 	],
 	getPropertyValue($container, 'wiring')
 );

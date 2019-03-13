@@ -64,8 +64,8 @@ class ContainerBuilder
 			for ($i = 1; isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]); $i++);
 			$name = '0' . $i; // prevents converting to integer in array key
 
-		} elseif ($name === '' || is_int(key([$name => 1]))) { // builder is not ready for integer names
-			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-numeric string, %s given.', gettype($name)));
+		} elseif (is_int(key([$name => 1])) || !preg_match('#^\w+(\.\w+)*\z#', $name)) {
+			throw new Nette\InvalidArgumentException(sprintf('Service name must be a alpha-numeric string and not a number, %s given.', gettype($name)));
 
 		} else {
 			$name = $this->aliases[$name] ?? $name;
@@ -368,13 +368,11 @@ class ContainerBuilder
 		}
 
 		[$low, $high] = $this->autowiring->getClassList();
-
-		$res = [];
 		foreach ($all as $class => $names) {
 			$meta['wiring'][$class] = array_filter([
-				array_diff($names, $low[$class] ?? [], $high[$class] ?? []),
-				$low[$class] ?? [],
 				$high[$class] ?? [],
+				$low[$class] ?? [],
+				array_diff($names, $low[$class] ?? [], $high[$class] ?? []),
 			]);
 		}
 
