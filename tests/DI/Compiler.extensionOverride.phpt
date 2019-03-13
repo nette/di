@@ -73,6 +73,10 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition('one8')
 			->setFactory('Lorem', [1])
 			->addSetup('__construct', [2]);
+		$builder->addDefinition('one9')
+			->setFactory('Lorem', [1]);
+		$builder->addDefinition('one10')
+			->setFactory('Lorem', [1]);
 
 		$builder->addDefinition('two1')
 			->setType('Lorem')
@@ -101,6 +105,12 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition('two9')
 			->setType('Lorem')
 			->setFactory('Factory::createLorem', [1, 2]);
+		$builder->addDefinition('two10')
+			->setType('Lorem')
+			->setFactory('Factory::createLorem', [1]);
+		$builder->addDefinition('two11')
+			->setType('Lorem')
+			->setFactory('Factory::createLorem', [1]);
 
 		$builder->addDefinition('three1')
 			->setFactory('Factory::createLorem', [1]);
@@ -115,6 +125,10 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition('three6')
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('three7')
+			->setFactory('Factory::createLorem', [1]);
+		$builder->addDefinition('three8')
+			->setFactory('Factory::createLorem', [1]);
+		$builder->addDefinition('three9')
 			->setFactory('Factory::createLorem', [1]);
 	}
 }
@@ -162,6 +176,16 @@ Assert::same([
 ], Notes::fetch());
 
 Assert::type(Ipsum::class, $container->getService('one8'));
+Assert::same([
+	'Ipsum::__construct ',
+], Notes::fetch());
+
+Assert::exception(function () use ($container) {
+	$container->getService('one9');
+}, TypeError::class, 'Return value of %a%::createServiceOne9() must be an instance of Ipsum, instance of Lorem returned');
+Notes::fetch();
+
+Assert::type(Ipsum::class, $container->getService('one10'));
 Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
@@ -217,6 +241,16 @@ Assert::same([
 	'Lorem::__construct 2 new',
 ], Notes::fetch());
 
+Assert::exception(function () use ($container) {
+	$container->getService('two11');
+}, TypeError::class, 'Return value of %a%::createServiceTwo11() must be an instance of Ipsum, instance of Lorem returned');
+Notes::fetch();
+
+Assert::type(Ipsum::class, $container->getService('two12'));
+Assert::same([
+	'Ipsum::__construct ',
+], Notes::fetch());
+
 
 
 Assert::type(Ipsum::class, $container->getService('three1'));
@@ -252,4 +286,14 @@ Assert::same([
 Assert::type(Ipsum::class, $container->getService('three7'));
 Assert::same([
 	'Ipsum::__construct 2',
+], Notes::fetch());
+
+Assert::exception(function () use ($container) {
+	$container->getService('three8');
+}, TypeError::class, 'Return value of %a%::createServiceThree8() must be an instance of Ipsum, instance of Lorem returned');
+Notes::fetch();
+
+Assert::type(Ipsum::class, $container->getService('three9'));
+Assert::same([
+	'Ipsum::__construct ',
 ], Notes::fetch());

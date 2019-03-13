@@ -134,6 +134,9 @@ class Processor
 			return ['factory' => $config];
 
 		} elseif (is_array($config)) {
+			if (isset($config['class']) && !isset($config['factory'])) {
+				$config['factory'] = null;
+			}
 			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
 				if (array_key_exists($alias, $config)) {
 					if (array_key_exists($original, $config)) {
@@ -195,22 +198,18 @@ class Processor
 	{
 		$config = self::processArguments($config);
 
-		if (array_key_exists('type', $config) || array_key_exists('factory', $config)) {
+		if (array_key_exists('factory', $config)) {
+			$definition->setFactory($config['factory']);
 			$definition->setType(null);
-			$definition->setFactory(null);
 		}
 
 		if (array_key_exists('type', $config)) {
 			if ($config['type'] instanceof Statement) {
 				trigger_error("Service '$name': option 'type' or 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
+				$definition->setFactory($config['type']);
 			} else {
 				$definition->setType($config['type']);
 			}
-			$definition->setFactory($config['type']);
-		}
-
-		if (array_key_exists('factory', $config)) {
-			$definition->setFactory($config['factory']);
 		}
 
 		if (array_key_exists('arguments', $config)) {

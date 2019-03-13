@@ -43,7 +43,7 @@ Assert::same(['implement' => Iface::class, 'tagged' => 123], $processor->normali
 
 
 // aliases
-Assert::same(['type' => 'val'], $processor->normalizeConfig(['class' => 'val']));
+Assert::same(['factory' => null, 'type' => 'val'], $processor->normalizeConfig(['class' => 'val']));
 Assert::same(['imported' => 'val'], $processor->normalizeConfig(['dynamic' => 'val']));
 
 Assert::exception(function () use ($processor) {
