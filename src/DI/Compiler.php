@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use Nette\Schema;
 
 
 /**
@@ -35,6 +36,9 @@ class Compiler
 	/** @var array */
 	private $config = [];
 
+	/** @var array [section => array[]] */
+	private $configs = [];
+
 	/** @var string */
 	private $sources = '';
 
@@ -51,7 +55,7 @@ class Compiler
 		$this->dependencies = new DependencyChecker;
 		$this->configProcessor = new Config\Processor($this->builder);
 		$this->addExtension(self::SERVICES, new Extensions\ServicesExtension);
-		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->config));
+		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->configs));
 	}
 
 
@@ -107,11 +111,9 @@ class Compiler
 	 */
 	public function addConfig(array $config)
 	{
-		if (isset($config[self::SERVICES])) {
-			$this->config[self::SERVICES] = $this->configProcessor->mergeConfigs($config[self::SERVICES], $this->config[self::SERVICES] ?? null);
-			unset($config[self::SERVICES]);
+		foreach ($config as $section => $data) {
+			$this->configs[$section][] = $data;
 		}
-		$this->config = Config\Helpers::merge($config, $this->config);
 		$this->sources .= "// source: array\n";
 		return $this;
 	}
@@ -136,6 +138,7 @@ class Compiler
 
 	/**
 	 * Returns configuration.
+	 * @deprecated
 	 */
 	public function getConfig(): array
 	{
@@ -188,7 +191,8 @@ class Compiler
 	{
 		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions(Extensions\ExtensionsExtension::class);
 		foreach ($first as $name => $extension) {
-			$extension->setConfig($this->config[$name] ?? []);
+			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+			$extension->setConfig($this->config[$name] = $config);
 			$extension->loadConfiguration();
 		}
 
@@ -196,8 +200,9 @@ class Compiler
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$extensions = array_diff_key($this->extensions, $first);
-		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
-			$extension->setConfig($this->config[$name] ?: []);
+		foreach ($extensions as $name => $extension) {
+			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+			$extension->setConfig($this->config[$name] = $config);
 		}
 
 		foreach ($extensions as $extension) {
@@ -208,7 +213,7 @@ class Compiler
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
-		} elseif ($extra = key(array_diff_key($this->config, $this->extensions))) {
+		} elseif ($extra = key(array_diff_key($this->configs, $this->extensions))) {
 			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
@@ -221,7 +226,29 @@ class Compiler
 	/** @internal */
 	public function processServices(): void
 	{
+		unset($this->config[self::SERVICES]);
+		foreach ($this->configs[self::SERVICES] ?? [] as $config) {
+			$this->config[self::SERVICES] = $this->configProcessor->mergeConfigs($config, $this->config[self::SERVICES] ?? null);
+		}
 		$this->loadDefinitionsFromConfig($this->config[self::SERVICES] ?? []);
+	}
+
+
+	/**
+	 * Merges and validates configurations against scheme.
+	 * @return array|object
+	 */
+	private function processSchema(Schema\Schema $schema, array $configs, $name = null)
+	{
+		$processor = new Schema\Processor;
+		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {
+			$context->path = $name ? [$name] : [];
+		};
+		try {
+			return $processor->processMultiple($schema, $configs);
+		} catch (Schema\ValidationException $e) {
+			throw new Nette\DI\InvalidConfigurationException($e->getMessage());
+		}
 	}
 
 
