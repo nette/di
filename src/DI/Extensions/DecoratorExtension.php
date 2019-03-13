@@ -41,6 +41,9 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	public function addSetups(string $type, array $setups): void
 	{
 		foreach ($this->findByType($type) as $def) {
+			if ($def instanceof Definitions\FactoryDefinition) {
+				$def = $def->getResultDefinition();
+			}
 			foreach ($setups as $setup) {
 				if (is_array($setup)) {
 					$setup = new Definitions\Statement(key($setup), array_values($setup));

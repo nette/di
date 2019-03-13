@@ -23,6 +23,9 @@ interface FooFactory
 
 class Foo
 {
+	public function testSetup(string $foo): void
+	{
+	}
 }
 
 
@@ -32,6 +35,8 @@ $container = createContainer($compiler, '
 decorator:
 	Foo:
 		inject: yes
+		setup:
+			- testSetup(foo)
 	FooFactory:
 		tags: [a]
 services:
