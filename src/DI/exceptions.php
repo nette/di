@@ -46,4 +46,19 @@ class NotAllowedDuringResolvingException extends Nette\InvalidStateException
  */
 class InvalidConfigurationException extends Nette\InvalidStateException
 {
+	/** @var array */
+	private $path;
+
+
+	public function __construct(string $message, array $path = [], \Throwable $previous = null)
+	{
+		parent::__construct($message, 0, $previous);
+		$this->path = $path;
+	}
+
+
+	public function getPath(): array
+	{
+		return $this->path;
+	}
 }

@@ -69,7 +69,7 @@ abstract class CompilerExtension
 	 */
 	public function getConfigSchema(): Config\Schema
 	{
-		return new Config\Expect;
+		return Config\Expect::array();
 	}
 
 

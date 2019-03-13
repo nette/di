@@ -191,7 +191,7 @@ class Compiler
 	/** @internal */
 	public function processParameters(): void
 	{
-		$params = (new Config\Expect)->flatten($this->configs[self::PARAMETERS] ?? [[]], [self::PARAMETERS]);
+		$params = Config\Expect::array()->flatten($this->configs[self::PARAMETERS] ?? [[]], [self::PARAMETERS]);
 		$this->config[self::PARAMETERS] = $params;
 
 		foreach ($this->dynamicParams as $key) {

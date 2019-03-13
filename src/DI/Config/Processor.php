@@ -194,7 +194,7 @@ class Processor
 			$this->{$scheme['method']}($def, $config);
 			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
-			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
+			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), [], $e);
 		}
 	}
 
