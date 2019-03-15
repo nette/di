@@ -167,6 +167,20 @@ final class Helpers
 	}
 
 
+	public static function getPropertyType(\ReflectionProperty $prop): ?string
+	{
+		if ($type = Reflection::getPropertyType($prop)) {
+			return ($prop->getType()->allowsNull() ? '?' : '') . $type;
+		} elseif ($type = preg_replace('#\s.*#', '', (string) self::parseAnnotation($prop, 'var'))) {
+			$class = Reflection::getPropertyDeclaringClass($prop);
+			return preg_replace_callback('#[\w\\\\]+#', function ($m) use ($class) {
+				return Reflection::expandClassName($m[0], $class);
+			}, $type);
+		}
+		return null;
+	}
+
+
 	public static function normalizeClass(string $type): string
 	{
 		return class_exists($type) || interface_exists($type)

@@ -102,10 +102,7 @@ final class InjectExtension extends DI\CompilerExtension
 		foreach (get_class_vars($class) as $name => $foo) {
 			$rp = new \ReflectionProperty($class, $name);
 			if (DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
-				if ($type = DI\Helpers::parseAnnotation($rp, 'var')) {
-					$type = Reflection::expandClassName($type, Reflection::getPropertyDeclaringClass($rp));
-				}
-				$res[$name] = $type;
+				$res[$name] = DI\Helpers::getPropertyType($rp);
 			}
 		}
 		ksort($res);

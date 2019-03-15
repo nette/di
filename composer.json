@@ -20,7 +20,7 @@
 		"nette/neon": "^3.0",
 		"nette/php-generator": "^3.2",
 		"nette/robot-loader": "^3.2",
-		"nette/utils": "^3.0"
+		"nette/utils": "^3.0.1"
 	},
 	"require-dev": {
 		"nette/tester": "^2.0",
