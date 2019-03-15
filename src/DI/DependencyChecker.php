@@ -122,7 +122,7 @@ class DependencyChecker
 						$method->getDocComment(),
 						self::hashParameters($method),
 						PHP_VERSION_ID >= 70000 && $method->hasReturnType()
-							? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
+							? [PHP_VERSION_ID >= 70100 ? $method->getReturnType()->getName() : (string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
 							: null,
 					];
 				}
@@ -146,7 +146,7 @@ class DependencyChecker
 				$method->getDocComment(),
 				self::hashParameters($method),
 				PHP_VERSION_ID >= 70000 && $method->hasReturnType()
-					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
+					? [PHP_VERSION_ID >= 70100 ? $method->getReturnType()->getName() : (string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
 					: null,
 			];
 		}
