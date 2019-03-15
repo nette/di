@@ -120,6 +120,33 @@ final class Expect implements Schema
 	}
 
 
+	/**
+	 * @param  object  $obj
+	 */
+	public static function from($obj, array $items = []): self
+	{
+		$ro = new \ReflectionObject($obj);
+		foreach ($ro->getProperties() as $prop) {
+			$type = Nette\DI\Helpers::getPropertyType($prop);
+			$item = &$items[$prop->getName()];
+			if (!$item) {
+				$item = new self($type ?? 'mixed');
+				if (PHP_VERSION_ID >= 70400 && !$prop->isInitialized($obj)) {
+					$item->required();
+				} else {
+					$item->default = $prop->getValue($obj);
+					if (is_object($item->default)) {
+						$item = self::from($item->default);
+					} elseif ($item->default === null && !Nette\Utils\Validators::is(null, $item->type)) {
+						$item->required();
+					}
+				}
+			}
+		}
+		return self::structure($items)->castTo($ro->getName());
+	}
+
+
 	private function __construct(string $type)
 	{
 		static $defaults = ['array' => [], 'list' => [], 'structure' => []];

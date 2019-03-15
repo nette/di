@@ -69,7 +69,9 @@ abstract class CompilerExtension
 	 */
 	public function getConfigSchema(): Config\Schema
 	{
-		return Config\Expect::array();
+		return is_object($this->config)
+			? Config\Expect::from($this->config)
+			: Config\Expect::array();
 	}
 
 
