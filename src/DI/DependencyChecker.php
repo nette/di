@@ -122,7 +122,7 @@ class DependencyChecker
 						$method->getDocComment(),
 						self::hashParameters($method),
 						$method->hasReturnType()
-							? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
+							? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
 							: null,
 					];
 				}
@@ -148,7 +148,7 @@ class DependencyChecker
 				$method->getDocComment(),
 				self::hashParameters($method),
 				$method->hasReturnType()
-					? [(string) $method->getReturnType(), $method->getReturnType()->allowsNull()]
+					? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
 					: null,
 			];
 		}
