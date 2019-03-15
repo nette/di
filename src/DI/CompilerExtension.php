@@ -25,7 +25,7 @@ abstract class CompilerExtension
 	/** @var string */
 	protected $name;
 
-	/** @var array */
+	/** @var array|object */
 	protected $config = [];
 
 
@@ -41,10 +41,14 @@ abstract class CompilerExtension
 
 
 	/**
+	 * @param  array|object  $config
 	 * @return static
 	 */
-	public function setConfig(array $config)
+	public function setConfig($config)
 	{
+		if (!is_array($config) && !is_object($config)) {
+			throw new Nette\InvalidArgumentException;
+		}
 		$this->config = $config;
 		return $this;
 	}
@@ -52,8 +56,9 @@ abstract class CompilerExtension
 
 	/**
 	 * Returns extension configuration.
+	 * @return array|object
 	 */
-	public function getConfig(): array
+	public function getConfig()
 	{
 		return $this->config;
 	}
