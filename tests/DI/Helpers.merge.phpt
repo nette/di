@@ -43,3 +43,5 @@ Assert::same($arr2, Helpers::merge($arr2, 231));
 Assert::same($arr2, Helpers::merge($arr2, $obj));
 Assert::same($arr2, Helpers::merge($arr2, []));
 Assert::same(['a' => 'b', 'x', 'c' => 'd', 'y'], Helpers::merge($arr2, $arr1));
+Assert::same([20 => 'b', 10 => 'a'], Helpers::merge([10 => 'a'], [20 => 'b']));
+Assert::same(['b', 'a'], Helpers::merge(['a'], ['b']));

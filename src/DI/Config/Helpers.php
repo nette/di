@@ -34,9 +34,11 @@ final class Helpers
 		}
 
 		if (is_array($left) && is_array($right)) {
+			$index = 0;
 			foreach ($left as $key => $val) {
-				if (is_int($key)) {
+				if ($key === $index) {
 					$right[] = $val;
+					$index++;
 				} else {
 					$right[$key] = static::merge($val, $right[$key] ?? null);
 				}
