@@ -31,6 +31,8 @@ class Loader
 
 	private $loadedFiles = [];
 
+	private $parameters = [];
+
 
 	/**
 	 * Reads configuration from file.
@@ -52,7 +54,8 @@ class Loader
 		$res = [];
 		if (isset($data[self::INCLUDES_KEY])) {
 			Validators::assert($data[self::INCLUDES_KEY], 'list', "section 'includes' in file '$file'");
-			foreach ($data[self::INCLUDES_KEY] as $include) {
+			$includes = Nette\DI\Helpers::expand($data[self::INCLUDES_KEY], $this->parameters);
+			foreach ($includes as $include) {
 				$include = $this->expandIncludedFile($include, $file);
 				$res = Helpers::merge($this->load($include, $merge), $res);
 			}
@@ -118,5 +121,15 @@ class Loader
 			throw new Nette\InvalidArgumentException("Unknown file extension '$file'.");
 		}
 		return is_object($this->adapters[$extension]) ? $this->adapters[$extension] : new $this->adapters[$extension];
+	}
+
+
+	/**
+	 * @return static
+	 */
+	public function setParameters(array $params)
+	{
+		$this->parameters = $params;
+		return $this;
 	}
 }
