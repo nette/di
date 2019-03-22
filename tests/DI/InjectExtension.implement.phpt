@@ -47,4 +47,4 @@ $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
 	new Statement([new Reference('self'), 'injectFoo'], [new Reference('01')]),
-], $builder->getDefinition('sf')->getResultDefinition()->getSetup());
+], $builder->getFactoryDefinition('sf')->getResultDefinition()->getSetup());
