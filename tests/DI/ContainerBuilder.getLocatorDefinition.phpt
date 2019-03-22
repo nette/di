@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\ContainerBuilder::getAccessorDefinition()
+ * Test: Nette\DI\ContainerBuilder::getLocatorDefinition()
  */
 
 declare(strict_types=1);

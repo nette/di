@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\ContainerBuilder::getAccessorDefinition()
+ * Test: Nette\DI\ContainerBuilder::getImportedDefinition()
  */
 
 declare(strict_types=1);
