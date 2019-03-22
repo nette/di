@@ -137,6 +137,61 @@ class ContainerBuilder
 	}
 
 
+	public function getServiceDefinition(string $name): Nette\DI\Definitions\ServiceDefinition
+	{
+		$service = $this->getDefinition($name);
+		if ( ! $service instanceof Nette\DI\Definitions\ServiceDefinition) {
+			throw new MissingServiceException("ServiceDefinition with name '$name' not found.");
+		}
+
+		return $service;
+	}
+
+
+	public function getAccessorDefinition(string $name): Nette\DI\Definitions\AccessorDefinition
+	{
+		$service = $this->getDefinition($name);
+		if ( ! $service instanceof Nette\DI\Definitions\AccessorDefinition) {
+			throw new MissingServiceException("AccessorDefinition with name '$name' not found.");
+		}
+
+		return $service;
+	}
+
+
+	public function getFactoryDefinition(string $name): Nette\DI\Definitions\FactoryDefinition
+	{
+		$service = $this->getDefinition($name);
+		if ( ! $service instanceof Nette\DI\Definitions\FactoryDefinition) {
+			throw new MissingServiceException("FactoryDefinition with name '$name' not found.");
+		}
+
+		return $service;
+	}
+
+
+	public function getLocatorDefinition(string $name): Nette\DI\Definitions\LocatorDefinition
+	{
+		$service = $this->getDefinition($name);
+		if ( ! $service instanceof Nette\DI\Definitions\LocatorDefinition) {
+			throw new MissingServiceException("LocatorDefinition with name '$name' not found.");
+		}
+
+		return $service;
+	}
+
+
+	public function getImportedDefinition(string $name): Nette\DI\Definitions\ImportedDefinition
+	{
+		$service = $this->getDefinition($name);
+		if ( ! $service instanceof Nette\DI\Definitions\ImportedDefinition) {
+			throw new MissingServiceException("ImportedDefinition with name '$name' not found.");
+		}
+
+		return $service;
+	}
+
+
 	/**
 	 * Gets all service definitions.
 	 * @return Definition[]
