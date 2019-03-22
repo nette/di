@@ -119,7 +119,7 @@ Assert::equal([
 	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
-], $builder->getDefinition('last.one')->getSetup());
+], $builder->getServiceDefinition('last.one')->getSetup());
 
 Assert::equal([
 	new Statement([new Reference('self'), 'injectA']),
@@ -129,7 +129,7 @@ Assert::equal([
 	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
-], $builder->getDefinition('ext.one')->getSetup());
+], $builder->getServiceDefinition('ext.one')->getSetup());
 
 Assert::equal([
 	new Statement([new Reference('self'), 'injectA']),
@@ -139,4 +139,4 @@ Assert::equal([
 	new Statement([new Reference('self'), '$e'], [new Reference('b')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
-], $builder->getDefinition('two')->getSetup());
+], $builder->getServiceDefinition('two')->getSetup());

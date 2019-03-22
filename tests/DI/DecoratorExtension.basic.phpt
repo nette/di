@@ -79,4 +79,4 @@ Assert::equal([
 	new Statement([new Reference('self'), 'setup'], ['Iface']),
 	new Statement([new Reference('self'), 'setup']),
 	new Statement([new Reference('self'), '$a'], [10]),
-], $builder->getDefinition('one')->getSetup());
+], $builder->getServiceDefinition('one')->getSetup());
