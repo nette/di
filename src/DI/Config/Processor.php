@@ -34,6 +34,7 @@ class Processor
 				'inject' => 'bool',
 				'autowired' => 'bool|string|array',
 				'tags' => 'array',
+				'reset' => 'array',
 			],
 		],
 		Definitions\AccessorDefinition::class => [
@@ -60,6 +61,7 @@ class Processor
 				'inject' => 'bool',
 				'autowired' => 'bool|string|array',
 				'tags' => 'array',
+				'reset' => 'array',
 			],
 		],
 		Definitions\LocatorDefinition::class => [
@@ -98,10 +100,10 @@ class Processor
 	 */
 	public function processSchema(array $configs): array
 	{
-		$flat = null;
+		$flat = [];
 		foreach ($configs as $config) {
 			foreach ($config as $key => &$def) {
-				$def = $this->normalizeConfig($def, $key);
+				$def = $this->normalizeConfig($def, $key, !isset($flat[$key]));
 				if (!empty($def['alteration']) && isset($flat[$key])) {
 					unset($def['alteration']);
 				}
@@ -115,7 +117,7 @@ class Processor
 	/**
 	 * Normalizes configuration of service definition.
 	 */
-	public function normalizeConfig($config, $key = null): array
+	public function normalizeConfig($config, $key = null, bool $first = false): array
 	{
 		if ($config === null || $config === false) {
 			return (array) $config;
@@ -158,6 +160,18 @@ class Processor
 					unset($config[$alias]);
 				}
 			}
+
+			if ($first) {
+				if (Helpers::takeParent($config)) {
+					$config['reset']['all'] = true;
+				}
+				foreach (['arguments', 'setup', 'tags'] as $k) {
+					if (isset($config[$k]) && Helpers::takeParent($config[$k])) {
+						$config['reset'][$k] = true;
+					}
+				}
+			}
+
 			return $config;
 
 		} else {
@@ -221,14 +235,14 @@ class Processor
 
 		if (array_key_exists('arguments', $config)) {
 			$arguments = $config['arguments'];
-			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments)) {
+			if (empty($config['reset']['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $definition->getFactory()->arguments;
 			}
 			$definition->setArguments($arguments);
 		}
 
 		if (isset($config['setup'])) {
-			if (Helpers::takeParent($config['setup'])) {
+			if (!empty($config['reset']['setup'])) {
 				$definition->setSetup([]);
 			}
 			foreach ($config['setup'] as $id => $setup) {
@@ -279,14 +293,14 @@ class Processor
 
 		if (array_key_exists('arguments', $config)) {
 			$arguments = $config['arguments'];
-			if (!Helpers::takeParent($arguments) && !Nette\Utils\Arrays::isList($arguments)) {
+			if (empty($config['reset']['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $resultDef->getFactory()->arguments;
 			}
 			$resultDef->setArguments($arguments);
 		}
 
 		if (isset($config['setup'])) {
-			if (Helpers::takeParent($config['setup'])) {
+			if (!empty($config['reset']['setup'])) {
 				$resultDef->setSetup([]);
 			}
 			foreach ($config['setup'] as $id => $setup) {
@@ -339,7 +353,7 @@ class Processor
 		}
 
 		if (isset($config['tags'])) {
-			if (Helpers::takeParent($config['tags'])) {
+			if (!empty($config['reset']['tags'])) {
 				$definition->setTags([]);
 			}
 			foreach ($config['tags'] as $tag => $attrs) {
@@ -399,7 +413,7 @@ class Processor
 
 	private function retrieveDefinition(?string $name, array &$config): Definitions\Definition
 	{
-		if (Helpers::takeParent($config)) {
+		if (!empty($config['reset']['all'])) {
 			$this->builder->removeDefinition($name);
 		}
 
