@@ -18,7 +18,7 @@
 		"php": ">=7.1",
 		"ext-tokenizer": "*",
 		"nette/neon": "^3.0",
-		"nette/php-generator": "^3.2",
+		"nette/php-generator": "^3.2.2",
 		"nette/robot-loader": "^3.2",
 		"nette/utils": "^3.0.1"
 	},

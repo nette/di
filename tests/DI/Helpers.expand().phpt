@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+use Nette\DI\Definitions\DynamicParameter;
 use Nette\DI\Helpers;
 use Nette\PhpGenerator\PhpLiteral;
 use Tester\Assert;
@@ -33,9 +34,10 @@ Assert::same(
 );
 
 Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
-Assert::equal(new PhpLiteral("'text' . (func())"), Helpers::expand('text%key%', ['key' => new PhpLiteral('func()')]));
-Assert::equal(new PhpLiteral("(func()) . 'text'"), Helpers::expand('%key%text', ['key' => new PhpLiteral('func()')]));
-Assert::equal(new PhpLiteral("'a' . (func()) . 'b' . '123' . (func()) . 'c'"), Helpers::expand('a%key1%b%key2%%key1%c', ['key1' => new PhpLiteral('func()'), 'key2' => 123]));
+
+Assert::equal(new DynamicParameter("'text' . (func())"), Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]));
+Assert::equal(new DynamicParameter("(func()) . 'text'"), Helpers::expand('%key%text', ['key' => new DynamicParameter('func()')]));
+Assert::equal(new DynamicParameter("'a' . (func()) . 'b' . '123' . (func()) . 'c'"), Helpers::expand('a%key1%b%key2%%key1%c', ['key1' => new DynamicParameter('func()'), 'key2' => 123]));
 
 
 Assert::exception(function () {

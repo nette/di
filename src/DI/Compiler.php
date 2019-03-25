@@ -192,8 +192,8 @@ class Compiler
 		$params = $this->config[self::PARAMETERS] ?? [];
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
-				? ContainerBuilder::literal('($this->parameters[?] \?\? ?)', [$key, $params[$key]])
-				: ContainerBuilder::literal('$this->parameters[?]', [$key]);
+				? new Definitions\DynamicParameter(Nette\PhpGenerator\Helpers::format('($this->parameters[?] \?\? ?)', $key, $params[$key]))
+				: new Definitions\DynamicParameter(Nette\PhpGenerator\Helpers::format('$this->parameters[?]', $key));
 		}
 		$this->builder->parameters = Helpers::expand($params, $params, true);
 	}
