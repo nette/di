@@ -12,7 +12,6 @@ namespace Nette\DI;
 use Nette;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
-use Nette\PhpGenerator\PhpLiteral;
 use Nette\Utils\Reflection;
 
 
@@ -65,8 +64,8 @@ final class Helpers
 				foreach (explode('.', $part) as $key) {
 					if (is_array($val) && array_key_exists($key, $val)) {
 						$val = $val[$key];
-					} elseif ($val instanceof PhpLiteral) {
-						$val = new PhpLiteral($val . '[' . var_export($key, true) . ']');
+					} elseif ($val instanceof DynamicParameter) {
+						$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
 					} else {
 						throw new Nette\InvalidArgumentException("Missing parameter '$part'.");
 					}
@@ -77,7 +76,7 @@ final class Helpers
 				if (strlen($part) + 2 === strlen($var)) {
 					return $val;
 				}
-				if ($val instanceof PhpLiteral) {
+				if ($val instanceof DynamicParameter) {
 					$php = true;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
@@ -87,8 +86,8 @@ final class Helpers
 		}
 		if ($php) {
 			$res = array_filter($res, function ($val): bool { return $val !== ''; });
-			$res = array_map(function ($val): string { return $val instanceof PhpLiteral ? "($val)" : var_export((string) $val, true); }, $res);
-			return new PhpLiteral(implode(' . ', $res));
+			$res = array_map(function ($val): string { return $val instanceof DynamicParameter ? "($val)" : var_export((string) $val, true); }, $res);
+			return new DynamicParameter(implode(' . ', $res));
 		}
 		return implode('', $res);
 	}

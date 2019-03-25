@@ -233,6 +233,7 @@ class Compiler
 		$processor = new Schema\Processor;
 		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {
 			$context->path = $name ? [$name] : [];
+			$context->dynamics = &$this->extensions[self::PARAMETERS]->dynamicValidators;
 		};
 		try {
 			return $processor->processMultiple($schema, $configs);
