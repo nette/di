@@ -44,7 +44,7 @@ Assert::exception(function () use ($compiler) {
 services:
 	service:
 		factory: ServiceA
-		inject: on
+		inject: yes
 ');
 }, InvalidStateException::class, 'Service of type DateTimeImmutable used in @var annotation at ServiceA::$a not found. Did you register it in configuration file?');
 
@@ -54,7 +54,7 @@ Assert::exception(function () use ($compiler) {
 services:
 	service:
 		factory: ServiceB
-		inject: on
+		inject: yes
 ');
 }, InvalidStateException::class, "Class or interface 'Unknown' used in @var annotation at ServiceB::\$a not found. Check annotation and 'use' statements.");
 
@@ -64,6 +64,6 @@ Assert::exception(function () use ($compiler) {
 services:
 	service:
 		factory: ServiceC
-		inject: on
+		inject: yes
 ');
 }, InvalidStateException::class, 'Property ServiceC::$a has no @var annotation.');
