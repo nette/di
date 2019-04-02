@@ -30,9 +30,6 @@ class Compiler
 	/** @var ContainerBuilder */
 	private $builder;
 
-	/** @var Config\Processor */
-	private $configProcessor;
-
 	/** @var array */
 	private $config = [];
 
@@ -53,7 +50,6 @@ class Compiler
 	{
 		$this->builder = $builder ?: new ContainerBuilder;
 		$this->dependencies = new DependencyChecker;
-		$this->configProcessor = new Config\Processor($this->builder);
 		$this->addExtension(self::SERVICES, new Extensions\ServicesExtension);
 		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->configs));
 	}
@@ -181,7 +177,6 @@ class Compiler
 	public function compile(): string
 	{
 		$this->processExtensions();
-		$this->processServices();
 		return $this->generateCode();
 	}
 
@@ -199,7 +194,7 @@ class Compiler
 		$last = $this->getExtensions(Extensions\InjectExtension::class);
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
-		$extensions = array_diff_key($this->extensions, $first);
+		$extensions = array_diff_key($this->extensions, $first, [self::SERVICES => 1]);
 		foreach ($extensions as $name => $extension) {
 			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
 			$extension->setConfig($this->config[$name] = $config);
@@ -209,7 +204,13 @@ class Compiler
 			$extension->loadConfiguration();
 		}
 
-		if ($extra = array_diff_key($this->extensions, $extensions, $first)) {
+		foreach ($this->getExtensions(Extensions\ServicesExtension::class) as $name => $extension) {
+			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+			$extension->setConfig($this->config[$name] = $config);
+			$extension->loadConfiguration();
+		}
+
+		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::SERVICES => 1])) {
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
@@ -219,18 +220,6 @@ class Compiler
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')
 			);
-		}
-	}
-
-
-	/** @internal */
-	public function processServices(): void
-	{
-		if (isset($this->configs[self::SERVICES])) {
-			$schema = Nette\Schema\Expect::arrayOf(new Config\DefinitionSchema($this->builder));
-			$config = $this->processSchema($schema, $this->configs[self::SERVICES] ?? [], self::SERVICES);
-			$this->config[self::SERVICES] = $config;
-			$this->configProcessor->loadDefinitions($config);
 		}
 	}
 
@@ -283,9 +272,8 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		$schema = Nette\Schema\Expect::arrayOf(new Config\DefinitionSchema($this->builder));
-		$config = $this->processSchema($schema, [$configList]);
-		$this->configProcessor->loadDefinitions($config);
+		$extension = $this->extensions[self::SERVICES];
+		$extension->loadDefinitions($this->processSchema($extension->getConfigSchema(), [$configList]));
 	}
 
 
