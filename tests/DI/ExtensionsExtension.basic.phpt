@@ -70,4 +70,4 @@ foo:
 
 Assert::same('hello', $container->parameters['foo']);
 Assert::same('test', $container->parameters['bar']);
-Assert::same(['first', 'extensions', 'foo', 'bar'], $container->parameters['first']);
+Assert::same(['services', 'parameters', 'first', 'extensions', 'foo', 'bar'], $container->parameters['first']);

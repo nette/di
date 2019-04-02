@@ -21,8 +21,7 @@ class Compiler
 
 	private const
 		SERVICES = 'services',
-		PARAMETERS = 'parameters',
-		RESERVED = [self::SERVICES => true, self::PARAMETERS => true];
+		PARAMETERS = 'parameters';
 
 	/** @var CompilerExtension[] */
 	private $extensions = [];
@@ -45,15 +44,14 @@ class Compiler
 	/** @var string */
 	private $className = 'Container';
 
-	/** @var string[] */
-	private $dynamicParams = [];
-
 
 	public function __construct(ContainerBuilder $builder = null)
 	{
 		$this->builder = $builder ?: new ContainerBuilder;
 		$this->dependencies = new DependencyChecker;
 		$this->configProcessor = new Config\Processor($this->builder);
+		$this->addExtension(self::SERVICES, new Extensions\ServicesExtension);
+		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->config));
 	}
 
 
@@ -65,11 +63,11 @@ class Compiler
 	{
 		if ($name === null) {
 			$name = '_' . count($this->extensions);
-		} elseif (isset($this->extensions[$name]) || isset(self::RESERVED[$name])) {
+		} elseif (isset($this->extensions[$name])) {
 			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
 		}
 		$lname = strtolower($name);
-		foreach (array_keys($this->extensions + self::RESERVED) as $nm) {
+		foreach (array_keys($this->extensions) as $nm) {
 			if ($lname === strtolower((string) $nm)) {
 				throw new Nette\InvalidArgumentException("Name of extension '$name' has the same name as '$nm' in a case-insensitive manner.");
 			}
@@ -151,7 +149,7 @@ class Compiler
 	 */
 	public function setDynamicParameterNames(array $names)
 	{
-		$this->dynamicParams = $names;
+		$this->extensions[self::PARAMETERS]->dynamicParams = $names;
 		return $this;
 	}
 
@@ -179,7 +177,6 @@ class Compiler
 
 	public function compile(): string
 	{
-		$this->processParameters();
 		$this->processExtensions();
 		$this->processServices();
 		return $this->generateCode();
@@ -187,26 +184,11 @@ class Compiler
 
 
 	/** @internal */
-	public function processParameters(): void
-	{
-		$params = $this->config[self::PARAMETERS] ?? [];
-		foreach ($this->dynamicParams as $key) {
-			$params[$key] = array_key_exists($key, $params)
-				? ContainerBuilder::literal('($this->parameters[?] \?\? ?)', [$key, $params[$key]])
-				: ContainerBuilder::literal('$this->parameters[?]', [$key]);
-		}
-		$this->builder->parameters = Helpers::expand($params, $params, true);
-	}
-
-
-	/** @internal */
 	public function processExtensions(): void
 	{
-		$config = array_diff_key($this->config, self::RESERVED);
-		$config = Helpers::expand($config, $this->builder->parameters);
-
-		foreach ($first = $this->getExtensions(Extensions\ExtensionsExtension::class) as $name => $extension) {
-			$extension->setConfig($config[$name] ?? []);
+		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions(Extensions\ExtensionsExtension::class);
+		foreach ($first as $name => $extension) {
+			$extension->setConfig($this->config[$name] ?? []);
 			$extension->loadConfiguration();
 		}
 
@@ -214,8 +196,8 @@ class Compiler
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$extensions = array_diff_key($this->extensions, $first);
-		foreach (array_intersect_key($extensions, $config) as $name => $extension) {
-			$extension->setConfig($config[$name] ?: []);
+		foreach (array_intersect_key($extensions, $this->config) as $name => $extension) {
+			$extension->setConfig($this->config[$name] ?: []);
 		}
 
 		foreach ($extensions as $extension) {
@@ -226,8 +208,8 @@ class Compiler
 			$extra = implode("', '", array_keys($extra));
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
-		} elseif ($extra = key(array_diff_key($config, $this->extensions))) {
-			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys(self::RESERVED + $this->extensions), $extra);
+		} elseif ($extra = key(array_diff_key($this->config, $this->extensions))) {
+			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')

@@ -18,4 +18,4 @@ $compiler = new DI\Compiler;
 $compiler->addExtension(null, new FooExtension);
 $compiler->addExtension(null, new FooExtension);
 
-Assert::count(2, $compiler->getExtensions());
+Assert::count(4, $compiler->getExtensions());
