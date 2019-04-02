@@ -161,6 +161,10 @@ class TestExtension extends DI\CompilerExtension
 				->setFactory('Foo')
 				->setArguments([1 => $builder::literal('$baz')]);
 
+		$builder->addFactoryDefinition('overridenFactory')
+			->setImplement('ILoremFactory')
+			->setAutowired(false);
+
 		// see definition by config in Compiler::parseService()
 	}
 }
@@ -217,6 +221,12 @@ Assert::type(Foo::class, $foo);
 Assert::type(Bar::class, $foo->bar);
 Assert::same($container->getService('bar'), $foo->bar);
 Assert::null($foo->baz);
+
+
+Assert::type(ILoremFactory::class, $container->getService('overridenFactory'));
+$foo = $container->getService('overridenFactory')->create();
+Assert::type(Lorem::class, $foo);
+Assert::same(123, $foo->var);
 
 
 Assert::type(IArticleFactory::class, $container->getService('article2'));
