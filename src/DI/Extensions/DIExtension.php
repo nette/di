@@ -54,19 +54,28 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			$class->setExtends($this->config->parentClass);
 		}
 
-		$initialize = $class->getMethod('initialize');
-		$builder = $this->getContainerBuilder();
-
 		if ($this->debugMode && $this->config->debugger) {
-			Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
-			$initialize->addBody($builder->formatPhp('?;', [
-				new Nette\DI\Definitions\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)]),
-			]));
+			$this->enableTracyIntegration($class);
 		}
 
-		foreach (array_filter($builder->findByTag('run')) as $name => $on) {
+		$this->initializeTaggedServices($class);
+	}
+
+
+	private function initializeTaggedServices(Nette\PhpGenerator\ClassType $class): void
+	{
+		foreach (array_filter($this->getContainerBuilder()->findByTag('run')) as $name => $on) {
 			trigger_error("Tag 'run' used in service '$name' definition is deprecated.", E_USER_DEPRECATED);
-			$initialize->addBody('$this->getService(?);', [$name]);
+			$class->getMethod('initialize')->addBody('$this->getService(?);', [$name]);
 		}
+	}
+
+
+	private function enableTracyIntegration(Nette\PhpGenerator\ClassType $class): void
+	{
+		Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
+		$class->getMethod('initialize')->addBody($this->getContainerBuilder()->formatPhp('?;', [
+			new Nette\DI\Definitions\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)]),
+		]));
 	}
 }
