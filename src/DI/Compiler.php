@@ -226,11 +226,12 @@ class Compiler
 	/** @internal */
 	public function processServices(): void
 	{
-		unset($this->config[self::SERVICES]);
-		foreach ($this->configs[self::SERVICES] ?? [] as $config) {
-			$this->config[self::SERVICES] = $this->configProcessor->mergeConfigs($config, $this->config[self::SERVICES] ?? null);
+		if (isset($this->configs[self::SERVICES])) {
+			$schema = Nette\Schema\Expect::arrayOf(new Config\DefinitionSchema($this->builder));
+			$config = $this->processSchema($schema, $this->configs[self::SERVICES] ?? [], self::SERVICES);
+			$this->config[self::SERVICES] = $config;
+			$this->configProcessor->loadDefinitions($config);
 		}
-		$this->loadDefinitionsFromConfig($this->config[self::SERVICES] ?? []);
 	}
 
 
@@ -282,8 +283,9 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		$configList = array_map([$this->configProcessor, 'normalizeConfig'], $configList);
-		$this->configProcessor->loadDefinitions($configList);
+		$schema = Nette\Schema\Expect::arrayOf(new Config\DefinitionSchema($this->builder));
+		$config = $this->processSchema($schema, [$configList]);
+		$this->configProcessor->loadDefinitions($config);
 	}
 
 

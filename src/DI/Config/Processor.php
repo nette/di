@@ -13,7 +13,6 @@ use Nette;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Extensions;
-use Nette\Utils\Validators;
 
 
 /**
@@ -23,68 +22,6 @@ class Processor
 {
 	use Nette\SmartObject;
 
-	private $schemes = [
-		Definitions\ServiceDefinition::class => [
-			'method' => 'updateServiceDefinition',
-			'fields' => [
-				'type' => 'string',
-				'factory' => 'callable|Nette\DI\Definitions\Statement',
-				'arguments' => 'array',
-				'setup' => 'list',
-				'inject' => 'bool',
-				'autowired' => 'bool|string|array',
-				'tags' => 'array',
-				'reset' => 'array',
-			],
-		],
-		Definitions\AccessorDefinition::class => [
-			'method' => 'updateAccessorDefinition',
-			'fields' => [
-				'type' => 'string',
-				'implement' => 'string',
-				'factory' => 'callable|Nette\DI\Definitions\Statement',
-				'autowired' => 'bool|string|array',
-				'tags' => 'array',
-			],
-		],
-		Definitions\FactoryDefinition::class => [
-			'method' => 'updateFactoryDefinition',
-			'fields' => [
-				'type' => 'string',
-				'factory' => 'callable|Nette\DI\Definitions\Statement',
-				'implement' => 'string',
-				'arguments' => 'array',
-				'setup' => 'list',
-				'parameters' => 'array',
-				'references' => 'array',
-				'tagged' => 'string',
-				'inject' => 'bool',
-				'autowired' => 'bool|string|array',
-				'tags' => 'array',
-				'reset' => 'array',
-			],
-		],
-		Definitions\LocatorDefinition::class => [
-			'method' => 'updateLocatorDefinition',
-			'fields' => [
-				'implement' => 'string',
-				'references' => 'array',
-				'tagged' => 'string',
-				'autowired' => 'bool|string|array',
-				'tags' => 'array',
-			],
-		],
-		Definitions\ImportedDefinition::class => [
-			'method' => 'updateImportedDefinition',
-			'fields' => [
-				'type' => 'string',
-				'imported' => 'bool',
-				'autowired' => 'bool|string|array',
-				'tags' => 'array',
-			],
-		],
-	];
-
 	/** @var Nette\DI\ContainerBuilder */
 	private $builder;
 
@@ -92,85 +29,6 @@ class Processor
 	public function __construct(Nette\DI\ContainerBuilder $builder)
 	{
 		$this->builder = $builder;
-	}
-
-
-	/**
-	 * Normalizes and merges configuration of list of service definitions. Left has higher priority.
-	 */
-	public function mergeConfigs(array $left, ?array $right): array
-	{
-		foreach ($left as $key => &$def) {
-			$def = $this->normalizeConfig($def, $key);
-			if (!empty($def['alteration']) && isset($right[$key])) {
-				unset($def['alteration']);
-			}
-			if (!isset($right[$key])) {
-				if (Helpers::takeParent($def)) {
-					$def['reset']['all'] = true;
-				}
-				foreach (['arguments', 'setup', 'tags'] as $k) {
-					if (isset($def[$k]) && Helpers::takeParent($def[$k])) {
-						$def['reset'][$k] = true;
-					}
-				}
-			}
-		}
-		return Helpers::merge($left, $right);
-	}
-
-
-	/**
-	 * Normalizes configuration of service definition.
-	 */
-	public function normalizeConfig($config, $key = null): array
-	{
-		if ($config === null || $config === false) {
-			return (array) $config;
-
-		} elseif (is_string($config) && interface_exists($config)) {
-			return ['implement' => $config];
-
-		} elseif ($config instanceof Statement && is_string($config->getEntity()) && interface_exists($config->getEntity())) {
-			$res = ['implement' => $config->getEntity()];
-			if (array_keys($config->arguments) === ['tagged']) {
-				$res += $config->arguments;
-			} elseif (count($config->arguments) > 1) {
-				$res['references'] = $config->arguments;
-			} else {
-				$res['factory'] = array_shift($config->arguments);
-			}
-			return $res;
-
-		} elseif (!is_array($config) || isset($config[0], $config[1])) {
-			return ['factory' => $config];
-
-		} elseif (is_array($config)) {
-			if (isset($config['class']) && !isset($config['type'])) {
-				if ($config['class'] instanceof Statement) {
-					trigger_error("Service '$key': option 'class' should be changed to 'factory'.", E_USER_DEPRECATED);
-					$config['factory'] = $config['class'];
-					unset($config['class']);
-				} elseif (!isset($config['factory']) && !isset($config['dynamic']) && !isset($config['imported'])) {
-					$config['factory'] = $config['class'];
-					unset($config['class']);
-				}
-			}
-
-			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
-				if (array_key_exists($alias, $config)) {
-					if (array_key_exists($original, $config)) {
-						throw new Nette\DI\InvalidConfigurationException("Options '$alias' and '$original' are aliases, use only '$original'.");
-					}
-					$config[$original] = $config[$alias];
-					unset($config[$alias]);
-				}
-			}
-			return $config;
-
-		} else {
-			throw new Nette\DI\InvalidConfigurationException('Unexpected format of service definition');
-		}
 	}
 
 
@@ -188,22 +46,26 @@ class Processor
 	/**
 	 * Loads service definition from normalized configuration.
 	 */
-	private function loadDefinition(?string $name, array $config): void
+	private function loadDefinition(?string $name, \stdClass $config): void
 	{
 		try {
-			if ($config === [false]) {
+			if ((array) $config === [false]) {
 				$this->builder->removeDefinition($name);
 				return;
-			} elseif (!empty($config['alteration']) && !$this->builder->hasDefinition($name)) {
+			} elseif (!empty($config->alteration) && !$this->builder->hasDefinition($name)) {
 				throw new Nette\DI\InvalidConfigurationException('missing original definition for alteration.');
 			}
-			unset($config['alteration']);
 
-			$config = $this->expandParameters($config);
 			$def = $this->retrieveDefinition($name, $config);
-			$scheme = $this->schemes[get_class($def)];
-			$this->validateFields($config, $scheme['fields']);
-			$this->{$scheme['method']}($def, $config);
+
+			static $methods = [
+				Definitions\ServiceDefinition::class => 'updateServiceDefinition',
+				Definitions\AccessorDefinition::class => 'updateAccessorDefinition',
+				Definitions\FactoryDefinition::class => 'updateFactoryDefinition',
+				Definitions\LocatorDefinition::class => 'updateLocatorDefinition',
+				Definitions\ImportedDefinition::class => 'updateImportedDefinition',
+			];
+			$this->{$methods[$config->defType]}($def, $config);
 			$this->updateDefinition($def, $config);
 		} catch (\Exception $e) {
 			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
@@ -214,33 +76,30 @@ class Processor
 	/**
 	 * Updates service definition according to normalized configuration.
 	 */
-	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, array $config): void
+	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, \stdClass $config): void
 	{
-		$config = Nette\DI\Helpers::filterArguments($config);
-
-		if (array_key_exists('factory', $config)) {
-			$definition->setFactory($config['factory']);
+		if ($config->factory) {
+			$definition->setFactory(Nette\DI\Helpers::filterArguments([$config->factory])[0]);
 			$definition->setType(null);
 		}
 
-		if (array_key_exists('type', $config)) {
-			$definition->setType($config['type']);
+		if ($config->type) {
+			$definition->setType($config->type);
 		}
 
-		if (array_key_exists('arguments', $config)) {
-			$arguments = $config['arguments'];
-			if (empty($config['reset']['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
+		if ($config->arguments) {
+			$arguments = Nette\DI\Helpers::filterArguments($config->arguments);
+			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $definition->getFactory()->arguments;
 			}
 			$definition->setArguments($arguments);
 		}
 
-		if (isset($config['setup'])) {
-			if (!empty($config['reset']['setup'])) {
+		if (isset($config->setup)) {
+			if (!empty($config->reset['setup'])) {
 				$definition->setSetup([]);
 			}
-			foreach ($config['setup'] as $id => $setup) {
-				Validators::assert($setup, 'callable|Nette\DI\Definitions\Statement|array:1', "setup item #$id");
+			foreach (Nette\DI\Helpers::filterArguments($config->setup) as $id => $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
@@ -248,57 +107,54 @@ class Processor
 			}
 		}
 
-		if (isset($config['inject'])) {
-			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
+		if (isset($config->inject)) {
+			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config->inject);
 		}
 	}
 
 
-	private function updateAccessorDefinition(Definitions\AccessorDefinition $definition, array $config): void
+	private function updateAccessorDefinition(Definitions\AccessorDefinition $definition, \stdClass $config): void
 	{
-		if (isset($config['implement'])) {
-			$definition->setImplement($config['implement']);
+		if (isset($config->implement)) {
+			$definition->setImplement($config->implement);
 		}
 
-		if ($ref = $config['factory'] ?? $config['type'] ?? null) {
+		if ($ref = $config->factory ?? $config->type ?? null) {
 			$definition->setReference($ref);
 		}
 	}
 
 
-	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, array $config): void
+	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, \stdClass $config): void
 	{
-		$config = Nette\DI\Helpers::filterArguments($config);
-
 		$resultDef = $definition->getResultDefinition();
 
-		if (isset($config['implement'])) {
-			$definition->setImplement($config['implement']);
+		if (isset($config->implement)) {
+			$definition->setImplement($config->implement);
 			$definition->setAutowired(true);
 		}
 
-		if (array_key_exists('factory', $config)) {
-			$resultDef->setFactory($config['factory']);
+		if ($config->factory) {
+			$resultDef->setFactory(Nette\DI\Helpers::filterArguments([$config->factory])[0]);
 		}
 
-		if (array_key_exists('type', $config)) {
-			$resultDef->setFactory($config['type']);
+		if ($config->type) {
+			$resultDef->setFactory($config->type);
 		}
 
-		if (array_key_exists('arguments', $config)) {
-			$arguments = $config['arguments'];
-			if (empty($config['reset']['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
+		if ($config->arguments) {
+			$arguments = Nette\DI\Helpers::filterArguments($config->arguments);
+			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $resultDef->getFactory()->arguments;
 			}
 			$resultDef->setArguments($arguments);
 		}
 
-		if (isset($config['setup'])) {
-			if (!empty($config['reset']['setup'])) {
+		if (isset($config->setup)) {
+			if (!empty($config->reset['setup'])) {
 				$resultDef->setSetup([]);
 			}
-			foreach ($config['setup'] as $id => $setup) {
-				Validators::assert($setup, 'callable|Nette\DI\Definitions\Statement|array:1', "setup item #$id");
+			foreach (Nette\DI\Helpers::filterArguments($config->setup) as $id => $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
@@ -306,75 +162,56 @@ class Processor
 			}
 		}
 
-		if (isset($config['parameters'])) {
-			$definition->setParameters($config['parameters']);
+		if (isset($config->parameters)) {
+			$definition->setParameters($config->parameters);
 		}
 
-		if (isset($config['inject'])) {
-			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config['inject']);
-		}
-	}
-
-
-	private function updateLocatorDefinition(Definitions\LocatorDefinition $definition, array $config): void
-	{
-		if (isset($config['implement'])) {
-			$definition->setImplement($config['implement']);
-		}
-
-		if (isset($config['references'])) {
-			$definition->setReferences($config['references']);
-		}
-
-		if (isset($config['tagged'])) {
-			$definition->setTagged($config['tagged']);
+		if (isset($config->inject)) {
+			$definition->addTag(Extensions\InjectExtension::TAG_INJECT, $config->inject);
 		}
 	}
 
 
-	private function updateImportedDefinition(Definitions\ImportedDefinition $definition, array $config): void
+	private function updateLocatorDefinition(Definitions\LocatorDefinition $definition, \stdClass $config): void
 	{
-		if (array_key_exists('type', $config)) {
-			$definition->setType($config['type']);
+		if (isset($config->implement)) {
+			$definition->setImplement($config->implement);
+		}
+
+		if (isset($config->references)) {
+			$definition->setReferences($config->references);
+		}
+
+		if (isset($config->tagged)) {
+			$definition->setTagged($config->tagged);
 		}
 	}
 
 
-	private function updateDefinition(Definitions\Definition $definition, array $config): void
+	private function updateImportedDefinition(Definitions\ImportedDefinition $definition, \stdClass $config): void
 	{
-		if (isset($config['autowired'])) {
-			$definition->setAutowired($config['autowired']);
+		if ($config->type) {
+			$definition->setType($config->type);
+		}
+	}
+
+
+	private function updateDefinition(Definitions\Definition $definition, \stdClass $config): void
+	{
+		if (isset($config->autowired)) {
+			$definition->setAutowired($config->autowired);
 		}
 
-		if (isset($config['tags'])) {
-			if (!empty($config['reset']['tags'])) {
+		if (isset($config->tags)) {
+			if (!empty($config->reset['tags'])) {
 				$definition->setTags([]);
 			}
-			foreach ($config['tags'] as $tag => $attrs) {
+			foreach ($config->tags as $tag => $attrs) {
 				if (is_int($tag) && is_string($attrs)) {
 					$definition->addTag($attrs);
 				} else {
 					$definition->addTag($tag, $attrs);
 				}
-			}
-		}
-	}
-
-
-	private function validateFields(array $config, array $fields): void
-	{
-		$expected = array_keys($fields);
-		if ($error = array_diff(array_keys($config), $expected)) {
-			$hints = array_filter(array_map(function ($error) use ($expected) {
-				return Nette\Utils\ObjectHelpers::getSuggestion($expected, $error);
-			}, $error));
-			$hint = $hints ? ", did you mean '" . implode("', '", $hints) . "'?" : '.';
-			throw new Nette\DI\InvalidConfigurationException(sprintf("Unknown key '%s' in definition of service$hint", implode("', '", $error)));
-		}
-
-		foreach ($fields as $field => $expected) {
-			if (isset($config[$field])) {
-				Validators::assertField($config, $field, $expected);
 			}
 		}
 	}
@@ -391,42 +228,14 @@ class Processor
 	}
 
 
-	private function expandParameters(array $config): array
+	private function retrieveDefinition(?string $name, \stdClass $config): Definitions\Definition
 	{
-		$params = $this->builder->parameters;
-		if (isset($config['parameters'])) {
-			foreach ((array) $config['parameters'] as $k => $v) {
-				$v = explode(' ', is_int($k) ? $v : $k);
-				$params[end($v)] = $this->builder::literal('$' . end($v));
-			}
-		}
-		$config = Nette\DI\Helpers::expand($config, $params);
-		return $config;
-	}
-
-
-	private function retrieveDefinition(?string $name, array &$config): Definitions\Definition
-	{
-		if (!empty($config['reset']['all'])) {
+		if (!empty($config->reset['all'])) {
 			$this->builder->removeDefinition($name);
 		}
 
-		if ($name && $this->builder->hasDefinition($name)) {
-			return $this->builder->getDefinition($name);
-
-		} elseif (isset($config['implement'], $config['references']) || isset($config['implement'], $config['tagged'])) {
-			return $this->builder->addLocatorDefinition($name);
-
-		} elseif (isset($config['implement'])) {
-			return method_exists($config['implement'], 'create')
-				? $this->builder->addFactoryDefinition($name)
-				: $this->builder->addAccessorDefinition($name);
-
-		} elseif (isset($config['imported'])) {
-			return $this->builder->addImportedDefinition($name);
-
-		} else {
-			return $this->builder->addDefinition($name);
-		}
+		return $name && $this->builder->hasDefinition($name)
+			? $this->builder->getDefinition($name)
+			: $this->builder->addDefinition($name, new $config->defType);
 	}
 }
