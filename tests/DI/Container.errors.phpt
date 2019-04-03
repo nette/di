@@ -16,6 +16,11 @@ require __DIR__ . '/../bootstrap.php';
 $service = new stdClass;
 $container = new Container;
 
+Assert::error(function () {
+	$container = new Container;
+	$container->addService('one', new stdClass);
+}, E_USER_NOTICE, "Nette\\DI\\Container::addService() service 'one' should be defined as 'imported'");
+
 Assert::exception(function () use ($container, $service) {
 	$container->addService('', $service);
 }, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string.');

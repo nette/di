@@ -73,6 +73,7 @@ class Container
 
 		} elseif (!isset($this->methods[self::getMethodName($name)])) {
 			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
+			$this->types[$name] = get_class($service);
 
 		} elseif (($type = $this->getServiceType($name)) && !$service instanceof $type) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be instance of %s, %s given.", $name, $type, get_class($service)));

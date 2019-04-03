@@ -26,7 +26,7 @@ $container = new MyContainer;
 
 Assert::true($container->hasService('one'));
 
-@$container->addService('one', new stdClass); // @ triggers service should be defined as "imported"
+$container->addService('one', new stdClass);
 
 Assert::true($container->hasService('one'));
 

@@ -37,4 +37,7 @@ test(function () use ($container) {
 
 	Assert::same($one, $container->getService('one'));
 	Assert::same($two, $container->getService('two'));
+
+	Assert::same(Service::class, $container->getServiceType('one'));
+	Assert::same(Service::class, $container->getServiceType('two'));
 });
