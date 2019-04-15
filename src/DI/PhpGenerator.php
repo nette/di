@@ -147,7 +147,7 @@ declare(strict_types=1);
 				}
 		}
 
-		throw Nette\InvalidStateException;
+		throw new Nette\InvalidStateException();
 	}
 
 
