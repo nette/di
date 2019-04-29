@@ -216,7 +216,7 @@ class Compiler
 			$extension->loadConfiguration();
 		}
 
-		$last = $this->getExtensions(Extensions\InjectExtension::class) + $this->getExtensions(Extensions\DecoratorExtension::class);
+		$last = $this->getExtensions(Extensions\DecoratorExtension::class) + $this->getExtensions(Extensions\InjectExtension::class);
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
 		$extensions = array_diff_key($this->extensions, $first, [self::SERVICES => 1]);
