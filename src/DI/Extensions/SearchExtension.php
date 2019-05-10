@@ -114,8 +114,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 			if ($rc->isInstantiable()) {
 				$instantiable[] = $rc->getName();
-			}
-			elseif ($rc->isInterface()) {
+			} elseif ($rc->isInterface()) {
 				$interface[] = $rc->getName();
 			}
 		}
