@@ -23,6 +23,9 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	/** @var array */
 	private $classes = [];
 
+	/** @var array */
+	private $factories = [];
+
 	/** @var string */
 	private $tempDir;
 
@@ -64,8 +67,14 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				throw new Nette\DI\InvalidConfigurationException("Option '{$this->name} › {$name} › in' must be valid directory name, '{$batch->in}' given.");
 			}
 
-			foreach ($this->findClasses($batch) as $class) {
+			[$instantiable, $interface] = $this->findClasses($batch);
+
+			foreach ($instantiable as $class) {
 				$this->classes[$class] = array_merge($this->classes[$class] ?? [], $batch->tags);
+			}
+
+			foreach ($interface as $factory) {
+				$this->factories[$factory] = array_merge($this->factories[$factory] ?? [], $batch->tags);
 			}
 		}
 	}
@@ -79,8 +88,9 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		$robot->acceptFiles = $config->files ?: ['*.php'];
 		$robot->reportParseErrors(false);
 		$robot->refresh();
+
 		$classes = array_unique(array_keys($robot->getIndexedClasses()));
-		$classes = array_filter($classes, 'class_exists');
+		$classes = array_filter($classes, static function ($name) { return class_exists($name) || interface_exists($name); });
 
 		$exclude = $config->exclude;
 		$acceptRE = self::buildNameRegexp($config->classes);
@@ -88,20 +98,29 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		$acceptParent = array_merge($config->extends, $config->implements);
 		$rejectParent = array_merge($exclude->extends, $exclude->implements);
 
-		$found = [];
+		$instantiable = [];
+		$interface = [];
 		foreach ($classes as $class) {
 			$rc = new \ReflectionClass($class);
+
 			if (
-				$rc->isInstantiable()
-				&& (!$acceptRE || preg_match($acceptRE, $rc->getName()))
-				&& (!$rejectRE || !preg_match($rejectRE, $rc->getName()))
-				&& (!$acceptParent || Arrays::some($acceptParent, function ($nm) use ($rc) { return $rc->isSubclassOf($nm); }))
-				&& (!$rejectParent || Arrays::every($rejectParent, function ($nm) use ($rc) { return !$rc->isSubclassOf($nm); }))
+				($acceptRE && !preg_match($acceptRE, $rc->getName())) ||
+				($rejectRE && preg_match($rejectRE, $rc->getName())) ||
+				($acceptParent && Arrays::every($acceptParent, function ($nm) use ($rc) { return !$rc->isSubclassOf($nm); })) ||
+				($rejectParent && Arrays::some($rejectParent, function ($nm) use ($rc) { return $rc->isSubclassOf($nm); }))
 			) {
-				$found[] = $rc->getName();
+				continue;
+			}
+
+			if ($rc->isInstantiable()) {
+				$instantiable[] = $rc->getName();
+			}
+			elseif ($rc->isInterface()) {
+				$interface[] = $rc->getName();
 			}
 		}
-		return $found;
+
+		return [$instantiable, $interface];
 	}
 
 
@@ -113,6 +132,18 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			if (!$builder->findByType($class)) {
 				$builder->addDefinition(null)
 					->setType($class)
+					->setTags(Arrays::normalize($tags, true));
+			}
+		}
+
+		foreach ($this->factories as $class => $tags) {
+			if (!$builder->findByType($class)) {
+				$definition = new Nette\DI\Definitions\FactoryDefinition();
+				$definition
+					->setImplement($class)
+					->setAutowired(true);
+
+				$builder->addDefinition(null, $definition)
 					->setTags(Arrays::normalize($tags, true));
 			}
 		}
