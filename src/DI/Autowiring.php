@@ -133,7 +133,7 @@ class Autowiring
 					foreach ($autowired as $autowiredType) {
 						if (is_a($parent, $autowiredType, true)) {
 							if (empty($preferred[$parent]) && isset($this->highPriority[$parent])) {
-								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent], $this->highPriority[$parent]);
+								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent] ?? [], $this->highPriority[$parent]);
 								$this->highPriority[$parent] = [];
 							}
 							$preferred[$parent] = $priority = true;

@@ -47,6 +47,19 @@ test(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
+		->setAutowired('self');
+
+	Assert::same('bar', $builder->getByType('Bar'));
+	Assert::same(null, $builder->getByType('IBar'));
+	Assert::same(null, $builder->getByType('Foo'));
+	Assert::same(null, $builder->getByType('IFoo'));
+});
+
+
+test(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('bar')
+		->setType('Bar')
 		->setAutowired('IBar');
 
 	Assert::same('bar', $builder->getByType('Bar'));
@@ -148,6 +161,19 @@ test(function () {
 	Assert::null($builder->getByType('IBar'));
 	Assert::same('foo', $builder->getByType('Foo'));
 	Assert::same('foo', $builder->getByType('IFoo'));
+});
+
+
+test(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('one')
+		->setType('stdClass');
+
+	$builder->addDefinition('two')
+		->setType('stdClass')
+		->setAutowired('stdClass');
+
+	Assert::same('two', $builder->getByType('stdClass'));
 });
 
 
