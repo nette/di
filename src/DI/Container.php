@@ -77,7 +77,6 @@ class Container
 			: get_class($service);
 
 		if (!isset($this->methods[self::getMethodName($name)])) {
-			trigger_error(__METHOD__ . "() service '$name' should be defined as 'imported'", E_USER_NOTICE);
 			$this->types[$name] = $type;
 
 		} elseif (($expectedType = $this->getServiceType($name)) && !is_a($type, $expectedType, true)) {
