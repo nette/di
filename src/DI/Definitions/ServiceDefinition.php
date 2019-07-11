@@ -244,7 +244,7 @@ final class ServiceDefinition extends Definition
 			$this->setup
 			&& $type !== $entity
 			&& !(is_array($entity) && $entity[0] instanceof Reference && $entity[0]->getValue() === Nette\DI\ContainerBuilder::THIS_CONTAINER)
-			&& !(is_string($entity) && preg_match('#^[\w\\\\]+\z#', $entity) && is_subclass_of($entity, $type))
+			&& !(is_string($entity) && preg_match('#^[\w\\\\]+$#D', $entity) && is_subclass_of($entity, $type))
 		) {
 			$code .= PhpHelpers::formatArgs("if (!\$service instanceof $type) {\n"
 				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",

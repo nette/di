@@ -130,7 +130,7 @@ class DefinitionSchema implements Schema
 	private function sniffType($key, array $def): string
 	{
 		if (is_string($key)) {
-			$name = preg_match('#^@[\w\\\\]+\z#', $key)
+			$name = preg_match('#^@[\w\\\\]+$#D', $key)
 				? $this->builder->getByType(substr($key, 1), false)
 				: $key;
 
