@@ -40,9 +40,7 @@ class ContainerLoader
 	public function load(callable $generator, $key = null): string
 	{
 		$class = $this->getClassName($key);
-		if (!class_exists($class, false)) {
-			$this->loadFile($class, $generator);
-		}
+		$this->loadFile($class, $generator);
 		return $class;
 	}
 
