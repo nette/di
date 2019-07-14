@@ -87,7 +87,7 @@ class ContainerLoader
 			}
 		}
 
-		if ((@include $file) === false) { // @ - error escalated to exception
+		if (!class_exists($class) && (@include $file) === false) { // @ - error escalated to exception
 			throw new Nette\IOException("Unable to include '$file'.");
 		}
 		flock($handle, LOCK_UN);
