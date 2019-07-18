@@ -30,8 +30,9 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 				$name = null;
 			}
 			if ($class instanceof Nette\DI\Definitions\Statement) {
-				$rc = new \ReflectionClass($class->getEntity());
-				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->arguments));
+				/** @var Nette\DI\CompilerExtension $rcExtension */
+				$rcExtension = (new \ReflectionClass($class->getEntity()))->newInstanceArgs($class->arguments);
+				$this->compiler->addExtension($name, $rcExtension);
 			} else {
 				$this->compiler->addExtension($name, new $class);
 			}
