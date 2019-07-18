@@ -108,12 +108,12 @@ class Resolver
 				}
 			}
 
-			/** @var \ReflectionMethod $reflection */
-			$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
-
 			try {
+				/** @var \ReflectionMethod $reflection */
+				$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
 				$refClass = $reflection instanceof \ReflectionMethod ? $reflection->getDeclaringClass() : null;
 			} catch (\ReflectionException $e) {
+				$reflection = null;
 				$refClass = null;
 			}
 
