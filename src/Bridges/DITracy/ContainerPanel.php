@@ -27,7 +27,7 @@ class ContainerPanel implements Tracy\IBarPanel
 	/** @var Nette\DI\Container */
 	private $container;
 
-	/** @var int|null */
+	/** @var int|float|null */
 	private $elapsedTime;
 
 
