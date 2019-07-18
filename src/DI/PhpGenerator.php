@@ -91,7 +91,7 @@ declare(strict_types=1);
 			$method->setReturnType($def->getType());
 			$def->generateMethod($method, $this);
 			if (preg_match('/^\$service\s=\s((?:new\s[^\;]+|[^;:]+::\w+\(\))\;)\n\s*return\s\$service\;$/', $method->getBody(), $methodBodyParser)) {
-				$method->setBody('return '.$methodBodyParser[1]);
+				$method->setBody('return ' . $methodBodyParser[1]);
 			}
 			return $method;
 
