@@ -19,7 +19,7 @@ abstract class Definition
 {
 	use Nette\SmartObject;
 
-	/** @var string */
+	/** @var string|null */
 	private $name;
 
 	/** @var string|null  class or interface name */
