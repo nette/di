@@ -26,7 +26,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	/** @var bool */
 	private $debugMode;
 
-	/** @var int */
+	/** @var float */
 	private $time;
 
 

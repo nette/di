@@ -32,12 +32,11 @@ final class InjectExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if (
-				$def->getTag(self::TAG_INJECT)
-				&& ($def = $def instanceof Definitions\FactoryDefinition ? $def->getResultDefinition() : $def)
-				&& ($def instanceof Definitions\ServiceDefinition)
-			) {
-				$this->updateDefinition($def);
+			if ($def->getTag(self::TAG_INJECT)) {
+				$def = $def instanceof Definitions\FactoryDefinition ? $def->getResultDefinition() : $def;
+				if ($def instanceof Definitions\ServiceDefinition) {
+					$this->updateDefinition($def);
+				}
 			}
 		}
 	}
@@ -142,9 +141,9 @@ final class InjectExtension extends DI\CompilerExtension
 
 	/**
 	 * @param  object|string  $class
-	 * @param  DI\Resolver|DI\Container  $container
+	 * @param  DI\Container|DI\ContainerBuilder|null  $container
 	 */
-	private static function checkType($class, string $name, ?string $type, $container = null): void
+	private static function checkType($class, string $name, ?string $type, $container): void
 	{
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		if (!$type) {

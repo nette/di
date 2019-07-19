@@ -84,8 +84,8 @@ declare(strict_types=1);
 
 	public function generateMethod(Definitions\Definition $def): Nette\PhpGenerator\Method
 	{
+		$name = $def->getName();
 		try {
-			$name = $def->getName();
 			$method = new Nette\PhpGenerator\Method(Container::getMethodName($name));
 			$method->setVisibility('public');
 			$method->setReturnType($def->getType());

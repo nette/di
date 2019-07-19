@@ -109,9 +109,11 @@ class Resolver
 			}
 
 			try {
+				/** @var \ReflectionMethod|\ReflectionFunction $reflection */
 				$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
 				$refClass = $reflection instanceof \ReflectionMethod ? $reflection->getDeclaringClass() : null;
 			} catch (\ReflectionException $e) {
+				$refClass = $reflection = null;
 			}
 
 			if (isset($e) || ($refClass && (!$reflection->isPublic()
@@ -326,16 +328,11 @@ class Resolver
 			return $this->currentService && $service === $this->currentService->getName()
 				? new Reference(Reference::SELF)
 				: $ref;
-		} else {
-			try {
-				$res = $this->getByType($service);
-			} catch (NotAllowedDuringResolvingException $e) {
-				return new Reference($service);
-			}
-			if (!$res) {
-				throw new ServiceCreationException("Reference to missing service of type $service.");
-			}
-			return $res;
+		}
+		try {
+			return $this->getByType($service);
+		} catch (NotAllowedDuringResolvingException $e) {
+			return new Reference($service);
 		}
 	}
 
