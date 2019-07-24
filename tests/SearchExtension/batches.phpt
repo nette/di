@@ -35,4 +35,5 @@ Assert::same([
 	'ExtendsStdClass' => ['ok' => true],
 	'Foo\\Bar\\ClassBar' => ['foo' => true],
 	'Foo\\ClassBar' => ['foo' => true],
+	'InterfaceOk1' => ['ok' => true],
 ], $services);
