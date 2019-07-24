@@ -233,7 +233,8 @@ final class FactoryDefinition extends Definition
 
 		$ctorParams = [];
 		if (
-			($class = $resolver->resolveEntityType($this->resultDefinition->getFactory()))
+			$this->resultDefinition instanceof ServiceDefinition
+			&& ($class = $resolver->resolveEntityType($this->resultDefinition->getFactory()))
 			&& ($ctor = (new \ReflectionClass($class))->getConstructor())
 		) {
 			foreach ($ctor->getParameters() as $param) {
