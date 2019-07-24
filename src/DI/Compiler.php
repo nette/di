@@ -149,7 +149,15 @@ class Compiler
 	 */
 	public function setDynamicParameterNames(array $names)
 	{
-		$this->extensions[self::PARAMETERS]->dynamicParams = $names;
+		$extension = $this->extensions[self::PARAMETERS];
+
+		if ($extension instanceof Nette\DI\Extensions\ParametersExtension) {
+			$extension->dynamicParams = $names;
+		} else {
+			throw new InvalidConfigurationException(
+				"Parameter 'dynamicParams' in extension '" . self::PARAMETERS . "' does not exist."
+			);
+		}
 		return $this;
 	}
 
@@ -180,8 +188,14 @@ class Compiler
 	 */
 	public function addExportedTag(string $tag)
 	{
-		if (isset($this->extensions[self::DI])) {
-			$this->extensions[self::DI]->exportedTags[$tag] = true;
+		$extension = $this->extensions[self::DI];
+
+		if ($extension instanceof Nette\DI\Extensions\DIExtension) {
+			$extension->exportedTags[$tag] = true;
+		} else {
+			throw new InvalidConfigurationException(
+				"Parameter 'exportedTags' in extension '" . self::DI . "' does not exist."
+			);
 		}
 		return $this;
 	}
@@ -192,8 +206,14 @@ class Compiler
 	 */
 	public function addExportedType(string $type)
 	{
-		if (isset($this->extensions[self::DI])) {
-			$this->extensions[self::DI]->exportedTypes[$type] = true;
+		$extension = $this->extensions[self::DI];
+
+		if ($extension instanceof Nette\DI\Extensions\DIExtension) {
+			$extension->exportedTypes[$type] = true;
+		} else {
+			throw new InvalidConfigurationException(
+				"Parameter 'exportedTypes' in extension '" . self::DI . "' does not exist."
+			);
 		}
 		return $this;
 	}
