@@ -60,11 +60,12 @@ class ContainerBuilder
 	public function addDefinition(?string $name, Definition $definition = null): Definition
 	{
 		$this->needsResolve = true;
+		$nameType = $name === null ? null : key([$name => 1]); /** @var string|int|null $nameType */
 		if ($name === null) {
 			for ($i = 1; isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]); $i++);
 			$name = '0' . $i; // prevents converting to integer in array key
 
-		} elseif (is_int(key([$name => 1])) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
+		} elseif (is_int($nameType) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a alpha-numeric string and not a number, %s given.', gettype($name)));
 
 		} else {
