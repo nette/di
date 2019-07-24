@@ -33,7 +33,15 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 				$rc = new \ReflectionClass($class->getEntity());
 				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->arguments));
 			} else {
-				$this->compiler->addExtension($name, new $class);
+				$extension = new $class;
+				if ($extension instanceof Nette\DI\CompilerExtension) {
+					$this->compiler->addExtension($name, $extension);
+				} else {
+					throw new Nette\DI\InvalidConfigurationException(
+						"Extension class must be type of '" . Nette\DI\CompilerExtension::class . "', "
+						. "but type of '" . get_class($extension) . "' given."
+					);
+				}
 			}
 		}
 	}
