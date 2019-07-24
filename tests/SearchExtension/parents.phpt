@@ -21,6 +21,7 @@ Assert::same([
 	'ExtendsStdClass',
 	'Foo\\Bar\\ClassBar',
 	'Foo\\ClassBar',
+	'InterfaceOk1',
 ], array_keys($services));
 
 
@@ -87,7 +88,11 @@ search:
 		extends: stdClass
 ');
 
-Assert::same(
-	['ClassOk1', 'ClassOk2', 'ClassOk3', 'CountableClass', 'Foo\\ClassBar'],
-	array_keys($services)
-);
+Assert::same([
+	'ClassOk1',
+	'ClassOk2',
+	'ClassOk3',
+	'CountableClass',
+	'Foo\\ClassBar',
+	'InterfaceOk1',
+], array_keys($services));

@@ -49,8 +49,7 @@ test(function () {
 
 		public function create(): stdClass
 		{
-			$service = new stdClass;
-			return $service;
+			return new stdClass;
 		}
 	};
 }', $method->__toString());

@@ -26,4 +26,5 @@ Assert::same([
 	'ExtendsStdClass',
 	'Foo\\Bar\\ClassBar',
 	'Foo\\ClassBar',
+	'InterfaceOk1',
 ], array_keys($services));

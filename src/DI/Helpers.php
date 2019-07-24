@@ -147,6 +147,7 @@ final class Helpers
 
 	/**
 	 * Returns an annotation value.
+	 * @param  \ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionClass  $ref
 	 */
 	public static function parseAnnotation(\Reflector $ref, string $name): ?string
 	{
