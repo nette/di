@@ -29,20 +29,15 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 			if (is_int($name)) {
 				$name = null;
 			}
+			$args = [];
 			if ($class instanceof Nette\DI\Definitions\Statement) {
-				$rc = new \ReflectionClass($class->getEntity());
-				$this->compiler->addExtension($name, $rc->newInstanceArgs($class->arguments));
-			} else {
-				$extension = new $class;
-				if ($extension instanceof Nette\DI\CompilerExtension) {
-					$this->compiler->addExtension($name, $extension);
-				} else {
-					throw new Nette\DI\InvalidConfigurationException(
-						"Extension class must be type of '" . Nette\DI\CompilerExtension::class . "', "
-						. "but type of '" . get_class($extension) . "' given."
-					);
-				}
+				[$class, $args] = [$class->getEntity(), $class->arguments];
 			}
+			if (!is_a($class, Nette\DI\CompilerExtension::class, true)) {
+				throw new Nette\DI\InvalidConfigurationException("Extension should be Nette\\DI\\CompilerExtension, '$class' given.");
+			}
+			$this->compiler->addExtension($name, (new \ReflectionClass($class))->newInstanceArgs($args));
 		}
 	}
+
 }
