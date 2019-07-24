@@ -231,10 +231,13 @@ final class FactoryDefinition extends Definition
 		$interface = $this->getType();
 		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
 
+		if (!$this->resultDefinition instanceof ServiceDefinition) {
+			throw new ServiceCreationException('Result definition must be type of ServiceDefinition.');
+		}
+
 		$ctorParams = [];
 		if (
-			$this->resultDefinition instanceof ServiceDefinition
-			&& ($class = $resolver->resolveEntityType($this->resultDefinition->getFactory()))
+			($class = $resolver->resolveEntityType($this->resultDefinition->getFactory()))
 			&& ($ctor = (new \ReflectionClass($class))->getConstructor())
 		) {
 			foreach ($ctor->getParameters() as $param) {
@@ -250,11 +253,7 @@ final class FactoryDefinition extends Definition
 				if ($hint !== $argHint && !is_a($hint, (string) $argHint, true)) {
 					throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::create() doesn't match type hint in $class constructor.");
 				}
-				if ($this->resultDefinition instanceof ServiceDefinition) {
-					$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
-				} else {
-					throw new ServiceCreationException('Result definition must be type of ServiceDefinition.');
-				}
+				$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($ctorParams), $param->getName());
