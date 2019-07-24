@@ -80,7 +80,7 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @return string|array|Definition|null
+	 * @return string|array|Definition|Reference|null
 	 */
 	public function getEntity()
 	{
