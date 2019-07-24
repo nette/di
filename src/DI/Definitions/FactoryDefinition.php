@@ -232,7 +232,10 @@ final class FactoryDefinition extends Definition
 		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
 
 		if (!$this->resultDefinition instanceof ServiceDefinition) {
-			throw new ServiceCreationException('Result definition must be type of ServiceDefinition.');
+			throw new ServiceCreationException(
+				'Result definition must be type of ServiceDefinition, '
+				. "type '" . get_class($this->resultDefinition) . "' given."
+			);
 		}
 
 		$ctorParams = [];
