@@ -237,12 +237,16 @@ final class ServiceDefinition extends Definition
 	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
 	{
 		$entity = $this->factory->getEntity();
-		$code = '$service = ' . $generator->formatStatement($this->factory) . ";\n";
-		$type = $this->getType();
+		$code = $generator->formatStatement($this->factory) . ";\n";
+		if (!$this->setup) {
+			$method->setBody('return ' . $code);
+			return;
+		}
 
+		$code = '$service = ' . $code;
+		$type = $this->getType();
 		if (
-			$this->setup
-			&& $type !== $entity
+			$type !== $entity
 			&& !(is_array($entity) && $entity[0] instanceof Reference && $entity[0]->getValue() === Nette\DI\ContainerBuilder::THIS_CONTAINER)
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+$#D', $entity) && is_subclass_of($entity, $type))
 		) {
