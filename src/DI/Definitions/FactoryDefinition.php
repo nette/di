@@ -74,7 +74,7 @@ final class FactoryDefinition extends Definition
 
 
 	/**
-	 * @return Definition|ServiceDefinition
+	 * @return ServiceDefinition
 	 */
 	public function getResultDefinition(): Definition
 	{
@@ -230,13 +230,6 @@ final class FactoryDefinition extends Definition
 	{
 		$interface = $this->getType();
 		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
-
-		if (!$this->resultDefinition instanceof ServiceDefinition) {
-			throw new ServiceCreationException(
-				'Result definition must be type of ServiceDefinition, '
-				. "type '" . get_class($this->resultDefinition) . "' given."
-			);
-		}
 
 		$ctorParams = [];
 		if (
