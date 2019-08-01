@@ -64,7 +64,7 @@ class ContainerBuilder
 			for ($i = 1; isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]); $i++);
 			$name = '0' . $i; // prevents converting to integer in array key
 
-		} elseif (preg_match('#^[+-]?\d+\z#', $name) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
+		} elseif (preg_match('#^[+-]?[1-9]\d*\z#', $name) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a alpha-numeric string and not a number, %s given.', gettype($name)));
 
 		} else {
