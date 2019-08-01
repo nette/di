@@ -150,14 +150,8 @@ class Compiler
 	public function setDynamicParameterNames(array $names)
 	{
 		$extension = $this->extensions[self::PARAMETERS];
-
-		if ($extension instanceof Nette\DI\Extensions\ParametersExtension) {
-			$extension->dynamicParams = $names;
-		} else {
-			throw new InvalidConfigurationException(
-				"Parameter 'dynamicParams' in extension '" . self::PARAMETERS . "' does not exist."
-			);
-		}
+		assert($extension instanceof Nette\DI\Extensions\ParametersExtension);
+		$extension->dynamicParams = $names;
 		return $this;
 	}
 
