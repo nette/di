@@ -149,6 +149,7 @@ class Compiler
 	 */
 	public function setDynamicParameterNames(array $names)
 	{
+		assert($this->extensions[self::PARAMETERS] instanceof Extensions\ParametersExtension);
 		$this->extensions[self::PARAMETERS]->dynamicParams = $names;
 		return $this;
 	}
@@ -181,6 +182,7 @@ class Compiler
 	public function addExportedTag(string $tag)
 	{
 		if (isset($this->extensions[self::DI])) {
+			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
 			$this->extensions[self::DI]->exportedTags[$tag] = true;
 		}
 		return $this;
@@ -193,6 +195,7 @@ class Compiler
 	public function addExportedType(string $type)
 	{
 		if (isset($this->extensions[self::DI])) {
+			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
 			$this->extensions[self::DI]->exportedTypes[$type] = true;
 		}
 		return $this;
@@ -299,6 +302,7 @@ class Compiler
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
 		$extension = $this->extensions[self::SERVICES];
+		assert($extension instanceof Extensions\ServicesExtension);
 		$extension->loadDefinitions($this->processSchema($extension->getConfigSchema(), [$configList]));
 	}
 
