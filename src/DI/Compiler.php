@@ -183,14 +183,8 @@ class Compiler
 	public function addExportedTag(string $tag)
 	{
 		$extension = $this->extensions[self::DI];
-
-		if ($extension instanceof Nette\DI\Extensions\DIExtension) {
-			$extension->exportedTags[$tag] = true;
-		} else {
-			throw new InvalidConfigurationException(
-				"Parameter 'exportedTags' in extension '" . self::DI . "' does not exist."
-			);
-		}
+		assert($extension instanceof Nette\DI\Extensions\DIExtension);
+		$extension->exportedTags[$tag] = true;
 		return $this;
 	}
 
@@ -201,14 +195,8 @@ class Compiler
 	public function addExportedType(string $type)
 	{
 		$extension = $this->extensions[self::DI];
-
-		if ($extension instanceof Nette\DI\Extensions\DIExtension) {
-			$extension->exportedTypes[$type] = true;
-		} else {
-			throw new InvalidConfigurationException(
-				"Parameter 'exportedTypes' in extension '" . self::DI . "' does not exist."
-			);
-		}
+		assert($extension instanceof Nette\DI\Extensions\DIExtension);
+		$extension->exportedTypes[$type] = true;
 		return $this;
 	}
 
