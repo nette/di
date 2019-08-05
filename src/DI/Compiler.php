@@ -182,9 +182,10 @@ class Compiler
 	 */
 	public function addExportedTag(string $tag)
 	{
-		$extension = $this->extensions[self::DI];
-		assert($extension instanceof Nette\DI\Extensions\DIExtension);
-		$extension->exportedTags[$tag] = true;
+		if (isset($this->extensions[self::DI])) {
+			assert($this->extensions[self::DI] instanceof Nette\DI\Extensions\DIExtension);
+			$this->extensions[self::DI]->exportedTags[$tag] = true;
+		}
 		return $this;
 	}
 
@@ -194,9 +195,10 @@ class Compiler
 	 */
 	public function addExportedType(string $type)
 	{
-		$extension = $this->extensions[self::DI];
-		assert($extension instanceof Nette\DI\Extensions\DIExtension);
-		$extension->exportedTypes[$type] = true;
+		if (isset($this->extensions[self::DI])) {
+			assert($this->extensions[self::DI] instanceof Nette\DI\Extensions\DIExtension);
+			$this->extensions[self::DI]->exportedTypes[$type] = true;
+		}
 		return $this;
 	}
 
