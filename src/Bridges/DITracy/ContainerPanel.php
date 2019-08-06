@@ -64,7 +64,7 @@ class ContainerPanel implements Tracy\IBarPanel
 		$types = [];
 		foreach ($rc->getMethods() as $method) {
 			if (preg_match('#^createService(.+)#', $method->getName(), $m) && $method->getReturnType()) {
-				$types[lcfirst(str_replace('__', '.', $m[1]))] = (string) $method->getReturnType();
+				$types[lcfirst(str_replace('__', '.', $m[1]))] = $method->getReturnType()->getName();
 			}
 		}
 		$types = $this->getContainerProperty('types') + $types;

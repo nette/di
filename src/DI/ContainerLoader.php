@@ -100,7 +100,7 @@ class ContainerLoader
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
-			$orig = $meta[2];
+			$orig = $meta[2] ?? null;
 			return empty($meta[0])
 				|| DependencyChecker::isExpired(...$meta)
 				|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
