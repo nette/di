@@ -113,10 +113,14 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach ($this->classes as $class => $tags) {
+		foreach ($this->classes as $class => $foo) {
 			if ($builder->findByType($class)) {
-				continue;
-			} elseif (class_exists($class)) {
+				unset($this->classes[$class]);
+			}
+		}
+
+		foreach ($this->classes as $class => $tags) {
+			if (class_exists($class)) {
 				$def = $builder->addDefinition(null)
 					->setType($class);
 			} else {
