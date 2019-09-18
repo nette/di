@@ -39,8 +39,8 @@ $compiler->addConfig([
 $code = $compiler->setClassName($class)
 	->compile();
 
-file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-require TEMP_DIR . '/code.php';
+file_put_contents(getTempDir() . '/code.php', "<?php\n\n$code");
+require getTempDir() . '/code.php';
 
 /** @var DI\Container $container */
 $container = new $class();

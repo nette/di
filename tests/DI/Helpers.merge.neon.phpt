@@ -20,11 +20,11 @@ $arr2 = ['c' => 'd', 'y'];
 
 function merge($left, $right)
 {
-	file_put_contents(TEMP_DIR . '/left.neon', $left);
-	file_put_contents(TEMP_DIR . '/right.neon', $right);
+	file_put_contents(getTempDir() . '/left.neon', $left);
+	file_put_contents(getTempDir() . '/right.neon', $right);
 
 	$config = new Config\Loader;
-	return Config\Helpers::merge($config->load(TEMP_DIR . '/left.neon'), $config->load(TEMP_DIR . '/right.neon'));
+	return Config\Helpers::merge($config->load(getTempDir() . '/left.neon'), $config->load(getTempDir() . '/right.neon'));
 }
 
 

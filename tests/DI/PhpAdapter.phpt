@@ -12,7 +12,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-define('TEMP_FILE', TEMP_DIR . '/cfg.php');
+define('TEMP_FILE', getTempDir() . '/cfg.php');
 
 
 // Load INI

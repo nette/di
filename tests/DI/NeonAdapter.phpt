@@ -14,7 +14,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-define('TEMP_FILE', TEMP_DIR . '/cfg.neon');
+define('TEMP_FILE', getTempDir() . '/cfg.neon');
 
 
 $config = new Config\Loader;

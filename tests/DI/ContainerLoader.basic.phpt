@@ -13,7 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$cache = new DI\ContainerLoader(TEMP_DIR . '/subdir');
+$cache = new DI\ContainerLoader(getTempDir() . '/subdir');
 
 $key = [1, 2];
 $className = $cache->getClassName($key);

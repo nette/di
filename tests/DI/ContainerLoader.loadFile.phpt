@@ -13,7 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-$loader = new DI\ContainerLoader(TEMP_DIR . '/subdir', true);
+$loader = new DI\ContainerLoader(getTempDir() . '/subdir', true);
 
 // create container
 Assert::with($loader, function () {

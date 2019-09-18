@@ -16,21 +16,25 @@ Tester\Environment::setup();
 date_default_timezone_set('Europe/Prague');
 
 
-// create temporary directory
-(function () {
-	define('TEMP_DIR', __DIR__ . '/tmp/' . getmypid());
+function getTempDir(): string
+{
+	$dir = __DIR__ . '/tmp/' . getmypid();
 
-	// garbage collector
-	$GLOBALS['\\lock'] = $lock = fopen(__DIR__ . '/lock', 'w');
-	if (rand(0, 100)) {
-		flock($lock, LOCK_SH);
-		@mkdir(dirname(TEMP_DIR));
-	} elseif (flock($lock, LOCK_EX)) {
-		Tester\Helpers::purge(dirname(TEMP_DIR));
+	if (empty($GLOBALS['\\lock'])) {
+		// garbage collector
+		$GLOBALS['\\lock'] = $lock = fopen(__DIR__ . '/lock', 'w');
+		if (rand(0, 100)) {
+			flock($lock, LOCK_SH);
+			@mkdir(dirname($dir));
+		} elseif (flock($lock, LOCK_EX)) {
+			Tester\Helpers::purge(dirname($dir));
+		}
+
+		@mkdir($dir);
 	}
 
-	@mkdir(TEMP_DIR);
-})();
+	return $dir;
+}
 
 
 function test(\Closure $function): void
@@ -78,7 +82,7 @@ function createContainer($source, $config = null, $params = []): ?Nette\DI\Conta
 		return null;
 	}
 
-	file_put_contents(TEMP_DIR . '/code.php', "<?php\n\n$code");
-	require TEMP_DIR . '/code.php';
+	file_put_contents(getTempDir() . '/code.php', "<?php\n\n$code");
+	require getTempDir() . '/code.php';
 	return new $class($params);
 }
