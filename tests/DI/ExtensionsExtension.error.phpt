@@ -17,4 +17,4 @@ Assert::exception(function () use ($compiler) {
 	extensions:
 		foo: stdClass
 	');
-}, Nette\DI\InvalidConfigurationException::class, "Extension should be Nette\\DI\\CompilerExtension, 'stdClass' given.");
+}, Nette\DI\InvalidConfigurationException::class, "Extension 'stdClass' not found or is not Nette\\DI\\CompilerExtension descendant.");
