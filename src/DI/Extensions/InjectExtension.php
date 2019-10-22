@@ -44,7 +44,8 @@ final class InjectExtension extends DI\CompilerExtension
 
 	private function updateDefinition(Definitions\ServiceDefinition $def): void
 	{
-		$class = $def->getType();
+		$resolver = new DI\Resolver($this->getContainerBuilder());
+		$class = $resolver->resolveEntityType($def->getFactory()) ?: $def->getType();
 		$setups = $def->getSetup();
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
@@ -61,7 +62,7 @@ final class InjectExtension extends DI\CompilerExtension
 			array_unshift($setups, $inject);
 		}
 
-		foreach (array_reverse(self::getInjectMethods($def->getType())) as $method) {
+		foreach (array_reverse(self::getInjectMethods($class)) as $method) {
 			$inject = new Definitions\Statement($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() === $inject->getEntity()) {
