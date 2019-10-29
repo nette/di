@@ -258,7 +258,7 @@ class Resolver
 	}
 
 
-	private function completeArguments(array $arguments): array
+	public function completeArguments(array $arguments): array
 	{
 		array_walk_recursive($arguments, function (&$val): void {
 			if ($val instanceof Statement) {

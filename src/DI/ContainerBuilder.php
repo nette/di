@@ -317,6 +317,8 @@ class ContainerBuilder
 		foreach ($this->definitions as $def) {
 			$resolver->completeDefinition($def);
 		}
+
+		$this->parameters = $resolver->completeArguments($this->parameters);
 	}
 
 
