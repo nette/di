@@ -9,7 +9,7 @@ return [
 		'params' => [
 			'host' => 'db.example.com',
 			'username' => 'dbuser',
-			'password' => 'secret',
+			'password' => '*secret*',
 			'dbname' => 'dbname',
 		],
 	],
