@@ -49,7 +49,7 @@ class PhpGenerator
 			->addBody('parent::__construct($params);')
 			->addBody($this->formatPhp('$this->parameters += ?;', [$this->builder->parameters]))
 			->addParameter('params', [])
-				->setTypeHint('array');
+				->setType('array');
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
 			$class->addProperty($key)
@@ -190,7 +190,7 @@ declare(strict_types=1);
 				$param->setDefaultValue($v);
 			}
 			if (isset($tmp[1])) {
-				$param->setTypeHint($tmp[0]);
+				$param->setType($tmp[0]);
 			}
 		}
 		return $res;

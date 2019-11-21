@@ -109,7 +109,7 @@ final class AccessorDefinition extends Definition
 		$class->addMethod('__construct')
 			->addBody('$this->container = $container;')
 			->addParameter('container')
-			->setTypeHint($generator->getClassName());
+			->setType($generator->getClassName());
 
 		$rm = new \ReflectionMethod($this->getType(), self::METHOD_GET);
 

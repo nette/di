@@ -277,7 +277,7 @@ final class FactoryDefinition extends Definition
 		$class->addMethod('__construct')
 			->addBody('$this->container = $container;')
 			->addParameter('container')
-			->setTypeHint($generator->getClassName());
+			->setType($generator->getClassName());
 
 		$methodCreate = $class->addMethod(self::METHOD_CREATE);
 		$this->resultDefinition->generateMethod($methodCreate, $generator);

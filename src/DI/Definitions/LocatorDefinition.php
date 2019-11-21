@@ -133,7 +133,7 @@ final class LocatorDefinition extends Definition
 		$class->addMethod('__construct')
 			->addBody('$this->container = $container;')
 			->addParameter('container')
-			->setTypeHint($generator->getClassName());
+			->setType($generator->getClassName());
 
 		foreach ((new \ReflectionClass($this->getType()))->getMethods() as $rm) {
 			preg_match('#^(get|create)(.*)#', $rm->getName(), $m);
