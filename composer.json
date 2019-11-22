@@ -18,7 +18,7 @@
 		"php": ">=7.1",
 		"ext-tokenizer": "*",
 		"nette/neon": "^3.0",
-		"nette/php-generator": "^3.2.2",
+		"nette/php-generator": "^3.2",
 		"nette/robot-loader": "^3.2",
 		"nette/schema": "^1.0",
 		"nette/utils": "^3.0"
@@ -28,7 +28,8 @@
 		"tracy/tracy": "^2.3"
 	},
 	"conflict": {
-		"nette/bootstrap": "<3.0"
+		"nette/bootstrap": "<3.0",
+		"nette/php-generator": "<=3.2.1"
 	},
 	"autoload": {
 		"classmap": ["src/"],
