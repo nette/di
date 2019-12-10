@@ -25,7 +25,8 @@
 	},
 	"require-dev": {
 		"nette/tester": "^2.2",
-		"tracy/tracy": "^2.3"
+		"tracy/tracy": "^2.3",
+		"phpstan/phpstan": "^0.12"
 	},
 	"conflict": {
 		"nette/bootstrap": "<3.0"
@@ -35,6 +36,10 @@
 		"files": ["src/compatibility.php"]
 	},
 	"minimum-stability": "dev",
+	"scripts": {
+		"phpstan": "phpstan analyse --level 5 src",
+		"tester": "tester tests -s"
+	},
 	"extra": {
 		"branch-alias": {
 			"dev-master": "3.0-dev"
