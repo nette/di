@@ -40,7 +40,22 @@ class Article
 }
 
 $compiler = new DI\Compiler;
-$container = createContainer($compiler, 'files/compiler.generatedFactory.nullableParameters.neon');
+$container = createContainer($compiler, '
+services:
+
+	article:
+		factory: Article(%title%, %foo%, %lorem%)
+		implement: IArticleFactory
+		parameters: [?string title, ?Foo foo, ?int lorem: null]
+
+	article2:
+		implement: IArticleFactory
+		arguments: [%title%, %foo%, %lorem%]
+		parameters: [?string title, ?Foo foo, ?int lorem: null]
+
+	article3:
+		implement: IArticleFactory
+');
 
 foreach (['article', 'article2', 'article3'] as $serviceName) {
 	$service = $container->getService($serviceName);

@@ -34,7 +34,22 @@ class FooArticle extends Article
 }
 
 $compiler = new DI\Compiler;
-$container = createContainer($compiler, 'files/compiler.generatedFactory.returnTypes.neon');
+$container = createContainer($compiler, '
+services:
+	article:
+		factory: Article(%title%)
+		implement: IArticleFactory
+		parameters: [title]
+
+	article2:
+		implement: IArticleFactory
+		arguments: [%title%]
+		parameters: [title]
+
+	article3:
+		implement: IArticleFactory
+		factory: FooArticle
+');
 
 Assert::type(IArticleFactory::class, $container->getService('article'));
 $article = $container->getService('article')->create('lorem-ipsum');

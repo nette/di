@@ -74,7 +74,17 @@ class Picture
 }
 
 $compiler = new DI\Compiler;
-$container = createContainer($compiler, 'files/compiler.generatedFactory.polymorphism.neon');
+$container = createContainer($compiler, '
+services:
+	circle:
+		implement: ICircleFactory
+
+	triangle:
+		implement: ITriangleFactory
+
+	ellipse:
+		implement: IEllipseFactory
+');
 
 Assert::type(ICircleFactory::class, $container->getService('circle'));
 $picture = $container->getService('circle')->create(new Circle);

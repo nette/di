@@ -18,15 +18,18 @@ class MyExtension extends Nette\DI\CompilerExtension
 }
 
 
-test(function () {
-	$ext = new MyExtension;
-	$ext->setCompiler(new DI\Compiler, 'my');
-	$res = $ext->loadFromFile(__DIR__ . '/files/compilerExtension.loadFromFile.neon');
-	Assert::equal([
-		'services' => [
-			'one' => [
-				'factory' => 'Ipsum',
-			],
+$config = '
+services:
+	one:
+		factory: Ipsum
+';
+$ext = new MyExtension;
+$ext->setCompiler(new DI\Compiler, 'my');
+$res = $ext->loadFromFile(Tester\FileMock::create($config, 'neon'));
+Assert::equal([
+	'services' => [
+		'one' => [
+			'factory' => 'Ipsum',
 		],
-	], $res);
-});
+	],
+], $res);
