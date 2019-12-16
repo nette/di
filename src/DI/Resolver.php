@@ -460,12 +460,10 @@ class Resolver
 			if (!$parameter->isVariadic() && array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
-				$optCount = 0;
 
 			} elseif (array_key_exists($num, $arguments)) {
 				$res[$num] = $arguments[$num];
 				unset($arguments[$num]);
-				$optCount = 0;
 
 			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
 				try {
@@ -475,16 +473,12 @@ class Resolver
 				} catch (ServiceCreationException $e) {
 					throw new ServiceCreationException("{$e->getMessage()} (needed by $$paramName in $methodName)", 0, $e);
 				}
-				if ($res[$num] === null) {
-					if ($parameter->allowsNull()) {
-						$optCount++;
-					} elseif (class_exists($type) || interface_exists($type)) {
-						throw new ServiceCreationException("Service of type $type needed by $$paramName in $methodName not found. Did you register it in configuration file?");
-					} else {
-						throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
-					}
+				if ($res[$num] !== null || $parameter->allowsNull()) {
+					// ok
+				} elseif (class_exists($type) || interface_exists($type)) {
+					throw new ServiceCreationException("Service of type $type needed by $$paramName in $methodName not found. Did you register it in configuration file?");
 				} else {
-					$optCount = 0;
+					throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
 				}
 
 			} elseif (
@@ -508,11 +502,14 @@ class Resolver
 				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
 				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
-				$optCount++;
 
 			} else {
 				throw new ServiceCreationException("Parameter $$paramName in $methodName has no class type hint or default value, so its value must be specified.");
 			}
+
+			$optCount = $parameter->isOptional() && $res[$num] === ($parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null)
+				? $optCount + 1
+				: 0;
 		}
 
 		// extra parameters

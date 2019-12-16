@@ -41,6 +41,6 @@ Assert::equal(
 );
 
 Assert::equal(
-	[new Test, new Test],
+	[new Test, new Test, null, null],
 	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodNullable'), [], $container)
 );
