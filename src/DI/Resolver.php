@@ -167,6 +167,11 @@ class Resolver
 		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
+		$getter = function (string $type, bool $single) {
+			return $single
+				? $this->getByType($type)
+				: array_values(array_filter($this->builder->findAutowired($type), function ($obj) { return $obj !== $this->currentService; }));
+		};
 
 		switch (true) {
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
@@ -185,7 +190,7 @@ class Resolver
 					$visibility = $rm->isProtected() ? 'protected' : 'private';
 					throw new ServiceCreationException("Class $entity has $visibility constructor.");
 				} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
-					$arguments = self::autowireArguments($constructor, $arguments, $this, $this->currentService);
+					$arguments = self::autowireArguments($constructor, $arguments, $getter);
 					$this->addDependency($constructor);
 				} elseif ($arguments) {
 					throw new ServiceCreationException("Unable to pass arguments, class $entity has no constructor.");
@@ -209,7 +214,7 @@ class Resolver
 							throw new ServiceCreationException("Function $entity[1] doesn't exist.");
 						}
 						$rf = new \ReflectionFunction($entity[1]);
-						$arguments = self::autowireArguments($rf, $arguments, $this, $this->currentService);
+						$arguments = self::autowireArguments($rf, $arguments, $getter);
 						$this->addDependency($rf);
 						break;
 
@@ -235,7 +240,7 @@ class Resolver
 								if (!$rm->isPublic()) {
 									throw new ServiceCreationException("$type::$entity[1]() is not callable.");
 								}
-								$arguments = self::autowireArguments($rm, $arguments, $this, $this->currentService);
+								$arguments = self::autowireArguments($rm, $arguments, $getter);
 								$this->addDependency($rm);
 
 							} elseif (!Nette\Utils\Arrays::isList($arguments)) {
@@ -445,10 +450,10 @@ class Resolver
 
 	/**
 	 * Add missing arguments using autowiring.
-	 * @param  Resolver|Container  $resolver
+	 * @param  (callable(string $type, bool $single): object|object[]|null)  $getter
 	 * @throws ServiceCreationException
 	 */
-	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, $resolver, Definitions\Definition $current = null): array
+	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, callable $getter): array
 	{
 		$optCount = 0;
 		$num = -1;
@@ -467,7 +472,7 @@ class Resolver
 
 			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
 				try {
-					$res[$num] = $resolver->getByType($type);
+					$res[$num] = $getter($type, true);
 				} catch (MissingServiceException $e) {
 					$res[$num] = null;
 				} catch (ServiceCreationException $e) {
@@ -488,15 +493,7 @@ class Resolver
 				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 				&& (class_exists($type) || interface_exists($type))
 			) {
-				$list = $resolver instanceof self
-					? $resolver->getContainerBuilder()->findAutowired($type)
-					: array_map([$resolver, 'getService'], $resolver->findAutowired($type));
-				$res[$num] = [];
-				foreach ($list as $item) {
-					if ($item !== $current) {
-						$res[$num][] = $item;
-					}
-				}
+				$res[$num] = $getter($type, false);
 
 			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
 				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7

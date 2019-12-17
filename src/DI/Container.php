@@ -273,7 +273,7 @@ class Container
 			throw new ServiceCreationException("Class $class is not instantiable.");
 
 		} elseif ($constructor = $rc->getConstructor()) {
-			return $rc->newInstanceArgs(Resolver::autowireArguments($constructor, $args, $this));
+			return $rc->newInstanceArgs($this->autowireArguments($constructor, $args));
 
 		} elseif ($args) {
 			throw new ServiceCreationException("Unable to pass arguments, class $class has no constructor.");
@@ -298,7 +298,17 @@ class Container
 	 */
 	public function callMethod(callable $function, array $args = [])
 	{
-		return $function(...Resolver::autowireArguments(Nette\Utils\Callback::toReflection($function), $args, $this));
+		return $function(...$this->autowireArguments(Nette\Utils\Callback::toReflection($function), $args));
+	}
+
+
+	private function autowireArguments(\ReflectionFunctionAbstract $function, array $args = []): array
+	{
+		return Resolver::autowireArguments($function, $args, function (string $type, bool $single) {
+			return $single
+				? $this->getByType($type)
+				: array_map([$this, 'getService'], $this->findAutowired($type));
+		});
 	}
 
 
