@@ -458,11 +458,10 @@ class Resolver
 		$optCount = 0;
 		$num = -1;
 		$res = [];
-		$methodName = Reflection::toString($method) . '()';
 
-		foreach ($method->getParameters() as $num => $parameter) {
-			$paramName = $parameter->getName();
-			if (!$parameter->isVariadic() && array_key_exists($paramName, $arguments)) {
+		foreach ($method->getParameters() as $num => $param) {
+			$paramName = $param->getName();
+			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
 
@@ -470,41 +469,11 @@ class Resolver
 				$res[$num] = $arguments[$num];
 				unset($arguments[$num]);
 
-			} elseif (($type = Reflection::getParameterType($parameter)) && !Reflection::isBuiltinType($type)) {
-				try {
-					$res[$num] = $getter($type, true);
-				} catch (MissingServiceException $e) {
-					$res[$num] = null;
-				} catch (ServiceCreationException $e) {
-					throw new ServiceCreationException("{$e->getMessage()} (needed by $$paramName in $methodName)", 0, $e);
-				}
-				if ($res[$num] !== null || $parameter->allowsNull()) {
-					// ok
-				} elseif (class_exists($type) || interface_exists($type)) {
-					throw new ServiceCreationException("Service of type $type needed by $$paramName in $methodName not found. Did you register it in configuration file?");
-				} else {
-					throw new ServiceCreationException("Class $type needed by $$paramName in $methodName not found. Check type hint and 'use' statements.");
-				}
-
-			} elseif (
-				$method instanceof \ReflectionMethod
-				&& $parameter->isArray()
-				&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $paramName . '#', (string) $method->getDocComment(), $m)
-				&& ($type = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
-				&& (class_exists($type) || interface_exists($type))
-			) {
-				$res[$num] = $getter($type, false);
-
-			} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
-				// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
-				// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
-				$res[$num] = $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
-
 			} else {
-				throw new ServiceCreationException("Parameter $$paramName in $methodName has no class type hint or default value, so its value must be specified.");
+				$res[$num] = self::autowireArgument($param, $getter);
 			}
 
-			$optCount = $parameter->isOptional() && $res[$num] === ($parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null)
+			$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
 				? $optCount + 1
 				: 0;
 		}
@@ -516,9 +485,59 @@ class Resolver
 			$optCount = 0;
 		}
 		if ($arguments) {
-			throw new ServiceCreationException("Unable to pass specified arguments to $methodName.");
+			throw new ServiceCreationException('Unable to pass specified arguments to ' . Reflection::toString($method) . '().');
+		} elseif ($optCount) {
+			$res = array_slice($res, 0, -$optCount);
 		}
 
-		return $optCount ? array_slice($res, 0, -$optCount) : $res;
+		return $res;
+	}
+
+
+	/**
+	 * Resolves missing argument using autowiring.
+	 * @param  (callable(string $type, bool $single): object|object[]|null)  $getter
+	 * @throws ServiceCreationException
+	 * @return mixed
+	 */
+	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
+	{
+		$type = Reflection::getParameterType($parameter);
+		$method = $parameter->getDeclaringFunction();
+		$desc = '$' . $parameter->getName() . ' in ' . Reflection::toString($method) . '()';
+
+		if ($type && !Reflection::isBuiltinType($type)) {
+			try {
+				$res = $getter($type, true);
+			} catch (MissingServiceException $e) {
+				$res = null;
+			} catch (ServiceCreationException $e) {
+				throw new ServiceCreationException("{$e->getMessage()} (needed by $desc)", 0, $e);
+			}
+			if ($res !== null || $parameter->allowsNull()) {
+				return $res;
+			} elseif (class_exists($type) || interface_exists($type)) {
+				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you register it in configuration file?");
+			} else {
+				throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
+			}
+
+		} elseif (
+			$method instanceof \ReflectionMethod
+			&& $parameter->isArray()
+			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->getName() . '#', (string) $method->getDocComment(), $m)
+			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
+			&& (class_exists($itemType) || interface_exists($itemType))
+		) {
+			return $getter($itemType, false);
+
+		} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
+			// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
+			return $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
+
+		} else {
+			throw new ServiceCreationException("Parameter $desc has no class type hint or default value, so its value must be specified.");
+		}
 	}
 }
