@@ -237,7 +237,7 @@ class Compiler
 			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
 
 		} elseif ($extra = key(array_diff_key($this->configs, $this->extensions))) {
-			$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($this->extensions), $extra);
+			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
 				. ($hint ? ", did you mean '$hint'?" : '.')

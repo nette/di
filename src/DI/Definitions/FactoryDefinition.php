@@ -240,7 +240,7 @@ final class FactoryDefinition extends Definition
 				$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
 
 			} elseif (!$this->resultDefinition->getSetup()) {
-				$hint = Nette\Utils\ObjectHelpers::getSuggestion(array_keys($ctorParams), $param->getName());
+				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->getName());
 				throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $interface::create()" . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 			$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== null);

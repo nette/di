@@ -67,9 +67,9 @@ class ContainerLoader
 
 		$handle = @fopen("$file.lock", 'c+'); // @ is escalated to exception
 		if (!$handle) {
-			throw new Nette\IOException("Unable to create file '$file.lock'. " . error_get_last()['message']);
+			throw new Nette\IOException("Unable to create file '$file.lock'. " . Nette\Utils\Helpers::getLastError());
 		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
-			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'. " . error_get_last()['message']);
+			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'. " . Nette\Utils\Helpers::getLastError());
 		}
 
 		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
