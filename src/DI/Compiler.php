@@ -279,11 +279,11 @@ class Compiler
 
 		$generator = new PhpGenerator($this->builder);
 		$class = $generator->generate($this->className);
-		$class->addMethod('initialize');
 		$this->dependencies->add($this->builder->getDependencies());
 
 		foreach ($this->extensions as $extension) {
 			$extension->afterCompile($class);
+			$generator->addInitialization($class, $extension);
 		}
 
 		return $this->sources . "\n" . $generator->toString($class);

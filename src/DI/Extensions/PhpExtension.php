@@ -23,27 +23,26 @@ final class PhpExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function afterCompile(Nette\PhpGenerator\ClassType $class)
+	public function loadConfiguration()
 	{
-		$initialize = $class->getMethod('initialize');
 		foreach ($this->getConfig() as $name => $value) {
 			if ($value === null) {
 				continue;
 
 			} elseif ($name === 'include_path') {
-				$initialize->addBody('set_include_path(?);', [str_replace(';', PATH_SEPARATOR, $value)]);
+				$this->initialization->addBody('set_include_path(?);', [str_replace(';', PATH_SEPARATOR, $value)]);
 
 			} elseif ($name === 'ignore_user_abort') {
-				$initialize->addBody('ignore_user_abort(?);', [$value]);
+				$this->initialization->addBody('ignore_user_abort(?);', [$value]);
 
 			} elseif ($name === 'max_execution_time') {
-				$initialize->addBody('set_time_limit(?);', [$value]);
+				$this->initialization->addBody('set_time_limit(?);', [$value]);
 
 			} elseif ($name === 'date.timezone') {
-				$initialize->addBody('date_default_timezone_set(?);', [$value]);
+				$this->initialization->addBody('date_default_timezone_set(?);', [$value]);
 
 			} elseif (function_exists('ini_set')) {
-				$initialize->addBody('ini_set(?, ?);', [$name, $value === false ? '0' : (string) $value]);
+				$this->initialization->addBody('ini_set(?, ?);', [$name, $value === false ? '0' : (string) $value]);
 
 			} elseif (ini_get($name) != $value) { // intentionally ==
 				throw new Nette\NotSupportedException('Required function ini_set() is disabled.');

@@ -28,10 +28,14 @@ abstract class CompilerExtension
 	/** @var array|object */
 	protected $config = [];
 
+	/** @var Nette\PhpGenerator\Closure */
+	protected $initialization;
+
 
 	/** @return static */
 	public function setCompiler(Compiler $compiler, string $name)
 	{
+		$this->initialization = new Nette\PhpGenerator\Closure;
 		$this->compiler = $compiler;
 		$this->name = $name;
 		return $this;
@@ -129,6 +133,12 @@ abstract class CompilerExtension
 	protected function createLoader(): Config\Loader
 	{
 		return new Config\Loader;
+	}
+
+
+	public function getInitialization(): Nette\PhpGenerator\Closure
+	{
+		return $this->initialization;
 	}
 
 

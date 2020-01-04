@@ -68,6 +68,8 @@ class PhpGenerator
 			->setReturnType($className)
 			->setBody('return $this;');
 
+		$class->addMethod('initialize');
+
 		return $class;
 	}
 
@@ -79,6 +81,17 @@ class PhpGenerator
 declare(strict_types=1);
 
 ' . $class->__toString();
+	}
+
+
+	public function addInitialization(Nette\PhpGenerator\ClassType $class, CompilerExtension $extension): void
+	{
+		$closure = $extension->getInitialization();
+		if ($closure->getBody()) {
+			$class->getMethod('initialize')
+				->addBody('// ' . $extension->prefix(''))
+				->addBody("($closure)();");
+		}
 	}
 
 
