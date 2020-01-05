@@ -109,9 +109,7 @@ class ContainerLoader
 	}
 
 
-	/**
-	 * @return array of (code, file[])
-	 */
+	/** @return array of (code, file[]) */
 	protected function generate(string $class, callable $generator): array
 	{
 		$compiler = new Compiler;

@@ -124,9 +124,7 @@ class Loader
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setParameters(array $params)
 	{
 		$this->parameters = $params;

@@ -25,9 +25,7 @@ final class AccessorDefinition extends Definition
 	private $reference;
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setImplement(string $type)
 	{
 		if (!interface_exists($type)) {

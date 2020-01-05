@@ -37,9 +37,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @deprecated Use setType()
-	 */
+	/** @deprecated Use setType() */
 	public function setClass(?string $type)
 	{
 		$this->setType($type);
@@ -53,9 +51,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setType(?string $type)
 	{
 		return parent::setType($type);
@@ -79,18 +75,14 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @return string|array|Definition|Reference|null
-	 */
+	/** @return string|array|Definition|Reference|null */
 	public function getEntity()
 	{
 		return $this->factory->getEntity();
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setArguments(array $args = [])
 	{
 		$this->factory->arguments = $args;
@@ -98,9 +90,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setArgument($key, $value)
 	{
 		$this->factory->arguments[$key] = $value;
@@ -124,9 +114,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @return Statement[]
-	 */
+	/** @return Statement[] */
 	public function getSetup(): array
 	{
 		return $this->setup;
@@ -144,18 +132,14 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @deprecated
-	 */
+	/** @deprecated */
 	public function setParameters(array $params)
 	{
 		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated.', $this->getName(), __METHOD__));
 	}
 
 
-	/**
-	 * @deprecated
-	 */
+	/** @deprecated */
 	public function getParameters(): array
 	{
 		trigger_error(sprintf('Service %s: %s() is deprecated.', $this->getName(), __METHOD__), E_USER_DEPRECATED);
@@ -163,27 +147,21 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @deprecated use $builder->addImportedDefinition(...)
-	 */
+	/** @deprecated use $builder->addImportedDefinition(...) */
 	public function setDynamic(): void
 	{
 		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated, use $builder->addImportedDefinition(...)', $this->getName(), __METHOD__));
 	}
 
 
-	/**
-	 * @deprecated use $builder->addFactoryDefinition(...) or addAccessorDefinition(...)
-	 */
+	/** @deprecated use $builder->addFactoryDefinition(...) or addAccessorDefinition(...) */
 	public function setImplement(): void
 	{
 		throw new Nette\DeprecatedException(sprintf('Service %s: %s() is deprecated, use $builder->addFactoryDefinition(...)', $this->getName(), __METHOD__));
 	}
 
 
-	/**
-	 * @deprecated use addTag('nette.inject')
-	 */
+	/** @deprecated use addTag('nette.inject') */
 	public function setInject(bool $state = true)
 	{
 		trigger_error(sprintf('Service %s: %s() is deprecated, use addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT)', $this->getName(), __METHOD__), E_USER_DEPRECATED);

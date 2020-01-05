@@ -35,9 +35,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	/**
-	 * @throws Nette\InvalidStateException
-	 */
+	/** @throws Nette\InvalidStateException */
 	public function process(array $arr): array
 	{
 		$res = [];

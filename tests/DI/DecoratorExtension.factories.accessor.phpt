@@ -14,7 +14,6 @@ require __DIR__ . '/../bootstrap.php';
 
 interface FooAccessor
 {
-
 	/**
 	 * @return Foo
 	 */

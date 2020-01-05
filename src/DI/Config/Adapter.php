@@ -15,7 +15,6 @@ namespace Nette\DI\Config;
  */
 interface Adapter
 {
-
 	/**
 	 * Reads configuration from file.
 	 */

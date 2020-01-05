@@ -18,9 +18,7 @@ use Nette\DI\PhpGenerator;
  */
 final class ImportedDefinition extends Definition
 {
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setType(?string $type)
 	{
 		return parent::setType($type);
@@ -47,9 +45,7 @@ final class ImportedDefinition extends Definition
 	}
 
 
-	/**
-	 * @deprecated use '$def instanceof ImportedDefinition'
-	 */
+	/** @deprecated use '$def instanceof ImportedDefinition' */
 	public function isDynamic(): bool
 	{
 		return true;

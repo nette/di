@@ -29,9 +29,7 @@ abstract class CompilerExtension
 	protected $config = [];
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setCompiler(Compiler $compiler, string $name)
 	{
 		$this->compiler = $compiler;

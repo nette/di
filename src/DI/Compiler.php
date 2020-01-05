@@ -92,9 +92,7 @@ class Compiler
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setClassName(string $className)
 	{
 		$this->className = $className;
@@ -176,9 +174,7 @@ class Compiler
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function addExportedTag(string $tag)
 	{
 		if (isset($this->extensions[self::DI])) {
@@ -189,9 +185,7 @@ class Compiler
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function addExportedType(string $type)
 	{
 		if (isset($this->extensions[self::DI])) {
@@ -307,18 +301,14 @@ class Compiler
 	}
 
 
-	/**
-	 * @deprecated use non-static Compiler::loadDefinitionsFromConfig()
-	 */
+	/** @deprecated use non-static Compiler::loadDefinitionsFromConfig() */
 	public static function loadDefinitions(): void
 	{
 		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');
 	}
 
 
-	/**
-	 * @deprecated use non-static Compiler::loadDefinitionsFromConfig()
-	 */
+	/** @deprecated use non-static Compiler::loadDefinitionsFromConfig() */
 	public static function loadDefinition(): void
 	{
 		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');

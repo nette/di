@@ -25,9 +25,7 @@ final class LocatorDefinition extends Definition
 	private $tagged;
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setImplement(string $type)
 	{
 		if (!interface_exists($type)) {
@@ -59,9 +57,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setReferences(array $references)
 	{
 		$this->references = [];
@@ -74,18 +70,14 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	/**
-	 * @return Reference[]
-	 */
+	/** @return Reference[] */
 	public function getReferences(): array
 	{
 		return $this->references;
 	}
 
 
-	/**
-	 * @return static
-	 */
+	/** @return static */
 	public function setTagged(?string $tagged)
 	{
 		$this->tagged = $tagged;
