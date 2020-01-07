@@ -59,7 +59,7 @@ test(function () {
 			parameters: true
 	', ['dynamic' => 123]);
 
-	Assert::same(['dynamic' => 123, 'key' => 123], $container->parameters);
+	Assert::same(['dynamic' => 123, 'key' => null], $container->parameters);
 });
 
 

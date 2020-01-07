@@ -76,8 +76,10 @@ test(function () {
 	$container = createContainer($compiler, '
 	parameters:
 		expand: hello%dynamic%
+	services:
+		one: Service(%expand%)
 	', ['dynamic' => 123]);
-	Assert::same(['dynamic' => 123, 'expand' => 'hello123'], $container->parameters);
+	Assert::same('hello123', $container->getService('one')->arg);
 });
 
 
@@ -89,6 +91,8 @@ test(function () {
 		dynamic: default
 		expand: %dynamic.item%
 
+	services:
+		one: Service(%expand%)
 	', ['dynamic' => ['item' => 123]]);
-	Assert::same(123, $container->parameters['expand']);
+	Assert::same(123, $container->getService('one')->arg);
 });
