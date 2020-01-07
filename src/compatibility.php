@@ -7,6 +7,33 @@
 
 declare(strict_types=1);
 
-class_alias(Nette\DI\Config\Adapter::class, Nette\DI\Config\IAdapter::class);
-class_alias(Nette\DI\Definitions\Statement::class, Nette\DI\Statement::class);
-class_alias(Nette\DI\Definitions\ServiceDefinition::class, Nette\DI\ServiceDefinition::class);
+namespace Nette\DI\Config {
+	if (false) {
+		/** @deprecated use Nette\DI\Config\Adapter */
+		interface IAdapter
+		{
+		}
+	} elseif (!interface_exists(IAdapter::class)) {
+		class_alias(Adapter::class, IAdapter::class);
+	}
+}
+
+namespace Nette\DI {
+	if (false) {
+		/** @deprecated use Nette\DI\Definitions\ServiceDefinition */
+		class ServiceDefinition
+		{
+		}
+	} elseif (!class_exists(ServiceDefinition::class)) {
+		class_alias(Definitions\ServiceDefinition::class, ServiceDefinition::class);
+	}
+
+	if (false) {
+		/** @deprecated use Nette\DI\Definitions\Statement */
+		class Statement
+		{
+		}
+	} elseif (!class_exists(Statement::class)) {
+		class_alias(Definitions\Statement::class, Statement::class);
+	}
+}

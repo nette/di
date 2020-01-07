@@ -250,3 +250,6 @@ final class ServiceDefinition extends Definition
 		$this->setup = unserialize(serialize($this->setup));
 	}
 }
+
+
+class_exists(Nette\DI\ServiceDefinition::class);

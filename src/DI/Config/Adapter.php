@@ -25,3 +25,6 @@ interface Adapter
 	 */
 	function dump(array $data): string;
 }
+
+
+class_exists(IAdapter::class);
