@@ -38,7 +38,7 @@ class Resolver
 	private $currentServiceType;
 
 	/** @var bool */
-	private $currentServiceAllowed;
+	private $currentServiceAllowed = false;
 
 	/** @var \SplObjectStorage  circular reference detector */
 	private $recursive;
@@ -263,7 +263,7 @@ class Resolver
 	}
 
 
-	private function completeArguments(array $arguments): array
+	public function completeArguments(array $arguments): array
 	{
 		array_walk_recursive($arguments, function (&$val): void {
 			if ($val instanceof Statement) {

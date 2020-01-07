@@ -38,10 +38,12 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$params = $this->config;
+		$resolver = new Nette\DI\Resolver($builder);
+		$generator = new Nette\DI\PhpGenerator($builder);
 
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
-				? new DynamicParameter(Nette\PhpGenerator\Helpers::format('($this->parameters[?] \?\? ?)', $key, $params[$key]))
+				? new DynamicParameter($generator->formatPhp('($this->parameters[?] \?\? ?)', $resolver->completeArguments(Nette\DI\Helpers::filterArguments([$key, $params[$key]]))))
 				: new DynamicParameter(Nette\PhpGenerator\Helpers::format('$this->parameters[?]', $key));
 		}
 
