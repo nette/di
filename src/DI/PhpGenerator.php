@@ -47,7 +47,7 @@ class PhpGenerator
 		$class->setExtends(Container::class);
 		$class->addMethod('__construct')
 			->addBody('parent::__construct($params);')
-			->addBody($this->formatPhp('$this->parameters += ?;', [$this->builder->parameters]))
+			->addBody('$this->parameters += ?;', [$this->builder->parameters])
 			->addParameter('params', [])
 				->setType('array');
 
