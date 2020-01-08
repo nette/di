@@ -51,3 +51,8 @@ Assert::exception(function () {
 Assert::exception(function () {
 	Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], true);
 }, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: key1, key2.');
+
+
+Assert::same(['key1' => 'hello', 'key2' => '*%key1%*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']));
+Assert::same(['key1' => 'hello', 'key2' => '*hello*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], true));
+Assert::same('own', Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']));

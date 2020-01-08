@@ -42,6 +42,11 @@ final class Helpers
 		} elseif ($var instanceof Statement) {
 			return new Statement(self::expand($var->getEntity(), $params, $recursive), self::expand($var->arguments, $params, $recursive));
 
+		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
+			return $recursive
+				? self::expand($params, $params, (is_array($recursive) ? $recursive : []))
+				: $params;
+
 		} elseif (!is_string($var)) {
 			return $var;
 		}
