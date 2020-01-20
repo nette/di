@@ -83,18 +83,19 @@ final class InjectExtension extends DI\CompilerExtension
 	 */
 	public static function getInjectMethods(string $class): array
 	{
-		$res = [];
+		$classes = [];
 		foreach (get_class_methods($class) as $name) {
 			if (substr($name, 0, 6) === 'inject') {
-				$res[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->getName();
+				$classes[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->getName();
 			}
 		}
-		uksort($res, function (string $a, string $b) use ($res): int {
-			return $res[$a] === $res[$b]
-				? strcmp($a, $b)
-				: (is_a($res[$a], $res[$b], true) ? 1 : -1);
+		$methods = array_keys($classes);
+		uksort($classes, function (string $a, string $b) use ($classes, $methods): int {
+			return $classes[$a] === $classes[$b]
+				? array_search($a, $methods, true) <=> array_search($b, $methods, true)
+				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1);
 		});
-		return array_keys($res);
+		return array_keys($classes);
 	}
 
 
