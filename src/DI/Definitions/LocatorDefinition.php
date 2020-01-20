@@ -120,7 +120,7 @@ final class LocatorDefinition extends Definition
 			->addImplement($this->getType());
 
 		$class->addProperty('container')
-			->setVisibility('private');
+			->setPrivate();
 
 		$class->addMethod('__construct')
 			->addBody('$this->container = $container;')
@@ -138,7 +138,7 @@ final class LocatorDefinition extends Definition
 
 			if (!$name) {
 				$class->addProperty('mapping', array_map(function ($item) { return $item->getValue(); }, $this->references))
-					->setVisibility('private');
+					->setPrivate();
 
 				$methodInner->setBody('if (!isset($this->mapping[$name])) {
 	' . ($nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service \'$name\' is not defined.");') . '

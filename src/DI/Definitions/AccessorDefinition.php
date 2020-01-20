@@ -102,7 +102,7 @@ final class AccessorDefinition extends Definition
 			->addImplement($this->getType());
 
 		$class->addProperty('container')
-			->setVisibility('private');
+			->setPrivate();
 
 		$class->addMethod('__construct')
 			->addBody('$this->container = $container;')

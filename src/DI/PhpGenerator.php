@@ -52,7 +52,7 @@ class PhpGenerator
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
 			$class->addProperty($key)
-				->setVisibility('protected')
+				->setProtected()
 				->setValue($value);
 		}
 
@@ -99,7 +99,7 @@ declare(strict_types=1);
 		$name = $def->getName();
 		try {
 			$method = new Nette\PhpGenerator\Method(Container::getMethodName($name));
-			$method->setVisibility('public');
+			$method->setPublic();
 			$method->setReturnType($def->getType());
 			$def->generateMethod($method, $this);
 			return $method;
