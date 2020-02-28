@@ -134,7 +134,10 @@ class Resolver
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
-				throw new ServiceCreationException("Class $entity not found.");
+				throw new ServiceCreationException(interface_exists($entity)
+					? "Interface $entity can not be used as 'factory', did you mean 'implement'?"
+					: "Class $entity not found."
+				);
 			}
 			return $entity;
 		}
