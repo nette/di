@@ -216,6 +216,10 @@ class Compiler
 		$last = $this->getExtensions(Extensions\InjectExtension::class);
 		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
 
+		if ($decorator = $this->getExtensions(Extensions\DecoratorExtension::class)) {
+			Nette\Utils\Arrays::insertBefore($this->extensions, key($decorator), $this->getExtensions(Extensions\SearchExtension::class));
+		}
+
 		$extensions = array_diff_key($this->extensions, $first, [self::SERVICES => 1]);
 		foreach ($extensions as $name => $extension) {
 			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
