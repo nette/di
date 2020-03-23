@@ -122,6 +122,17 @@ class Container
 
 
 	/**
+	 * Gets the service object by name.
+	 * @return object
+	 * @throws MissingServiceException
+	 */
+	public function getByName(string $name)
+	{
+		return $this->getService($name);
+	}
+
+
+	/**
 	 * Gets the service type by name.
 	 * @throws MissingServiceException
 	 */
