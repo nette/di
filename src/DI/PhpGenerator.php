@@ -29,10 +29,25 @@ class PhpGenerator
 	/** @var string */
 	private $className;
 
+	/** @var bool */
+	private $strictTypes = true;
 
-	public function __construct(ContainerBuilder $builder)
+
+	public function __construct(ContainerBuilder $builder, bool $strictTypes = true)
 	{
 		$this->builder = $builder;
+		$this->strictTypes = $strictTypes;
+	}
+
+
+	/**
+	 * Enables/disables declare(strict_types=1) in generated code.
+	 * @return static
+	 */
+	public function setStrictTypes(bool $on)
+	{
+		$this->strictTypes = $on;
+		return $this;
 	}
 
 
@@ -76,7 +91,7 @@ class PhpGenerator
 	{
 		return '/** @noinspection PhpParamsInspection,PhpMethodMayBeStaticInspection */
 
-declare(strict_types=1);
+' . ($this->strictTypes ? 'declare(strict_types=1);' : '') . '
 
 ' . $class->__toString();
 	}

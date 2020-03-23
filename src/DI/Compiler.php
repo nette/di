@@ -46,6 +46,9 @@ class Compiler
 	/** @var string */
 	private $className = 'Container';
 
+	/** @var bool */
+	private $strictTypes = true;
+
 
 	public function __construct(ContainerBuilder $builder = null)
 	{
@@ -96,6 +99,17 @@ class Compiler
 	public function setClassName(string $className)
 	{
 		$this->className = $className;
+		return $this;
+	}
+
+
+	/**
+	 * Enables/disables declare(strict_types=1) in generated code.
+	 * @return static
+	 */
+	public function setStrictTypes(bool $on)
+	{
+		$this->strictTypes = $on;
 		return $this;
 	}
 
@@ -281,7 +295,7 @@ class Compiler
 
 		$this->builder->complete();
 
-		$generator = new PhpGenerator($this->builder);
+		$generator = new PhpGenerator($this->builder, $this->strictTypes);
 		$class = $generator->generate($this->className);
 		$this->dependencies->add($this->builder->getDependencies());
 
