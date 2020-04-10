@@ -38,12 +38,12 @@ final class LocatorDefinition extends Definition
 
 		foreach ($methods as $method) {
 			if ($method->isStatic() || !(
-				(preg_match('#^(get|create)$#', $method->getName()) && $method->getNumberOfParameters() === 1)
-				|| (preg_match('#^(get|create)[A-Z]#', $method->getName()) && $method->getNumberOfParameters() === 0)
+				(preg_match('#^(get|create)$#', $method->name) && $method->getNumberOfParameters() === 1)
+				|| (preg_match('#^(get|create)[A-Z]#', $method->name) && $method->getNumberOfParameters() === 0)
 			)) {
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Service '%s': Method %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
-					$this->getName(), $type, $method->getName()
+					$this->getName(), $type, $method->name
 				));
 			}
 		}
@@ -128,11 +128,11 @@ final class LocatorDefinition extends Definition
 			->setType($generator->getClassName());
 
 		foreach ((new \ReflectionClass($this->getType()))->getMethods() as $rm) {
-			preg_match('#^(get|create)(.*)#', $rm->getName(), $m);
+			preg_match('#^(get|create)(.*)#', $rm->name, $m);
 			$name = lcfirst($m[2]);
 			$nullable = $rm->getReturnType()->allowsNull();
 
-			$methodInner = $class->addMethod($rm->getName())
+			$methodInner = $class->addMethod($rm->name)
 				->setReturnType(Reflection::getReturnType($rm))
 				->setReturnNullable($nullable);
 

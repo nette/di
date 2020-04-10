@@ -461,7 +461,7 @@ class Resolver
 		$res = [];
 
 		foreach ($method->getParameters() as $num => $param) {
-			$paramName = $param->getName();
+			$paramName = $param->name;
 			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
@@ -505,7 +505,7 @@ class Resolver
 	{
 		$type = Reflection::getParameterType($parameter);
 		$method = $parameter->getDeclaringFunction();
-		$desc = '$' . $parameter->getName() . ' in ' . Reflection::toString($method) . '()';
+		$desc = '$' . $parameter->name . ' in ' . Reflection::toString($method) . '()';
 
 		if ($type && !Reflection::isBuiltinType($type)) {
 			try {
@@ -526,7 +526,7 @@ class Resolver
 		} elseif (
 			$method instanceof \ReflectionMethod
 			&& $parameter->isArray()
-			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->getName() . '#', (string) $method->getDocComment(), $m)
+			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->name . '#', (string) $method->getDocComment(), $m)
 			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 			&& (class_exists($itemType) || interface_exists($itemType))
 		) {

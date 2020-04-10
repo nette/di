@@ -50,7 +50,7 @@ class DependencyChecker
 				$files[] = $dep;
 
 			} elseif ($dep instanceof ReflectionClass) {
-				if (empty($classes[$name = $dep->getName()])) {
+				if (empty($classes[$name = $dep->name])) {
 					$all = [$name] + class_parents($name) + class_implements($name);
 					foreach ($all as &$item) {
 						$all += class_uses($item);
@@ -111,14 +111,14 @@ class DependencyChecker
 
 			foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
 				if ($prop->getDeclaringClass() == $class) { // intentionally ==
-					$hash[] = [$name, $prop->getName(), $prop->getDocComment()];
+					$hash[] = [$name, $prop->name, $prop->getDocComment()];
 				}
 			}
 			foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
 				if ($method->getDeclaringClass() == $class) { // intentionally ==
 					$hash[] = [
 						$name,
-						$method->getName(),
+						$method->name,
 						$method->getDocComment(),
 						self::hashParameters($method),
 						$method->hasReturnType()
@@ -134,7 +134,7 @@ class DependencyChecker
 			if (strpos($name, '::')) {
 				$method = new ReflectionMethod($name);
 				$class = $method->getDeclaringClass();
-				if (isset($flip[$class->getName()])) {
+				if (isset($flip[$class->name])) {
 					continue;
 				}
 				$uses = Reflection::getUseStatements($class);
@@ -162,7 +162,7 @@ class DependencyChecker
 		$res = [];
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
-				$param->getName(),
+				$param->name,
 				Reflection::getParameterType($param),
 				$param->allowsNull(),
 				$param->isVariadic(),

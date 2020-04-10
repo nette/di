@@ -42,7 +42,7 @@ final class FactoryDefinition extends Definition
 		}
 		$rc = new \ReflectionClass($type);
 		$method = $rc->getMethods()[0] ?? null;
-		if (!$method || $method->isStatic() || $method->getName() !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
+		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
 			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface $type must have just one non-static method create().");
 		}
 		return parent::setType($type);
@@ -225,26 +225,26 @@ final class FactoryDefinition extends Definition
 			&& ($ctor = (new \ReflectionClass($class))->getConstructor())
 		) {
 			foreach ($ctor->getParameters() as $param) {
-				$ctorParams[$param->getName()] = $param;
+				$ctorParams[$param->name] = $param;
 			}
 		}
 
 		foreach ($method->getParameters() as $param) {
 			$hint = Reflection::getParameterType($param);
-			if (isset($ctorParams[$param->getName()])) {
-				$arg = $ctorParams[$param->getName()];
+			if (isset($ctorParams[$param->name])) {
+				$arg = $ctorParams[$param->name];
 				$argHint = Reflection::getParameterType($arg);
 				if ($hint !== $argHint && !is_a($hint, (string) $argHint, true)) {
-					throw new ServiceCreationException("Type hint for \${$param->getName()} in $interface::create() doesn't match type hint in $class constructor.");
+					throw new ServiceCreationException("Type hint for \${$param->name} in $interface::create() doesn't match type hint in $class constructor.");
 				}
-				$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->getName());
+				$this->resultDefinition->getFactory()->arguments[$arg->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $arg->name);
 
 			} elseif (!$this->resultDefinition->getSetup()) {
-				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->getName());
-				throw new ServiceCreationException("Unused parameter \${$param->getName()} when implementing method $interface::create()" . ($hint ? ", did you mean \${$hint}?" : '.'));
+				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->name);
+				throw new ServiceCreationException("Unused parameter \${$param->name} when implementing method $interface::create()" . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 			$nullable = $hint && $param->allowsNull() && (!$param->isDefaultValueAvailable() || $param->getDefaultValue() !== null);
-			$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->getName();
+			$paramDef = ($nullable ? '?' : '') . $hint . ' ' . $param->name;
 			if ($param->isDefaultValueAvailable()) {
 				$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
 			} else {

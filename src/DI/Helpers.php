@@ -176,7 +176,7 @@ final class Helpers
 				return null;
 			} elseif ($func instanceof \ReflectionMethod) {
 				return $type === 'static' || $type === '$this'
-					? $func->getDeclaringClass()->getName()
+					? $func->getDeclaringClass()->name
 					: Reflection::expandClassName($type, $func->getDeclaringClass());
 			} else {
 				return $type;
@@ -189,7 +189,7 @@ final class Helpers
 	public static function normalizeClass(string $type): string
 	{
 		return class_exists($type) || interface_exists($type)
-			? (new \ReflectionClass($type))->getName()
+			? (new \ReflectionClass($type))->name
 			: $type;
 	}
 }

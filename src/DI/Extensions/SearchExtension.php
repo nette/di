@@ -95,14 +95,14 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 					||
 					($rc->isInterface()
 					&& count($methods = $rc->getMethods()) === 1
-					&& $methods[0]->getName() === 'create')
+					&& $methods[0]->name === 'create')
 				)
-				&& (!$acceptRE || preg_match($acceptRE, $rc->getName()))
-				&& (!$rejectRE || !preg_match($rejectRE, $rc->getName()))
+				&& (!$acceptRE || preg_match($acceptRE, $rc->name))
+				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))
 				&& (!$acceptParent || Arrays::some($acceptParent, function ($nm) use ($rc) { return $rc->isSubclassOf($nm); }))
 				&& (!$rejectParent || Arrays::every($rejectParent, function ($nm) use ($rc) { return !$rc->isSubclassOf($nm); }))
 			) {
-				$found[] = $rc->getName();
+				$found[] = $rc->name;
 			}
 		}
 		return $found;
