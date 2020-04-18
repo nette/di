@@ -265,6 +265,9 @@ class Container
 	 * Creates new instance using autowiring.
 	 * @return object
 	 * @throws Nette\InvalidArgumentException
+	 * @template T of object
+	 * @phpstan-param class-string<T> $class
+	 * @phpstan-return T
 	 */
 	public function createInstance(string $class, array $args = [])
 	{
