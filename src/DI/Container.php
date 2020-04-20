@@ -205,6 +205,9 @@ class Container
 	 * @param  bool  $throw  exception if service doesn't exist?
 	 * @return object|null  service
 	 * @throws MissingServiceException
+	 * @template T of object
+	 * @phpstan-param class-string<T> $type
+	 * @phpstan-return T|null
 	 */
 	public function getByType(string $type, bool $throw = true)
 	{
