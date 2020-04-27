@@ -89,6 +89,9 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 		$found = [];
 		foreach ($classes as $class) {
+			if (!class_exists($class) && !interface_exists($class) && !trait_exists($class)) {
+				throw new Nette\InvalidStateException("Class $class was found, but it cannot be loaded by autoloading.");
+			}
 			$rc = new \ReflectionClass($class);
 			if (
 				($rc->isInstantiable()
