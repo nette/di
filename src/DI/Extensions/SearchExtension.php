@@ -89,10 +89,11 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 		$found = [];
 		foreach ($classes as $class) {
-			if (\class_exists($class) === false) {
-				throw new Nette\InvalidStateException('Class "' . $class . '" does not exist. Did you use an autoloader?');
+			try {
+				$rc = new \ReflectionClass($class);
+			} catch (\ReflectionException $e) {
+				throw new Nette\InvalidStateException($e->getMessage() . '. Did you use an autoloader?');
 			}
-			$rc = new \ReflectionClass($class);
 			if (
 				($rc->isInstantiable()
 					||
