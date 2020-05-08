@@ -32,6 +32,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 
 	public function beforeCompile()
 	{
+		$this->getContainerBuilder()->resolve();
 		foreach ($this->config as $type => $info) {
 			if ($info->inject !== null) {
 				$info->tags[InjectExtension::TAG_INJECT] = $info->inject;
