@@ -199,6 +199,7 @@ class Compiler
 	public function compile(): string
 	{
 		$this->processExtensions();
+		$this->processBeforeCompile();
 		return $this->generateCode();
 	}
 
@@ -250,6 +251,19 @@ class Compiler
 	}
 
 
+	private function processBeforeCompile(): void
+	{
+		$this->builder->resolve();
+
+		foreach ($this->extensions as $extension) {
+			$extension->beforeCompile();
+			$this->dependencies->add([(new \ReflectionClass($extension))->getFileName()]);
+		}
+
+		$this->builder->complete();
+	}
+
+
 	/**
 	 * Merges and validates configurations against scheme.
 	 * @return array|object
@@ -272,16 +286,7 @@ class Compiler
 	/** @internal */
 	public function generateCode(): string
 	{
-		$this->builder->resolve();
-
-		foreach ($this->extensions as $extension) {
-			$extension->beforeCompile();
-			$this->dependencies->add([(new \ReflectionClass($extension))->getFileName()]);
-		}
-
-		$this->builder->complete();
-
-		$generator = new PhpGenerator($this->builder);
+		$generator = $this->createPhpGenerator();
 		$class = $generator->generate($this->className);
 		$this->dependencies->add($this->builder->getDependencies());
 
@@ -302,6 +307,12 @@ class Compiler
 		$extension = $this->extensions[self::SERVICES];
 		assert($extension instanceof Extensions\ServicesExtension);
 		$extension->loadDefinitions($this->processSchema($extension->getConfigSchema(), [$configList]));
+	}
+
+
+	protected function createPhpGenerator(): PhpGenerator
+	{
+		return new PhpGenerator($this->builder);
 	}
 
 
