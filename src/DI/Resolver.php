@@ -365,7 +365,15 @@ class Resolver
 		) {
 			return new Reference(Reference::SELF);
 		}
-		return new Reference($this->builder->getByType($type, true));
+
+		$name = $this->builder->getByType($type, true);
+		if (
+			!$this->currentServiceAllowed
+			&& $this->currentService === $this->builder->getDefinition($name)
+		) {
+			throw new MissingServiceException;
+		}
+		return new Reference($name);
 	}
 
 
