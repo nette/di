@@ -181,7 +181,21 @@ class Resolver
 				break;
 
 			case $entity === 'not':
+				if (count($arguments) > 1) {
+					throw new ServiceCreationException("Function $entity() expects at most 1 parameter, " . count($arguments) . ' given.');
+				}
 				$entity = ['', '!'];
+				break;
+
+			case $entity === 'bool':
+			case $entity === 'int':
+			case $entity === 'float':
+			case $entity === 'string':
+				if (count($arguments) > 1) {
+					throw new ServiceCreationException("Function $entity() expects at most 1 parameter, " . count($arguments) . ' given.');
+				}
+				$arguments = [$arguments[0], $entity];
+				$entity = [Helpers::class, 'convertType'];
 				break;
 
 			case is_string($entity): // create class
