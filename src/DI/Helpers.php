@@ -192,4 +192,27 @@ final class Helpers
 			? (new \ReflectionClass($type))->name
 			: $type;
 	}
+
+
+	/**
+	 * Non data-loss type conversion.
+	 * @param  mixed
+	 * @return mixed
+	 * @throws Nette\InvalidStateException
+	 */
+	public static function convertType($val, string $type)
+	{
+		if (is_scalar($val)) {
+			$norm = ($val === false ? '0' : (string) $val);
+			if ($type === 'float') {
+				$norm = preg_replace('#\.0*$#D', '', $norm);
+			}
+			$orig = $norm;
+			settype($norm, $type);
+			if ($orig === ($norm === false ? '0' : (string) $norm)) {
+				return $norm;
+			}
+		}
+		throw new Nette\InvalidStateException('Cannot convert ' . (is_scalar($val) ? "'$val'" : gettype($val)) . " to $type.");
+	}
 }
