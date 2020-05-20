@@ -99,6 +99,45 @@ final class Helpers
 
 
 	/**
+	 * Performs internal functions like not(), bool() ... recursively.
+	 */
+	public static function performFunctions(array $args): array
+	{
+		foreach ($args as $k => $v) {
+			if (is_array($v)) {
+				$args[$k] = self::performFunctions($v);
+
+			} elseif ($v instanceof Statement) {
+				[$entity] = self::performFunctions([$v->getEntity()]);
+				$va = self::performFunctions($v->arguments);
+				if (isset($va[0]) && !is_object($va[0])) {
+					$count = count($va);
+					switch ($entity) {
+						case 'not':
+							if ($count > 1) {
+								throw new ServiceCreationException("Function $entity() expects at most 1 parameter, $count given.");
+							}
+							$args[$k] = !$va[0];
+							continue 2;
+						case 'bool':
+						case 'int':
+						case 'float':
+						case 'string':
+							if ($count > 1) {
+								throw new ServiceCreationException("Function $entity() expects at most 1 parameter, $count given.");
+							}
+							$args[$k] = self::convertType($va[0], $entity);
+							continue 2;
+					}
+				}
+				$args[$k] = new Statement($entity, $va);
+			}
+		}
+		return $args;
+	}
+
+
+	/**
 	 * Removes ... and process constants recursively.
 	 */
 	public static function filterArguments(array $args): array

@@ -170,6 +170,7 @@ class Resolver
 		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
+		$arguments = Helpers::performFunctions($arguments);
 		$getter = function (string $type, bool $single) {
 			return $single
 				? $this->getByType($type)
