@@ -113,8 +113,8 @@ final class Helpers
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
 			} elseif ($v instanceof Statement) {
-				$tmp = self::filterArguments([$v->getEntity()]);
-				$args[$k] = new Statement($tmp[0], self::filterArguments($v->arguments));
+				[$tmp] = self::filterArguments([$v->getEntity()]);
+				$args[$k] = new Statement($tmp, self::filterArguments($v->arguments));
 			}
 		}
 		return $args;
