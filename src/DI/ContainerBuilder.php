@@ -61,7 +61,11 @@ class ContainerBuilder
 	{
 		$this->needsResolve = true;
 		if ($name === null) {
-			for ($i = 1; isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]); $i++);
+			for (
+				$i = 1;
+				isset($this->definitions['0' . $i]) || isset($this->aliases['0' . $i]);
+				$i++
+			);
 			$name = '0' . $i; // prevents converting to integer in array key
 
 		} elseif (is_int(key([$name => 1])) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
