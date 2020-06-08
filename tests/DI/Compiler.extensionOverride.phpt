@@ -182,7 +182,7 @@ Assert::same([
 
 Assert::exception(function () use ($container) {
 	$container->getService('one9');
-}, TypeError::class, 'Return value of %a%::createServiceOne9() must be an instance of Ipsum, instance of Lorem returned');
+}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('one10'));
@@ -243,7 +243,7 @@ Assert::same([
 
 Assert::exception(function () use ($container) {
 	$container->getService('two11');
-}, TypeError::class, 'Return value of %a%::createServiceTwo11() must be an instance of Ipsum, instance of Lorem returned');
+}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('two12'));
@@ -290,7 +290,7 @@ Assert::same([
 
 Assert::exception(function () use ($container) {
 	$container->getService('three8');
-}, TypeError::class, 'Return value of %a%::createServiceThree8() must be an instance of Ipsum, instance of Lorem returned');
+}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('three9'));

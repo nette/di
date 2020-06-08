@@ -547,7 +547,7 @@ class Resolver
 
 		} elseif (
 			$method instanceof \ReflectionMethod
-			&& $parameter->isArray()
+			&& $type === 'array'
 			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->name . '#', (string) $method->getDocComment(), $m)
 			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 			&& (class_exists($itemType) || interface_exists($itemType))
