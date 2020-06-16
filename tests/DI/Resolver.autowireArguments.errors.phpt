@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (stdClass $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass needed by $x in {closure}() not found. Did you register it in configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass needed by $x in {closure}() not found. Did you add it to configuration file?');
 
 
 Assert::exception(function () {

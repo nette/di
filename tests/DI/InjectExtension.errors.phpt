@@ -46,7 +46,7 @@ services:
 		factory: ServiceA
 		inject: yes
 ');
-}, InvalidStateException::class, 'Service of type DateTimeImmutable used in @var annotation at ServiceA::$a not found. Did you register it in configuration file?');
+}, InvalidStateException::class, 'Service of type DateTimeImmutable used in @var annotation at ServiceA::$a not found. Did you add it to configuration file?');
 
 
 Assert::exception(function () use ($compiler) {

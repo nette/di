@@ -540,7 +540,7 @@ class Resolver
 			if ($res !== null || $parameter->allowsNull()) {
 				return $res;
 			} elseif (class_exists($type) || interface_exists($type)) {
-				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you register it in configuration file?");
+				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you add it to configuration file?");
 			} else {
 				throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
 			}
