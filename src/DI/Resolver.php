@@ -554,6 +554,15 @@ class Resolver
 			&& (class_exists($itemType) || interface_exists($itemType))
 		) {
 			return $getter($itemType, false);
+			
+		} elseif (
+			$method instanceof \ReflectionMethod
+			&& $parameter->isArray()
+			&& preg_match('#@param[ \t]+array<([\w\\\\]+)>[ \t]+\$' . $parameter->name . '#', (string) $method->getDocComment(), $m)
+			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
+			&& (class_exists($itemType) || interface_exists($itemType))
+		) {
+			return $getter($itemType, false);
 
 		} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
 			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
