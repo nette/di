@@ -554,7 +554,7 @@ class Resolver
 			&& (class_exists($itemType) || interface_exists($itemType))
 		) {
 			return $getter($itemType, false);
-			
+
 		} elseif (
 			$method instanceof \ReflectionMethod
 			&& $parameter->isArray()
