@@ -99,6 +99,27 @@ final class Helpers
 
 
 	/**
+	 * Escapes '%' and '@'
+	 * @param  mixed  $value
+	 * @return mixed
+	 */
+	public static function escape($value)
+	{
+		if (is_array($value)) {
+			$res = [];
+			foreach ($value as $key => $val) {
+				$key = is_string($key) ? str_replace('%', '%%', $key) : $key;
+				$res[$key] = self::escape($val);
+			}
+			return $res;
+		} elseif (is_string($value)) {
+			return preg_replace('#^@|%#', '$0$0', $value);
+		}
+		return $value;
+	}
+
+
+	/**
 	 * Removes ... and process constants recursively.
 	 */
 	public static function filterArguments(array $args): array
