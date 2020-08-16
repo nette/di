@@ -26,7 +26,7 @@ Assert::exception(function () {
 }, Nette\DI\ServiceCreationException::class, "Service '': Type of service is unknown.");
 
 
-test(function () {
+test('', function () {
 	$def = new ImportedDefinition;
 	$def->setName('abc');
 	$def->setType('stdClass');

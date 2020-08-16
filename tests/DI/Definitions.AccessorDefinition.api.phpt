@@ -102,7 +102,7 @@ Assert::noError(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$def = new AccessorDefinition;
 	$def->setImplement('Good1');
 

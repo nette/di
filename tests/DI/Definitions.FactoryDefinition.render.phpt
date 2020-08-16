@@ -19,7 +19,7 @@ interface Good2
 }
 
 
-test(function () {
+test('', function () {
 	$def = new FactoryDefinition;
 	$def->setName('abc');
 	$def->setImplement('Good2');

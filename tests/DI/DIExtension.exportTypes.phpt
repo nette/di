@@ -19,7 +19,7 @@ class Foo
 }
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -40,7 +40,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -61,7 +61,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);
@@ -83,7 +83,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);
@@ -107,7 +107,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);

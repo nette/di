@@ -20,7 +20,7 @@ class Service
 
 $container = new Container;
 
-test(function () use ($container) {
+test('', function () use ($container) {
 	$one = new Service;
 	$two = new Service;
 	$container->addService('one', $one);
@@ -39,8 +39,7 @@ test(function () use ($container) {
 });
 
 
-// closure
-test(function () use ($container) {
+test('closure', function () use ($container) {
 	@$container->addService('four', function () { // @ triggers service should be defined as "imported"
 		return new Service;
 	});
@@ -55,8 +54,7 @@ test(function () use ($container) {
 });
 
 
-// closure with typehint
-test(function () use ($container) {
+test('closure with typehint', function () use ($container) {
 	@$container->addService('five', function (): Service { // @ triggers service should be defined as "imported"
 		return new Service;
 	});

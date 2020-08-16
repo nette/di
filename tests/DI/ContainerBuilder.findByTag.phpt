@@ -28,7 +28,7 @@ $builder->addDefinition('five')
 	->addTag('typeHint', 'Service');
 
 
-test(function () use ($builder) { // compile-time
+test('compile-time', function () use ($builder) {
 	Assert::same([
 		'five' => 'Service',
 	], $builder->findByTag('typeHint'));
@@ -46,7 +46,7 @@ test(function () use ($builder) { // compile-time
 });
 
 
-test(function () use ($builder) { // run-time
+test('run-time', function () use ($builder) {
 	$container = createContainer($builder);
 
 	Assert::same([

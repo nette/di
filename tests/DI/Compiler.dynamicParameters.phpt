@@ -22,7 +22,7 @@ class Service
 	}
 }
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -33,7 +33,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -44,7 +44,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -58,7 +58,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -72,7 +72,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -85,7 +85,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -100,7 +100,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -114,7 +114,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -128,7 +128,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	Assert::exception(function () use ($compiler) {

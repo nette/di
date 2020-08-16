@@ -19,7 +19,7 @@ interface Good
 }
 
 
-test(function () {
+test('', function () {
 	$def = new LocatorDefinition;
 	$def->setName('abc');
 	$def->setImplement('Good');

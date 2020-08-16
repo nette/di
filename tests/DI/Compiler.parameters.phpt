@@ -29,7 +29,7 @@ class Service
 }
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -43,7 +43,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -57,7 +57,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -71,7 +71,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -86,7 +86,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -101,7 +101,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:

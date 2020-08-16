@@ -53,7 +53,7 @@ Assert::exception(function () {
 }, Nette\DI\InvalidConfigurationException::class, "The option 'foo › key' expects to be string, int 123 given.");
 
 
-test(function () {
+test('', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '
@@ -64,7 +64,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '
@@ -74,7 +74,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '

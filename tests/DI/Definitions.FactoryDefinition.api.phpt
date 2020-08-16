@@ -90,7 +90,7 @@ Assert::noError(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$def = new FactoryDefinition;
 	$def->setImplement('Good1');
 
@@ -99,7 +99,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$def = new FactoryDefinition;
 	$def->setImplement('Good1');
 

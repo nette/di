@@ -30,7 +30,7 @@ class Bar extends Foo implements IBar
 }
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -43,7 +43,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -56,7 +56,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -69,7 +69,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -82,7 +82,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -95,7 +95,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -108,7 +108,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -121,7 +121,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -134,7 +134,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -147,7 +147,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -164,7 +164,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')
 		->setType('stdClass');
@@ -177,7 +177,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType('Bar')
@@ -194,7 +194,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setType('Bar')
@@ -217,7 +217,7 @@ test(function () {
 });
 
 
-test(function () {
+test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setType('Foo')

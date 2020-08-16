@@ -19,7 +19,7 @@ Assert::exception(function () {
 }, Nette\InvalidArgumentException::class, "Missing parameter 'name'.");
 
 
-test(function () {
+test('', function () {
 	$config = new Config\Loader;
 	$config->setParameters(['name' => 'loader.includes.params.child']);
 	$data = $config->load('files/loader.includes.params.neon');
