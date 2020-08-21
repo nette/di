@@ -484,7 +484,29 @@ class Resolver
 
 		foreach ($method->getParameters() as $num => $param) {
 			$paramName = $param->name;
-			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
+			if ($param->isVariadic()) {
+				if (array_key_exists($paramName, $arguments)) {
+					$values = (array) $arguments[$paramName];
+				} elseif (array_key_exists($num, $arguments)) {
+					$values = array_slice($arguments, $num, null, true);
+					ksort($values);
+				} else {
+					$values = (array) self::autowireArgument($param, $getter);
+				}
+
+				$valueNum = $num;
+				foreach ($values as $value) {
+					$res[$valueNum] = $value;
+					unset($arguments[$valueNum]);
+					$valueNum++;
+				}
+
+				unset($arguments[$paramName]);
+				if ($valueNum > $num) {
+					$num = $valueNum - 1;
+				}
+
+			} elseif (array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
 
@@ -496,7 +518,7 @@ class Resolver
 				$res[$num] = self::autowireArgument($param, $getter);
 			}
 
-			$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
+			$optCount = ($param->isVariadic() && !array_key_exists($num, $res)) || ($param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null))
 				? $optCount + 1
 				: 0;
 		}
@@ -531,7 +553,7 @@ class Resolver
 
 		if ($type && !Reflection::isBuiltinType($type)) {
 			try {
-				$res = $getter($type, true);
+				$res = $getter($type, !$parameter->isVariadic());
 			} catch (MissingServiceException $e) {
 				$res = null;
 			} catch (ServiceCreationException $e) {
