@@ -36,7 +36,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->time = microtime(true);
 
 		$this->config = new class {
-			/** @var bool */
+			/** @var ?bool */
 			public $debugger;
 			/** @var string[] */
 			public $excluded = [];
@@ -53,7 +53,6 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			/** @var string[]|bool|null */
 			public $types = true;
 		};
-		$this->config->debugger = interface_exists(\Tracy\IBarPanel::class);
 	}
 
 
@@ -81,7 +80,10 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->restrictTags($class);
 		$this->restrictTypes($class);
 
-		if ($this->debugMode && $this->config->debugger) {
+		if (
+			$this->debugMode &&
+			($this->config->debugger ?? $this->getContainerBuilder()->getByType(\Tracy\Bar::class))
+		) {
 			$this->enableTracyIntegration();
 		}
 
