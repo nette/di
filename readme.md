@@ -9,6 +9,8 @@ Nette Dependency Injection (DI)
 
 Purpose of the Dependecy Injection (DI) is to free classes from the responsibility for obtaining objects that they need for its operation (these objects are called **services**). To pass them these services on their instantiation instead.
 
+It requires PHP version 5.6 and supports PHP up to 8.0.
+
 Nette DI is one of the most interesting part of framework. It is compiled DI container, extremely fast and easy to configure.
 
 Let's have an application for sending newsletters. The code is maximally simplified and is available on the [GitHub](https://github.com/dg/di-example).
