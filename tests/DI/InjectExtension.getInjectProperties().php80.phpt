@@ -19,7 +19,17 @@ class AClass
 	public AClass|\stdClass $var;
 }
 
+class EClass
+{
+	#[\Nette\DI\Attributes\Inject]
+	public EInjected $varA;
+}
+
 
 Assert::exception(function () {
 	InjectExtension::getInjectProperties(AClass::class);
 }, Nette\InvalidStateException::class, 'The AClass::$var is not expected to have a union type.');
+
+Assert::same([
+	'varA' => 'EInjected',
+], InjectExtension::getInjectProperties(EClass::class));
