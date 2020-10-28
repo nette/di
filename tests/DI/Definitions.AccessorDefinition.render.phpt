@@ -35,7 +35,7 @@ test('', function () {
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(
-<<<'XX'
+		<<<'XX'
 public function createServiceAbc(): Good2
 {
 	return new class ($this) implements Good2 {
@@ -55,5 +55,7 @@ public function createServiceAbc(): Good2
 	};
 }
 XX
-, $method->__toString());
+,
+		$method->__toString()
+	);
 });

@@ -26,7 +26,6 @@ class Foo
 
 interface FooFactory
 {
-
 	/** @return Foo */
 	public function create();
 }

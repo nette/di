@@ -43,7 +43,7 @@ file_put_contents(getTempDir() . '/code.php', "<?php\n\n$code");
 require getTempDir() . '/code.php';
 
 /** @var DI\Container $container */
-$container = new $class();
+$container = new $class;
 
 Assert::type(Ipsum::class, $container->getService('s1'));
 Assert::same([

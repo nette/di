@@ -15,7 +15,6 @@ require __DIR__ . '/../bootstrap.php';
 
 interface IArticleFactory
 {
-
 	/** @return Article */
 	public function create(string $title);
 }

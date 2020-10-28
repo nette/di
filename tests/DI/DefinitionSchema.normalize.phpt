@@ -44,7 +44,6 @@ Assert::with(DefinitionSchema::class, function () {
 	$statement = new Statement(Iface::class, ['tagged' => 123]);
 	Assert::same(['implement' => Iface::class, 'tagged' => 123], $schema->normalize($statement, $context));
 
-
 	// aliases
 	Assert::same(['factory' => 'val'], $schema->normalize(['class' => 'val'], $context));
 	Assert::same(['imported' => 'val'], $schema->normalize(['dynamic' => 'val'], $context));

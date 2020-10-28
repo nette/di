@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface Iface
 {
-	public const NAME = __CLASS__;
+	public const NAME = self::class;
 }
 
 

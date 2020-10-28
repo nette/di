@@ -90,7 +90,9 @@ abstract class CompilerExtension
 		if ($extra = array_diff_key((array) $config, $expected)) {
 			$name = $name ? str_replace('.', ' › ', $name) : $this->name;
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($expected), key($extra));
-			$extra = $hint ? key($extra) : implode("', '{$name} › ", array_keys($extra));
+			$extra = $hint
+				? key($extra)
+				: implode("', '{$name} › ", array_keys($extra));
 			throw new Nette\DI\InvalidConfigurationException("Unknown configuration option '{$name} › {$extra}'" . ($hint ? ", did you mean '{$name} › {$hint}'?" : '.'));
 		}
 		return Nette\Schema\Helpers::merge($config, $expected);

@@ -81,13 +81,15 @@ $cfg = '
 $data = $config->load(Tester\FileMock::create($cfg, 'neon'));
 Assert::equal([
 	new Statement('ent', [1]),
-	new Statement([
+	new Statement(
+		[
 			new Statement('ent', [2]),
 			'inner',
 		],
 		[3, 4]
 	),
-	new Statement([
+	new Statement(
+		[
 			new Statement('ent', [3]),
 			'inner',
 		],

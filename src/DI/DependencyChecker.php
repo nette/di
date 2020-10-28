@@ -80,8 +80,14 @@ class DependencyChecker
 	/**
 	 * Are dependencies expired?
 	 */
-	public static function isExpired(int $version, array $files, array &$phpFiles, array $classes, array $functions, string $hash): bool
-	{
+	public static function isExpired(
+		int $version,
+		array $files,
+		array &$phpFiles,
+		array $classes,
+		array $functions,
+		string $hash
+	): bool {
 		try {
 			$currentFiles = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
 			$origPhpFiles = $phpFiles;

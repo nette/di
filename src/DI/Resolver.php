@@ -111,7 +111,9 @@ class Resolver
 			try {
 				/** @var \ReflectionMethod|\ReflectionFunction $reflection */
 				$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
-				$refClass = $reflection instanceof \ReflectionMethod ? $reflection->getDeclaringClass() : null;
+				$refClass = $reflection instanceof \ReflectionMethod
+					? $reflection->getDeclaringClass()
+					: null;
 			} catch (\ReflectionException $e) {
 				$refClass = $reflection = null;
 			}
@@ -134,7 +136,8 @@ class Resolver
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
-				throw new ServiceCreationException(interface_exists($entity)
+				throw new ServiceCreationException(
+					interface_exists($entity)
 					? "Interface $entity can not be used as 'factory', did you mean 'implement'?"
 					: "Class $entity not found."
 				);
@@ -147,7 +150,9 @@ class Resolver
 
 	public function completeDefinition(Definition $def): void
 	{
-		$this->currentService = in_array($def, $this->builder->getDefinitions(), true) ? $def : null;
+		$this->currentService = in_array($def, $this->builder->getDefinitions(), true)
+			? $def
+			: null;
 		$this->currentServiceType = $def->getType();
 		$this->currentServiceAllowed = false;
 
@@ -287,7 +292,9 @@ class Resolver
 				$entity = $val->getEntity();
 				if ($entity === 'typed' || $entity === 'tagged') {
 					$services = [];
-					$current = $this->currentService ? $this->currentService->getName() : null;
+					$current = $this->currentService
+						? $this->currentService->getName()
+						: null;
 					foreach ($val->arguments as $argument) {
 						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findAutowired($argument) as $name => $foo) {
 							if ($name !== $current) {
@@ -476,8 +483,11 @@ class Resolver
 	 * @param  (callable(string $type, bool $single): object|object[]|null)  $getter
 	 * @throws ServiceCreationException
 	 */
-	public static function autowireArguments(\ReflectionFunctionAbstract $method, array $arguments, callable $getter): array
-	{
+	public static function autowireArguments(
+		\ReflectionFunctionAbstract $method,
+		array $arguments,
+		callable $getter
+	): array {
 		$optCount = 0;
 		$num = -1;
 		$res = [];
@@ -554,10 +564,16 @@ class Resolver
 		) {
 			return $getter($itemType, false);
 
-		} elseif (($type && $parameter->allowsNull()) || $parameter->isOptional() || $parameter->isDefaultValueAvailable()) {
+		} elseif (
+			($type && $parameter->allowsNull())
+			|| $parameter->isOptional()
+			|| $parameter->isDefaultValueAvailable()
+		) {
 			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 			// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
-			return $parameter->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($parameter) : null;
+			return $parameter->isDefaultValueAvailable()
+				? Reflection::getParameterDefaultValue($parameter)
+				: null;
 
 		} else {
 			throw new ServiceCreationException("Parameter $desc has no class type hint or default value, so its value must be specified.");

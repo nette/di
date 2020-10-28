@@ -131,11 +131,9 @@ declare(strict_types=1);
 						if ($append = (substr($name, -2) === '[]')) {
 							$name = substr($name, 0, -2);
 						}
-						if ($entity[0] instanceof Reference) {
-							$prop = $this->formatPhp('?->?', [$entity[0], $name]);
-						} else {
-							$prop = $this->formatPhp($entity[0] . '::$?', [$name]);
-						}
+						$prop = $entity[0] instanceof Reference
+							? $this->formatPhp('?->?', [$entity[0], $name])
+							: $this->formatPhp($entity[0] . '::$?', [$name]);
 						return $arguments
 							? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
 							: $prop;

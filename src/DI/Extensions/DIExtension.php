@@ -38,18 +38,23 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->config = new class {
 			/** @var bool */
 			public $debugger;
+
 			/** @var string[] */
 			public $excluded = [];
+
 			/** @var ?string */
 			public $parentClass;
+
 			/** @var object */
 			public $export;
 		};
 		$this->config->export = new class {
 			/** @var bool */
 			public $parameters = true;
+
 			/** @var string[]|bool|null */
 			public $tags = true;
+
 			/** @var string[]|bool|null */
 			public $types = true;
 		};

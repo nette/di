@@ -20,7 +20,6 @@ namespace A
 		/** @inject */
 		public \A\AInjected $varC;
 
-		/**  */
 		public AInjected $varD;
 
 		/** @inject */

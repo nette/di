@@ -119,7 +119,9 @@ abstract class Definition
 		if ($this->notifier && $this->autowired !== $state) {
 			($this->notifier)();
 		}
-		$this->autowired = is_string($state) || is_array($state) ? (array) $state : (bool) $state;
+		$this->autowired = is_string($state) || is_array($state)
+			? (array) $state
+			: (bool) $state;
 		return $this;
 	}
 

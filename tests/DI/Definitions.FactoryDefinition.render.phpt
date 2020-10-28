@@ -35,7 +35,7 @@ test('', function () {
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(
-'public function createServiceAbc(): Good2
+		'public function createServiceAbc(): Good2
 {
 	return new class ($this) implements Good2 {
 		private $container;
@@ -52,5 +52,7 @@ test('', function () {
 			return new stdClass;
 		}
 	};
-}', $method->__toString());
+}',
+		$method->__toString()
+	);
 });

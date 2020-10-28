@@ -200,7 +200,9 @@ class Container
 
 		try {
 			$this->creating[$name] = true;
-			$service = $cb instanceof \Closure ? $cb(...$args) : $this->$method(...$args);
+			$service = $cb instanceof \Closure
+				? $cb(...$args)
+				: $this->$method(...$args);
 
 		} finally {
 			unset($this->creating[$name]);
@@ -235,7 +237,7 @@ class Container
 				throw new MissingServiceException("Service of type '$type' not found. Check class name because it cannot be found.");
 			}
 			foreach ($this->methods as $method => $foo) {
-				$methodType = (new \ReflectionMethod(get_class($this), $method))->getReturnType()->getName();
+				$methodType = (new \ReflectionMethod(static::class, $method))->getReturnType()->getName();
 				if (is_a($methodType, $type, true)) {
 					throw new MissingServiceException("Service of type $type is not autowired or is missing in di › export › types.");
 				}

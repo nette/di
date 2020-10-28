@@ -33,7 +33,9 @@ final class InjectExtension extends DI\CompilerExtension
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
 			if ($def->getTag(self::TAG_INJECT)) {
-				$def = $def instanceof Definitions\FactoryDefinition ? $def->getResultDefinition() : $def;
+				$def = $def instanceof Definitions\FactoryDefinition
+					? $def->getResultDefinition()
+					: $def;
 				if ($def instanceof Definitions\ServiceDefinition) {
 					$this->updateDefinition($def);
 				}
@@ -45,7 +47,9 @@ final class InjectExtension extends DI\CompilerExtension
 	private function updateDefinition(Definitions\ServiceDefinition $def): void
 	{
 		$resolvedType = (new DI\Resolver($this->getContainerBuilder()))->resolveEntityType($def->getFactory());
-		$class = is_subclass_of($resolvedType, $def->getType()) ? $resolvedType : $def->getType();
+		$class = is_subclass_of($resolvedType, $def->getType())
+			? $resolvedType
+			: $def->getType();
 		$setups = $def->getSetup();
 
 		foreach (self::getInjectProperties($class) as $property => $type) {

@@ -12,7 +12,7 @@ use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
 
-$compiler = new DI\Config\Loader();
+$compiler = new DI\Config\Loader;
 
 Assert::exception(function () use ($compiler) {
 	$compiler->load('files/loader.recursiveInclude.neon');

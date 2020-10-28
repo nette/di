@@ -121,7 +121,6 @@ class Dolor
 
 interface DolorFactory
 {
-
 	/** @return Dolor */
 	public function create(Bar $bar = null, $foo);
 }
