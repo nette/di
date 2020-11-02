@@ -115,6 +115,9 @@ final class InjectExtension extends DI\CompilerExtension
 			if (DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if ($type = Reflection::getPropertyType($rp)) {
 				} elseif ($type = DI\Helpers::parseAnnotation($rp, 'var')) {
+					if (strpos($type, '|') !== false) {
+						throw new Nette\InvalidStateException('The ' . Reflection::toString($rp) . ' is not expected to have a union type.');
+					}
 					$type = Reflection::expandClassName($type, Reflection::getPropertyDeclaringClass($rp));
 				}
 				$res[$name] = $type;
@@ -154,11 +157,11 @@ final class InjectExtension extends DI\CompilerExtension
 	{
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		if (!$type) {
-			throw new Nette\InvalidStateException("Property $propName has no @var annotation.");
+			throw new Nette\InvalidStateException("Property $propName has no type hint.");
 		} elseif (!class_exists($type) && !interface_exists($type)) {
-			throw new Nette\InvalidStateException("Class or interface '$type' used in @var annotation at $propName not found. Check annotation and 'use' statements.");
+			throw new Nette\InvalidStateException("Class or interface '$type' used in type hint at $propName not found. Check type and 'use' statements.");
 		} elseif ($container && !$container->getByType($type, false)) {
-			throw new Nette\DI\MissingServiceException("Service of type $type used in @var annotation at $propName not found. Did you add it to configuration file?");
+			throw new Nette\DI\MissingServiceException("Service of type $type used in type hint at $propName not found. Did you add it to configuration file?");
 		}
 	}
 }

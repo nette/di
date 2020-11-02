@@ -46,7 +46,7 @@ services:
 		factory: ServiceA
 		inject: yes
 ');
-}, InvalidStateException::class, 'Service of type DateTimeImmutable used in @var annotation at ServiceA::$a not found. Did you add it to configuration file?');
+}, InvalidStateException::class, 'Service of type DateTimeImmutable used in type hint at ServiceA::$a not found. Did you add it to configuration file?');
 
 
 Assert::exception(function () use ($compiler) {
@@ -56,7 +56,7 @@ services:
 		factory: ServiceB
 		inject: yes
 ');
-}, InvalidStateException::class, "Class or interface 'Unknown' used in @var annotation at ServiceB::\$a not found. Check annotation and 'use' statements.");
+}, InvalidStateException::class, "Class or interface 'Unknown' used in type hint at ServiceB::\$a not found. Check type and 'use' statements.");
 
 
 Assert::exception(function () use ($compiler) {
@@ -66,4 +66,4 @@ services:
 		factory: ServiceC
 		inject: yes
 ');
-}, InvalidStateException::class, 'Property ServiceC::$a has no @var annotation.');
+}, InvalidStateException::class, 'Property ServiceC::$a has no type hint.');
