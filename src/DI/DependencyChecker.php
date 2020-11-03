@@ -127,9 +127,7 @@ class DependencyChecker
 						$method->name,
 						$method->getDocComment(),
 						self::hashParameters($method),
-						$method->hasReturnType()
-							? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
-							: null,
+						Reflection::getReturnTypes($method),
 					];
 				}
 			}
@@ -153,9 +151,7 @@ class DependencyChecker
 				$uses,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				$method->hasReturnType()
-					? [$method->getReturnType()->getName(), $method->getReturnType()->allowsNull()]
-					: null,
+				Reflection::getReturnTypes($method),
 			];
 		}
 
@@ -169,8 +165,7 @@ class DependencyChecker
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->name,
-				Reflection::getParameterType($param),
-				$param->allowsNull(),
+				Reflection::getParameterTypes($param),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? [Reflection::getParameterDefaultValue($param)]
