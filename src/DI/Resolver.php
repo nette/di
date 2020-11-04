@@ -414,20 +414,26 @@ class Resolver
 	{
 		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
 			return $e;
-		} else {
-			$name = $def->getName();
-			$type = $def->getType();
-			if (!$type) {
-				$message = "Service '$name': " . $e->getMessage();
-			} elseif (!$name || ctype_digit($name)) {
-				$message = "Service of type $type: " . str_replace("$type::", '', $e->getMessage());
-			} else {
-				$message = "Service '$name' (type of $type): " . str_replace("$type::", '', $e->getMessage());
-			}
-			return $e instanceof ServiceCreationException
-				? $e->setMessage($message)
-				: new ServiceCreationException($message, 0, $e);
 		}
+
+		$name = $def->getName();
+		$type = $def->getType();
+		if ($name && !ctype_digit($name)) {
+			$message = "Service '$name'" . ($type ? " (type of $type)" : '') . ': ';
+		} elseif ($type) {
+			$message = "Service of type $type: ";
+		} elseif ($def instanceof Definitions\ServiceDefinition && $def->getEntity()) {
+			$message = 'Service (' . $this->entityToString($def->getEntity()) . '): ';
+		} else {
+			$message = '';
+		}
+		$message .= $type
+			? str_replace("$type::", '', $e->getMessage())
+			: $e->getMessage();
+
+		return $e instanceof ServiceCreationException
+			? $e->setMessage($message)
+			: new ServiceCreationException($message, 0, $e);
 	}
 
 

@@ -23,6 +23,13 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition(null)->setFactory('Unknown');
+	$builder->complete();
+}, Nette\DI\ServiceCreationException::class, 'Service (Unknown::__construct()): Class Unknown not found.');
+
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('@two');
 	$builder->addDefinition('two')->setFactory('Unknown');
 	$builder->complete();

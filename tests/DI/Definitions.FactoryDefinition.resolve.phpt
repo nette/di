@@ -28,7 +28,7 @@ Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
-}, Nette\DI\ServiceCreationException::class, "Service '': Type is missing in definition of service.");
+}, Nette\DI\ServiceCreationException::class, 'Type is missing in definition of service.');
 
 
 Assert::exception(function () {
