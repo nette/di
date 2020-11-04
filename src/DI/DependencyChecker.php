@@ -117,7 +117,12 @@ class DependencyChecker
 
 			foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
 				if ($prop->getDeclaringClass() == $class) { // intentionally ==
-					$hash[] = [$name, $prop->name, $prop->getDocComment()];
+					$hash[] = [
+						$name,
+						$prop->name,
+						$prop->getDocComment(),
+						Reflection::getPropertyTypes($prop),
+					];
 				}
 			}
 			foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
