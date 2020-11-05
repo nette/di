@@ -41,7 +41,7 @@ Assert::true(method_exists($container, 'createServiceLorem'));
 
 $params = new ReflectionParameter([$container, 'createServiceLorem'], 0);
 Assert::same('foo', $params->getName());
-Assert::same('Ipsum', $params->getClass()->getName());
+Assert::same('Ipsum', Nette\Utils\Reflection::getParameterType($params));
 Assert::false($params->isDefaultValueAvailable());
 
 $params = new ReflectionParameter([$container, 'createServiceLorem'], 1);

@@ -41,32 +41,35 @@ class Lorem
 define('MY_CONSTANT_TEST', 'one');
 
 
-Assert::error(function () use (&$container) {
-	$container = createContainer(new DI\Compiler, "
-	services:
-		lorem:
-			factory: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
-			setup:
-				- method( @lorem, @self, @container )
-				- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
-				- method( [Lorem, method], 'Lorem::add', Lorem::add )
-				- method( not(true) )
-				- method( @lorem::var, @self::var, @container::parameters )
-				- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
+if (PHP_VERSION_ID < 80000) {
+	Assert::error(function () use (&$container) {
+		$container = createContainer(new DI\Compiler, '
+		services:
+			dolor: Lorem(::MY_FAILING_CONSTANT_TEST)
+		');
+	}, E_WARNING, "%a?%Couldn't find constant MY_FAILING_CONSTANT_TEST");
+	Assert::same([null], $container->getService('dolor')->args[0]);
+}
 
-		dolor:
-			factory: Lorem(::MY_FAILING_CONSTANT_TEST)
-	");
-}, E_WARNING, "%a?%Couldn't find constant MY_FAILING_CONSTANT_TEST");
+$container = createContainer(new DI\Compiler, "
+services:
+	lorem:
+		factory: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
+		setup:
+			- method( @lorem, @self, @container )
+			- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
+			- method( [Lorem, method], 'Lorem::add', Lorem::add )
+			- method( not(true) )
+			- method( @lorem::var, @self::var, @container::parameters )
+			- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT, @container::TAGS )
+");
 
 $container->parameters = ['something'];
 
 $lorem = $container->getService('lorem');
-$dolor = $container->getService('dolor');
 
 // constants
 Assert::same(['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0]);
-Assert::same([null], $dolor->args[0]);
 
 // services
 Assert::same([$lorem, $lorem, $container], $lorem->args[1]);

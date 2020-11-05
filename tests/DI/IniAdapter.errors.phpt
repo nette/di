@@ -26,4 +26,4 @@ Assert::exception(function () {
 Assert::exception(function () {
 	$config = new Config\Loader;
 	$config->load('files/iniAdapter.malformed.ini');
-}, Nette\InvalidStateException::class, "%a?%syntax error, unexpected \$end, expecting ']' in %a% on line 1");
+}, Nette\InvalidStateException::class, '%a% on line 1');
