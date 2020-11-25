@@ -541,29 +541,38 @@ class Resolver
 	 */
 	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
 	{
-		$type = Reflection::getParameterType($parameter);
-		$method = $parameter->getDeclaringFunction();
+		$types = Reflection::getParameterTypes($parameter);
 		$desc = Reflection::toString($parameter);
 
-		if ($type && !Reflection::isBuiltinType($type)) {
+		foreach ($types as $type) {
+			if (Reflection::isBuiltinType($type)) {
+				continue;
+			}
+			$hasType = true;
 			try {
-				$res = $getter($type, true);
+				if ($service = $getter($type, true)) {
+					return $service;
+				}
 			} catch (MissingServiceException $e) {
-				$res = null;
 			} catch (ServiceCreationException $e) {
 				throw new ServiceCreationException("{$e->getMessage()} (needed by $desc)", 0, $e);
 			}
-			if ($res !== null || $parameter->allowsNull()) {
-				return $res;
-			} elseif (class_exists($type) || interface_exists($type)) {
-				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you add it to configuration file?");
-			} else {
-				throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
-			}
+		}
 
-		} elseif (
+		if (empty($hasType)) {
+			// continue
+		} elseif ($parameter->allowsNull()) {
+			return null;
+		} elseif (class_exists($type) || interface_exists($type)) {
+			throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you add it to configuration file?");
+		} else {
+			throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
+		}
+
+		$method = $parameter->getDeclaringFunction();
+		if (
 			$method instanceof \ReflectionMethod
-			&& $type === 'array'
+			&& in_array('array', $types, true)
 			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->name . '#', (string) $method->getDocComment(), $m)
 			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 			&& (class_exists($itemType) || interface_exists($itemType))
@@ -571,7 +580,7 @@ class Resolver
 			return $getter($itemType, false);
 
 		} elseif (
-			($type && $parameter->allowsNull())
+			($types && $parameter->allowsNull())
 			|| $parameter->isOptional()
 			|| $parameter->isDefaultValueAvailable()
 		) {

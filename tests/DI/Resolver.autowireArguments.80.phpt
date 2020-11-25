@@ -16,11 +16,14 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public function methodUnion(\stdClass |self $self)
+	public function methodUnion(int|self $self, self|Undefined $self2, Undefined1|Undefined2|null $nullable)
 	{
 	}
 }
 
-Assert::exception(function () {
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnion'), [], function () {});
-}, Nette\InvalidStateException::class, 'The $self in Test::methodUnion() is not expected to have a union type.');
+Assert::equal(
+	[new Test, new Test, null],
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnion'), [], function ($type) {
+		return $type === 'Test' ? new Test : null;
+	})
+);
