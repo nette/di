@@ -76,7 +76,7 @@ class Container
 		}
 
 		$type = $service instanceof \Closure
-			? (($tmp = (new \ReflectionFunction($service))->getReturnType()) ? $tmp->getName() : '')
+			? (string) Nette\Utils\Reflection::getReturnType(new \ReflectionFunction($service))
 			: get_class($service);
 
 		if (!isset($this->methods[self::getMethodName($name)])) {
