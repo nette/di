@@ -524,7 +524,7 @@ class Resolver
 			$optCount = 0;
 		}
 		if ($arguments) {
-			throw new ServiceCreationException('Unable to pass specified arguments to ' . Reflection::toString($method) . '().');
+			throw new ServiceCreationException('Unable to pass specified arguments to ' . Reflection::toString($method) . '.');
 		} elseif ($optCount) {
 			$res = array_slice($res, 0, -$optCount);
 		}
@@ -543,7 +543,7 @@ class Resolver
 	{
 		$type = Reflection::getParameterType($parameter);
 		$method = $parameter->getDeclaringFunction();
-		$desc = '$' . $parameter->name . ' in ' . Reflection::toString($method) . '()';
+		$desc = Reflection::toString($parameter);
 
 		if ($type && !Reflection::isBuiltinType($type)) {
 			try {

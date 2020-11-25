@@ -61,7 +61,7 @@ class DependencyChecker
 
 			} elseif ($dep instanceof \ReflectionFunctionAbstract) {
 				$phpFiles[] = $dep->getFileName();
-				$functions[] = Reflection::toString($dep);
+				$functions[] = rtrim(Reflection::toString($dep), '()');
 
 			} else {
 				throw new Nette\InvalidStateException('Unexpected dependency ' . gettype($dep));
