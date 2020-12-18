@@ -50,7 +50,7 @@ Assert::exception(function () {
 	foo:
 		key: 123
 	');
-}, Nette\DI\InvalidConfigurationException::class, "The option 'foo › key' expects to be string, int 123 given.");
+}, Nette\DI\InvalidConfigurationException::class, "The option 'foo › key' expects to be string, 123 given.");
 
 
 test('', function () {
