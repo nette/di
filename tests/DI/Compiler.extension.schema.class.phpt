@@ -40,7 +40,7 @@ Assert::exception(function () {
 	foo:
 		unknown: 123
 	');
-}, Nette\DI\InvalidConfigurationException::class, "Unexpected option 'foo › unknown'.");
+}, Nette\DI\InvalidConfigurationException::class, "Unexpected item 'foo › unknown'.");
 
 
 Assert::exception(function () {
@@ -50,7 +50,7 @@ Assert::exception(function () {
 	foo:
 		key: 123
 	');
-}, Nette\DI\InvalidConfigurationException::class, "The option 'foo › key' expects to be ?string, int 123 given.");
+}, Nette\DI\InvalidConfigurationException::class, "The item 'foo › key' expects to be ?string, 123 given.");
 
 
 test('', function () {

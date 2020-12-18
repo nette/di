@@ -21,4 +21,4 @@ Assert::exception(function () {
 		batch:
 			in: []
 	');
-}, Nette\DI\InvalidConfigurationException::class, "The option 'search › batch › in' expects to be string, array given.");
+}, Nette\DI\InvalidConfigurationException::class, "The item 'search › batch › in' expects to be string, array given.");
