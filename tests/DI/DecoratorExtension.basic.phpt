@@ -33,6 +33,16 @@ class Service extends stdClass implements Iface
 }
 
 
+class Spec1
+{
+}
+
+
+class Spec2
+{
+}
+
+
 $compiler = new DI\Compiler;
 $compiler->addExtension('decorator', new Nette\DI\Extensions\DecoratorExtension);
 $container = createContainer($compiler, '
