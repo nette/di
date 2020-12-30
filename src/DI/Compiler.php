@@ -276,10 +276,14 @@ class Compiler
 			$context->dynamics = &$this->extensions[self::PARAMETERS]->dynamicValidators;
 		};
 		try {
-			return $processor->processMultiple($schema, $configs);
+			$res = $processor->processMultiple($schema, $configs);
 		} catch (Schema\ValidationException $e) {
 			throw new Nette\DI\InvalidConfigurationException($e->getMessage());
 		}
+		foreach ($processor->getWarnings() as $warning) {
+			trigger_error($warning, E_USER_DEPRECATED);
+		}
+		return $res;
 	}
 
 
