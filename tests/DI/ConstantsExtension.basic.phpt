@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $compiler = new DI\Compiler;
 $compiler->addExtension('constants', new Nette\DI\Extensions\ConstantsExtension);
-$container = createContainer($compiler, '
+$container = @createContainer($compiler, '
 constants:
 	a: hello
 	A: WORLD
