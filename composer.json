@@ -15,13 +15,13 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2 <8.2",
+		"php": ">=7.1 <8.2",
 		"ext-tokenizer": "*",
 		"nette/neon": "^3.0",
 		"nette/php-generator": "^3.3.3",
 		"nette/robot-loader": "^3.2",
 		"nette/schema": "^1.1",
-		"nette/utils": "^3.2"
+		"nette/utils": "^3.1.4"
 	},
 	"require-dev": {
 		"nette/tester": "^2.2",
@@ -41,7 +41,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "3.1-dev"
+			"dev-master": "4.0-dev"
 		}
 	}
 }
