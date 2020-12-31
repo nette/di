@@ -14,6 +14,7 @@ use Nette;
 
 /**
  * PHP directives definition.
+ * @deprecated
  */
 final class PhpExtension extends Nette\DI\CompilerExtension
 {
