@@ -14,6 +14,7 @@ use Nette;
 
 /**
  * Constant definitions.
+ * @deprecated
  */
 final class ConstantsExtension extends Nette\DI\CompilerExtension
 {
