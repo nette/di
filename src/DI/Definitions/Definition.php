@@ -198,6 +198,7 @@ abstract class Definition
 	/** @deprecated Use '$def instanceof Nette\DI\Definitions\ImportedDefinition' */
 	public function isDynamic(): bool
 	{
+		trigger_error(sprintf('Service %s: %s() is deprecated, use "instanceof ImportedDefinition".', $this->getName(), __METHOD__), E_USER_DEPRECATED);
 		return false;
 	}
 
@@ -205,6 +206,7 @@ abstract class Definition
 	/** @deprecated Use Nette\DI\Definitions\FactoryDefinition or AccessorDefinition */
 	public function getImplement(): ?string
 	{
+		trigger_error(sprintf('Service %s: %s() is deprecated.', $this->getName(), __METHOD__), E_USER_DEPRECATED);
 		return null;
 	}
 
