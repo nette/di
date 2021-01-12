@@ -23,19 +23,14 @@ final class Helpers
 	public const PREVENT_MERGING = '_prevent_merging';
 
 
-	/**
-	 * Merges configurations. Left has higher priority than right one.
-	 * @return array|string
-	 */
+	/** @deprecated */
 	public static function merge($left, $right)
 	{
 		return Nette\Schema\Helpers::merge($left, $right);
 	}
 
 
-	/**
-	 * Return true if array prevents merging and removes this information.
-	 */
+	/** @deprecated */
 	public static function takeParent(&$data): bool
 	{
 		if (is_array($data) && isset($data[self::PREVENT_MERGING])) {
