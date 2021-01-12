@@ -19,11 +19,6 @@ Assert::exception(function () {
 	$def->setType('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");
 
-Assert::exception(function () {
-	$def = new ServiceDefinition;
-	$def->setImplement('Foo');
-}, Nette\DeprecatedException::class);
-
 test('', function () {
 	$def = new ServiceDefinition;
 	$def->setType('stdClass');
@@ -33,24 +28,6 @@ test('', function () {
 	$def->setArguments([1, 2]);
 	Assert::same('stdClass', $def->getType());
 	Assert::null($def->getEntity());
-});
-
-test('', function () {
-	$def = new ServiceDefinition;
-	Assert::error(function () use ($def) {
-		$def->setClass('stdClass', []);
-	}, E_USER_DEPRECATED);
-	Assert::same('stdClass', $def->getType());
-	Assert::null($def->getEntity());
-});
-
-test('', function () {
-	$def = new ServiceDefinition;
-	Assert::error(function () use ($def) {
-		$def->setClass('stdClass', [1, 2]);
-	}, E_USER_DEPRECATED);
-	Assert::same('stdClass', $def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
 });
 
 test('', function () {
