@@ -417,12 +417,4 @@ class ContainerBuilder
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);
 	}
-
-
-	/** @deprecated use resolve() */
-	public function prepareClassList(): void
-	{
-		trigger_error(__METHOD__ . '() is deprecated, use resolve()', E_USER_DEPRECATED);
-		$this->resolve();
-	}
 }
