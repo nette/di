@@ -92,16 +92,16 @@ class DefinitionSchema implements Schema
 			return ['factory' => $def];
 
 		} elseif (is_array($def)) {
-			if (isset($def['class']) && !isset($def['type'])) {
-				if ($def['class'] instanceof Statement) {
-					$key = end($context->path);
-					trigger_error(sprintf("Service '%s': option 'class' should be changed to 'factory'.", $key), E_USER_DEPRECATED);
-					$def['factory'] = $def['class'];
-					unset($def['class']);
-				} elseif (!isset($def['factory']) && !isset($def['dynamic']) && !isset($def['imported'])) {
-					$def['factory'] = $def['class'];
-					unset($def['class']);
-				}
+			// back compatibility
+			if (
+				isset($def['class'])
+				&& !isset($def['type'])
+				&& !isset($def['factory'])
+				&& !isset($def['dynamic'])
+				&& !isset($def['imported'])
+			) {
+				$def['factory'] = $def['class'];
+				unset($def['class']);
 			}
 
 			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
