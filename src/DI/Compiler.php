@@ -332,18 +332,4 @@ class Compiler
 	{
 		return new PhpGenerator($this->builder);
 	}
-
-
-	/** @deprecated use non-static Compiler::loadDefinitionsFromConfig() */
-	public static function loadDefinitions(): void
-	{
-		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');
-	}
-
-
-	/** @deprecated use non-static Compiler::loadDefinitionsFromConfig() */
-	public static function loadDefinition(): void
-	{
-		throw new Nette\DeprecatedException(__METHOD__ . '() is deprecated, use non-static Compiler::loadDefinitionsFromConfig(array $configList).');
-	}
 }

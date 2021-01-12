@@ -92,8 +92,6 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		) {
 			$this->enableTracyIntegration();
 		}
-
-		$this->initializeTaggedServices();
 	}
 
 
@@ -121,15 +119,6 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			$prop->getValue(),
 			$this->exportedTypes + (is_array($option) ? array_flip($option) : [])
 		));
-	}
-
-
-	private function initializeTaggedServices(): void
-	{
-		foreach (array_filter($this->getContainerBuilder()->findByTag('run')) as $name => $on) {
-			trigger_error("Tag 'run' used in service '$name' definition is deprecated.", E_USER_DEPRECATED);
-			$this->initialization->addBody('$this->getService(?);', [$name]);
-		}
 	}
 
 
