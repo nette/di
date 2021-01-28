@@ -66,7 +66,7 @@ class ContainerPanel implements Tracy\IBarPanel
 			}
 		}
 		$types = $this->getContainerProperty('types') + $types;
-		ksort($types);
+		ksort($types, SORT_NATURAL);
 		foreach ($this->getContainerProperty('tags') as $tag => $tmp) {
 			foreach ($tmp as $service => $val) {
 				$tags[$service][$tag] = $val;
