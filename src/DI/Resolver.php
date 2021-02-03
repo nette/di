@@ -275,8 +275,8 @@ class Resolver
 		try {
 			$arguments = $this->completeArguments($arguments);
 		} catch (ServiceCreationException $e) {
-			if (!strpos($e->getMessage(), ' (used in')) {
-				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
+			if (!strpos($e->getMessage(), "\nUsed in")) {
+				$e->setMessage($e->getMessage() . "\nUsed in {$this->entityToString($entity)}.");
 			}
 			throw $e;
 		}
@@ -412,18 +412,18 @@ class Resolver
 
 	private function completeException(\Exception $e, Definition $def): ServiceCreationException
 	{
-		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
+		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "(Service '")) {
 			return $e;
 		}
 
 		$name = $def->getName();
 		$type = $def->getType();
 		if ($name && !ctype_digit($name)) {
-			$message = "Service '$name'" . ($type ? " (type of $type)" : '') . ': ';
+			$message = "(Service '$name'" . ($type ? " of type $type" : '') . ")\n";
 		} elseif ($type) {
-			$message = "Service of type $type: ";
+			$message = "(Service of type $type)\n";
 		} elseif ($def instanceof Definitions\ServiceDefinition && $def->getEntity()) {
-			$message = 'Service (' . $this->entityToString($def->getEntity()) . '): ';
+			$message = '(Service ' . $this->entityToString($def->getEntity()) . ")\n";
 		} else {
 			$message = '';
 		}
@@ -551,14 +551,14 @@ class Resolver
 			} catch (MissingServiceException $e) {
 				$res = null;
 			} catch (ServiceCreationException $e) {
-				throw new ServiceCreationException("{$e->getMessage()} (needed by $desc)", 0, $e);
+				throw new ServiceCreationException($e->getMessage() . "\nNeeded by $desc.", 0, $e);
 			}
 			if ($res !== null || $parameter->allowsNull()) {
 				return $res;
 			} elseif (class_exists($type) || interface_exists($type)) {
-				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you add it to configuration file?");
+				throw new ServiceCreationException("Service of type $type needed by $desc not found.\nDid you add it to configuration file?");
 			} else {
-				throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
+				throw new ServiceCreationException("Class $type needed by $desc not found.\nCheck type hint and 'use' statements.");
 			}
 
 		} elseif (
