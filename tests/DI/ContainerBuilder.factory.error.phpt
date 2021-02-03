@@ -25,7 +25,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition(null)->setFactory('Unknown');
 	$builder->complete();
-}, Nette\DI\ServiceCreationException::class, 'Service (Unknown::__construct()): Class Unknown not found.');
+}, Nette\DI\ServiceCreationException::class, '(Service Unknown::__construct())
+Class Unknown not found.');
 
 
 Assert::exception(function () {
@@ -33,7 +34,8 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setFactory('@two');
 	$builder->addDefinition('two')->setFactory('Unknown');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'two': Class Unknown not found.");
+}, Nette\InvalidStateException::class, "(Service 'two')
+Class Unknown not found.");
 
 
 Assert::exception(function () {
@@ -41,21 +43,24 @@ Assert::exception(function () {
 	$builder->addDefinition('one')->setFactory(new Reference('two'));
 	$builder->addDefinition('two')->setFactory('Unknown');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'two': Class Unknown not found.");
+}, Nette\InvalidStateException::class, "(Service 'two')
+Class Unknown not found.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('stdClass::foo');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method stdClass::foo() is not callable.");
+}, Nette\InvalidStateException::class, "(Service 'one')
+Method stdClass::foo() is not callable.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Nette\DI\Container::foo'); // has __magic
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method Nette\\DI\\Container::foo() is not callable.");
+}, Nette\InvalidStateException::class, "(Service 'one')
+Method Nette\\DI\\Container::foo() is not callable.");
 
 
 Assert::exception(function () {
@@ -76,7 +81,8 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement('Bad4');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Method create() has not return type hint or annotation @return.");
+}, Nette\InvalidStateException::class, "(Service 'one' of type Bad4)
+Method create() has not return type hint or annotation @return.");
 
 
 interface Bad5
@@ -103,7 +109,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad6::create');
 	$builder->complete();
-}, Nette\DI\ServiceCreationException::class, "Service 'one': Method Bad6::create() is not callable.");
+}, Nette\DI\ServiceCreationException::class, "(Service 'one')
+Method Bad6::create() is not callable.");
 
 
 class Bad7
@@ -117,7 +124,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad7::create');
 	$builder->complete();
-}, Nette\DI\ServiceCreationException::class, "Service 'one': Unknown service type, specify it or declare return type of factory.");
+}, Nette\DI\ServiceCreationException::class, "(Service 'one')
+Unknown service type, specify it or declare return type of factory.");
 
 
 class Bad8
@@ -131,7 +139,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType('Bad8');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad8): Class Bad8 has private constructor.");
+}, Nette\InvalidStateException::class, "(Service 'one' of type Bad8)
+Class Bad8 has private constructor.");
 
 
 class Good
@@ -146,14 +155,18 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Good', [new Statement('Unknown')]);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Unknown not found. (used in __construct())");
+}, Nette\InvalidStateException::class, "(Service 'one' of type Good)
+Class Unknown not found.
+Used in __construct().");
 
 // fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad8')]);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Bad8 has private constructor. (used in __construct())");
+}, Nette\InvalidStateException::class, "(Service 'one' of type Good)
+Class Bad8 has private constructor.
+Used in __construct().");
 
 
 abstract class Bad9
@@ -168,7 +181,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType('Bad9');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad9): Class Bad9 is abstract.");
+}, Nette\InvalidStateException::class, "(Service 'one' of type Bad9)
+Class Bad9 is abstract.");
 
 
 trait Bad10
@@ -183,7 +197,8 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setFactory('Bad10::method');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one': Method Bad10::method() is not callable.");
+}, Nette\InvalidStateException::class, "(Service 'one')
+Method Bad10::method() is not callable.");
 
 
 class ConstructorParam
@@ -208,7 +223,9 @@ services:
 	b: stdClass
 	bad: ConstructorParam
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b (needed by \$x in __construct())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type ConstructorParam)
+Multiple services of type stdClass found: a, b
+Needed by \$x in __construct().");
 
 
 // forced autowiring fail
@@ -219,7 +236,9 @@ services:
 	b: stdClass
 	bad: ConstructorParam(@\stdClass)
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b (used in __construct())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type ConstructorParam)
+Multiple services of type stdClass found: a, b
+Used in __construct().");
 
 
 // autowiring fail in chain
@@ -230,7 +249,9 @@ services:
 	b: stdClass
 	bad: MethodParam()::foo()
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (needed by \$x in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type MethodParam)
+Multiple services of type stdClass found: a, b
+Needed by \$x in foo().");
 
 
 // forced autowiring fail in chain
@@ -241,7 +262,9 @@ services:
 	b: stdClass
 	bad: MethodParam()::foo(@\stdClass)
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (used in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type MethodParam)
+Multiple services of type stdClass found: a, b
+Used in foo().");
 
 
 // autowiring fail in argument
@@ -252,7 +275,10 @@ services:
 	b: stdClass
 	bad: Good(ConstructorParam())
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (needed by \$x in ConstructorParam::__construct()) (used in __construct())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Needed by \$x in ConstructorParam::__construct().
+Used in __construct().");
 
 
 // forced autowiring fail in argument
@@ -263,7 +289,9 @@ services:
 	b: stdClass
 	bad: Good(ConstructorParam(@\stdClass))
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in ConstructorParam::__construct())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in ConstructorParam::__construct().");
 
 
 // autowiring fail in chain in argument
@@ -274,7 +302,10 @@ services:
 	b: stdClass
 	bad: Good(MethodParam()::foo())
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (needed by \$x in MethodParam::foo()) (used in __construct())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Needed by \$x in MethodParam::foo().
+Used in __construct().");
 
 
 // forced autowiring fail in chain in argument
@@ -285,7 +316,9 @@ services:
 	b: stdClass
 	bad: Good(MethodParam()::foo(@\stdClass))
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in foo().");
 
 
 // forced autowiring fail in property passing
@@ -299,7 +332,9 @@ services:
 		setup:
 			- $a = @\stdClass
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in @bad::\$a)");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in @bad::\$a.");
 
 
 // autowiring fail in rich property passing
@@ -313,7 +348,9 @@ services:
 		setup:
 			- $a = MethodParam()::foo(@\stdClass)
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in foo().");
 
 
 // autowiring fail in method calling
@@ -327,7 +364,9 @@ services:
 		setup:
 			- foo
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (needed by \$x in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type MethodParam)
+Multiple services of type stdClass found: a, b
+Needed by \$x in foo().");
 
 
 // forced autowiring fail in method calling
@@ -341,7 +380,9 @@ services:
 		setup:
 			- bar(@\stdClass)
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in @bad::bar())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in @bad::bar().");
 
 
 // autowiring fail in rich method calling
@@ -355,4 +396,6 @@ services:
 		setup:
 			- bar(MethodParam()::foo(@\stdClass))
 ');
-}, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in foo())");
+}, Nette\DI\ServiceCreationException::class, "(Service 'bad' of type Good)
+Multiple services of type stdClass found: a, b
+Used in foo().");

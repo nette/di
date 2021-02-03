@@ -82,7 +82,8 @@ namespace
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'a': Class or interface 'array' not found. Is return type of A\\Factory::createArray() correct?");
+	}, Nette\DI\ServiceCreationException::class, "(Service 'a')
+Class or interface 'array' not found. Is return type of A\\Factory::createArray() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -91,7 +92,8 @@ namespace
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'c': Class or interface 'callable' not found. Is return type of A\\Factory::createCallable() correct?");
+	}, Nette\DI\ServiceCreationException::class, "(Service 'c')
+Class or interface 'callable' not found. Is return type of A\\Factory::createCallable() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -100,7 +102,8 @@ namespace
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 's': Class or interface 'string' not found. Is return type of A\\Factory::createString() correct?");
+	}, Nette\DI\ServiceCreationException::class, "(Service 's')
+Class or interface 'string' not found. Is return type of A\\Factory::createString() correct?");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
