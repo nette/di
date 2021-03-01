@@ -35,13 +35,12 @@ class Container
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
-	private $instances = [];
+	private array $instances = [];
 
 	/** @var array circular reference detector */
-	private $creating;
+	private array $creating;
 
-	/** @var array */
-	private $methods;
+	private array $methods;
 
 
 	public function __construct(array $params = [])

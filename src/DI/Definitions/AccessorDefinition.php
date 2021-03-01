@@ -21,8 +21,7 @@ final class AccessorDefinition extends Definition
 {
 	private const METHOD_GET = 'get';
 
-	/** @var Reference|null */
-	private $reference;
+	private ?Reference $reference = null;
 
 
 	/** @return static */
