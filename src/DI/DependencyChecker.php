@@ -31,9 +31,8 @@ class DependencyChecker
 
 	/**
 	 * Adds dependencies to the list.
-	 * @return static
 	 */
-	public function add(array $deps)
+	public function add(array $deps): static
 	{
 		$this->dependencies = array_merge($this->dependencies, $deps);
 		return $this;
