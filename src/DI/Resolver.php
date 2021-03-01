@@ -60,7 +60,7 @@ class Resolver
 	public function resolveDefinition(Definition $def): void
 	{
 		if ($this->recursive->contains($def)) {
-			$names = array_map(function ($item) { return $item->getName(); }, iterator_to_array($this->recursive));
+			$names = array_map(fn($item) => $item->getName(), iterator_to_array($this->recursive));
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', $names)));
 		}
 
@@ -139,7 +139,7 @@ class Resolver
 				throw new ServiceCreationException(
 					interface_exists($entity)
 					? "Interface $entity can not be used as 'factory', did you mean 'implement'?"
-					: "Class $entity not found."
+					: "Class $entity not found.",
 				);
 			}
 			return $entity;
@@ -175,11 +175,9 @@ class Resolver
 		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
-		$getter = function (string $type, bool $single) {
-			return $single
+		$getter = fn(string $type, bool $single) => $single
 				? $this->getByType($type)
-				: array_values(array_filter($this->builder->findAutowired($type), function ($obj) { return $obj !== $this->currentService; }));
-		};
+				: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
 
 		switch (true) {
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
@@ -439,11 +437,9 @@ class Resolver
 
 	private function entityToString($entity): string
 	{
-		$referenceToText = function (Reference $ref): string {
-			return $ref->isSelf() && $this->currentService
+		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService
 				? '@' . $this->currentService->getName()
 				: '@' . $ref->getValue();
-		};
 		if (is_string($entity)) {
 			return $entity . '::__construct()';
 		} elseif ($entity instanceof Reference) {
@@ -492,7 +488,7 @@ class Resolver
 	public static function autowireArguments(
 		\ReflectionFunctionAbstract $method,
 		array $arguments,
-		callable $getter
+		callable $getter,
 	): array {
 		$optCount = 0;
 		$num = -1;

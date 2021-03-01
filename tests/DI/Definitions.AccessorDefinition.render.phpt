@@ -36,26 +36,26 @@ test('', function () {
 
 	Assert::match(
 		<<<'XX'
-public function createServiceAbc(): Good2
-{
-	return new class ($this) implements Good2 {
-		private $container;
+			public function createServiceAbc(): Good2
+			{
+				return new class ($this) implements Good2 {
+					private $container;
 
 
-		public function __construct($container)
-		{
-			$this->container = $container;
-		}
+					public function __construct($container)
+					{
+						$this->container = $container;
+					}
 
 
-		public function get(): stdClass
-		{
-			return $this->container->getService('a');
-		}
-	};
-}
-XX
+					public function get(): stdClass
+					{
+						return $this->container->getService('a');
+					}
+				};
+			}
+			XX
 ,
-		$method->__toString()
+		$method->__toString(),
 	);
 });

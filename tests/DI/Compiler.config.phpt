@@ -17,7 +17,7 @@ test('Compiler config', function () {
 
 	Assert::same(
 		[],
-		$compiler->getConfig()
+		$compiler->getConfig(),
 	);
 
 	$compiler->addConfig([
@@ -34,7 +34,7 @@ test('Compiler config', function () {
 			],
 			'services' => [],
 		],
-		$compiler->getConfig()
+		$compiler->getConfig(),
 	);
 });
 
@@ -55,6 +55,6 @@ parameters:
 
 	Assert::same(
 		['php', 'node'],
-		$compiler->getConfig()['parameters']['languages']
+		$compiler->getConfig()['parameters']['languages'],
 	);
 });

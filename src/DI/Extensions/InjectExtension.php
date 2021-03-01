@@ -94,11 +94,9 @@ final class InjectExtension extends DI\CompilerExtension
 			}
 		}
 		$methods = array_keys($classes);
-		uksort($classes, function (string $a, string $b) use ($classes, $methods): int {
-			return $classes[$a] === $classes[$b]
+		uksort($classes, fn(string $a, string $b): int => $classes[$a] === $classes[$b]
 				? array_search($a, $methods, true) <=> array_search($b, $methods, true)
-				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1);
-		});
+				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1));
 		return array_keys($classes);
 	}
 

@@ -81,7 +81,7 @@ class Compiler
 	public function getExtensions(string $type = null): array
 	{
 		return $type
-			? array_filter($this->extensions, function ($item) use ($type): bool { return $item instanceof $type; })
+			? array_filter($this->extensions, fn($item): bool => $item instanceof $type)
 			: $this->extensions;
 	}
 
@@ -245,7 +245,7 @@ class Compiler
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				"Found section '$extra' in configuration, but corresponding extension is missing"
-				. ($hint ? ", did you mean '$hint'?" : '.')
+				. ($hint ? ", did you mean '$hint'?" : '.'),
 			);
 		}
 	}

@@ -26,5 +26,5 @@ Assert::equal(
 			new Statement('Class2', ['arg2', 'arg3']),
 		]),
 	],
-	$data
+	$data,
 );

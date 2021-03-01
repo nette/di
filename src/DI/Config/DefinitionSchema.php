@@ -93,7 +93,13 @@ class DefinitionSchema implements Schema
 
 		} elseif (is_array($def)) {
 			// back compatibility
-			if (isset($def['class']) && !isset($def['type']) && !isset($def['factory']) && !isset($def['dynamic']) && !isset($def['imported'])) {
+			if (
+				isset($def['class'])
+				&& !isset($def['type'])
+				&& !isset($def['factory'])
+				&& !isset($def['dynamic'])
+				&& !isset($def['imported'])
+			) {
 				$def['factory'] = $def['class'];
 				unset($def['class']);
 			}

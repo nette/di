@@ -49,7 +49,7 @@ class Container
 		$this->parameters = $params;
 		$this->methods = array_flip(array_filter(
 			get_class_methods($this),
-			function ($s) { return preg_match('#^createService.#', $s); }
+			fn($s) => preg_match('#^createService.#', $s),
 		));
 	}
 
@@ -329,11 +329,9 @@ class Container
 
 	private function autowireArguments(\ReflectionFunctionAbstract $function, array $args = []): array
 	{
-		return Resolver::autowireArguments($function, $args, function (string $type, bool $single) {
-			return $single
+		return Resolver::autowireArguments($function, $args, fn(string $type, bool $single) => $single
 				? $this->getByType($type)
-				: array_map([$this, 'getService'], $this->findAutowired($type));
-		});
+				: array_map([$this, 'getService'], $this->findAutowired($type)));
 	}
 
 

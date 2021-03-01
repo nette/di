@@ -38,12 +38,12 @@ Assert::same(
 		Nette\DI\Container::class => [['container']],
 		stdClass::class => [['lorem']],
 	],
-	getPropertyValue($container, 'wiring')
+	getPropertyValue($container, 'wiring'),
 );
 
 Assert::same(
 	['container' => Nette\DI\Container::class],
-	getPropertyValue($container, 'types')
+	getPropertyValue($container, 'types'),
 );
 
 Assert::same(
@@ -52,12 +52,12 @@ Assert::same(
 		'b' => ['lorem' => 'c'],
 		'd' => ['lorem' => ['e']],
 	],
-	getPropertyValue($container, 'tags')
+	getPropertyValue($container, 'tags'),
 );
 
 Assert::same(
 	[],
-	getPropertyValue($container, 'aliases')
+	getPropertyValue($container, 'aliases'),
 );
 
 Assert::same(['lorem' => true], $container->findByTag('a'));
