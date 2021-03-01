@@ -43,18 +43,13 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setType(?string $type)
+	public function setType(?string $type): static
 	{
 		return parent::setType($type);
 	}
 
 
-	/**
-	 * @param  string|array|Definition|Reference|Statement  $factory
-	 * @return static
-	 */
-	public function setFactory($factory, array $args = [])
+	public function setFactory(string|array|Definition|Reference|Statement $factory, array $args = []): static
 	{
 		$this->factory = $factory instanceof Statement
 			? $factory
@@ -69,23 +64,20 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/** @return string|array|Definition|Reference|null */
-	public function getEntity()
+	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->factory->getEntity();
 	}
 
 
-	/** @return static */
-	public function setArguments(array $args = [])
+	public function setArguments(array $args = []): static
 	{
 		$this->factory->arguments = $args;
 		return $this;
 	}
 
 
-	/** @return static */
-	public function setArgument($key, $value)
+	public function setArgument($key, $value): static
 	{
 		$this->factory->arguments[$key] = $value;
 		return $this;
@@ -94,9 +86,8 @@ final class ServiceDefinition extends Definition
 
 	/**
 	 * @param  Statement[]  $setup
-	 * @return static
 	 */
-	public function setSetup(array $setup)
+	public function setSetup(array $setup): static
 	{
 		foreach ($setup as $v) {
 			if (!$v instanceof Statement) {
@@ -115,11 +106,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/**
-	 * @param  string|array|Definition|Reference|Statement  $entity
-	 * @return static
-	 */
-	public function addSetup($entity, array $args = [])
+	public function addSetup(string|array|Definition|Reference|Statement $entity, array $args = []): static
 	{
 		$this->setup[] = $entity instanceof Statement
 			? $entity

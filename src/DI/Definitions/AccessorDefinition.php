@@ -24,8 +24,7 @@ final class AccessorDefinition extends Definition
 	private ?Reference $reference = null;
 
 
-	/** @return static */
-	public function setImplement(string $type)
+	public function setImplement(string $type): static
 	{
 		if (!interface_exists($type)) {
 			throw new Nette\InvalidArgumentException(sprintf(
@@ -65,11 +64,7 @@ final class AccessorDefinition extends Definition
 	}
 
 
-	/**
-	 * @param  string|Reference  $reference
-	 * @return static
-	 */
-	public function setReference($reference)
+	public function setReference(string|Reference $reference): static
 	{
 		if ($reference instanceof Reference) {
 			$this->reference = $reference;
