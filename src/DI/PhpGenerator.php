@@ -23,11 +23,8 @@ class PhpGenerator
 {
 	use Nette\SmartObject;
 
-	/** @var ContainerBuilder */
-	private $builder;
-
-	/** @var string */
-	private $className;
+	private ContainerBuilder $builder;
+	private ?string $className = null;
 
 
 	public function __construct(ContainerBuilder $builder)

@@ -26,25 +26,15 @@ class Compiler
 		DI = 'di';
 
 	/** @var CompilerExtension[] */
-	private $extensions = [];
-
-	/** @var ContainerBuilder */
-	private $builder;
-
-	/** @var array */
-	private $config = [];
+	private array $extensions = [];
+	private ContainerBuilder $builder;
+	private array $config = [];
 
 	/** @var array [section => array[]] */
-	private $configs = [];
-
-	/** @var string */
-	private $sources = '';
-
-	/** @var DependencyChecker */
-	private $dependencies;
-
-	/** @var string */
-	private $className = 'Container';
+	private array $configs = [];
+	private string $sources = '';
+	private DependencyChecker $dependencies;
+	private string $className = 'Container';
 
 
 	public function __construct(?ContainerBuilder $builder = null)

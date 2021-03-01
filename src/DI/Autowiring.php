@@ -19,17 +19,16 @@ class Autowiring
 {
 	use Nette\SmartObject;
 
-	/** @var ContainerBuilder */
-	private $builder;
+	private ContainerBuilder $builder;
 
 	/** @var array[]  type => services, used by getByType() */
-	private $highPriority = [];
+	private array $highPriority = [];
 
 	/** @var array[]  type => services, used by findByType() */
-	private $lowPriority = [];
+	private array $lowPriority = [];
 
 	/** @var string[] of classes excluded from autowiring */
-	private $excludedClasses = [];
+	private array $excludedClasses = [];
 
 
 	public function __construct(ContainerBuilder $builder)
