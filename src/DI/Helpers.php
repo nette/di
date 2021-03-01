@@ -26,12 +26,9 @@ final class Helpers
 
 	/**
 	 * Expands %placeholders%.
-	 * @param  mixed  $var
-	 * @param  bool|array  $recursive
-	 * @return mixed
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public static function expand($var, array $params, $recursive = false)
+	public static function expand(mixed $var, array $params, bool|array $recursive = false): mixed
 	{
 		if (is_array($var)) {
 			$res = [];
@@ -106,10 +103,8 @@ final class Helpers
 
 	/**
 	 * Escapes '%' and '@'
-	 * @param  mixed  $value
-	 * @return mixed
 	 */
-	public static function escape($value)
+	public static function escape(mixed $value): mixed
 	{
 		if (is_array($value)) {
 			$res = [];
@@ -158,10 +153,8 @@ final class Helpers
 
 	/**
 	 * Replaces @extension with real extension name in service definition.
-	 * @param  mixed  $config
-	 * @return mixed
 	 */
-	public static function prefixServiceName($config, string $namespace)
+	public static function prefixServiceName(mixed $config, string $namespace): mixed
 	{
 		if (is_string($config)) {
 			if (strncmp($config, '@extension.', 10) === 0) {
@@ -187,7 +180,6 @@ final class Helpers
 
 	/**
 	 * Returns an annotation value.
-	 * @param  \ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionClass  $ref
 	 */
 	public static function parseAnnotation(\Reflector $ref, string $name): ?string
 	{
@@ -245,11 +237,9 @@ final class Helpers
 
 	/**
 	 * Non data-loss type conversion.
-	 * @param  mixed  $value
-	 * @return mixed
 	 * @throws Nette\InvalidStateException
 	 */
-	public static function convertType($value, string $type)
+	public static function convertType(mixed $value, string $type): mixed
 	{
 		if (is_scalar($value)) {
 			$norm = ($value === false ? '0' : (string) $value);
@@ -270,10 +260,7 @@ final class Helpers
 	}
 
 
-	/**
-	 * @param  string|array|Reference  $entity
-	 */
-	public static function entityToString($entity, bool $inner = false): string
+	public static function entityToString(string|array|Reference $entity, bool $inner = false): string
 	{
 		if (is_string($entity)) {
 			return $entity . ($inner ? '()' : '');
@@ -281,7 +268,7 @@ final class Helpers
 		} elseif ($entity instanceof Reference) {
 			return '@' . $entity->getValue();
 
-		} elseif (is_array($entity)) {
+		} else {
 			[$a, $b] = $entity;
 			return self::entityToString($a instanceof Statement ? $a->entity : $a, true)
 				. '::'
