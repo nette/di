@@ -20,11 +20,8 @@ use Nette\Utils\Arrays;
  */
 final class SearchExtension extends Nette\DI\CompilerExtension
 {
-	/** @var array */
-	private $classes = [];
-
-	/** @var string */
-	private $tempDir;
+	private array $classes = [];
+	private string $tempDir;
 
 
 	public function __construct(string $tempDir)

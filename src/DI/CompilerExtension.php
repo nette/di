@@ -19,17 +19,13 @@ abstract class CompilerExtension
 {
 	use Nette\SmartObject;
 
-	/** @var Compiler */
-	protected $compiler;
-
-	/** @var string */
-	protected $name;
+	protected Compiler $compiler;
+	protected string $name;
 
 	/** @var array|object */
 	protected $config = [];
 
-	/** @var Nette\PhpGenerator\Closure */
-	protected $initialization;
+	protected Nette\PhpGenerator\Closure $initialization;
 
 
 	/** @return static */
