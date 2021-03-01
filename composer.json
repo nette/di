@@ -17,15 +17,15 @@
 	"require": {
 		"php": ">=8.0 <8.2",
 		"ext-tokenizer": "*",
-		"nette/neon": "^3.0",
-		"nette/php-generator": "^3.3.3",
-		"nette/robot-loader": "^3.2",
+		"nette/neon": "^3.0 || ^4.0",
+		"nette/php-generator": "^3.3.3 || ^4.0",
+		"nette/robot-loader": "^3.3.1 || ^4.0",
 		"nette/schema": "^1.1",
-		"nette/utils": "^3.1.4"
+		"nette/utils": "^3.2 || ^4.0"
 	},
 	"require-dev": {
-		"nette/tester": "^2.2",
-		"tracy/tracy": "^2.3",
+		"nette/tester": "^2.4",
+		"tracy/tracy": "^2.8",
 		"phpstan/phpstan": "^0.12"
 	},
 	"conflict": {
