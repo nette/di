@@ -19,13 +19,11 @@ use Nette\DI\DynamicParameter;
 final class ParametersExtension extends Nette\DI\CompilerExtension
 {
 	/** @var string[] */
-	public $dynamicParams = [];
+	public array $dynamicParams = [];
 
 	/** @var string[][] */
 	public $dynamicValidators = [];
-
-	/** @var array */
-	private $compilerConfig;
+	private array $compilerConfig;
 
 
 	public function __construct(array &$compilerConfig)

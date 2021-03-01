@@ -17,17 +17,10 @@ use Nette;
  */
 final class DIExtension extends Nette\DI\CompilerExtension
 {
-	/** @var array */
-	public $exportedTags = [];
-
-	/** @var array */
-	public $exportedTypes = [];
-
-	/** @var bool */
-	private $debugMode;
-
-	/** @var float */
-	private $time;
+	public array $exportedTags = [];
+	public array $exportedTypes = [];
+	private bool $debugMode;
+	private float $time;
 
 
 	public function __construct(bool $debugMode = false)
@@ -36,21 +29,17 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->time = microtime(true);
 
 		$this->config = new class {
-			/** @var ?bool */
-			public $debugger;
+			public ?bool $debugger = null;
 
 			/** @var string[] */
-			public $excluded = [];
+			public array $excluded = [];
 
-			/** @var ?string */
-			public $parentClass;
+			public ?string $parentClass = null;
 
-			/** @var object */
-			public $export;
+			public object $export;
 		};
 		$this->config->export = new class {
-			/** @var bool */
-			public $parameters = true;
+			public bool $parameters = true;
 
 			/** @var string[]|bool|null */
 			public $tags = true;
