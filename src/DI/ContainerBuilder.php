@@ -24,26 +24,21 @@ class ContainerBuilder
 		THIS_SERVICE = 'self',
 		THIS_CONTAINER = 'container';
 
-	/** @var array */
-	public $parameters = [];
+	public array $parameters = [];
 
 	/** @var Definition[] */
-	private $definitions = [];
+	private array $definitions = [];
 
-	/** @var array of alias => service */
-	private $aliases = [];
+	/** alias => service */
+	private array $aliases = [];
 
-	/** @var Autowiring */
-	private $autowiring;
+	private Autowiring $autowiring;
 
-	/** @var bool */
-	private $needsResolve = true;
+	private bool $needsResolve = true;
 
-	/** @var bool */
-	private $resolving = false;
+	private bool $resolving = false;
 
-	/** @var array */
-	private $dependencies = [];
+	private array $dependencies = [];
 
 
 	public function __construct()

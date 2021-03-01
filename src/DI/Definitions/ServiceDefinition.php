@@ -23,11 +23,10 @@ use Nette\PhpGenerator\Helpers as PhpHelpers;
  */
 final class ServiceDefinition extends Definition
 {
-	/** @var Statement */
-	private $factory;
+	private Statement $factory;
 
 	/** @var Statement[] */
-	private $setup = [];
+	private array $setup = [];
 
 
 	public function __construct()

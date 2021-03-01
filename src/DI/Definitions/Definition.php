@@ -19,19 +19,17 @@ abstract class Definition
 {
 	use Nette\SmartObject;
 
-	/** @var string|null */
-	private $name;
+	private ?string $name = null;
 
-	/** @var string|null  class or interface name */
-	private $type;
+	/** class or interface name */
+	private ?string $type = null;
 
-	/** @var array */
-	private $tags = [];
+	private array $tags = [];
 
 	/** @var bool|string[] */
-	private $autowired = true;
+	private bool|array $autowired = true;
 
-	/** @var callable|null */
+	/** @var ?callable */
 	private $notifier;
 
 

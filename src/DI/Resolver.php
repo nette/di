@@ -28,20 +28,16 @@ class Resolver
 {
 	use Nette\SmartObject;
 
-	/** @var ContainerBuilder */
-	private $builder;
+	private ContainerBuilder $builder;
 
-	/** @var Definition|null */
-	private $currentService;
+	private ?Definition $currentService = null;
 
-	/** @var string|null */
-	private $currentServiceType;
+	private ?string $currentServiceType = null;
 
-	/** @var bool */
-	private $currentServiceAllowed = false;
+	private bool $currentServiceAllowed = false;
 
-	/** @var \SplObjectStorage  circular reference detector */
-	private $recursive;
+	/** circular reference detector */
+	private \SplObjectStorage $recursive;
 
 
 	public function __construct(ContainerBuilder $builder)
