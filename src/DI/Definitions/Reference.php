@@ -21,8 +21,7 @@ final class Reference
 
 	public const SELF = 'self';
 
-	/** @var string */
-	private $value;
+	private string $value;
 
 
 	public static function fromType(string $value): self
