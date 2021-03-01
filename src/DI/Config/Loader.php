@@ -22,16 +22,13 @@ class Loader
 
 	private const IncludesKey = 'includes';
 
-	private $adapters = [
+	private array $adapters = [
 		'php' => Adapters\PhpAdapter::class,
 		'neon' => Adapters\NeonAdapter::class,
 	];
-
-	private $dependencies = [];
-
-	private $loadedFiles = [];
-
-	private $parameters = [];
+	private array $dependencies = [];
+	private array $loadedFiles = [];
+	private array $parameters = [];
 
 
 	/**

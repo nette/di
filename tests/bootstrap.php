@@ -45,7 +45,7 @@ function test(string $title, Closure $function): void
 
 class Notes
 {
-	public static $notes = [];
+	public static array $notes = [];
 
 
 	public static function add($message): void

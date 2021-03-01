@@ -19,8 +19,7 @@ class Container
 {
 	use Nette\SmartObject;
 
-	/** @var array  user parameters */
-	public $parameters = [];
+	public array $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
 	protected $types = [];
@@ -35,13 +34,11 @@ class Container
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
-	private $instances = [];
+	private array $instances = [];
 
-	/** @var array circular reference detector */
-	private $creating;
-
-	/** @var array */
-	private $methods;
+	/** circular reference detector */
+	private array $creating;
+	private array $methods;
 
 
 	public function __construct(array $params = [])

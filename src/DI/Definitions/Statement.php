@@ -22,11 +22,8 @@ final class Statement implements Nette\Schema\DynamicParameter
 {
 	use Nette\SmartObject;
 
-	/** @var array */
-	public $arguments;
-
-	/** @var string|array|Definition|Reference|null */
-	private $entity;
+	public array $arguments;
+	private string|array|Definition|Reference|null $entity;
 
 
 	/**

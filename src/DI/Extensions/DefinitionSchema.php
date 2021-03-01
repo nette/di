@@ -25,8 +25,7 @@ class DefinitionSchema implements Schema
 {
 	use Nette\SmartObject;
 
-	/** @var Nette\DI\ContainerBuilder */
-	private $builder;
+	private Nette\DI\ContainerBuilder $builder;
 
 
 	public function __construct(Nette\DI\ContainerBuilder $builder)
