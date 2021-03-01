@@ -50,7 +50,6 @@ class ContainerBuilder
 
 	/**
 	 * Adds new service definition.
-	 * @return Definitions\ServiceDefinition
 	 */
 	public function addDefinition(?string $name, Definition $definition = null): Definition
 	{
@@ -198,9 +197,8 @@ class ContainerBuilder
 
 	/**
 	 * @param  string[]  $types
-	 * @return static
 	 */
-	public function addExcludedClasses(array $types)
+	public function addExcludedClasses(array $types): static
 	{
 		$this->needsResolve = true;
 		$this->autowiring->addExcludedClasses($types);
@@ -210,7 +208,6 @@ class ContainerBuilder
 
 	/**
 	 * Resolves autowired service name by type.
-	 * @param  bool  $throw exception if service doesn't exist?
 	 * @throws MissingServiceException
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
@@ -325,11 +322,9 @@ class ContainerBuilder
 
 	/**
 	 * Adds item to the list of dependencies.
-	 * @param  \ReflectionClass|\ReflectionFunctionAbstract|string  $dep
-	 * @return static
 	 * @internal
 	 */
-	public function addDependency($dep)
+	public function addDependency(\ReflectionClass|\ReflectionFunctionAbstract|string $dep): static
 	{
 		$this->dependencies[] = $dep;
 		return $this;

@@ -132,14 +132,9 @@ final class InjectExtension extends DI\CompilerExtension
 
 	/**
 	 * Calls all methods starting with with "inject" using autowiring.
-	 * @param  object  $service
 	 */
-	public static function callInjects(DI\Container $container, $service): void
+	public static function callInjects(DI\Container $container, object $service): void
 	{
-		if (!is_object($service)) {
-			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
-		}
-
 		foreach (self::getInjectMethods($service::class) as $method) {
 			$container->callMethod([$service, $method]);
 		}
@@ -151,15 +146,11 @@ final class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	/**
-	 * @param  object|string  $class
-	 * @param  DI\Container|DI\ContainerBuilder|null  $container
-	 */
 	private static function checkType(
-		$class,
+		object|string $class,
 		string $name,
 		?string $type,
-		$container,
+		DI\Container|DI\ContainerBuilder|null $container,
 		Definitions\Definition $def = null,
 	): void {
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));

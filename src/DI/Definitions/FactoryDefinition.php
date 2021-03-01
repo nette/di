@@ -32,8 +32,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setImplement(string $type)
+	public function setImplement(string $type): static
 	{
 		if (!interface_exists($type)) {
 			throw new Nette\InvalidArgumentException(sprintf(
@@ -67,8 +66,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setResultDefinition(Definition $definition)
+	public function setResultDefinition(Definition $definition): static
 	{
 		$this->resultDefinition = $definition;
 		return $this;
@@ -82,8 +80,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setParameters(array $params)
+	public function setParameters(array $params): static
 	{
 		$this->parameters = $params;
 		return $this;
