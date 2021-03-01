@@ -14,7 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyExtension extends Nette\DI\CompilerExtension
 {
-	protected $name = 'my';
+	protected string $name = 'my';
 }
 
 

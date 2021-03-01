@@ -21,11 +21,9 @@ final class FactoryDefinition extends Definition
 {
 	private const METHOD_CREATE = 'create';
 
-	/** @var array */
-	public $parameters = [];
+	public array $parameters = [];
 
-	/** @var Definition */
-	private $resultDefinition;
+	private Definition $resultDefinition;
 
 
 	public function __construct()

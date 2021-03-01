@@ -19,7 +19,7 @@ class Lorem
 
 	public $args;
 
-	public $var = 123;
+	public int $var = 123;
 
 
 	public function __construct()

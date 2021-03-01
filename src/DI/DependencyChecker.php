@@ -24,8 +24,8 @@ class DependencyChecker
 
 	public const VERSION = 1;
 
-	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
-	private $dependencies = [];
+	/** @var array<ReflectionClass|\ReflectionFunctionAbstract|string> */
+	private array $dependencies = [];
 
 
 	/**
