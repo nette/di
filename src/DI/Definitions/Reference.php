@@ -24,8 +24,7 @@ final class Reference
 	/** @deprecated use Reference::Self */
 	public const SELF = self::Self;
 
-	/** @var string */
-	private $value;
+	private string $value;
 
 
 	public static function fromType(string $value): self
