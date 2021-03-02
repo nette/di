@@ -123,7 +123,7 @@ class DependencyChecker
 						$prop->getDocComment(),
 						Reflection::getPropertyTypes($prop, $kind),
 						$kind,
-						PHP_VERSION_ID >= 80000 ? count($prop->getAttributes(Attributes\Inject::class)) : null,
+						count($prop->getAttributes(Attributes\Inject::class)),
 					];
 				}
 			}
