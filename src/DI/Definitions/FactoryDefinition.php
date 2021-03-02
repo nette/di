@@ -171,10 +171,7 @@ final class FactoryDefinition extends Definition
 				throw new ServiceCreationException("Unused parameter \${$param->name} when implementing method $interface::create()" . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 
-			$paramDef = PHP_VERSION_ID < 80000
-				? ($methodHint && $param->allowsNull() ? '?' : '') . reset($methodHint)
-				: implode('|', $methodHint);
-			$paramDef .= ' ' . $param->name;
+			$paramDef = implode('|', $methodHint) . ' ' . $param->name;
 			if ($param->isDefaultValueAvailable()) {
 				$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
 			} else {
