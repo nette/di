@@ -16,11 +16,32 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public function methodUnion(\stdClass |self $self)
+	public function methodUnion(\stdClass|self $self)
+	{
+	}
+
+
+	public function methodUnionNullable(\stdClass|self|null $nullable)
+	{
+	}
+
+
+	public function methodUnionDefault(\stdClass|int $default = 1)
 	{
 	}
 }
 
+
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnion'), [], function () {});
-}, Nette\InvalidStateException::class, 'The $self in Test::methodUnion() is not expected to have a union type.');
+}, Nette\InvalidStateException::class, 'Parameter $self in Test::methodUnion() has union type hint and no default value, so its value must be specified.');
+
+Assert::same(
+	[null],
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnionNullable'), [], function () {}),
+);
+
+Assert::same(
+	[],
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnionDefault'), [], function () {}),
+);

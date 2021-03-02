@@ -541,7 +541,8 @@ class Resolver
 	 */
 	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
 	{
-		$type = Reflection::getParameterType($parameter);
+		$types = array_diff(Reflection::getParameterTypes($parameter), ['null']);
+		$type = count($types) === 1 ? reset($types) : null;
 		$method = $parameter->getDeclaringFunction();
 		$desc = Reflection::toString($parameter);
 
@@ -571,7 +572,7 @@ class Resolver
 			return $getter($itemType, false);
 
 		} elseif (
-			($type && $parameter->allowsNull())
+			($types && $parameter->allowsNull())
 			|| $parameter->isOptional()
 			|| $parameter->isDefaultValueAvailable()
 		) {
@@ -582,7 +583,8 @@ class Resolver
 				: null;
 
 		} else {
-			throw new ServiceCreationException("Parameter $desc has no class type hint or default value, so its value must be specified.");
+			$tmp = count($types) > 1 ? 'union' : 'no class';
+			throw new ServiceCreationException("Parameter $desc has $tmp type hint and no default value, so its value must be specified.");
 		}
 	}
 }
