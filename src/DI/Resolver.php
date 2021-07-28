@@ -259,7 +259,7 @@ class Resolver
 					case $entity[0] instanceof Reference:
 						if ($entity[1][0] === '$') { // property getter, setter or appender
 							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
-							if (!$arguments && substr($entity[1], -2) === '[]') {
+							if (!$arguments && str_ends_with($entity[1], '[]')) {
 								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
 							}
 						} elseif (
@@ -287,7 +287,7 @@ class Resolver
 			$arguments = $this->completeArguments($arguments);
 
 		} catch (ServiceCreationException $e) {
-			if (!strpos($e->getMessage(), "\nRelated to")) {
+			if (!str_contains($e->getMessage(), "\nRelated to")) {
 				if (is_string($entity)) {
 					$desc = $entity . '::__construct()';
 				} else {
@@ -432,7 +432,7 @@ class Resolver
 	private function completeException(\Exception $e, Definition $def): ServiceCreationException
 	{
 		$message = $e->getMessage();
-		if ($e instanceof ServiceCreationException && Strings::startsWith($message, '[Service ')) {
+		if ($e instanceof ServiceCreationException && str_starts_with($message, '[Service ')) {
 			return $e;
 		}
 
@@ -460,7 +460,7 @@ class Resolver
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
 				}
 
-			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
+			} elseif (is_string($val) && str_starts_with($val, '@@')) { // escaped text @@
 				$val = substr($val, 1);
 			}
 		});

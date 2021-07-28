@@ -142,7 +142,7 @@ class DependencyChecker
 
 		$flip = array_flip($classes);
 		foreach ($functions as $name) {
-			if (strpos($name, '::')) {
+			if (str_contains($name, '::')) {
 				$method = new ReflectionMethod($name);
 				$class = $method->getDeclaringClass();
 				if (isset($flip[$class->name])) {
