@@ -126,7 +126,7 @@ declare(strict_types=1);
 				switch (true) {
 					case $entity[1][0] === '$': // property getter, setter or appender
 						$name = substr($entity[1], 1);
-						if ($append = (substr($name, -2) === '[]')) {
+						if ($append = (str_ends_with($name, '[]'))) {
 							$name = substr($name, 0, -2);
 						}
 						$prop = $entity[0] instanceof Reference
@@ -138,7 +138,7 @@ declare(strict_types=1);
 
 					case $entity[0] instanceof Statement:
 						$inner = $this->formatPhp('?', [$entity[0]]);
-						if (substr($inner, 0, 4) === 'new ') {
+						if (str_starts_with($inner, 'new ')) {
 							$inner = "($inner)";
 						}
 						return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);

@@ -89,7 +89,7 @@ final class InjectExtension extends DI\CompilerExtension
 	{
 		$classes = [];
 		foreach (get_class_methods($class) as $name) {
-			if (substr($name, 0, 6) === 'inject') {
+			if (str_starts_with($name, 'inject')) {
 				$classes[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->name;
 			}
 		}
@@ -114,7 +114,7 @@ final class InjectExtension extends DI\CompilerExtension
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if ($type = Reflection::getPropertyType($rp)) {
 				} elseif (!$hasAttr && ($type = DI\Helpers::parseAnnotation($rp, 'var'))) {
-					if (strpos($type, '|') !== false) {
+					if (str_contains($type, '|')) {
 						throw new Nette\InvalidStateException(sprintf(
 							'The %s is not expected to have a union type.',
 							Reflection::toString($rp),
