@@ -14,8 +14,6 @@ return function (Symfony\Component\DependencyInjection\Loader\Configurator\Conta
 	$parameters = $containerConfigurator->parameters();
 
 	$parameters->set('skip', [
-		PhpCsFixer\Fixer\Basic\Psr4Fixer::class => [
-			'tests/bootstrap.php',
-		],
+		'fixtures/*',
 	]);
 };
