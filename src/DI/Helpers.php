@@ -131,7 +131,14 @@ final class Helpers
 		foreach ($args as $k => $v) {
 			if ($v === '...') {
 				unset($args[$k]);
-			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*$#D', $v, $m)) {
+			} elseif (
+				PHP_VERSION_ID >= 80100
+				&& is_string($v)
+				&& preg_match('#^([\w\\\\]+)::\w+$#D', $v, $m)
+				&& enum_exists($m[1])
+			) {
+				$args[$k] = new Nette\PhpGenerator\PhpLiteral($v);
+			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*$#D', $v)) {
 				$args[$k] = constant(ltrim($v, ':'));
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
