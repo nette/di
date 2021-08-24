@@ -16,5 +16,6 @@ return function (Symfony\Component\DependencyInjection\Loader\Configurator\Conta
 	$parameters->set('skip', [
 		'fixtures/*',
 		'tests/DI/ContainerBuilder.enum.phpt', // enum
+		'tests/DI/Resolver.autowireArguments.81.phpt', // enum
 	]);
 };

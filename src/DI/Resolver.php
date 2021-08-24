@@ -541,10 +541,14 @@ class Resolver
 	 */
 	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
 	{
+		$desc = Reflection::toString($parameter);
+		if ($parameter->getType() instanceof \ReflectionIntersectionType) {
+			throw new ServiceCreationException("Parameter $desc has intersection type, so its value must be specified.");
+		}
+
 		$types = array_diff(Reflection::getParameterTypes($parameter), ['null']);
 		$type = count($types) === 1 ? reset($types) : null;
 		$method = $parameter->getDeclaringFunction();
-		$desc = Reflection::toString($parameter);
 
 		if ($type && !Reflection::isBuiltinType($type)) {
 			try {
