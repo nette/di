@@ -11,7 +11,6 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\ServiceCreationException;
-use Nette\PhpGenerator\Helpers as PhpHelpers;
 
 
 /**
@@ -234,10 +233,10 @@ final class ServiceDefinition extends Definition
 			&& !(is_array($entity) && $entity[0] instanceof Reference && $entity[0]->getValue() === Nette\DI\ContainerBuilder::THIS_CONTAINER)
 			&& !(is_string($entity) && preg_match('#^[\w\\\\]+$#D', $entity) && is_subclass_of($entity, $type))
 		) {
-			$code .= PhpHelpers::formatArgs(
+			$code .= (new Nette\PhpGenerator\Dumper)->format(
 				"if (!\$service instanceof $type) {\n"
 				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
-				["Unable to create service '{$this->getName()}', value returned by factory is not $type type."]
+				"Unable to create service '{$this->getName()}', value returned by factory is not $type type."
 			);
 		}
 

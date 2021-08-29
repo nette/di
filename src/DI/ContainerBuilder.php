@@ -388,7 +388,7 @@ class ContainerBuilder
 	public static function literal(string $code, array $args = null): Nette\PhpGenerator\PhpLiteral
 	{
 		return new Nette\PhpGenerator\PhpLiteral(
-			$args === null ? $code : Nette\PhpGenerator\Helpers::formatArgs($code, $args)
+			$args === null ? $code : (new Nette\PhpGenerator\Dumper)->format($code, ...$args)
 		);
 	}
 

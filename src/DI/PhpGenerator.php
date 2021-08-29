@@ -181,7 +181,7 @@ declare(strict_types=1);
 				}
 			}
 		});
-		return Php\Helpers::formatArgs($statement, $args);
+		return (new Php\Dumper)->format($statement, ...$args);
 	}
 
 
