@@ -38,12 +38,20 @@ final class FactoryDefinition extends Definition
 	public function setImplement(string $type)
 	{
 		if (!interface_exists($type)) {
-			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface '$type' not found.");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Interface '%s' not found.",
+				$this->getName(),
+				$type
+			));
 		}
 		$rc = new \ReflectionClass($type);
 		$method = $rc->getMethods()[0] ?? null;
 		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
-			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface $type must have just one non-static method create().");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Interface %s must have just one non-static method create().",
+				$this->getName(),
+				$type
+			));
 		}
 		return parent::setType($type);
 	}
@@ -252,7 +260,11 @@ final class FactoryDefinition extends Definition
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->name);
-				throw new ServiceCreationException("Unused parameter \${$param->name} when implementing method $interface::create()" . ($hint ? ", did you mean \${$hint}?" : '.'));
+				throw new ServiceCreationException(sprintf(
+					'Unused parameter $%s when implementing method %s::create()',
+					$param->name,
+					$interface
+				) . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 
 			$paramDef = PHP_VERSION_ID < 80000

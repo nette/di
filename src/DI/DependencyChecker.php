@@ -64,7 +64,7 @@ class DependencyChecker
 				$functions[] = rtrim(Reflection::toString($dep), '()');
 
 			} else {
-				throw new Nette\InvalidStateException('Unexpected dependency ' . gettype($dep));
+				throw new Nette\InvalidStateException(sprintf('Unexpected dependency %s', gettype($dep)));
 			}
 		}
 

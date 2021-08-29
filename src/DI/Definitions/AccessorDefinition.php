@@ -29,7 +29,11 @@ final class AccessorDefinition extends Definition
 	public function setImplement(string $type)
 	{
 		if (!interface_exists($type)) {
-			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface '$type' not found.");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Interface '%s' not found.",
+				$this->getName(),
+				$type
+			));
 		}
 		$rc = new \ReflectionClass($type);
 
@@ -40,9 +44,17 @@ final class AccessorDefinition extends Definition
 			|| $method->getName() !== self::METHOD_GET
 			|| count($rc->getMethods()) > 1
 		) {
-			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Interface $type must have just one non-static method get().");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Interface %s must have just one non-static method get().",
+				$this->getName(),
+				$type
+			));
 		} elseif ($method->getNumberOfParameters()) {
-			throw new Nette\InvalidArgumentException("Service '{$this->getName()}': Method $type::get() must have no parameters.");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Method %s::get() must have no parameters.",
+				$this->getName(),
+				$type
+			));
 		}
 		return parent::setType($type);
 	}

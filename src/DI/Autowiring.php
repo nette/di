@@ -66,7 +66,11 @@ class Autowiring
 			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
 				: '';
-			throw new ServiceCreationException("Multiple services of type $type found: " . implode(', ', $list) . $hint);
+			throw new ServiceCreationException(sprintf(
+				"Multiple services of type $type found: %s%s",
+				implode(', ', $list),
+				$hint
+			));
 		}
 	}
 
@@ -123,7 +127,11 @@ class Autowiring
 					if ($autowiredType === ContainerBuilder::THIS_SERVICE) {
 						$autowired[$k] = $type;
 					} elseif (!is_a($type, $autowiredType, true)) {
-						throw new ServiceCreationException("Incompatible class $autowiredType in autowiring definition of service '$name'.");
+						throw new ServiceCreationException(sprintf(
+							"Incompatible class %s in autowiring definition of service '%s'.",
+							$autowiredType,
+							$name
+						));
 					}
 				}
 			}

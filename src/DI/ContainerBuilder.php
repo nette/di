@@ -74,12 +74,16 @@ class ContainerBuilder
 		} else {
 			$name = $this->aliases[$name] ?? $name;
 			if (isset($this->definitions[$name])) {
-				throw new Nette\InvalidStateException("Service '$name' has already been added.");
+				throw new Nette\InvalidStateException(sprintf("Service '%s' has already been added.", $name));
 			}
 			$lname = strtolower($name);
 			foreach ($this->definitions as $nm => $foo) {
 				if ($lname === strtolower($nm)) {
-					throw new Nette\InvalidStateException("Service '$name' has the same name as '$nm' in a case-insensitive manner.");
+					throw new Nette\InvalidStateException(sprintf(
+						"Service '%s' has the same name as '%s' in a case-insensitive manner.",
+						$name,
+						$nm
+					));
 				}
 			}
 		}
@@ -135,7 +139,7 @@ class ContainerBuilder
 	{
 		$service = $this->aliases[$name] ?? $name;
 		if (!isset($this->definitions[$service])) {
-			throw new MissingServiceException("Service '$name' not found.");
+			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));
 		}
 		return $this->definitions[$service];
 	}
@@ -170,10 +174,10 @@ class ContainerBuilder
 			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($service)));
 
 		} elseif (isset($this->aliases[$alias])) {
-			throw new Nette\InvalidStateException("Alias '$alias' has already been added.");
+			throw new Nette\InvalidStateException(sprintf("Alias '%s' has already been added.", $alias));
 
 		} elseif (isset($this->definitions[$alias])) {
-			throw new Nette\InvalidStateException("Service '$alias' has already been added.");
+			throw new Nette\InvalidStateException(sprintf("Service '%s' has already been added.", $alias));
 		}
 		$this->aliases[$alias] = $service;
 	}

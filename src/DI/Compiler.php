@@ -65,12 +65,16 @@ class Compiler
 		if ($name === null) {
 			$name = '_' . count($this->extensions);
 		} elseif (isset($this->extensions[$name])) {
-			throw new Nette\InvalidArgumentException("Name '$name' is already used or reserved.");
+			throw new Nette\InvalidArgumentException(sprintf("Name '%s' is already used or reserved.", $name));
 		}
 		$lname = strtolower($name);
 		foreach (array_keys($this->extensions) as $nm) {
 			if ($lname === strtolower((string) $nm)) {
-				throw new Nette\InvalidArgumentException("Name of extension '$name' has the same name as '$nm' in a case-insensitive manner.");
+				throw new Nette\InvalidArgumentException(sprintf(
+					"Name of extension '%s' has the same name as '%s' in a case-insensitive manner.",
+					$name,
+					$nm
+				));
 			}
 		}
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
@@ -238,13 +242,15 @@ class Compiler
 		}
 
 		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::SERVICES => 1])) {
-			$extra = implode("', '", array_keys($extra));
-			throw new Nette\DeprecatedException("Extensions '$extra' were added while container was being compiled.");
+			throw new Nette\DeprecatedException(sprintf(
+				"Extensions '%s' were added while container was being compiled.",
+				implode("', '", array_keys($extra))
+			));
 
 		} elseif ($extra = key(array_diff_key($this->configs, $this->extensions))) {
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
-				"Found section '$extra' in configuration, but corresponding extension is missing"
+				sprintf("Found section '%s' in configuration, but corresponding extension is missing", $extra)
 				. ($hint ? ", did you mean '$hint'?" : '.')
 			);
 		}

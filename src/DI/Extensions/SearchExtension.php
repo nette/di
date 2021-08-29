@@ -61,7 +61,12 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	{
 		foreach (array_filter($this->config) as $name => $batch) {
 			if (!is_dir($batch->in)) {
-				throw new Nette\DI\InvalidConfigurationException("Option '{$this->name} › {$name} › in' must be valid directory name, '{$batch->in}' given.");
+				throw new Nette\DI\InvalidConfigurationException(sprintf(
+					"Option '%s › %s › in' must be valid directory name, '%s' given.",
+					$this->name,
+					$name,
+					$batch->in
+				));
 			}
 
 			foreach ($this->findClasses($batch) as $class) {
@@ -90,7 +95,10 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		$found = [];
 		foreach ($classes as $class) {
 			if (!class_exists($class) && !interface_exists($class) && !trait_exists($class)) {
-				throw new Nette\InvalidStateException("Class $class was found, but it cannot be loaded by autoloading.");
+				throw new Nette\InvalidStateException(sprintf(
+					'Class %s was found, but it cannot be loaded by autoloading.',
+					$class
+				));
 			}
 			$rc = new \ReflectionClass($class);
 			if (

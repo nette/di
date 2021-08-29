@@ -62,7 +62,10 @@ final class Helpers
 				$res[] = '%';
 
 			} elseif (isset($recursive[$part])) {
-				throw new Nette\InvalidArgumentException(sprintf('Circular reference detected for variables: %s.', implode(', ', array_keys($recursive))));
+				throw new Nette\InvalidArgumentException(sprintf(
+					'Circular reference detected for variables: %s.',
+					implode(', ', array_keys($recursive))
+				));
 
 			} else {
 				$val = $params;
@@ -72,7 +75,7 @@ final class Helpers
 					} elseif ($val instanceof DynamicParameter) {
 						$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
 					} else {
-						throw new Nette\InvalidArgumentException("Missing parameter '$part'.");
+						throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $part));
 					}
 				}
 				if ($recursive) {
@@ -84,7 +87,7 @@ final class Helpers
 				if ($val instanceof DynamicParameter) {
 					$php = true;
 				} elseif (!is_scalar($val)) {
-					throw new Nette\InvalidArgumentException("Unable to concatenate non-scalar parameter '$part' into '$var'.");
+					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $var));
 				}
 				$res[] = $val;
 			}
@@ -245,7 +248,10 @@ final class Helpers
 				return $norm;
 			}
 		}
-		$value = is_scalar($value) ? "'$value'" : gettype($value);
-		throw new Nette\InvalidStateException("Cannot convert $value to $type.");
+		throw new Nette\InvalidStateException(sprintf(
+			'Cannot convert %s to %s.',
+			is_scalar($value) ? "'$value'" : gettype($value),
+			$type
+		));
 	}
 }

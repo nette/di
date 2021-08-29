@@ -117,7 +117,10 @@ final class InjectExtension extends DI\CompilerExtension
 				if ($type = Reflection::getPropertyType($rp)) {
 				} elseif (!$hasAttr && ($type = DI\Helpers::parseAnnotation($rp, 'var'))) {
 					if (strpos($type, '|') !== false) {
-						throw new Nette\InvalidStateException('The ' . Reflection::toString($rp) . ' is not expected to have a union type.');
+						throw new Nette\InvalidStateException(sprintf(
+							'The %s is not expected to have a union type.',
+							Reflection::toString($rp)
+						));
 					}
 					$type = Reflection::expandClassName($type, Reflection::getPropertyDeclaringClass($rp));
 				}

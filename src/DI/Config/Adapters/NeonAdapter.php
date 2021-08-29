@@ -42,7 +42,10 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		foreach ($arr as $key => $val) {
 			if (is_string($key) && substr($key, -1) === self::PREVENT_MERGING_SUFFIX) {
 				if (!is_array($val) && $val !== null) {
-					throw new Nette\DI\InvalidConfigurationException("Replacing operator is available only for arrays, item '$key' is not array.");
+					throw new Nette\DI\InvalidConfigurationException(sprintf(
+						"Replacing operator is available only for arrays, item '%s' is not array.",
+						$key
+					));
 				}
 				$key = substr($key, 0, -1);
 				$val[Helpers::PREVENT_MERGING] = true;

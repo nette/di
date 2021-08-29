@@ -67,9 +67,9 @@ class ContainerLoader
 
 		$handle = @fopen("$file.lock", 'c+'); // @ is escalated to exception
 		if (!$handle) {
-			throw new Nette\IOException("Unable to create file '$file.lock'. " . Nette\Utils\Helpers::getLastError());
+			throw new Nette\IOException(sprintf("Unable to create file '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
-			throw new Nette\IOException("Unable to acquire exclusive lock on '$file.lock'. " . Nette\Utils\Helpers::getLastError());
+			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		}
 
 		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
@@ -82,7 +82,7 @@ class ContainerLoader
 			foreach ($toWrite as $name => $content) {
 				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
 					@unlink("$name.tmp"); // @ - file may not exist
-					throw new Nette\IOException("Unable to create file '$name'.");
+					throw new Nette\IOException(sprintf("Unable to create file '%s'.", $name));
 				} elseif (function_exists('opcache_invalidate')) {
 					@opcache_invalidate($name, true); // @ can be restricted
 				}
@@ -90,7 +90,7 @@ class ContainerLoader
 		}
 
 		if ((@include $file) === false) { // @ - error escalated to exception
-			throw new Nette\IOException("Unable to include '$file'.");
+			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
 		}
 		flock($handle, LOCK_UN);
 	}

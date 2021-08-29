@@ -64,7 +64,11 @@ abstract class Definition
 		if ($type === null) {
 			$this->type = null;
 		} elseif (!class_exists($type) && !interface_exists($type)) {
-			throw new Nette\InvalidArgumentException("Service '$this->name': Class or interface '$type' not found.");
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Class or interface '%s' not found.",
+				$this->name,
+				$type
+			));
 		} else {
 			$this->type = Nette\DI\Helpers::normalizeClass($type);
 		}

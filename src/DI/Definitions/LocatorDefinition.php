@@ -104,7 +104,12 @@ final class LocatorDefinition extends Definition
 			$this->references = [];
 			foreach ($resolver->getContainerBuilder()->findByTag($this->tagged) as $name => $tag) {
 				if (isset($this->references[$tag])) {
-					trigger_error("Service '{$this->getName()}': duplicated tag '$this->tagged' with value '$tag'.", E_USER_NOTICE);
+					trigger_error(sprintf(
+						"Service '%s': duplicated tag '%s' with value '%s'.",
+						$this->getName(),
+						$this->tagged,
+						$tag
+					), E_USER_NOTICE);
 				}
 				$this->references[$tag] = new Reference($name);
 			}
