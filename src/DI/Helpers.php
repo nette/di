@@ -64,7 +64,7 @@ final class Helpers
 			} elseif (isset($recursive[$part])) {
 				throw new Nette\InvalidArgumentException(sprintf(
 					'Circular reference detected for variables: %s.',
-					implode(', ', array_keys($recursive))
+					implode(', ', array_keys($recursive)),
 				));
 
 			} else {
@@ -93,12 +93,10 @@ final class Helpers
 			}
 		}
 		if ($php) {
-			$res = array_filter($res, function ($val): bool { return $val !== ''; });
-			$res = array_map(function ($val): string {
-				return $val instanceof DynamicParameter
+			$res = array_filter($res, fn($val): bool => $val !== '');
+			$res = array_map(fn($val): string => $val instanceof DynamicParameter
 					? "($val)"
-					: var_export((string) $val, true);
-			}, $res);
+					: var_export((string) $val, true), $res);
 			return new DynamicParameter(implode(' . ', $res));
 		}
 		return implode('', $res);
@@ -174,7 +172,7 @@ final class Helpers
 		} elseif ($config instanceof Statement) {
 			return new Statement(
 				self::prefixServiceName($config->getEntity(), $namespace),
-				self::prefixServiceName($config->arguments, $namespace)
+				self::prefixServiceName($config->arguments, $namespace),
 			);
 		} elseif (is_array($config)) {
 			foreach ($config as &$val) {
@@ -251,7 +249,7 @@ final class Helpers
 		throw new Nette\InvalidStateException(sprintf(
 			'Cannot convert %s to %s.',
 			is_scalar($value) ? "'$value'" : gettype($value),
-			$type
+			$type,
 		));
 	}
 

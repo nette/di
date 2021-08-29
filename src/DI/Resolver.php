@@ -60,7 +60,7 @@ class Resolver
 	public function resolveDefinition(Definition $def): void
 	{
 		if ($this->recursive->contains($def)) {
-			$names = array_map(function ($item) { return $item->getName(); }, iterator_to_array($this->recursive));
+			$names = array_map(fn($item) => $item->getName(), iterator_to_array($this->recursive));
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', $names)));
 		}
 
@@ -140,7 +140,7 @@ class Resolver
 					interface_exists($entity)
 						? "Interface %s can not be used as 'factory', did you mean 'implement'?"
 						: "Class '%s' not found.",
-					$entity
+					$entity,
 				));
 			}
 			return $entity;
@@ -176,11 +176,9 @@ class Resolver
 		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
-		$getter = function (string $type, bool $single) {
-			return $single
+		$getter = fn(string $type, bool $single) => $single
 				? $this->getByType($type)
-				: array_values(array_filter($this->builder->findAutowired($type), function ($obj) { return $obj !== $this->currentService; }));
-		};
+				: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
 
 		switch (true) {
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
@@ -191,7 +189,7 @@ class Resolver
 					throw new ServiceCreationException(sprintf(
 						'Function %s() expects at most 1 parameter, %s given.',
 						$entity,
-						count($arguments)
+						count($arguments),
 					));
 				}
 				$entity = ['', '!'];
@@ -205,7 +203,7 @@ class Resolver
 					throw new ServiceCreationException(sprintf(
 						'Function %s() expects at most 1 parameter, %s given.',
 						$entity,
-						count($arguments)
+						count($arguments),
 					));
 				}
 				$arguments = [$arguments[0], $entity];
@@ -225,7 +223,7 @@ class Resolver
 				} elseif ($arguments) {
 					throw new ServiceCreationException(sprintf(
 						'Unable to pass arguments, class %s has no constructor.',
-						$entity
+						$entity,
 					));
 				}
 				break;
@@ -238,7 +236,7 @@ class Resolver
 				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::PHP_IDENT . ')+(\[\])?$#D', $entity[1])) {
 					throw new ServiceCreationException(sprintf(
 						"Expected function, method or property name, '%s' given.",
-						$entity[1]
+						$entity[1],
 					));
 				}
 
@@ -247,7 +245,7 @@ class Resolver
 						if (!Nette\Utils\Arrays::isList($arguments)) {
 							throw new ServiceCreationException(sprintf(
 								'Unable to pass specified arguments to %s.',
-								$entity[0]
+								$entity[0],
 							));
 						} elseif (!function_exists($entity[1])) {
 							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
@@ -484,7 +482,7 @@ class Resolver
 	public static function autowireArguments(
 		\ReflectionFunctionAbstract $method,
 		array $arguments,
-		callable $getter
+		callable $getter,
 	): array {
 		$optCount = 0;
 		$num = -1;
@@ -518,7 +516,7 @@ class Resolver
 		if ($arguments) {
 			throw new ServiceCreationException(sprintf(
 				'Unable to pass specified arguments to %s.',
-				Reflection::toString($method)
+				Reflection::toString($method),
 			));
 		} elseif ($optCount) {
 			$res = array_slice($res, 0, -$optCount);
@@ -540,7 +538,7 @@ class Resolver
 		if ($parameter->getType() instanceof \ReflectionIntersectionType) {
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has intersection type, so its value must be specified.',
-				$desc
+				$desc,
 			));
 		}
 
@@ -562,13 +560,13 @@ class Resolver
 				throw new ServiceCreationException(sprintf(
 					"Service of type %s required by %s not found.\nDid you add it to configuration file?",
 					$type,
-					$desc
+					$desc,
 				));
 			} else {
 				throw new ServiceCreationException(sprintf(
 					"Class '%s' required by %s not found.\nCheck the parameter type and 'use' statements.",
 					$type,
-					$desc
+					$desc,
 				));
 			}
 
@@ -596,7 +594,7 @@ class Resolver
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has %s, so its value must be specified.',
 				$desc,
-				count($types) > 1 ? 'union type and no default value' : 'no class type or default value'
+				count($types) > 1 ? 'union type and no default value' : 'no class type or default value',
 			));
 		}
 	}

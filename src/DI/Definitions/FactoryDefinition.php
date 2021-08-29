@@ -50,7 +50,7 @@ final class FactoryDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nInterface %s must have just one non-static method create().",
 				$this->getDescriptor(),
-				$type
+				$type,
 			));
 		}
 		return parent::setType($type);
@@ -120,7 +120,7 @@ final class FactoryDefinition extends Definition
 				throw new ServiceCreationException(sprintf(
 					"Class '%s' not found.\nCheck the return type or annotation @return of the %s::create() method.",
 					$returnType,
-					$interface
+					$interface,
 				));
 			}
 			$resultDef->setType($returnType);
@@ -178,7 +178,7 @@ final class FactoryDefinition extends Definition
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
 						$param->name,
 						$interface,
-						$class
+						$class,
 					));
 				}
 				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $ctorParam->name);
@@ -188,7 +188,7 @@ final class FactoryDefinition extends Definition
 				throw new ServiceCreationException(sprintf(
 					'Unused parameter $%s when implementing method %s::create()',
 					$param->name,
-					$interface
+					$interface,
 				) . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 

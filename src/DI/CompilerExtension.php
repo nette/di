@@ -93,7 +93,7 @@ abstract class CompilerExtension
 			throw new Nette\DI\InvalidConfigurationException(sprintf(
 				"Unknown configuration option '%s › %s'",
 				$name,
-				$hint ? key($extra) : implode("', '{$name} › ", array_keys($extra))
+				$hint ? key($extra) : implode("', '{$name} › ", array_keys($extra)),
 			) . ($hint ? ", did you mean '{$name} › {$hint}'?" : '.'));
 		}
 		return Nette\Schema\Helpers::merge($config, $expected);

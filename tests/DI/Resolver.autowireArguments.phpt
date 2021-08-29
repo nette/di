@@ -27,14 +27,10 @@ class Test
 
 Assert::equal(
 	[new Test, new Test],
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'method'), [], function ($type) {
-		return $type === 'Test' ? new Test : null;
-	})
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'method'), [], fn($type) => $type === 'Test' ? new Test : null),
 );
 
 Assert::equal(
 	[new Test, new Test, null, null],
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodNullable'), [], function ($type) {
-		return $type === 'Test' ? new Test : null;
-	})
+	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodNullable'), [], fn($type) => $type === 'Test' ? new Test : null),
 );

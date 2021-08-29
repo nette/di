@@ -53,6 +53,6 @@ test('', function () {
 		}
 	};
 }',
-		$method->__toString()
+		$method->__toString(),
 	);
 });
