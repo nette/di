@@ -94,11 +94,9 @@ final class InjectExtension extends DI\CompilerExtension
 			}
 		}
 		$methods = array_keys($classes);
-		uksort($classes, function (string $a, string $b) use ($classes, $methods): int {
-			return $classes[$a] === $classes[$b]
+		uksort($classes, fn(string $a, string $b): int => $classes[$a] === $classes[$b]
 				? array_search($a, $methods, true) <=> array_search($b, $methods, true)
-				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1);
-		});
+				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1));
 		return array_keys($classes);
 	}
 
@@ -119,7 +117,7 @@ final class InjectExtension extends DI\CompilerExtension
 					if (strpos($type, '|') !== false) {
 						throw new Nette\InvalidStateException(sprintf(
 							'The %s is not expected to have a union type.',
-							Reflection::toString($rp)
+							Reflection::toString($rp),
 						));
 					}
 					$type = Reflection::expandClassName($type, Reflection::getPropertyDeclaringClass($rp));
@@ -142,11 +140,11 @@ final class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
 		}
 
-		foreach (self::getInjectMethods(get_class($service)) as $method) {
+		foreach (self::getInjectMethods($service::class) as $method) {
 			$container->callMethod([$service, $method]);
 		}
 
-		foreach (self::getInjectProperties(get_class($service)) as $property => $type) {
+		foreach (self::getInjectProperties($service::class) as $property => $type) {
 			self::checkType($service, $property, $type, $container);
 			$service->$property = $container->getByType($type);
 		}
@@ -162,7 +160,7 @@ final class InjectExtension extends DI\CompilerExtension
 		string $name,
 		?string $type,
 		$container,
-		Definitions\Definition $def = null
+		Definitions\Definition $def = null,
 	): void {
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		$desc = $def ? '[' . $def->getDescriptor() . "]\n" : '';
@@ -174,7 +172,7 @@ final class InjectExtension extends DI\CompilerExtension
 				"%sClass '%s' required by %s not found.\nCheck the property type and 'use' statements.",
 				$desc,
 				$type,
-				$propName
+				$propName,
 			));
 
 		} elseif ($container && !$container->getByType($type, false)) {
@@ -182,7 +180,7 @@ final class InjectExtension extends DI\CompilerExtension
 				"%sService of type %s required by %s not found.\nDid you add it to configuration file?",
 				$desc,
 				$type,
-				$propName
+				$propName,
 			));
 		}
 	}

@@ -87,7 +87,7 @@ abstract class Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nClass or interface '%s' not found.",
 				$this->getDescriptor(),
-				$type
+				$type,
 			));
 		} else {
 			$this->type = Nette\DI\Helpers::normalizeClass($type);

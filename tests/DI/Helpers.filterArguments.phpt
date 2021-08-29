@@ -18,20 +18,20 @@ Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
 	['a', 'b', 4 => ['c'], [1 => 'd']],
-	Helpers::filterArguments(['a', 'b', '...', '--', ['c', '...'], ['...', 'd']])
+	Helpers::filterArguments(['a', 'b', '...', '--', ['c', '...'], ['...', 'd']]),
 );
 
 Assert::same(
 	['a', 'b', Nette\DI\ContainerBuilder::THIS_CONTAINER],
-	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])
+	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::THIS_CONTAINER']),
 );
 
 Assert::equal(
 	['a', 'b', new Nette\DI\Definitions\Reference('service')],
-	Helpers::filterArguments(['a', 'b', '@service'])
+	Helpers::filterArguments(['a', 'b', '@service']),
 );
 
 Assert::equal(
 	[new Statement('class', ['a', 2 => Nette\DI\ContainerBuilder::THIS_CONTAINER])],
-	Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])])
+	Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])]),
 );
