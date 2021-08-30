@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test: Nette\DI\Compiler: generated services factories from interfaces with scalar type hints in parameters.
+ * Test: Nette\DI\Compiler: generated services factories from interfaces with scalar type in parameters.
  */
 
 declare(strict_types=1);

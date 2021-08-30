@@ -37,7 +37,7 @@ Assert::exception(function () {
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Method get() has not return type hint or annotation @return.');
+}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Method get() has no return type or annotation @return.');
 
 
 Assert::noError(function () {
@@ -66,4 +66,4 @@ Assert::exception(function () {
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, "Service of type Good2: Service of type 'stdClass' not found.");
+}, Nette\DI\ServiceCreationException::class, 'Service of type Good2: Service of type stdClass not found. Did you add it to configuration file?');

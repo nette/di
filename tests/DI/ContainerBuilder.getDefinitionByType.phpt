@@ -28,7 +28,7 @@ Assert::same($definitionOne, $definition);
 
 Assert::exception(function () use ($builder) {
 	$builder->getDefinitionByType('unknown');
-}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found.");
+}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found. Check the class name because it cannot be found.");
 
 Assert::exception(function () use ($builder) {
 	$builder->getDefinitionByType(SplFileInfo::class);

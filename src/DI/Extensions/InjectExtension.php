@@ -158,11 +158,21 @@ final class InjectExtension extends DI\CompilerExtension
 	{
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
 		if (!$type) {
-			throw new Nette\InvalidStateException("Property $propName has no type hint.");
+			throw new Nette\InvalidStateException(sprintf('Property %s has no type.', $propName));
+
 		} elseif (!class_exists($type) && !interface_exists($type)) {
-			throw new Nette\InvalidStateException("Class or interface '$type' used in type hint at $propName not found. Check type and 'use' statements.");
+			throw new Nette\InvalidStateException(sprintf(
+				"Class '%s' required by %s not found. Check the property type and 'use' statements.",
+				$type,
+				$propName
+			));
+
 		} elseif ($container && !$container->getByType($type, false)) {
-			throw new Nette\DI\MissingServiceException("Service of type $type used in type hint at $propName not found. Did you add it to configuration file?");
+			throw new Nette\DI\MissingServiceException(sprintf(
+				'Service of type %s required by %s not found. Did you add it to configuration file?',
+				$type,
+				$propName
+			));
 		}
 	}
 }

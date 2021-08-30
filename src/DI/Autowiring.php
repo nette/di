@@ -50,7 +50,10 @@ class Autowiring
 		$types = $this->highPriority;
 		if (empty($types[$type])) {
 			if ($throw) {
-				throw new MissingServiceException("Service of type '$type' not found.");
+				if (!class_exists($type) && !interface_exists($type)) {
+					throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
+				}
+				throw new MissingServiceException(sprintf('Service of type %s not found. Did you add it to configuration file?', $type));
 			}
 			return null;
 

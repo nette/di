@@ -294,7 +294,7 @@ Assert::exception(function () {
 		->getResultDefinition()
 			->setFactory('Bad1');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type hint for \$bar in create() doesn't match type hint in Bad1 constructor.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in create() doesn't match type in Bad1 constructor.");
 
 
 

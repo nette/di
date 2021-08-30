@@ -234,7 +234,7 @@ class Container
 
 		} elseif ($throw) {
 			if (!class_exists($type) && !interface_exists($type)) {
-				throw new MissingServiceException("Service of type '$type' not found. Check class name because it cannot be found.");
+				throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
 			}
 			foreach ($this->methods as $method => $foo) {
 				$methodType = (new \ReflectionMethod(static::class, $method))->getReturnType()->getName();

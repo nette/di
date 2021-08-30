@@ -182,9 +182,13 @@ final class FactoryDefinition extends Definition
 			$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
 			$returnType = Nette\DI\Helpers::getReturnType($method);
 			if (!$returnType) {
-				throw new ServiceCreationException("Method $interface::create() has not return type hint or annotation @return.");
+				throw new ServiceCreationException(sprintf('Method %s::create() has no return type or annotation @return.', $interface));
 			} elseif (!class_exists($returnType) && !interface_exists($returnType)) {
-				throw new ServiceCreationException("Check a type hint or annotation @return of the $interface::create() method, class '$returnType' cannot be found.");
+				throw new ServiceCreationException(sprintf(
+					"Class '%s' not found.\nCheck the return type or annotation @return of the %s::create() method.",
+					$returnType,
+					$interface
+				));
 			}
 			$resultDef->setType($returnType);
 		}
@@ -237,7 +241,12 @@ final class FactoryDefinition extends Definition
 				if ($methodHint !== $ctorHint
 					&& !is_a((string) reset($methodHint), (string) reset($ctorHint), true)
 				) {
-					throw new ServiceCreationException("Type hint for \${$param->name} in $interface::create() doesn't match type hint in $class constructor.");
+					throw new ServiceCreationException(sprintf(
+						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
+						$param->name,
+						$interface,
+						$class
+					));
 				}
 				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $ctorParam->name);
 

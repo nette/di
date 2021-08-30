@@ -34,7 +34,7 @@ class Test
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnion'), [], function () {});
-}, Nette\InvalidStateException::class, 'Parameter $self in Test::methodUnion() has union type hint and no default value, so its value must be specified.');
+}, Nette\InvalidStateException::class, 'Parameter $self in Test::methodUnion() has union type and no default value, so its value must be specified.');
 
 Assert::same(
 	[null],

@@ -15,19 +15,19 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (stdClass $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass needed by $x in {closure}() not found. Did you add it to configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass required by $x in {closure}() not found. Did you add it to configuration file?');
 
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (Foo $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, "Class Foo needed by \$x in {closure}() not found. Check type hint and 'use' statements.");
+}, Nette\DI\ServiceCreationException::class, "Class 'Foo' required by \$x in {closure}() not found. Check the parameter type and 'use' statements.");
 
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function ($x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type hint and no default value, so its value must be specified.');
+}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');
 
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (int $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type hint and no default value, so its value must be specified.');
+}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');

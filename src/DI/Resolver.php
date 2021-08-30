@@ -127,7 +127,7 @@ class Resolver
 
 			$type = Helpers::getReturnType($reflection);
 			if ($type && !class_exists($type) && !interface_exists($type)) {
-				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Is return type of %s() correct?", $type, Nette\Utils\Callback::toString($entity)));
+				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Check the return type of %s() method.", $type, Nette\Utils\Callback::toString($entity)));
 			}
 			return $type;
 
@@ -136,11 +136,12 @@ class Resolver
 
 		} elseif (is_string($entity)) { // class
 			if (!class_exists($entity)) {
-				throw new ServiceCreationException(
+				throw new ServiceCreationException(sprintf(
 					interface_exists($entity)
-					? "Interface $entity can not be used as 'factory', did you mean 'implement'?"
-					: "Class $entity not found."
-				);
+						? "Interface %s can not be used as 'factory', did you mean 'implement'?"
+						: "Class '%s' not found.",
+					$entity
+				));
 			}
 			return $entity;
 		}
@@ -205,7 +206,7 @@ class Resolver
 
 			case is_string($entity): // create class
 				if (!class_exists($entity)) {
-					throw new ServiceCreationException("Class $entity not found.");
+					throw new ServiceCreationException(sprintf("Class '%s' not found.", $entity));
 				} elseif ((new ReflectionClass($entity))->isAbstract()) {
 					throw new ServiceCreationException("Class $entity is abstract.");
 				} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
@@ -556,14 +557,22 @@ class Resolver
 			} catch (MissingServiceException $e) {
 				$res = null;
 			} catch (ServiceCreationException $e) {
-				throw new ServiceCreationException("{$e->getMessage()} (needed by $desc)", 0, $e);
+				throw new ServiceCreationException("{$e->getMessage()} (required by $desc)", 0, $e);
 			}
 			if ($res !== null || $parameter->allowsNull()) {
 				return $res;
 			} elseif (class_exists($type) || interface_exists($type)) {
-				throw new ServiceCreationException("Service of type $type needed by $desc not found. Did you add it to configuration file?");
+				throw new ServiceCreationException(sprintf(
+					'Service of type %s required by %s not found. Did you add it to configuration file?',
+					$type,
+					$desc
+				));
 			} else {
-				throw new ServiceCreationException("Class $type needed by $desc not found. Check type hint and 'use' statements.");
+				throw new ServiceCreationException(sprintf(
+					"Class '%s' required by %s not found. Check the parameter type and 'use' statements.",
+					$type,
+					$desc
+				));
 			}
 
 		} elseif (
@@ -587,8 +596,11 @@ class Resolver
 				: null;
 
 		} else {
-			$tmp = count($types) > 1 ? 'union' : 'no class';
-			throw new ServiceCreationException("Parameter $desc has $tmp type hint and no default value, so its value must be specified.");
+			throw new ServiceCreationException(sprintf(
+				'Parameter %s has %s, so its value must be specified.',
+				$desc,
+				count($types) > 1 ? 'union type and no default value' : 'no class type or default value'
+			));
 		}
 	}
 }

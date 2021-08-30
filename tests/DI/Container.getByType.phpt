@@ -55,7 +55,7 @@ Assert::null($container->getByType('unknown', false));
 
 Assert::exception(function () use ($container) {
 	$container->getByType('unknown');
-}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found. Check class name because it cannot be found.");
+}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found. Check the class name because it cannot be found.");
 
 Assert::exception(function () use ($container) {
 	$container->getByType('Exception');
