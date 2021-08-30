@@ -51,7 +51,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 
 		// normalize Class::method to [Class, method]
 		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) {
-			$entity = explode('::', $entity);
+			$entity = explode('::', $entity, 2);
 		}
 		if (is_string($entity) && substr($entity, 0, 1) === '@') { // normalize @service to Reference
 			$entity = new Reference(substr($entity, 1));
