@@ -17,7 +17,8 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(function () {
 	$def = new ServiceDefinition;
 	$def->setType('Foo');
-}, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");
+}, Nette\InvalidArgumentException::class, "[Service ?]
+Class or interface 'Foo' not found.");
 
 test('', function () {
 	$def = new ServiceDefinition;

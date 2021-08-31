@@ -85,4 +85,6 @@ Assert::exception(function () {
 	services:
 		- Service(bool(123, 10))
 	');
-}, Nette\InvalidStateException::class, 'Service of type Service: Function bool() expects at most 1 parameter, 2 given. (used in __construct())');
+}, Nette\InvalidStateException::class, '[Service of type Service]
+Function bool() expects at most 1 parameter, 2 given.
+Related to __construct().');

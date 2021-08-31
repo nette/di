@@ -29,11 +29,11 @@ final class LocatorDefinition extends Definition
 	public function setImplement(string $type)
 	{
 		if (!interface_exists($type)) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface '%s' not found.", $this->getName(), $type));
+			throw new Nette\InvalidArgumentException(sprintf("[%s]\nInterface '%s' not found.", $this->getDescriptor(), $type));
 		}
 		$methods = (new \ReflectionClass($type))->getMethods();
 		if (!$methods) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface %s must have at least one method.", $this->getName(), $type));
+			throw new Nette\InvalidArgumentException(sprintf("[%s]\nInterface %s must have at least one method.", $this->getDescriptor(), $type));
 		}
 
 		foreach ($methods as $method) {
@@ -42,8 +42,8 @@ final class LocatorDefinition extends Definition
 				|| (preg_match('#^(get|create)[A-Z]#', $method->name) && $method->getNumberOfParameters() === 0)
 			)) {
 				throw new Nette\InvalidArgumentException(sprintf(
-					"Service '%s': Method %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
-					$this->getName(),
+					"[%s]\nMethod %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
+					$this->getDescriptor(),
 					$type,
 					$method->name
 				));
@@ -105,8 +105,8 @@ final class LocatorDefinition extends Definition
 			foreach ($resolver->getContainerBuilder()->findByTag($this->tagged) as $name => $tag) {
 				if (isset($this->references[$tag])) {
 					trigger_error(sprintf(
-						"Service '%s': duplicated tag '%s' with value '%s'.",
-						$this->getName(),
+						"[%s]\nDuplicated tag '%s' with value '%s'.",
+						$this->getDescriptor(),
 						$this->tagged,
 						$tag
 					), E_USER_NOTICE);
