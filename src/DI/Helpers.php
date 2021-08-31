@@ -254,4 +254,25 @@ final class Helpers
 			$type
 		));
 	}
+
+
+	/**
+	 * @param  string|array|Reference  $entity
+	 */
+	public static function entityToString($entity, bool $inner = false): string
+	{
+		if (is_string($entity)) {
+			return $entity . ($inner ? '()' : '');
+
+		} elseif ($entity instanceof Reference) {
+			return '@' . $entity->getValue();
+
+		} elseif (is_array($entity)) {
+			[$a, $b] = $entity;
+			return self::entityToString($a instanceof Statement ? $a->entity : $a, true)
+				. '::'
+				. $b
+				. (strpos($b, '$') === false ? '()' : '');
+		}
+	}
 }

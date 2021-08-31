@@ -35,6 +35,15 @@ final class ServiceDefinition extends Definition
 	}
 
 
+	public function getDescriptor(): string
+	{
+		if ($this->getEntity() && $this->isAnonymous() && !$this->getType()) {
+			return 'Service ' . Nette\DI\Helpers::entityToString($this->getEntity());
+		}
+		return parent::getDescriptor();
+	}
+
+
 	/** @return static */
 	public function setType(?string $type)
 	{

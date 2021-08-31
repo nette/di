@@ -15,12 +15,14 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (stdClass $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass required by $x in {closure}() not found. Did you add it to configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass required by $x in {closure}() not found.
+Did you add it to configuration file?');
 
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (Foo $x) {}), [], function () {});
-}, Nette\DI\ServiceCreationException::class, "Class 'Foo' required by \$x in {closure}() not found. Check the parameter type and 'use' statements.");
+}, Nette\DI\ServiceCreationException::class, "Class 'Foo' required by \$x in {closure}() not found.
+Check the parameter type and 'use' statements.");
 
 
 Assert::exception(function () {

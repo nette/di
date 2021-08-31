@@ -62,7 +62,7 @@ final class InjectExtension extends DI\CompilerExtension
 					unset($setups[$key]);
 				}
 			}
-			self::checkType($class, $property, $type, $builder);
+			self::checkType($class, $property, $type, $builder, $def);
 			array_unshift($setups, $inject);
 		}
 
@@ -157,22 +157,30 @@ final class InjectExtension extends DI\CompilerExtension
 	 * @param  object|string  $class
 	 * @param  DI\Container|DI\ContainerBuilder|null  $container
 	 */
-	private static function checkType($class, string $name, ?string $type, $container): void
-	{
+	private static function checkType(
+		$class,
+		string $name,
+		?string $type,
+		$container,
+		Definitions\Definition $def = null
+	): void {
 		$propName = Reflection::toString(new \ReflectionProperty($class, $name));
+		$desc = $def ? '[' . $def->getDescriptor() . "]\n" : '';
 		if (!$type) {
-			throw new Nette\InvalidStateException(sprintf('Property %s has no type.', $propName));
+			throw new Nette\InvalidStateException(sprintf('%sProperty %s has no type.', $desc, $propName));
 
 		} elseif (!class_exists($type) && !interface_exists($type)) {
 			throw new Nette\InvalidStateException(sprintf(
-				"Class '%s' required by %s not found. Check the property type and 'use' statements.",
+				"%sClass '%s' required by %s not found.\nCheck the property type and 'use' statements.",
+				$desc,
 				$type,
 				$propName
 			));
 
 		} elseif ($container && !$container->getByType($type, false)) {
 			throw new Nette\DI\MissingServiceException(sprintf(
-				'Service of type %s required by %s not found. Did you add it to configuration file?',
+				"%sService of type %s required by %s not found.\nDid you add it to configuration file?",
+				$desc,
 				$type,
 				$propName
 			));
