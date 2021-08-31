@@ -115,7 +115,6 @@ class DependencyChecker
 				class_uses($name),
 			];
 
-			$kind = null;
 			foreach ($class->getProperties(\ReflectionProperty::IS_PUBLIC) as $prop) {
 				if ($prop->getDeclaringClass() == $class) { // intentionally ==
 					$hash[] = [
@@ -172,7 +171,6 @@ class DependencyChecker
 	private static function hashParameters(\ReflectionFunctionAbstract $method): array
 	{
 		$res = [];
-		$kind = null;
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->name,

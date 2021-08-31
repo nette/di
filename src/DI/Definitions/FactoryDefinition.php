@@ -242,7 +242,6 @@ final class FactoryDefinition extends Definition
 		}
 
 		foreach ($method->getParameters() as $param) {
-			$methodTypeKind = $ctorTypeKind = '|';
 			$methodType = Reflection::getParameterTypes($param, $methodTypeKind);
 			if (isset($ctorParams[$param->name])) {
 				$ctorParam = $ctorParams[$param->name];
