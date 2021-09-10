@@ -21,7 +21,7 @@ services:
 		parameters: [title]
 
 	fooFactory1:
-		factory: Foo(..., %baz%)
+		factory: Foo(_, %baz%)
 		implement: IFooFactory
 		parameters: [Baz baz = null]
 

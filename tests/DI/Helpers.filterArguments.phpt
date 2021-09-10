@@ -17,8 +17,8 @@ require __DIR__ . '/../bootstrap.php';
 Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
-	['a', 'b', 3 => ['c'], [1 => 'd']],
-	Helpers::filterArguments(['a', 'b', '...', ['c', '...'], ['...', 'd']])
+	['a', 'b', 4 => ['c'], [1 => 'd']],
+	Helpers::filterArguments(['a', 'b', '...', '_', ['c', '...'], ['...', 'd']])
 );
 
 Assert::same(
