@@ -75,7 +75,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				} else {
 					$tmp = $this->process([$val->value]);
 					if (is_string($tmp[0]) && strpos($tmp[0], '?') !== false) {
-						trigger_error('Operator ? is deprecated in config files.', E_USER_DEPRECATED);
+						throw new Nette\DI\InvalidConfigurationException('Operator ? is deprecated in config file.');
 					}
 					$val = new Statement($tmp[0], $this->process($val->attributes));
 				}
