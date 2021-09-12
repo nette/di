@@ -26,7 +26,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition(null)->setFactory('Unknown');
 	$builder->complete();
-}, Nette\DI\ServiceCreationException::class, "[Service Unknown]
+}, Nette\DI\ServiceCreationException::class, "[Service of type Unknown]
 Class 'Unknown' not found.");
 
 

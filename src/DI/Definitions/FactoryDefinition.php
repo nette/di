@@ -162,12 +162,12 @@ final class FactoryDefinition extends Definition
 		}
 
 		foreach ($method->getParameters() as $param) {
-			$methodHint = Reflection::getParameterTypes($param);
+			$methodType = Reflection::getParameterTypes($param, $methodTypeKind);
 			if (isset($ctorParams[$param->name])) {
 				$ctorParam = $ctorParams[$param->name];
-				$ctorHint = Reflection::getParameterTypes($ctorParam);
-				if ($methodHint !== $ctorHint
-					&& !is_a((string) reset($methodHint), (string) reset($ctorHint), true)
+				$ctorType = Reflection::getParameterTypes($ctorParam, $ctorTypeKind);
+				if ([$methodType, $methodTypeKind] !== [$ctorType, $ctorTypeKind]
+					&& !is_a((string) reset($methodType), (string) reset($ctorType), true)
 				) {
 					throw new ServiceCreationException(sprintf(
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
@@ -187,7 +187,7 @@ final class FactoryDefinition extends Definition
 				) . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 
-			$paramDef = implode('|', $methodHint) . ' ' . $param->name;
+			$paramDef = implode($methodTypeKind, $methodType) . ' ' . $param->name;
 			if ($param->isDefaultValueAvailable()) {
 				$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
 			} else {

@@ -28,7 +28,7 @@ class EClass
 
 Assert::exception(function () {
 	InjectExtension::getInjectProperties(AClass::class);
-}, Nette\InvalidStateException::class, 'The AClass::$var is not expected to have a union type.');
+}, Nette\InvalidStateException::class, 'The AClass::$var is not expected to have a union or intersection type.');
 
 Assert::same([
 	'varA' => 'EInjected',

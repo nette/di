@@ -120,7 +120,8 @@ class DependencyChecker
 						$name,
 						$prop->name,
 						$prop->getDocComment(),
-						Reflection::getPropertyTypes($prop),
+						Reflection::getPropertyTypes($prop, $kind),
+						$kind,
 						count($prop->getAttributes(Attributes\Inject::class)),
 					];
 				}
@@ -132,7 +133,8 @@ class DependencyChecker
 						$method->name,
 						$method->getDocComment(),
 						self::hashParameters($method),
-						Reflection::getReturnTypes($method),
+						Reflection::getReturnTypes($method, $kind),
+						$kind,
 					];
 				}
 			}
@@ -156,7 +158,8 @@ class DependencyChecker
 				$uses,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				Reflection::getReturnTypes($method),
+				Reflection::getReturnTypes($method, $kind),
+				$kind,
 			];
 		}
 
@@ -170,7 +173,8 @@ class DependencyChecker
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->name,
-				Reflection::getParameterTypes($param),
+				Reflection::getParameterTypes($param, $kind),
+				$kind,
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? [Reflection::getParameterDefaultValue($param)]

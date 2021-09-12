@@ -218,10 +218,6 @@ class Container
 
 	/**
 	 * Resolves service by type.
-	 * @template T
-	 * @param  class-string<T>  $type  fully qualified class name
-	 * @param  bool  $throw  exception if service doesn't exist?
-	 * @return T|null  service
 	 * @throws MissingServiceException
 	 */
 	public function getByType(string $type, bool $throw = true): ?object

@@ -535,7 +535,8 @@ class Resolver
 			));
 		}
 
-		$types = array_diff(Reflection::getParameterTypes($parameter), ['null']);
+		$kind = null;
+		$types = array_diff(Reflection::getParameterTypes($parameter, $kind), ['null']);
 		$type = count($types) === 1 ? reset($types) : null;
 		$method = $parameter->getDeclaringFunction();
 
