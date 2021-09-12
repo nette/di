@@ -503,7 +503,7 @@ class Resolver
 
 	/**
 	 * Add missing arguments using autowiring.
-	 * @param  (callable(string $type, bool $single): object|object[]|null)  $getter
+	 * @param  (callable(string $type, bool $single): (object|object[]|null))  $getter
 	 * @throws ServiceCreationException
 	 */
 	public static function autowireArguments(
@@ -555,7 +555,7 @@ class Resolver
 
 	/**
 	 * Resolves missing argument using autowiring.
-	 * @param  (callable(string $type, bool $single): object|object[]|null)  $getter
+	 * @param  (callable(string $type, bool $single): (object|object[]|null))  $getter
 	 * @throws ServiceCreationException
 	 * @return mixed
 	 */
