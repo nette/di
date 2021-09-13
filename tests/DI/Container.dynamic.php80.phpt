@@ -19,4 +19,4 @@ $container = new Container;
 Assert::exception(function () use ($container) {
 	@$container->addService('six', function (): \stdClass|\Closure {}); // @ triggers service should be defined as "imported"
 	$container->getService('six');
-}, Nette\InvalidStateException::class, 'The {closure}%a?% is not expected to have a union type.');
+}, Nette\InvalidStateException::class, 'The {closure}%a?% is not expected to have a union%a?% type.');
