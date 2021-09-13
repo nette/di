@@ -629,7 +629,7 @@ class Resolver
 		$desc = Reflection::toString($parameter);
 		$type = Nette\Utils\Type::fromReflection($parameter);
 
-		if ($parameter->getType() instanceof \ReflectionIntersectionType) {
+		if ($type && $type->isIntersection()) {
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has intersection type, so its value must be specified.',
 				$desc
