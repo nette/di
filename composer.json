@@ -21,7 +21,7 @@
 		"nette/php-generator": "^3.3.3",
 		"nette/robot-loader": "^3.2",
 		"nette/schema": "^1.1",
-		"nette/utils": "^3.1.4"
+		"nette/utils": "^3.1.6"
 	},
 	"require-dev": {
 		"nette/tester": "^2.2",
