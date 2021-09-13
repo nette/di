@@ -20,7 +20,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass required by $x in {closure}%a?% not found. Did you add it to configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type stdClass required by $x in {closure}() not found. Did you add it to configuration file?');
 
 
 // not found
@@ -30,7 +30,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, "Class 'Foo' required by \$x in {closure}%a?% not found. Check the parameter type and 'use' statements.");
+}, Nette\DI\ServiceCreationException::class, "Class 'Foo' required by \$x in {closure}() not found. Check the parameter type and 'use' statements.");
 
 
 // no typehint
@@ -40,7 +40,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}%a?% has no class type or default value, so its value must be specified.');
+}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');
 
 
 // scalar
@@ -50,7 +50,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}%a?% has no class type or default value, so its value must be specified.');
+}, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');
 
 
 // bad variadics (this is actually what PHP allows)
@@ -60,7 +60,7 @@ Assert::exception(function () {
 		[1, 'args' => []],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
+}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}().');
 
 
 // bad variadics
@@ -70,4 +70,4 @@ Assert::exception(function () {
 		['args' => [], 1],
 		function () {}
 	);
-}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
+}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}().');

@@ -25,7 +25,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\InvalidStateException::class, 'Parameter $x in {closure}%a?% has union type and no default value, so its value must be specified.');
+}, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has union type and no default value, so its value must be specified.');
 
 // nullable union
 Assert::same(
