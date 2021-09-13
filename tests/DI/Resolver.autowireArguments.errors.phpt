@@ -35,4 +35,4 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), ['args' => []], function () {});
-}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
+}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}().');
