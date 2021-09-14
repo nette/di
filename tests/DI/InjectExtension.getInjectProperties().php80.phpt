@@ -22,14 +22,14 @@ class AClass
 class EClass
 {
 	#[\Nette\DI\Attributes\Inject]
-	public EInjected $varA;
+	public stdClass $varA;
 }
 
 
 Assert::exception(function () {
 	InjectExtension::getInjectProperties(AClass::class);
-}, Nette\InvalidStateException::class, 'The AClass::$var is not expected to have a union%a?% type.');
+}, Nette\InvalidStateException::class, "Type of property AClass::\$var is not expected to be nullable/union/intersection/built-in, 'AClass|stdClass' given.");
 
 Assert::same([
-	'varA' => 'EInjected',
+	'varA' => 'stdClass',
 ], InjectExtension::getInjectProperties(EClass::class));

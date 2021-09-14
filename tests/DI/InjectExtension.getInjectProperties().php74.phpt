@@ -15,10 +15,7 @@ namespace A
 		public AInjected $varA;
 
 		/** @inject */
-		public B\BInjected $varB;
-
-		/** @inject */
-		public \A\AInjected $varC;
+		public AInjected $varC;
 
 		public AInjected $varD;
 
@@ -41,7 +38,6 @@ namespace
 
 	Assert::same([
 		'varA' => 'A\AInjected',
-		'varB' => 'A\B\BInjected',
 		'varC' => 'A\AInjected',
 	], InjectExtension::getInjectProperties('A\AClass'));
 }

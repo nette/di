@@ -82,7 +82,7 @@ namespace
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'a': Class or interface 'array' not found. Check the return type of A\\Factory::createArray() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of A\\Factory::createArray() is not expected to be nullable/union/intersection/built-in, 'array' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -91,7 +91,7 @@ namespace
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'c': Class or interface 'callable' not found. Check the return type of A\\Factory::createCallable() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 'c': Return type of A\\Factory::createCallable() is not expected to be nullable/union/intersection/built-in, 'callable' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -100,7 +100,7 @@ namespace
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 's': Class or interface 'string' not found. Check the return type of A\\Factory::createString() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 's': Return type of A\\Factory::createString() is not expected to be nullable/union/intersection/built-in, 'string' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -109,7 +109,7 @@ namespace
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'i': Class or interface 'int' not found. Check the return type of A\\Factory::createInt() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 'i': Return type of A\\Factory::createInt() is not expected to be nullable/union/intersection/built-in, 'int' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -118,7 +118,7 @@ namespace
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'b': Class or interface 'bool' not found. Check the return type of A\\Factory::createBool() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 'b': Return type of A\\Factory::createBool() is not expected to be nullable/union/intersection/built-in, 'bool' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -127,7 +127,7 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Class or interface 'float' not found. Check the return type of A\\Factory::createFloat() method.");
+	}, Nette\DI\ServiceCreationException::class, "Service 'f': Return type of A\\Factory::createFloat() is not expected to be nullable/union/intersection/built-in, 'float' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;

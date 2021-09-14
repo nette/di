@@ -13,6 +13,7 @@ use Nette;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Utils\Reflection;
+use Nette\Utils\Type;
 
 
 /**
@@ -202,22 +203,31 @@ final class Helpers
 	}
 
 
-	public static function getReturnType(\ReflectionFunctionAbstract $func): ?string
+	public static function getReturnTypeAnnotation(\ReflectionFunctionAbstract $func): ?Type
 	{
-		if ($type = Reflection::getReturnType($func)) {
-			return $type;
-		} elseif ($type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'))) {
-			if ($type === 'object' || $type === 'mixed') {
-				return null;
-			} elseif ($func instanceof \ReflectionMethod) {
-				return $type === 'static' || $type === '$this'
-					? $func->getDeclaringClass()->name
-					: Reflection::expandClassName($type, $func->getDeclaringClass());
-			} else {
-				return $type;
-			}
+		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
+		if (!$type || $type === 'object' || $type === 'mixed') {
+			return null;
+		} elseif ($func instanceof \ReflectionMethod) {
+			$type = $type === '$this' ? 'static' : $type;
+			$type = Reflection::expandClassName($type, $func->getDeclaringClass());
 		}
-		return null;
+		return Type::fromString($type);
+	}
+
+
+	public static function ensureClassType(?Type $type, string $hint): string
+	{
+		if (!$type) {
+			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
+		} elseif (!$type->isClass() || $type->isUnion()) {
+			throw new ServiceCreationException(sprintf("%s is not expected to be nullable/union/intersection/built-in, '%s' given.", ucfirst($hint), $type));
+		}
+		$class = $type->getSingleName();
+		if (!class_exists($class) && !interface_exists($class)) {
+			throw new ServiceCreationException(sprintf("Class '%s' not found.\nCheck the %s.", $class, $hint));
+		}
+		return $class;
 	}
 
 

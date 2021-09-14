@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
 use Nette\Utils\Reflection;
 use Nette\Utils\Type;
@@ -189,17 +190,8 @@ final class FactoryDefinition extends Definition
 				throw new ServiceCreationException('Type is missing in definition of service.');
 			}
 			$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
-			$returnType = Nette\DI\Helpers::getReturnType($method);
-			if (!$returnType) {
-				throw new ServiceCreationException(sprintf('Method %s::create() has no return type or annotation @return.', $interface));
-			} elseif (!class_exists($returnType) && !interface_exists($returnType)) {
-				throw new ServiceCreationException(sprintf(
-					"Class '%s' not found.\nCheck the return type or annotation @return of the %s::create() method.",
-					$returnType,
-					$interface
-				));
-			}
-			$resultDef->setType($returnType);
+			$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
+			$resultDef->setType(Helpers::ensureClassType($type, "return type of $interface::create()"));
 		}
 
 		$resolver->resolveDefinition($resultDef);

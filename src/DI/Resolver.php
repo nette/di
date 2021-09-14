@@ -14,6 +14,7 @@ use Nette\DI\Definitions\Definition;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
+use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
@@ -110,7 +111,7 @@ class Resolver
 
 			try {
 				/** @var \ReflectionMethod|\ReflectionFunction $reflection */
-				$reflection = Nette\Utils\Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
 				$refClass = $reflection instanceof \ReflectionMethod
 					? $reflection->getDeclaringClass()
 					: null;
@@ -121,15 +122,15 @@ class Resolver
 			if (isset($e) || ($refClass && (!$reflection->isPublic()
 				|| ($refClass->isTrait() && !$reflection->isStatic())
 			))) {
-				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Nette\Utils\Callback::toString($entity)), 0, $e ?? null);
+				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)), 0, $e ?? null);
 			}
 			$this->addDependency($reflection);
 
-			$type = Helpers::getReturnType($reflection);
-			if ($type && !class_exists($type) && !interface_exists($type)) {
-				throw new ServiceCreationException(sprintf("Class or interface '%s' not found. Check the return type of %s() method.", $type, Nette\Utils\Callback::toString($entity)));
+			$type = Nette\Utils\Type::fromReflection($reflection) ?? Helpers::getReturnTypeAnnotation($reflection);
+			if ($type) {
+				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)));
 			}
-			return $type;
+			return null;
 
 		} elseif ($entity instanceof Reference) { // alias or factory
 			return $this->resolveReferenceType($entity);
@@ -264,7 +265,7 @@ class Resolver
 					case is_string($entity[0]): // static method call
 					case $entity[0] instanceof Reference:
 						if ($entity[1][0] === '$') { // property getter, setter or appender
-							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Nette\Utils\Callback::toString($entity) . "'");
+							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Callback::toString($entity) . "'");
 							if (!$arguments && substr($entity[1], -2) === '[]') {
 								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
 							}

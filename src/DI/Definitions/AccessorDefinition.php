@@ -10,7 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\DI\ServiceCreationException;
+use Nette\DI\Helpers;
 use Nette\Utils\Type;
 
 
@@ -99,18 +99,8 @@ final class AccessorDefinition extends Definition
 		if (!$this->reference) {
 			$interface = $this->getType();
 			$method = new \ReflectionMethod($interface, self::METHOD_GET);
-			$returnType = Nette\DI\Helpers::getReturnType($method);
-
-			if (!$returnType) {
-				throw new ServiceCreationException(sprintf('Method %s::get() has no return type or annotation @return.', $interface));
-			} elseif (!class_exists($returnType) && !interface_exists($returnType)) {
-				throw new ServiceCreationException(sprintf(
-					"Class '%s' not found.\nCheck the return type or annotation @return of the %s::get() method.",
-					$returnType,
-					$interface
-				));
-			}
-			$this->setReference($returnType);
+			$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
+			$this->setReference(Helpers::ensureClassType($type, "return type of $interface::get()"));
 		}
 
 		$this->reference = $resolver->normalizeReference($this->reference);
