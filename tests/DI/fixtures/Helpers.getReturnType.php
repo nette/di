@@ -11,36 +11,6 @@ namespace NS
 		}
 
 
-		public function classType(): B
-		{
-		}
-
-
-		public function nativeType(): string
-		{
-		}
-
-
-		public function selfType(): self
-		{
-		}
-
-
-		public function nullableClassType(): ?B
-		{
-		}
-
-
-		public function nullableNativeType(): ?string
-		{
-		}
-
-
-		public function nullableSelfType(): ?self
-		{
-		}
-
-
 		/** @return B */
 		public function annotationClassType()
 		{

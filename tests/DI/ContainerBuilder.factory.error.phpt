@@ -76,7 +76,7 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement('Bad4');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Method create() has no return type or annotation @return.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Return type of create() is not declared.");
 
 
 interface Bad5

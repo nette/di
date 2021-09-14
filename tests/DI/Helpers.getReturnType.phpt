@@ -14,29 +14,17 @@ require __DIR__ . '/../bootstrap.php';
 require __DIR__ . '/fixtures/Helpers.getReturnType.php';
 
 
-Assert::null(Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'noType')));
+Assert::null(Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'noType')));
 
-Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'classType')));
+Assert::same('Test\B', (string) Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'annotationClassType')));
 
-Assert::same('string', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nativeType')));
+Assert::same('Test\B', (string) Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'annotationUnionType')));
 
-Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'selfType')));
+Assert::same('string', (string) Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'annotationNativeType')));
 
-Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableClassType')));
+Assert::same('NS\A', (string) Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'annotationSelfType')));
 
-Assert::same('string', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableNativeType')));
-
-Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'nullableSelfType')));
-
-Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationClassType')));
-
-Assert::same('Test\B', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationUnionType')));
-
-Assert::same('string', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationNativeType')));
-
-Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationSelfType')));
-
-Assert::same('NS\A', Helpers::getReturnType(new \ReflectionMethod(NS\A::class, 'annotationStaticType')));
+Assert::same('NS\A', (string) Helpers::getReturnTypeAnnotation(new \ReflectionMethod(NS\A::class, 'annotationStaticType')));
 
 // class name expanding is NOT supported for global functions
-Assert::same('B', Helpers::getReturnType(new \ReflectionFunction('NS\annotationClassType')));
+Assert::same('B', (string) Helpers::getReturnTypeAnnotation(new \ReflectionFunction('NS\annotationClassType')));
