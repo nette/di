@@ -11,7 +11,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\ServiceCreationException;
-use Nette\Utils\Reflection;
+use Nette\Utils\Type;
 
 
 /**
@@ -134,7 +134,7 @@ final class AccessorDefinition extends Definition
 
 		$class->addMethod(self::METHOD_GET)
 			->setBody('return $this->container->getService(?);', [$this->reference->getValue()])
-			->setReturnType(Reflection::getReturnType($rm));
+			->setReturnType((string) Type::fromReflection($rm));
 
 		$method->setBody('return new class ($this) ' . $class . ';');
 	}
