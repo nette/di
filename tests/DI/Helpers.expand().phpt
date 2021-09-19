@@ -30,7 +30,7 @@ Assert::same(
 	Helpers::expand('%keyA%', [
 		'keyA' => ['key1' => 123, 'key2' => '%keyB%'],
 		'keyB' => 'abc',
-	], true)
+	], true),
 );
 
 Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));

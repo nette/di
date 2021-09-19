@@ -44,7 +44,7 @@ final class LocatorDefinition extends Definition
 					"[%s]\nMethod %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
 					$this->getDescriptor(),
 					$type,
-					$method->name
+					$method->name,
 				));
 			}
 		}
@@ -143,7 +143,7 @@ final class LocatorDefinition extends Definition
 				->setReturnNullable($nullable);
 
 			if (!$name) {
-				$class->addProperty('mapping', array_map(function ($item) { return $item->getValue(); }, $this->references))
+				$class->addProperty('mapping', array_map(fn($item) => $item->getValue(), $this->references))
 					->setPrivate();
 
 				$methodInner->setBody('if (!isset($this->mapping[$name])) {

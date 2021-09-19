@@ -19,5 +19,5 @@ Assert::same('@@', Helpers::escape('@'));
 Assert::same('x@', Helpers::escape('x@'));
 Assert::same(
 	['key1' => '%%', 'key2' => '@@', '%%a%%' => 123, '@' => 123],
-	Helpers::escape(['key1' => '%', 'key2' => '@', '%a%' => 123, '@' => 123])
+	Helpers::escape(['key1' => '%', 'key2' => '@', '%a%' => 123, '@' => 123]),
 );

@@ -84,7 +84,7 @@ class ContainerBuilder
 					throw new Nette\InvalidStateException(sprintf(
 						"Service '%s' has the same name as '%s' in a case-insensitive manner.",
 						$name,
-						$nm
+						$nm,
 					));
 				}
 			}

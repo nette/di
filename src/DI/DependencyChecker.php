@@ -87,7 +87,7 @@ class DependencyChecker
 		array &$phpFiles,
 		array $classes,
 		array $functions,
-		string $hash
+		string $hash,
 	): bool {
 		try {
 			$currentFiles = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist

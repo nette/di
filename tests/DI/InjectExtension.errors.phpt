@@ -73,5 +73,3 @@ services:
 		inject: yes
 ');
 }, InvalidStateException::class, 'Type of property ServiceC::$a is not declared.');
-//}, InvalidStateException::class, "[Service 'service' of type ServiceC]
-//Property ServiceC::\$a has no type.");

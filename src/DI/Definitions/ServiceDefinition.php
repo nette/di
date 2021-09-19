@@ -195,7 +195,7 @@ final class ServiceDefinition extends Definition
 			$code .= (new Nette\PhpGenerator\Dumper)->format(
 				"if (!\$service instanceof $type) {\n"
 				. "\tthrow new Nette\\UnexpectedValueException(?);\n}\n",
-				"Unable to create service '{$this->getName()}', value returned by factory is not $type type."
+				"Unable to create service '{$this->getName()}', value returned by factory is not $type type.",
 			);
 		}
 

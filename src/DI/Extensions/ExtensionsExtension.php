@@ -36,7 +36,7 @@ final class ExtensionsExtension extends Nette\DI\CompilerExtension
 			if (!is_a($class, Nette\DI\CompilerExtension::class, true)) {
 				throw new Nette\DI\InvalidConfigurationException(sprintf(
 					"Extension '%s' not found or is not Nette\\DI\\CompilerExtension descendant.",
-					$class
+					$class,
 				));
 			}
 			$this->compiler->addExtension($name, (new \ReflectionClass($class))->newInstanceArgs($args));
