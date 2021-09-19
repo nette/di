@@ -12,6 +12,7 @@ namespace Nette\DI\Definitions;
 use Nette;
 use Nette\DI\ServiceCreationException;
 use Nette\Utils\Reflection;
+use Nette\Utils\Type;
 
 
 /**
@@ -242,13 +243,11 @@ final class FactoryDefinition extends Definition
 		}
 
 		foreach ($method->getParameters() as $param) {
-			$methodHint = Reflection::getParameterTypes($param);
+			$methodType = Type::fromReflection($param);
 			if (isset($ctorParams[$param->name])) {
 				$ctorParam = $ctorParams[$param->name];
-				$ctorHint = Reflection::getParameterTypes($ctorParam);
-				if ($methodHint !== $ctorHint
-					&& !is_a((string) reset($methodHint), (string) reset($ctorHint), true)
-				) {
+				$ctorType = Type::fromReflection($ctorParam);
+				if ($ctorType && !$ctorType->allows((string) $methodType)) {
 					throw new ServiceCreationException(sprintf(
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
 						$param->name,
@@ -267,10 +266,7 @@ final class FactoryDefinition extends Definition
 				) . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 
-			$paramDef = PHP_VERSION_ID < 80000
-				? ($methodHint && $param->allowsNull() ? '?' : '') . reset($methodHint)
-				: implode('|', $methodHint);
-			$paramDef .= ' ' . $param->name;
+			$paramDef = $methodType . ' ' . $param->name;
 			if ($param->isDefaultValueAvailable()) {
 				$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
 			} else {
@@ -302,7 +298,7 @@ final class FactoryDefinition extends Definition
 		$rm = new \ReflectionMethod($this->getType(), self::METHOD_CREATE);
 		$methodCreate
 			->setParameters($generator->convertParameters($this->parameters))
-			->setReturnType(Reflection::getReturnType($rm) ?: $this->getResultType())
+			->setReturnType((string) (Type::fromReflection($rm) ?? $this->getResultType()))
 			->setBody($body);
 
 		$method->setBody('return new class ($this) ' . $class . ';');

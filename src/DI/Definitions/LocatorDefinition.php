@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\Utils\Reflection;
 
 
 /**
@@ -140,8 +139,7 @@ final class LocatorDefinition extends Definition
 			$nullable = $rm->getReturnType()->allowsNull();
 
 			$methodInner = $class->addMethod($rm->name)
-				->setReturnType(Reflection::getReturnType($rm))
-				->setReturnNullable($nullable);
+				->setReturnType((string) Nette\Utils\Type::fromReflection($rm));
 
 			if (!$name) {
 				$class->addProperty('mapping', array_map(function ($item) { return $item->getValue(); }, $this->references))

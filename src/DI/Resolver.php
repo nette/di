@@ -561,21 +561,20 @@ class Resolver
 	 */
 	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
 	{
+		$method = $parameter->getDeclaringFunction();
 		$desc = Reflection::toString($parameter);
+		$type = Nette\Utils\Type::fromReflection($parameter);
+
 		if ($parameter->getType() instanceof \ReflectionIntersectionType) {
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has intersection type, so its value must be specified.',
 				$desc
 			));
-		}
 
-		$types = array_diff(Reflection::getParameterTypes($parameter), ['null']);
-		$type = count($types) === 1 ? reset($types) : null;
-		$method = $parameter->getDeclaringFunction();
-
-		if ($type && !Reflection::isBuiltinType($type)) {
+		} elseif ($type && $type->isClass()) {
+			$class = $type->getSingleName();
 			try {
-				$res = $getter($type, true);
+				$res = $getter($class, true);
 			} catch (MissingServiceException $e) {
 				$res = null;
 			} catch (ServiceCreationException $e) {
@@ -583,23 +582,23 @@ class Resolver
 			}
 			if ($res !== null || $parameter->allowsNull()) {
 				return $res;
-			} elseif (class_exists($type) || interface_exists($type)) {
+			} elseif (class_exists($class) || interface_exists($class)) {
 				throw new ServiceCreationException(sprintf(
 					'Service of type %s required by %s not found. Did you add it to configuration file?',
-					$type,
+					$class,
 					$desc
 				));
 			} else {
 				throw new ServiceCreationException(sprintf(
 					"Class '%s' required by %s not found. Check the parameter type and 'use' statements.",
-					$type,
+					$class,
 					$desc
 				));
 			}
 
 		} elseif (
 			$method instanceof \ReflectionMethod
-			&& $type === 'array'
+			&& $type && $type->getSingleName() === 'array'
 			&& preg_match('#@param[ \t]+([\w\\\\]+)\[\][ \t]+\$' . $parameter->name . '#', (string) $method->getDocComment(), $m)
 			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 			&& (class_exists($itemType) || interface_exists($itemType))
@@ -607,7 +606,7 @@ class Resolver
 			return $getter($itemType, false);
 
 		} elseif (
-			($types && $parameter->allowsNull())
+			($type && $parameter->allowsNull())
 			|| $parameter->isOptional()
 			|| $parameter->isDefaultValueAvailable()
 		) {
@@ -621,7 +620,7 @@ class Resolver
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has %s, so its value must be specified.',
 				$desc,
-				count($types) > 1 ? 'union type and no default value' : 'no class type or default value'
+				$type && $type->isUnion() ? 'union type and no default value' : 'no class type or default value'
 			));
 		}
 	}
