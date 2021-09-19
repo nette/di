@@ -82,7 +82,8 @@ namespace
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of A\\Factory::createArray() is not expected to be union/intersection/built-in, 'array' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'a']
+Return type of A\\Factory::createArray() is not expected to be union/intersection/built-in, 'array' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -91,7 +92,8 @@ namespace
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'c': Return type of A\\Factory::createCallable() is not expected to be union/intersection/built-in, 'callable' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'c']
+Return type of A\\Factory::createCallable() is not expected to be union/intersection/built-in, 'callable' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -100,7 +102,8 @@ namespace
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 's': Return type of A\\Factory::createString() is not expected to be union/intersection/built-in, 'string' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 's']
+Return type of A\\Factory::createString() is not expected to be union/intersection/built-in, 'string' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -109,7 +112,8 @@ namespace
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'i': Return type of A\\Factory::createInt() is not expected to be union/intersection/built-in, 'int' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'i']
+Return type of A\\Factory::createInt() is not expected to be union/intersection/built-in, 'int' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -118,7 +122,8 @@ namespace
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'b': Return type of A\\Factory::createBool() is not expected to be union/intersection/built-in, 'bool' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'b']
+Return type of A\\Factory::createBool() is not expected to be union/intersection/built-in, 'bool' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -127,7 +132,8 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Return type of A\\Factory::createFloat() is not expected to be union/intersection/built-in, 'float' given.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
+Return type of A\\Factory::createFloat() is not expected to be union/intersection/built-in, 'float' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -136,7 +142,8 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createObject');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown service type, specify it or declare return type of factory.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
+Unknown service type, specify it or declare return type of factory.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -145,6 +152,7 @@ namespace
 		$builder->addDefinition('f')
 			->setFactory('@factory::createMixed');
 		$container = createContainer($builder);
-	}, Nette\DI\ServiceCreationException::class, "Service 'f': Unknown service type, specify it or declare return type of factory.");
+	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
+Unknown service type, specify it or declare return type of factory.");
 
 }

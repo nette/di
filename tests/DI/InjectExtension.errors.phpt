@@ -46,7 +46,9 @@ services:
 		factory: ServiceA
 		inject: yes
 ');
-}, InvalidStateException::class, "Service 'service' (type of ServiceA): Service of type DateTimeImmutable not found. Did you add it to configuration file?");
+}, InvalidStateException::class, "[Service 'service' of type ServiceA]
+Service of type DateTimeImmutable required by ServiceA::\$a not found.
+Did you add it to configuration file?");
 
 
 Assert::exception(function () use ($compiler) {
@@ -58,6 +60,9 @@ services:
 ');
 }, InvalidStateException::class, "Class 'Unknown' not found.
 Check the type of property ServiceB::\$a.");
+// }, InvalidStateException::class, "[Service 'service' of type ServiceB]
+// Class 'Unknown' required by ServiceB::\$a not found.
+// Check the property type and 'use' statements.");
 
 
 Assert::exception(function () use ($compiler) {
@@ -68,3 +73,5 @@ services:
 		inject: yes
 ');
 }, InvalidStateException::class, 'Type of property ServiceC::$a is not declared.');
+//}, InvalidStateException::class, "[Service 'service' of type ServiceC]
+//Property ServiceC::\$a has no type.");

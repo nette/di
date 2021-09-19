@@ -41,8 +41,8 @@ final class FactoryDefinition extends Definition
 	{
 		if (!interface_exists($type)) {
 			throw new Nette\InvalidArgumentException(sprintf(
-				"Service '%s': Interface '%s' not found.",
-				$this->getName(),
+				"[%s]\nInterface '%s' not found.",
+				$this->getDescriptor(),
 				$type
 			));
 		}
@@ -50,8 +50,8 @@ final class FactoryDefinition extends Definition
 		$method = $rc->getMethods()[0] ?? null;
 		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
 			throw new Nette\InvalidArgumentException(sprintf(
-				"Service '%s': Interface %s must have just one non-static method create().",
-				$this->getName(),
+				"[%s]\nInterface %s must have just one non-static method create().",
+				$this->getDescriptor(),
 				$type
 			));
 		}

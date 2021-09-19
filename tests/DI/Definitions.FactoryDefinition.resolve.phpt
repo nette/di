@@ -28,7 +28,8 @@ Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Type is missing in definition of service.');
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
+Type is missing in definition of service.');
 
 
 Assert::exception(function () {
@@ -36,7 +37,8 @@ Assert::exception(function () {
 	$def->setImplement('Good1');
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Return type of create() is not declared.');
+}, Nette\DI\ServiceCreationException::class, '[Service of type Good1]
+Return type of create() is not declared.');
 
 
 Assert::noError(function () {
