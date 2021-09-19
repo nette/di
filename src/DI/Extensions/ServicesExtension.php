@@ -72,7 +72,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		} catch (\Exception $e) {
 			$message = $e->getMessage();
-			if ($name && !Nette\Utils\Strings::startsWith($message, '[Service ')) {
+			if ($name && !str_starts_with($message, '[Service ')) {
 				$message = "[Service '$name']\n$message";
 			}
 			throw new Nette\DI\InvalidConfigurationException($message, 0, $e);

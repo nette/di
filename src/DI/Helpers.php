@@ -273,7 +273,7 @@ final class Helpers
 			return self::entityToString($a instanceof Statement ? $a->entity : $a, true)
 				. '::'
 				. $b
-				. (strpos($b, '$') === false ? '()' : '');
+				. (str_contains($b, '$') ? '' : '()');
 		}
 	}
 }
