@@ -26,7 +26,7 @@ final class Reference
 
 	public static function fromType(string $value): static
 	{
-		if (strpos($value, '\\') === false) {
+		if (!str_contains($value, '\\')) {
 			$value = '\\' . $value;
 		}
 		return new static($value);
@@ -47,13 +47,13 @@ final class Reference
 
 	public function isName(): bool
 	{
-		return strpos($this->value, '\\') === false && $this->value !== self::SELF;
+		return !str_contains($this->value, '\\') && $this->value !== self::SELF;
 	}
 
 
 	public function isType(): bool
 	{
-		return strpos($this->value, '\\') !== false;
+		return str_contains($this->value, '\\');
 	}
 
 
