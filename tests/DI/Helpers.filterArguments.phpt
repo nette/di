@@ -18,8 +18,12 @@ Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
 	['a', 'b', 4 => ['c'], [1 => 'd']],
-	Helpers::filterArguments(['a', 'b', '...', '_', ['c', '...'], ['...', 'd']]),
+	@Helpers::filterArguments(['a', 'b', '...', '_', ['c', '...'], ['...', 'd']]), // ... is deprecated
 );
+
+Assert::error(function () {
+	Helpers::filterArguments([['c', '...']], 'hint');
+}, E_USER_DEPRECATED, '[hint] Replace ... with _ in configuration file.');
 
 Assert::same(
 	['a', 'b', Nette\DI\ContainerBuilder::THIS_CONTAINER],
@@ -33,5 +37,5 @@ Assert::equal(
 
 Assert::equal(
 	[new Statement('class', ['a', 2 => Nette\DI\ContainerBuilder::THIS_CONTAINER])],
-	Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])]),
+	Helpers::filterArguments([new Statement('class', ['a', '_', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])]),
 );

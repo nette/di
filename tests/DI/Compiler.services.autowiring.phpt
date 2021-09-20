@@ -53,7 +53,7 @@ services:
 		factory: Factory()::createModel
 		setup:
 			# local methods
-			- test(...)
+			- test(--)
 			- @model::test()
 			- @self::test()
 
