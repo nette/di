@@ -129,7 +129,7 @@ final class Helpers
 			if ($v === '...') {
 				trigger_error("[$hint] Replace ... with _ in configuration file.", E_USER_DEPRECATED);
 				unset($args[$k]);
-			} elseif ($v === '_' {
+			} elseif ($v === '_') {
 				unset($args[$k]);
 			} elseif (
 				PHP_VERSION_ID >= 80100
