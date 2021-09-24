@@ -17,9 +17,9 @@ use Nette\Utils\Strings;
 /**
  * Definition of standard service.
  *
- * @property string|null $class
- * @property Statement $factory
- * @property Statement[] $setup
+ * @property-deprecated string|null $class
+ * @property-deprecated Statement $factory
+ * @property-deprecated Statement[] $setup
  */
 final class ServiceDefinition extends Definition
 {

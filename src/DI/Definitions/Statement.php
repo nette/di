@@ -21,7 +21,7 @@ use Nette\Utils\Validators;
 /**
  * Assignment or calling statement.
  *
- * @property string|array|Definition|Reference|null $entity
+ * @property-deprecated string|array|Definition|Reference|null $entity
  */
 final class Statement extends Expression implements Nette\Schema\DynamicParameter
 {
