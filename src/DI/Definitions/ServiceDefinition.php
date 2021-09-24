@@ -15,10 +15,6 @@ use Nette\DI\ServiceCreationException;
 
 /**
  * Definition of standard service.
- *
- * @property string|null $class
- * @property Statement $factory
- * @property Statement[] $setup
  */
 final class ServiceDefinition extends Definition
 {
