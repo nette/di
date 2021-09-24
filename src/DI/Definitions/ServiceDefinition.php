@@ -20,9 +20,9 @@ use function count, is_string;
 /**
  * Definition of standard service.
  *
- * @property ?string $class
- * @property Expression $factory
- * @property Statement[] $setup
+ * @property-deprecated ?string $class
+ * @property-deprecated Expression $factory
+ * @property-deprecated Statement[] $setup
  */
 final class ServiceDefinition extends Definition
 {
