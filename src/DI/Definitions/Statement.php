@@ -14,7 +14,7 @@ use function array_keys, class_exists, explode, is_array, is_string, str_contain
 /**
  * Assignment or calling statement.
  *
- * @property string|array{string|Reference|Statement,string}|Definition|Reference|null $entity
+ * @property-deprecated string|array{string|Reference|Statement,string}|Definition|Reference|null $entity
  */
 final class Statement implements Nette\Schema\DynamicParameter
 {
