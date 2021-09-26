@@ -49,7 +49,8 @@ class PhpGenerator
 		foreach ($this->builder->exportMeta() as $key => $value) {
 			$class->addProperty($key)
 				->setProtected()
-				->setValue($value);
+				->setValue($value)
+				->setType(get_debug_type($value));
 		}
 
 		$definitions = $this->builder->getDefinitions();
