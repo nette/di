@@ -16,8 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Factory
 {
-	/** @return Obj */
-	public function create()
+	public function create(): Obj
 	{
 		return new Obj;
 	}
@@ -31,8 +30,7 @@ class Factory
 
 class Obj
 {
-	/** @return Obj */
-	public function foo(...$args)
+	public function foo(...$args): self
 	{
 		$this->args[] = $args;
 		return $this;

@@ -35,8 +35,7 @@ class AnnotatedFactory
 	public $methods;
 
 
-	/** @return stdClass */
-	public function create()
+	public function create(): stdClass
 	{
 		$this->methods[] = [__FUNCTION__, func_get_args()];
 		return new stdClass;
@@ -57,8 +56,7 @@ class UninstantiableFactory
 	}
 
 
-	/** @return stdClass */
-	public function create()
+	public function create(): stdClass
 	{
 	}
 }
