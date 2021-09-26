@@ -19,12 +19,12 @@ class Service
 
 interface ServiceFactory
 {
-	public function create();
+	public function create(): Service;
 }
 
 interface ServiceFactory2
 {
-	public function create();
+	public function create(): Service;
 }
 
 $builder = new DI\ContainerBuilder;

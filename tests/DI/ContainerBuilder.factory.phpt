@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassFactory
 {
-	public function create();
+	public function create(): stdClass;
 }
 
 interface AnnotatedFactory
@@ -38,8 +38,8 @@ $builder->addFactoryDefinition('one')
 	->getResultDefinition()
 		->setFactory(stdClass::class);
 
-$builder->addFactoryDefinition('two')
-	->setImplement(AnnotatedFactory::class);
+@$builder->addFactoryDefinition('two')
+	->setImplement(AnnotatedFactory::class); // missing type triggers warning
 
 $builder->addDefinition('three')
 	->setType(FactoryReceiver::class);

@@ -15,8 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface ITestFactory
 {
-	/** @return Test */
-	public function create();
+	public function create(): Test;
 }
 
 class Foo
