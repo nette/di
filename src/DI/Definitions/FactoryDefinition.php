@@ -36,25 +36,25 @@ final class FactoryDefinition extends Definition
 
 
 	/** @return static */
-	public function setImplement(string $type)
+	public function setImplement(string $interface)
 	{
-		if (!interface_exists($type)) {
+		if (!interface_exists($interface)) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface '%s' not found.",
 				$this->getName(),
-				$type
+				$interface
 			));
 		}
-		$rc = new \ReflectionClass($type);
+		$rc = new \ReflectionClass($interface);
 		$method = $rc->getMethods()[0] ?? null;
 		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface %s must have just one non-static method create().",
 				$this->getName(),
-				$type
+				$interface
 			));
 		}
-		return parent::setType($type);
+		return parent::setType($interface);
 	}
 
 

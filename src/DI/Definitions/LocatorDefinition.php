@@ -25,14 +25,14 @@ final class LocatorDefinition extends Definition
 
 
 	/** @return static */
-	public function setImplement(string $type)
+	public function setImplement(string $interface)
 	{
-		if (!interface_exists($type)) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface '%s' not found.", $this->getName(), $type));
+		if (!interface_exists($interface)) {
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface '%s' not found.", $this->getName(), $interface));
 		}
-		$methods = (new \ReflectionClass($type))->getMethods();
+		$methods = (new \ReflectionClass($interface))->getMethods();
 		if (!$methods) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface %s must have at least one method.", $this->getName(), $type));
+			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface %s must have at least one method.", $this->getName(), $interface));
 		}
 
 		foreach ($methods as $method) {
@@ -43,12 +43,12 @@ final class LocatorDefinition extends Definition
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Service '%s': Method %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
 					$this->getName(),
-					$type,
+					$interface,
 					$method->name
 				));
 			}
 		}
-		return parent::setType($type);
+		return parent::setType($interface);
 	}
 
 

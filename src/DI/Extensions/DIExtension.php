@@ -103,7 +103,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		} elseif ($option === false) {
 			$class->removeProperty('tags');
 		} elseif ($prop = $class->getProperties()['tags'] ?? null) {
-			$prop->value = array_intersect_key($prop->value, $this->exportedTags + array_flip((array) $option));
+			$prop->setValue(array_intersect_key($prop->getValue(), $this->exportedTags + array_flip((array) $option)));
 		}
 	}
 
@@ -115,10 +115,10 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			return;
 		}
 		$prop = $class->getProperty('wiring');
-		$prop->value = array_intersect_key(
-			$prop->value,
+		$prop->setValue(array_intersect_key(
+			$prop->getValue(),
 			$this->exportedTypes + (is_array($option) ? array_flip($option) : [])
-		);
+		));
 	}
 
 
