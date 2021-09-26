@@ -294,7 +294,7 @@ Assert::exception(function () {
 		->getResultDefinition()
 			->setFactory('Bad1');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in create() doesn't match type in Bad1 constructor.");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
 
 
 
@@ -317,7 +317,7 @@ Assert::exception(function () {
 		->getResultDefinition()
 			->setFactory('Bad3');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method create(), did you mean \$bar?");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
 
 
 
@@ -340,7 +340,7 @@ Assert::exception(function () {
 		->getResultDefinition()
 			->setFactory('Bad5');
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method create().");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
 
 
 

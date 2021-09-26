@@ -446,7 +446,7 @@ class Resolver
 			$message = '';
 		}
 		$message .= $type
-			? str_replace("$type::", '', $e->getMessage())
+			? str_replace("$type::", preg_replace('~.*\\\\~', '', $type) . '::', $e->getMessage())
 			: $e->getMessage();
 
 		return $e instanceof ServiceCreationException

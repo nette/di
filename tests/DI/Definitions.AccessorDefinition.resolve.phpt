@@ -37,7 +37,7 @@ Assert::exception(function () {
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Return type of get() is not declared.');
+}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Return type of Good1::get() is not declared.');
 
 
 Assert::noError(function () {
