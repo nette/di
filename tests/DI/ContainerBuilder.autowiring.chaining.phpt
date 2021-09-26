@@ -15,8 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Foo
 {
-	/** @return Bar */
-	public static function create(Test $test)
+	public static function create(Test $test): Bar
 	{
 		return new Bar;
 	}
@@ -29,8 +28,7 @@ class Foo
 
 class Bar
 {
-	/** @return Baz */
-	public function create(Test $test)
+	public function create(Test $test): Baz
 	{
 		return new Baz;
 	}

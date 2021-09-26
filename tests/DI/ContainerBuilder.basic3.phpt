@@ -13,8 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-/** @return stdClass */
-function create()
+function create(): stdClass
 {
 	return new stdClass;
 }

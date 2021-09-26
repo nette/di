@@ -126,8 +126,11 @@ class Resolver
 			}
 			$this->addDependency($reflection);
 
-			$type = Nette\Utils\Type::fromReflection($reflection) ?? Helpers::getReturnTypeAnnotation($reflection);
+			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = Helpers::getReturnTypeAnnotation($reflection));
 			if ($type) {
+				if (isset($annotation)) {
+					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
+				}
 				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)));
 			}
 			return null;
