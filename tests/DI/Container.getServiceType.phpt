@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class MyContainer extends Container
 {
-	protected $aliases = [
+	protected array $aliases = [
 		'three' => 'one',
 	];
 
