@@ -13,12 +13,12 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-interface Good1
+interface Bad1
 {
 	public function get();
 }
 
-interface Good2
+interface Good1
 {
 	public function get(): stdClass;
 }
@@ -33,11 +33,11 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement(Good1::class);
+	@$def->setImplement(Bad1::class); // missing type triggers warning
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Return type of Good1::get() is not declared.');
+}, Nette\DI\ServiceCreationException::class, 'Service of type Bad1: Return type of Bad1::get() is not declared.');
 
 
 Assert::noError(function () {
@@ -52,7 +52,7 @@ Assert::noError(function () {
 
 Assert::noError(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement(Good2::class);
+	$def->setImplement(Good1::class);
 
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
@@ -61,9 +61,9 @@ Assert::noError(function () {
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement(Good2::class);
+	$def->setImplement(Good1::class);
 
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good2: Service of type stdClass not found. Did you add it to configuration file?');
+}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Service of type stdClass not found. Did you add it to configuration file?');
