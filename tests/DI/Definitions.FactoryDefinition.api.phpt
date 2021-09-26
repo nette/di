@@ -36,7 +36,7 @@ interface Bad4
 
 interface Good1
 {
-	public function create();
+	public function create(): stdClass;
 }
 
 
@@ -84,7 +84,7 @@ Assert::exception(function () {
 
 Assert::noError(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement(Good1::class);
+	@$def->setImplement(Good1::class); // missing type triggers warning
 	Assert::same(Good1::class, $def->getImplement());
 	Assert::same(Good1::class, $def->getType());
 });

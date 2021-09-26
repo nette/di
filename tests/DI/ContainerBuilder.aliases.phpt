@@ -19,12 +19,12 @@ class Service
 
 interface ServiceFactory
 {
-	public function create();
+	public function create(): Service;
 }
 
 interface ServiceFactory2
 {
-	public function create();
+	public function create(): Service;
 }
 
 $builder = new DI\ContainerBuilder;
@@ -39,13 +39,13 @@ $builder->addFactoryDefinition('aliasedFactory')
 	->setImplement(ServiceFactory::class)
 	->setAutowired(false)
 	->getResultDefinition()
-		->setFactory('@serviceFactory');
+		->setFactory('@service');
 
 $builder->addFactoryDefinition('aliasedFactoryViaClass')
 	->setImplement(ServiceFactory::class)
 	->setAutowired(false)
 	->getResultDefinition()
-		->setFactory('@\ServiceFactory');
+		->setFactory('@\Service');
 
 $builder->addDefinition('aliasedService')
 	->setFactory('@service');

@@ -48,6 +48,14 @@ final class LocatorDefinition extends Definition
 					$method->name
 				));
 			}
+
+			if ($method->getNumberOfParameters() === 0) {
+				try {
+					Nette\DI\Helpers::ensureClassType(Nette\Utils\Type::fromReflection($method), "return type of $interface::$method->name()", true);
+				} catch (Nette\DI\ServiceCreationException $e) {
+					trigger_error($e->getMessage(), E_USER_DEPRECATED);
+				}
+			}
 		}
 
 		return parent::setType($interface);

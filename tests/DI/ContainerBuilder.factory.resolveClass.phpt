@@ -12,15 +12,13 @@ namespace A
 
 	class Factory
 	{
-		/** @return Foo */
-		public function createFoo()
+		public function createFoo(): Foo
 		{
 			return new Foo;
 		}
 
 
-		/** @return Bar */
-		public function createBar()
+		public function createBar(): Bar
 		{
 			return new Bar;
 		}
@@ -45,26 +43,7 @@ namespace C
 {
 	class SelfFactory
 	{
-		/** @return self */
-		public static function create()
-		{
-			return new self;
-		}
-	}
-
-	class ThisFactory
-	{
-		/** @return $this */
-		public static function create()
-		{
-			return new self;
-		}
-	}
-
-	class StaticFactory
-	{
-		/** @return static */
-		public static function create()
+		public static function create(): self
 		{
 			return new self;
 		}
@@ -81,7 +60,7 @@ namespace {
 
 	interface StdClassFactory
 	{
-		public function create();
+		public function create(): stdClass;
 	}
 
 
@@ -95,7 +74,7 @@ namespace {
 	$builder->addFactoryDefinition('two')
 		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
-			->setFactory('@one');
+			->setFactory('@eight');
 
 	$builder->addFactoryDefinition('three')
 		->setImplement(StdClassFactory::class)
@@ -116,10 +95,7 @@ namespace {
 		->setFactory('C\SelfFactory::create');
 
 	$builder->addDefinition('eight')
-		->setFactory('C\ThisFactory::create');
-
-	$builder->addDefinition('nine')
-		->setFactory('C\StaticFactory::create');
+		->setFactory('stdClass');
 
 
 	$container = createContainer($builder);
@@ -127,7 +103,7 @@ namespace {
 	Assert::type(StdClassFactory::class, $container->getService('one'));
 
 	Assert::type(StdClassFactory::class, $container->getService('two'));
-	Assert::type(StdClassFactory::class, $container->getService('two')->create());
+	Assert::type(stdClass::class, $container->getService('two')->create());
 	Assert::notSame($container->getService('two')->create(), $container->getService('two')->create());
 
 	Assert::type(StdClassFactory::class, $container->getService('three'));
@@ -138,6 +114,4 @@ namespace {
 	Assert::type(B\Bar::class, $container->getByType(B\Bar::class));
 
 	Assert::type(C\SelfFactory::class, $container->getByType(C\SelfFactory::class));
-	Assert::type(C\ThisFactory::class, $container->getByType(C\ThisFactory::class));
-	Assert::type(C\StaticFactory::class, $container->getByType(C\StaticFactory::class));
 }

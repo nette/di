@@ -14,10 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface FooAccessor
 {
-	/**
-	 * @return Foo
-	 */
-	public function get();
+	public function get(): Foo;
 }
 
 class Foo

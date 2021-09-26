@@ -14,10 +14,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface FooFactory
 {
-	/**
-	 * @return Foo
-	 */
-	public function create();
+	public function create(): Foo;
 }
 
 class Foo

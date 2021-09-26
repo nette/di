@@ -58,6 +58,12 @@ final class AccessorDefinition extends Definition
 			));
 		}
 
+		try {
+			Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::get()");
+		} catch (Nette\DI\ServiceCreationException $e) {
+			trigger_error($e->getMessage(), E_USER_DEPRECATED);
+		}
+
 		return parent::setType($interface);
 	}
 

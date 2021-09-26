@@ -16,10 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface ILoremFactory
 {
-	/**
-	 * @return Lorem
-	 */
-	public function create();
+	public function create(): Lorem;
 }
 
 class Lorem
@@ -44,11 +41,7 @@ interface IFinderFactory
 
 interface IArticleFactory
 {
-	/**
-	 * @param string
-	 * @return Article
-	 */
-	public function create($title);
+	public function create($title): Article;
 }
 
 class Article
@@ -100,11 +93,7 @@ class Baz
 
 interface IFooFactory
 {
-	/**
-	 * @param Baz
-	 * @return Foo
-	 */
-	public function create(?Baz $baz = null);
+	public function create(?Baz $baz = null): Foo;
 }
 
 class Dolor
@@ -123,8 +112,7 @@ class Dolor
 
 interface DolorFactory
 {
-	/** @return Dolor */
-	public function create(?Bar $bar, $foo);
+	public function create(?Bar $bar, $foo): Dolor;
 }
 
 
@@ -144,8 +132,7 @@ class TestClass
 
 interface ITestClassFactory
 {
-	/** @return TestClass */
-	public function create($bar);
+	public function create($bar): TestClass;
 }
 
 class TestExtension extends DI\CompilerExtension
@@ -170,7 +157,7 @@ class TestExtension extends DI\CompilerExtension
 
 $compiler = new DI\Compiler;
 $compiler->addExtension('test', new TestExtension);
-$container = createContainer($compiler, 'files/compiler.generatedFactory.neon');
+@$container = createContainer($compiler, 'files/compiler.generatedFactory.neon'); // missing type triggers warning
 
 
 Assert::type(ILoremFactory::class, $container->getService('lorem'));
@@ -286,15 +273,13 @@ class Bad1
 
 interface Bad2
 {
-	public function create(Baz $bar);
+	public function create(Baz $bar): Bad1;
 }
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement(Bad2::class)
-		->getResultDefinition()
-			->setFactory(Bad1::class);
+		->setImplement(Bad2::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
 
@@ -309,15 +294,13 @@ class Bad3
 
 interface Bad4
 {
-	public function create($baz);
+	public function create($baz): Bad3;
 }
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement(Bad4::class)
-		->getResultDefinition()
-			->setFactory(Bad3::class);
+		->setImplement(Bad4::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
 
@@ -332,15 +315,13 @@ class Bad5
 
 interface Bad6
 {
-	public function create($baz);
+	public function create($baz): Bad5;
 }
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement(Bad6::class)
-		->getResultDefinition()
-			->setFactory(Bad5::class);
+		->setImplement(Bad6::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
 
@@ -348,7 +329,7 @@ Assert::exception(function () {
 
 interface Bad7
 {
-	public function get();
+	public function get(): stdClass;
 }
 
 Assert::exception(function () {
