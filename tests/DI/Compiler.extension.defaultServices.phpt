@@ -21,8 +21,7 @@ interface IIpsum
 }
 interface IIpsumFactory
 {
-	/** @return IIpsum */
-	public function create();
+	public function create(): IIpsum;
 }
 interface IFooBar
 {
@@ -46,10 +45,7 @@ class FooBar implements IFooBar
 
 class Factory
 {
-	/**
-	 * @return Lorem
-	 */
-	public static function createLorem()
+	public static function createLorem(): Lorem
 	{
 		return new Lorem;
 	}
