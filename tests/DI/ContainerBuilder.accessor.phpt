@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface StdClassAccessor
 {
-	public function get();
+	public function get(): stdClass;
 }
 
 interface AnnotatedAccessor
@@ -48,8 +48,8 @@ $builder->addAccessorDefinition('one')
 	->setImplement(StdClassAccessor::class)
 	->setReference(stdClass::class);
 
-$builder->addAccessorDefinition('two')
-	->setImplement(AnnotatedAccessor::class);
+@$builder->addAccessorDefinition('two')
+	->setImplement(AnnotatedAccessor::class); // missing type triggers warning
 
 $builder->addAccessorDefinition('three')
 	->setImplement(StdClassAccessor::class)

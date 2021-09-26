@@ -42,7 +42,7 @@ interface Bad5
 
 interface Good1
 {
-	public function get();
+	public function get(): stdClass;
 }
 
 
@@ -96,7 +96,7 @@ Assert::exception(function () {
 
 Assert::noError(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement(Good1::class);
+	@$def->setImplement(Good1::class); // missing type triggers warning
 	Assert::same(Good1::class, $def->getImplement());
 	Assert::same(Good1::class, $def->getType());
 });
