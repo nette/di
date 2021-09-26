@@ -6,8 +6,8 @@
 
 declare(strict_types=1);
 
-use Nette\DI\Config\DefinitionSchema;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Extensions\DefinitionSchema;
 use Tester\Assert;
 
 

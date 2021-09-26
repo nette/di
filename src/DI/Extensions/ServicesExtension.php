@@ -24,7 +24,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
-		return Nette\Schema\Expect::arrayOf(new Nette\DI\Config\DefinitionSchema($this->getContainerBuilder()));
+		return Nette\Schema\Expect::arrayOf(new DefinitionSchema($this->getContainerBuilder()));
 	}
 
 
