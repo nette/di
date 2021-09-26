@@ -7,9 +7,10 @@
 
 declare(strict_types=1);
 
-namespace Nette\DI\Config;
+namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Config\Helpers;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\Context;
