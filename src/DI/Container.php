@@ -22,16 +22,16 @@ class Container
 	public array $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
-	protected $types = [];
+	protected array $types = [];
 
 	/** @var string[]  alias => service name */
-	protected $aliases = [];
+	protected array $aliases = [];
 
 	/** @var array[]  tag name => service name => tag value */
-	protected $tags = [];
+	protected array $tags = [];
 
 	/** @var array[]  type => level => services */
-	protected $wiring = [];
+	protected array $wiring = [];
 
 	/** @var object[]  service name => instance */
 	private array $instances = [];
