@@ -42,8 +42,8 @@ final class FactoryDefinition extends Definition
 	{
 		if (!interface_exists($interface)) {
 			throw new Nette\InvalidArgumentException(sprintf(
-				"Service '%s': Interface '%s' not found.",
-				$this->getName(),
+				"[%s]\nInterface '%s' not found.",
+				$this->getDescriptor(),
 				$interface
 			));
 		}
@@ -51,13 +51,13 @@ final class FactoryDefinition extends Definition
 		$method = $rc->getMethods()[0] ?? null;
 		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
 			throw new Nette\InvalidArgumentException(sprintf(
-				"Service '%s': Interface %s must have just one non-static method create().",
-				$this->getName(),
+				"[%s]\nInterface %s must have just one non-static method create().",
+				$this->getDescriptor(),
 				$interface
 			));
 		}
 		try {
-			Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::create()");
+			Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::create()", $this->getDescriptor());
 		} catch (Nette\DI\ServiceCreationException $e) {
 			trigger_error($e->getMessage(), E_USER_DEPRECATED);
 		}
@@ -103,8 +103,8 @@ final class FactoryDefinition extends Definition
 				$new[] = '$' . end($tmp);
 			}
 			trigger_error(sprintf(
-				"Service '%s': Option 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
-				$this->getName(),
+				"[%s]\nOption 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
+				$this->getDescriptor(),
 				implode(', ', $old),
 				implode(', ', $new)
 			), E_USER_DEPRECATED);
@@ -143,7 +143,8 @@ final class FactoryDefinition extends Definition
 
 		if ($type && !$type->allows($resultDef->getType())) {
 			throw new ServiceCreationException(sprintf(
-				'Factory for %s cannot create incompatible %s type.',
+				"[%s]\nFactory for %s cannot create incompatible %s type.",
+				$this->getDescriptor(),
 				$type,
 				$resultDef->getType()
 			));

@@ -104,7 +104,7 @@ declare(strict_types=1);
 			return $method;
 
 		} catch (\Exception $e) {
-			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+			throw new ServiceCreationException(sprintf("[%s]\n%s", $def->getDescriptor(), $e->getMessage()), 0, $e);
 		}
 	}
 
