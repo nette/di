@@ -25,4 +25,4 @@ services:
 ');
 
 $builder = $compiler->getContainerBuilder();
-Assert::null($builder->getByType('stdClass'));
+Assert::null($builder->getByType(stdClass::class));

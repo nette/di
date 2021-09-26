@@ -33,186 +33,186 @@ class Bar extends Foo implements IBar
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired('Bar');
+		->setType(Bar::class)
+		->setAutowired(Bar::class);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same(null, $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same(null, $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
+		->setType(Bar::class)
 		->setAutowired('self');
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same(null, $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same(null, $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired('IBar');
+		->setType(Bar::class)
+		->setAutowired(IBar::class);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same('bar', $builder->getByType('IBar'));
-	Assert::same(null, $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same('bar', $builder->getByType(IBar::class));
+	Assert::same(null, $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired('Foo');
+		->setType(Bar::class)
+		->setAutowired(Foo::class);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired('IFoo');
+		->setType(Bar::class)
+		->setAutowired(IFoo::class);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same('bar', $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same('bar', $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['IFoo', 'IBar']);
+		->setType(Bar::class)
+		->setAutowired([IFoo::class, IBar::class]);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same('bar', $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same('bar', $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same('bar', $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same('bar', $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['Foo', 'Bar']);
+		->setType(Bar::class)
+		->setAutowired([Foo::class, Bar::class]);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['Foo', 'IBar']);
+		->setType(Bar::class)
+		->setAutowired([Foo::class, IBar::class]);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same('bar', $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same(null, $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same('bar', $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same(null, $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['IFoo', 'Bar']);
+		->setType(Bar::class)
+		->setAutowired([IFoo::class, Bar::class]);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::same(null, $builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same('bar', $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::same(null, $builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same('bar', $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired('Bar');
+		->setType(Bar::class)
+		->setAutowired(Bar::class);
 
 	$builder->addDefinition('foo')
-		->setType('Foo')
+		->setType(Foo::class)
 		->setAutowired();
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::null($builder->getByType('IBar'));
-	Assert::same('foo', $builder->getByType('Foo'));
-	Assert::same('foo', $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::null($builder->getByType(IBar::class));
+	Assert::same('foo', $builder->getByType(Foo::class));
+	Assert::same('foo', $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')
-		->setType('stdClass');
+		->setType(stdClass::class);
 
 	$builder->addDefinition('two')
-		->setType('stdClass')
-		->setAutowired('stdClass');
+		->setType(stdClass::class)
+		->setAutowired(stdClass::class);
 
-	Assert::same('two', $builder->getByType('stdClass'));
+	Assert::same('two', $builder->getByType(stdClass::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['Bar', 'IFoo']);
+		->setType(Bar::class)
+		->setAutowired([Bar::class, IFoo::class]);
 
 	$builder->addDefinition('foo')
-		->setType('Foo')
+		->setType(Foo::class)
 		->setAutowired();
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::null($builder->getByType('IBar'));
-	Assert::same('bar', $builder->getByType('Foo'));
-	Assert::same('bar', $builder->getByType('IFoo'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::null($builder->getByType(IBar::class));
+	Assert::same('bar', $builder->getByType(Foo::class));
+	Assert::same('bar', $builder->getByType(IFoo::class));
 });
 
 
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
-		->setType('Bar')
-		->setAutowired(['Bar', 'IFoo']);
+		->setType(Bar::class)
+		->setAutowired([Bar::class, IFoo::class]);
 
 	$foo = $builder->addDefinition('foo')
-		->setType('Foo')
-		->setAutowired('IFoo');
+		->setType(Foo::class)
+		->setAutowired(IFoo::class);
 
-	Assert::same('bar', $builder->getByType('Bar'));
-	Assert::null($builder->getByType('IBar'));
+	Assert::same('bar', $builder->getByType(Bar::class));
+	Assert::null($builder->getByType(IBar::class));
 
 	Assert::exception(function () use ($builder) {
-		$builder->getByType('Foo');
+		$builder->getByType(Foo::class);
 	}, DI\ServiceCreationException::class, 'Multiple services of type Foo found: bar, foo');
 
 	Assert::exception(function () use ($builder) {
-		$builder->getByType('IFoo');
+		$builder->getByType(IFoo::class);
 	}, DI\ServiceCreationException::class, 'Multiple services of type IFoo found: bar, foo');
 });
 
@@ -220,10 +220,10 @@ test('', function () {
 test('', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
-		->setType('Foo')
-		->setAutowired(['Bar']);
+		->setType(Foo::class)
+		->setAutowired([Bar::class]);
 
 	Assert::exception(function () use ($builder) {
-		$builder->getByType('Foo');
+		$builder->getByType(Foo::class);
 	}, DI\ServiceCreationException::class, "Incompatible class Bar in autowiring definition of service 'bar'.");
 });

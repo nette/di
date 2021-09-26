@@ -45,17 +45,17 @@ class ServiceChild extends Service
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('foo')
-	->setType('Foo');
+	->setType(Foo::class);
 $builder->addDefinition('s1')
-	->setType('Service');
+	->setType(Service::class);
 $builder->addDefinition('s2')
-	->setType('Service');
+	->setType(Service::class);
 $builder->addDefinition('s3')
-	->setType('ServiceChild');
+	->setType(ServiceChild::class);
 $builder->addDefinition('s4')
-	->setType('stdClass');
+	->setType(stdClass::class);
 $builder->addDefinition('s5')
-	->setType('Service')
+	->setType(Service::class)
 	->setAutowired(false);
 
 $container = createContainer($builder);
@@ -73,7 +73,7 @@ Assert::same(['default'], $foo->strings);
 
 // runtime
 
-$foo2 = $container->createInstance('Foo');
+$foo2 = $container->createInstance(Foo::class);
 Assert::type(Foo::class, $foo2);
 Assert::same([
 	$container->getService('s1'),

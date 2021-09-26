@@ -38,26 +38,26 @@ class AccessorReceiver
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('service')
-	->setFactory('stdClass');
+	->setFactory(stdClass::class);
 
 $builder->addDefinition('service2')
 	->setAutowired(false)
-	->setFactory('stdClass');
+	->setFactory(stdClass::class);
 
 $builder->addAccessorDefinition('one')
-	->setImplement('StdClassAccessor')
-	->setReference('stdClass');
+	->setImplement(StdClassAccessor::class)
+	->setReference(stdClass::class);
 
 $builder->addAccessorDefinition('two')
-	->setImplement('AnnotatedAccessor');
+	->setImplement(AnnotatedAccessor::class);
 
 $builder->addAccessorDefinition('three')
-	->setImplement('StdClassAccessor')
+	->setImplement(StdClassAccessor::class)
 	->setAutowired(false)
 	->setReference('@service2');
 
 $builder->addDefinition('four')
-	->setType('AccessorReceiver');
+	->setType(AccessorReceiver::class);
 
 
 $container = createContainer($builder);

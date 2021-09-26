@@ -22,10 +22,10 @@ interface Good2
 test('', function () {
 	$def = new AccessorDefinition;
 	$def->setName('abc');
-	$def->setImplement('Good2');
+	$def->setImplement(Good2::class);
 
 	$builder = new Nette\DI\ContainerBuilder;
-	$builder->addDefinition('a')->setType('stdClass');
+	$builder->addDefinition('a')->setType(stdClass::class);
 	$resolver = new Nette\DI\Resolver($builder);
 
 	$resolver->resolveDefinition($def);

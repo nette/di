@@ -42,14 +42,14 @@ class M2 extends M
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('foo')
-	->setType('Foo');
+	->setType(Foo::class);
 
 $builder->addDefinition('m1')
-	->setType('M1')
+	->setType(M1::class)
 	->addSetup('@foo::test');
 
 $builder->addDefinition('m2')
-	->setType('M2')
+	->setType(M2::class)
 	->addSetup('@foo::test')
 	->setAutowired(false);
 

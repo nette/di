@@ -15,15 +15,15 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setType('stdClass');
+	->setType(stdClass::class);
 $builder->addDefinition('two')
-	->setType('stdClass')
+	->setType(stdClass::class)
 	->addTag('debugPanel', true);
 $builder->addDefinition('three')
-	->setType('stdClass')
+	->setType(stdClass::class)
 	->addTag('component');
 $builder->addDefinition('five')
-	->setType('stdClass')
+	->setType(stdClass::class)
 	->addTag('debugPanel', [1, 2, 3])
 	->addTag('typeHint', 'Service');
 

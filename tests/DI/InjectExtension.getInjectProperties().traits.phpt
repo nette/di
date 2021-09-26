@@ -41,6 +41,6 @@ namespace
 
 
 	Assert::same([
-		'varA' => 'A\AInjected',
-	], InjectExtension::getInjectProperties('C\CClass'));
+		'varA' => A\AInjected::class,
+	], InjectExtension::getInjectProperties(C\CClass::class));
 }

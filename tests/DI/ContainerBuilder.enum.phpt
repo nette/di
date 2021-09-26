@@ -35,4 +35,4 @@ services:
 	foo: Foo(Suit::Clubs)
 ');
 
-Assert::type('Foo', $container->getService('foo'));
+Assert::type(Foo::class, $container->getService('foo'));

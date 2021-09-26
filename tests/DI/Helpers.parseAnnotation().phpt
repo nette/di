@@ -20,7 +20,7 @@ class TestClass
 {
 }
 
-$rc = new ReflectionClass('TestClass');
+$rc = new ReflectionClass(TestClass::class);
 
 Assert::same('', Helpers::parseAnnotation($rc, 'inject'));
 Assert::same(null, Helpers::parseAnnotation($rc, 'injec'));
@@ -33,7 +33,7 @@ class TestClass2
 {
 }
 
-$rc = new ReflectionClass('TestClass2');
+$rc = new ReflectionClass(TestClass2::class);
 
 Assert::same('', Helpers::parseAnnotation($rc, 'return'));
 
@@ -45,7 +45,7 @@ class TestClass3
 {
 }
 
-$rc = new ReflectionClass('TestClass3');
+$rc = new ReflectionClass(TestClass3::class);
 
 Assert::same('', Helpers::parseAnnotation($rc, 'return'));
 
@@ -57,7 +57,7 @@ class TestClass4
 {
 }
 
-$rc = new ReflectionClass('TestClass4');
+$rc = new ReflectionClass(TestClass4::class);
 
 Assert::same(null, Helpers::parseAnnotation($rc, 'inject'));
 Assert::same(null, Helpers::parseAnnotation($rc, 'injec'));

@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 
 $container = createContainer($builder);

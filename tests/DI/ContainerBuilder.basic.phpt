@@ -41,12 +41,12 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory('Service', ['@@string']);
+	->setFactory(Service::class, ['@@string']);
 $builder->addDefinition('three')
-	->setFactory('Service', ['a', 'b']);
+	->setFactory(Service::class, ['a', 'b']);
 
 $builder->addDefinition('four')
-	->setFactory('Service', ['a', 'b'])
+	->setFactory(Service::class, ['a', 'b'])
 	->addSetup('methodA', ['a', 'b'])
 	->addSetup('@four::methodB', [1, 2])
 	->addSetup('methodC', ['@self', '@container'])

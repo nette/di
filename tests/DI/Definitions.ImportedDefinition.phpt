@@ -29,7 +29,7 @@ Assert::exception(function () {
 test('', function () {
 	$def = new ImportedDefinition;
 	$def->setName('abc');
-	$def->setType('stdClass');
+	$def->setType(stdClass::class);
 
 	$builder = new Nette\DI\ContainerBuilder;
 	$resolver = new Nette\DI\Resolver($builder);

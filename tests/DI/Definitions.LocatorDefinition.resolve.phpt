@@ -38,12 +38,12 @@ Assert::exception(function () {
 
 test('', function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 	$def->setReferences(['first' => '@a', 'second' => 'stdClass']);
 
 	$builder = new Nette\DI\ContainerBuilder;
-	$builder->addDefinition('a')->setType('stdClass');
-	$builder->addDefinition('b')->setType('Service');
+	$builder->addDefinition('a')->setType(stdClass::class);
+	$builder->addDefinition('b')->setType(Service::class);
 
 	$resolver = new Nette\DI\Resolver($builder);
 	$resolver->completeDefinition($def);
@@ -57,7 +57,7 @@ test('', function () {
 
 test('', function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 	$def->setTagged('tagName');
 
 	$builder = new Nette\DI\ContainerBuilder;

@@ -26,53 +26,53 @@ Assert::exception(function () {
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->setType('stdClass');
-	Assert::same('stdClass', $def->getType());
+	$def->setType(stdClass::class);
+	Assert::same(stdClass::class, $def->getType());
 	Assert::null($def->getEntity());
 
 	$def->setArguments([1, 2]);
-	Assert::same('stdClass', $def->getType());
+	Assert::same(stdClass::class, $def->getType());
 	Assert::null($def->getEntity());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
 	Assert::error(function () use ($def) {
-		$def->setClass('stdClass', []);
+		$def->setClass(stdClass::class, []);
 	}, E_USER_DEPRECATED);
-	Assert::same('stdClass', $def->getType());
+	Assert::same(stdClass::class, $def->getType());
 	Assert::null($def->getEntity());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
 	Assert::error(function () use ($def) {
-		$def->setClass('stdClass', [1, 2]);
+		$def->setClass(stdClass::class, [1, 2]);
 	}, E_USER_DEPRECATED);
-	Assert::same('stdClass', $def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::same(stdClass::class, $def->getType());
+	Assert::equal(new Statement(stdClass::class, [1, 2]), $def->getFactory());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->setFactory('stdClass');
+	$def->setFactory(stdClass::class);
 	Assert::null($def->getType());
-	Assert::equal(new Statement('stdClass', []), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, []), $def->getFactory());
 
 	$def->setArguments([1, 2]);
 	Assert::null($def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, [1, 2]), $def->getFactory());
 
 	// Demonstrate that setArguments call will always replace arguments.
 	$def->setArguments([1 => 200]);
-	Assert::equal(new Statement('stdClass', [1 => 200]), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, [1 => 200]), $def->getFactory());
 });
 
 test('Test with factory being previously set.', function () {
 	$def1 = new ServiceDefinition;
-	$def1->setFactory('stdClass', ['foo', 'bar']);
+	$def1->setFactory(stdClass::class, ['foo', 'bar']);
 	$def1->setArgument(1, 'new');
-	Assert::equal(new Statement('stdClass', ['foo', 'new']), $def1->getFactory());
+	Assert::equal(new Statement(stdClass::class, ['foo', 'new']), $def1->getFactory());
 
 	// Test with factory being set implicitly.
 	$def2 = new ServiceDefinition;
@@ -83,34 +83,34 @@ test('Test with factory being previously set.', function () {
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->setFactory('stdClass', [1, 2]);
+	$def->setFactory(stdClass::class, [1, 2]);
 	Assert::null($def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, [1, 2]), $def->getFactory());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('stdClass', [1, 2]));
+	$def->setFactory(new Statement(stdClass::class, [1, 2]));
 	Assert::null($def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, [1, 2]), $def->getFactory());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('stdClass', [1, 2]), [99]); // 99 is ignored
+	$def->setFactory(new Statement(stdClass::class, [1, 2]), [99]); // 99 is ignored
 	Assert::null($def->getType());
-	Assert::equal(new Statement('stdClass', [1, 2]), $def->getFactory());
+	Assert::equal(new Statement(stdClass::class, [1, 2]), $def->getFactory());
 });
 
 test('', function () {
 	$def = new ServiceDefinition;
-	$def->addSetup('stdClass', [1, 2]);
-	$def->addSetup(new Statement('stdClass', [1, 2]));
-	$def->addSetup(new Statement('stdClass', [1, 2]), [99]); // 99 is ignored
+	$def->addSetup(stdClass::class, [1, 2]);
+	$def->addSetup(new Statement(stdClass::class, [1, 2]));
+	$def->addSetup(new Statement(stdClass::class, [1, 2]), [99]); // 99 is ignored
 	Assert::equal([
-		new Statement('stdClass', [1, 2]),
-		new Statement('stdClass', [1, 2]),
-		new Statement('stdClass', [1, 2]),
+		new Statement(stdClass::class, [1, 2]),
+		new Statement(stdClass::class, [1, 2]),
+		new Statement(stdClass::class, [1, 2]),
 	], $def->getSetup());
 });
 
@@ -130,8 +130,8 @@ test('', function () {
 
 test('deep clone', function () {
 	$def = new ServiceDefinition;
-	$def->setFactory(new Statement('stdClass', [1, 2]));
-	$def->addSetup(new Statement('stdClass', [1, 2]));
+	$def->setFactory(new Statement(stdClass::class, [1, 2]));
+	$def->addSetup(new Statement(stdClass::class, [1, 2]));
 
 	$dolly = clone $def;
 	Assert::notSame($dolly->getFactory(), $def->getFactory());

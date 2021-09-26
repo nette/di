@@ -79,22 +79,22 @@ namespace
 
 
 	Assert::same([
-		'varA' => 'A\AInjected',
-		'varB' => 'A\B\BInjected',
-		'varC' => 'A\AInjected',
-	], InjectExtension::getInjectProperties('A\AClass'));
+		'varA' => A\AInjected::class,
+		'varB' => A\B\BInjected::class,
+		'varC' => A\AInjected::class,
+	], InjectExtension::getInjectProperties(A\AClass::class));
 
 	Assert::same([
-		'varA' => 'A\AInjected',
-		'varB' => 'A\B\BInjected',
-		'varC' => 'A\AInjected',
-		'varF' => 'A\B\BInjected',
-	], InjectExtension::getInjectProperties('A\B\BClass'));
+		'varA' => A\AInjected::class,
+		'varB' => A\B\BInjected::class,
+		'varC' => A\AInjected::class,
+		'varF' => A\B\BInjected::class,
+	], InjectExtension::getInjectProperties(A\B\BClass::class));
 
 	Assert::same([
-		'var1' => 'A\AInjected',
-		'var2' => 'A\B\BInjected',
-		'var3' => 'C\CInjected',
-		'var4' => 'C\CInjected',
-	], InjectExtension::getInjectProperties('C\CClass'));
+		'var1' => A\AInjected::class,
+		'var2' => A\B\BInjected::class,
+		'var3' => C\CInjected::class,
+		'var4' => C\CInjected::class,
+	], InjectExtension::getInjectProperties(C\CClass::class));
 }

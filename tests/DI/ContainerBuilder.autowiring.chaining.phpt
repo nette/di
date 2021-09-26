@@ -51,7 +51,7 @@ services:
 	- Foo::create()::create()
 	- Test
 ');
-Assert::type(Baz::class, $container->getByType('Baz'));
+Assert::type(Baz::class, $container->getByType(Baz::class));
 
 
 $compiler = new DI\Compiler;
@@ -60,7 +60,7 @@ services:
 	- Foo()::create()::create()
 	- Test
 ');
-Assert::type(Baz::class, $container->getByType('Baz'));
+Assert::type(Baz::class, $container->getByType(Baz::class));
 
 
 $compiler = new DI\Compiler;
@@ -70,7 +70,7 @@ services:
 	- @\Foo::create()::create()
 	- Test
 ');
-Assert::type(Baz::class, $container->getByType('Baz'));
+Assert::type(Baz::class, $container->getByType(Baz::class));
 
 
 $compiler = new DI\Compiler;

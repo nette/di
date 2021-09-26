@@ -30,17 +30,17 @@ interface ServiceFactory2
 $builder = new DI\ContainerBuilder;
 
 $builder->addFactoryDefinition('serviceFactory')
-	->setImplement('ServiceFactory')
+	->setImplement(ServiceFactory::class)
 	->getResultDefinition()
 		->setFactory('@service');
 
 $builder->addFactoryDefinition('serviceFactoryViaClass')
-	->setImplement('ServiceFactory2')
+	->setImplement(ServiceFactory2::class)
 	->getResultDefinition()
 		->setFactory('@\Service');
 
 $builder->addDefinition('service')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 
 $builder->addAlias('aliased.service', 'service');
@@ -71,7 +71,7 @@ Assert::same($builder->getDefinition('service'), $builder->getDefinition('aliase
 $builder->removeDefinition('aliased.service');
 Assert::false($builder->hasDefinition('aliased.service'));
 $builder->addDefinition('aliased.service')
-	->setType('Service');
+	->setType(Service::class);
 
 
 $container = createContainer($builder);
@@ -87,6 +87,6 @@ Assert::type(ServiceFactory2::class, $container->getService('aliased.serviceFact
 Assert::type(ServiceFactory2::class, $container->getService('serviceFactoryViaClass'));
 
 // autowiring test
-Assert::type(Service::class, $container->getByType('Service'));
-Assert::type(ServiceFactory::class, $container->getByType('ServiceFactory'));
-Assert::type(ServiceFactory2::class, $container->getByType('ServiceFactory2'));
+Assert::type(Service::class, $container->getByType(Service::class));
+Assert::type(ServiceFactory::class, $container->getByType(ServiceFactory::class));
+Assert::type(ServiceFactory2::class, $container->getByType(ServiceFactory2::class));

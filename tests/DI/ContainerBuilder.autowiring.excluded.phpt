@@ -32,43 +32,43 @@ class Bar extends Foo implements IBar
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('bar')
-		->setType('Bar');
-$builder->addExcludedClasses(['Foo', 'IBar']);
+		->setType(Bar::class);
+$builder->addExcludedClasses([Foo::class, IBar::class]);
 
 
-Assert::same('bar', $builder->getByType('Bar'));
-Assert::null($builder->getByType('IBar'));
-Assert::null($builder->getByType('Foo'));
-Assert::null($builder->getByType('IFoo'));
+Assert::same('bar', $builder->getByType(Bar::class));
+Assert::null($builder->getByType(IBar::class));
+Assert::null($builder->getByType(Foo::class));
+Assert::null($builder->getByType(IFoo::class));
 
-Assert::same(['bar'], array_keys($builder->findAutowired('Bar')));
-Assert::same([], array_keys($builder->findAutowired('IBar')));
-Assert::same([], array_keys($builder->findAutowired('Foo')));
-Assert::same([], array_keys($builder->findAutowired('IFoo')));
+Assert::same(['bar'], array_keys($builder->findAutowired(Bar::class)));
+Assert::same([], array_keys($builder->findAutowired(IBar::class)));
+Assert::same([], array_keys($builder->findAutowired(Foo::class)));
+Assert::same([], array_keys($builder->findAutowired(IFoo::class)));
 
-Assert::same(['bar'], array_keys($builder->findByType('Bar')));
-Assert::same(['bar'], array_keys($builder->findByType('IBar')));
-Assert::same(['bar'], array_keys($builder->findByType('Foo')));
-Assert::same(['bar'], array_keys($builder->findByType('IFoo')));
+Assert::same(['bar'], array_keys($builder->findByType(Bar::class)));
+Assert::same(['bar'], array_keys($builder->findByType(IBar::class)));
+Assert::same(['bar'], array_keys($builder->findByType(Foo::class)));
+Assert::same(['bar'], array_keys($builder->findByType(IFoo::class)));
 
 
 $container = createContainer($builder);
 
-Assert::type(Bar::class, $container->getByType('Bar'));
+Assert::type(Bar::class, $container->getByType(Bar::class));
 
 Assert::exception(function () use ($container) {
-	$container->getByType('IBar');
+	$container->getByType(IBar::class);
 }, DI\MissingServiceException::class);
 
 Assert::exception(function () use ($container) {
-	$container->getByType('Foo');
+	$container->getByType(Foo::class);
 }, DI\MissingServiceException::class);
 
 Assert::exception(function () use ($container) {
-	$container->getByType('IFoo');
+	$container->getByType(IFoo::class);
 }, DI\MissingServiceException::class);
 
-Assert::same(['bar'], $container->findByType('Bar'));
-Assert::same(['bar'], $container->findByType('IBar'));
-Assert::same(['bar'], $container->findByType('Foo'));
-Assert::same(['bar'], $container->findByType('IFoo'));
+Assert::same(['bar'], $container->findByType(Bar::class));
+Assert::same(['bar'], $container->findByType(IBar::class));
+Assert::same(['bar'], $container->findByType(Foo::class));
+Assert::same(['bar'], $container->findByType(IFoo::class));

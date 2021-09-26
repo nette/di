@@ -26,7 +26,7 @@ interface StdClassFactoryFactory
 
 $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('one')
-	->setImplement('StdClassFactoryFactory')
+	->setImplement(StdClassFactoryFactory::class)
 	->setResultDefinition(new DI\Definitions\FactoryDefinition);
 
 

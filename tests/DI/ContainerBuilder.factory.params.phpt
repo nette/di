@@ -21,20 +21,20 @@ interface StdClassFactory
 
 $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('one')
-	->setImplement('StdClassFactory')
+	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory('stdClass')
+		->setFactory(stdClass::class)
 		->addSetup('$a', [$builder::literal('$a')]);
 
 $builder->addFactoryDefinition('two')
 	->setParameters(['stdClass foo', 'array bar', 'foobar' => null])
-	->setImplement('StdClassFactory')
+	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory('stdClass')
+		->setFactory(stdClass::class)
 		->addSetup('$a', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 $builder->addDefinition('four')
 	->setFactory('@one::create', [1 => [1]])

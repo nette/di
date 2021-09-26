@@ -28,24 +28,24 @@ class Service2 extends stdClass
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setType('Service');
+	->setType(Service::class);
 $child = $builder->addDefinition('child')
-	->setType('Child')
+	->setType(Child::class)
 	->setAutowired(false);
 $two = $builder->addDefinition('two')
-	->setType('Service2');
+	->setType(Service2::class);
 $three = $builder->addDefinition('three')
-	->setType('Service2')
+	->setType(Service2::class)
 	->setAutowired(false);
 
 $container = createContainer($builder);
 
 
-Assert::type(Service::class, $container->getByType('Service'));
+Assert::type(Service::class, $container->getByType(Service::class));
 
-Assert::null($container->getByType('Child', false));
+Assert::null($container->getByType(Child::class, false));
 
-Assert::type(Service2::class, $container->getByType('Service2'));
+Assert::type(Service2::class, $container->getByType(Service2::class));
 
 Assert::exception(function () use ($container) {
 	$container->getByType(stdClass::class);
@@ -62,7 +62,7 @@ Assert::exception(function () use ($container) {
 }, Nette\DI\MissingServiceException::class, 'Service of type Exception not found. Did you add it to configuration file?');
 
 
-Assert::same(['one', 'child'], $container->findByType('Service'));
-Assert::same(['child'], $container->findByType('Child'));
-Assert::same(['two', 'three'], $container->findByType('Service2'));
+Assert::same(['one', 'child'], $container->findByType(Service::class));
+Assert::same(['child'], $container->findByType(Child::class));
+Assert::same(['two', 'three'], $container->findByType(Service2::class));
 Assert::same([], $container->findByType('unknown'));

@@ -53,13 +53,13 @@ class Class3 extends Class2
 
 Assert::same([
 	'inject1',
-], InjectExtension::getInjectMethods('Class1'));
+], InjectExtension::getInjectMethods(Class1::class));
 
 Assert::same([
 	'inject1',
 	'inject2',
 	'injectT1',
-], InjectExtension::getInjectMethods('Class2'));
+], InjectExtension::getInjectMethods(Class2::class));
 
 Assert::same([
 	'inject1',
@@ -67,4 +67,4 @@ Assert::same([
 	'injectT1',
 	'inject3',
 	'injectT2',
-], InjectExtension::getInjectMethods('Class3'));
+], InjectExtension::getInjectMethods(Class3::class));

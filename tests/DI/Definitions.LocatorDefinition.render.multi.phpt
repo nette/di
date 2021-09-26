@@ -24,11 +24,11 @@ interface Good
 test('', function () {
 	$def = new LocatorDefinition;
 	$def->setName('abc');
-	$def->setImplement('Good');
+	$def->setImplement(Good::class);
 	$def->setReferences(['first' => '@a', 'second' => 'stdClass']);
 
 	$builder = new Nette\DI\ContainerBuilder;
-	$builder->addDefinition('a')->setType('stdClass');
+	$builder->addDefinition('a')->setType(stdClass::class);
 	$resolver = new Nette\DI\Resolver($builder);
 
 	$resolver->resolveDefinition($def);

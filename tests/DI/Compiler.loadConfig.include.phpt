@@ -41,7 +41,7 @@ Assert::equal([
 	'services' => [
 		'a' => (object) [
 			'type' => null,
-			'factory' => 'stdClass',
+			'factory' => stdClass::class,
 			'arguments' => [],
 			'setup' => [],
 			'inject' => null,

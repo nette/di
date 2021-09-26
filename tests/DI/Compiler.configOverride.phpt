@@ -25,14 +25,14 @@ $class = 'Container' . md5((string) lcg_value());
 $compiler = new DI\Compiler;
 $compiler->addConfig([
 	'services' => [
-		's1' => 'Ipsum',
-		's2' => ['type' => 'Ipsum'],
+		's1' => Ipsum::class,
+		's2' => ['type' => Ipsum::class],
 	],
 ]);
 $compiler->addConfig([
 	'services' => [
 		's1' => ['arguments' => [2]],
-		's2' => ['type' => 'Ipsum', 'alteration' => true],
+		's2' => ['type' => Ipsum::class, 'alteration' => true],
 	],
 ]);
 
@@ -52,7 +52,7 @@ Assert::same([
 
 $compiler->addConfig([
 	'services' => [
-		's3' => ['type' => 'Ipsum', 'alteration' => true],
+		's3' => ['type' => Ipsum::class, 'alteration' => true],
 	],
 ]);
 

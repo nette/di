@@ -13,24 +13,24 @@ class Service
 {
 }
 
-class_alias('Service', 'Alias');
+class_alias(Service::class, 'Alias');
 
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setType('Service');
+	->setType(Service::class);
 $two = $builder->addDefinition('two')
-	->setType('Alias');
+	->setType(Alias::class);
 
 $container = createContainer($builder);
 
 
 Assert::exception(function () use ($container) {
-	$container->getByType('Service');
+	$container->getByType(Service::class);
 }, Nette\DI\MissingServiceException::class, 'Multiple services of type Service found: one, two.');
 
 Assert::exception(function () use ($container) {
-	$container->getByType('Alias');
+	$container->getByType(Alias::class);
 }, Nette\DI\MissingServiceException::class, 'Multiple services of type Service found: one, two.');
 
 Assert::exception(function () use ($builder) {
@@ -39,6 +39,6 @@ Assert::exception(function () use ($builder) {
 
 
 
-Assert::same(['one', 'two'], $container->findByType('Service'));
-Assert::same(['one', 'two'], $container->findByType('Alias'));
+Assert::same(['one', 'two'], $container->findByType(Service::class));
+Assert::same(['one', 'two'], $container->findByType(Alias::class));
 Assert::same(['one', 'two'], $container->findByType('\service'));

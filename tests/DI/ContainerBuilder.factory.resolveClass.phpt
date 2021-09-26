@@ -89,23 +89,23 @@ namespace
 	$builder = new DI\ContainerBuilder;
 
 	$builder->addFactoryDefinition('one')
-		->setImplement('StdClassFactory')
+		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
-			->setFactory('stdClass');
+			->setFactory(stdClass::class);
 
 	$builder->addFactoryDefinition('two')
-		->setImplement('StdClassFactory')
+		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
 			->setFactory('@one');
 
 	$builder->addFactoryDefinition('three')
-		->setImplement('StdClassFactory')
+		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
 			->setFactory('@one::create') // alias
-			->setType('stdClass'); // type is needed
+			->setType(stdClass::class); // type is needed
 
 	$builder->addDefinition('four')
-		->setType('A\Factory');
+		->setType(A\Factory::class);
 
 	$builder->addDefinition('five')
 		->setFactory('@four::createFoo');
@@ -135,10 +135,10 @@ namespace
 	Assert::type(stdClass::class, $container->getService('three')->create());
 	Assert::notSame($container->getService('three')->create(), $container->getService('three')->create());
 
-	Assert::type(A\Foo::class, $container->getByType('A\Foo'));
-	Assert::type(B\Bar::class, $container->getByType('B\Bar'));
+	Assert::type(A\Foo::class, $container->getByType(A\Foo::class));
+	Assert::type(B\Bar::class, $container->getByType(B\Bar::class));
 
-	Assert::type(C\SelfFactory::class, $container->getByType('C\SelfFactory'));
-	Assert::type(C\ThisFactory::class, $container->getByType('C\ThisFactory'));
-	Assert::type(C\StaticFactory::class, $container->getByType('C\StaticFactory'));
+	Assert::type(C\SelfFactory::class, $container->getByType(C\SelfFactory::class));
+	Assert::type(C\ThisFactory::class, $container->getByType(C\ThisFactory::class));
+	Assert::type(C\StaticFactory::class, $container->getByType(C\StaticFactory::class));
 }

@@ -22,7 +22,7 @@ class Foo
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('foo')->setType('Foo');
+	$builder->addDefinition('foo')->setType(Foo::class);
 	$container = createContainer($builder);
 }, Nette\DI\ServiceCreationException::class, "Service 'foo' (type of Foo): Parameter \$x in Foo::__construct() has no class type or default value, so its value must be specified.");
 
@@ -36,7 +36,7 @@ class Bar
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('foo')->setType('Bar');
+	$builder->addDefinition('foo')->setType(Bar::class);
 	$container = createContainer($builder);
 }, Nette\DI\ServiceCreationException::class, "Service 'foo' (type of Bar): Parameter \$x in Bar::__construct() has no class type or default value, so its value must be specified.");
 
@@ -50,7 +50,7 @@ class Bar2
 
 Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('foo')->setType('Bar2');
+	$builder->addDefinition('foo')->setType(Bar2::class);
 	$container = createContainer($builder);
 });
 
@@ -64,6 +64,6 @@ class Bar3
 
 Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('foo')->setType('Bar3');
+	$builder->addDefinition('foo')->setType(Bar3::class);
 	$container = createContainer($builder);
 });

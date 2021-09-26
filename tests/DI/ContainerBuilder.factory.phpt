@@ -34,18 +34,18 @@ class FactoryReceiver
 
 $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('one')
-	->setImplement('StdClassFactory')
+	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory('stdClass');
+		->setFactory(stdClass::class);
 
 $builder->addFactoryDefinition('two')
-	->setImplement('AnnotatedFactory');
+	->setImplement(AnnotatedFactory::class);
 
 $builder->addDefinition('three')
-	->setType('FactoryReceiver');
+	->setType(FactoryReceiver::class);
 
 $builder->addDefinition('four')
-	->setFactory('FactoryReceiver', ['@one']);
+	->setFactory(FactoryReceiver::class, ['@one']);
 
 
 $container = createContainer($builder);

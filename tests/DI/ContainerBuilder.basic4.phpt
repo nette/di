@@ -49,7 +49,7 @@ services:
 	classC: ClassA()::funcA()::funcB()
 ');
 
-Assert::type('ClassA', $container->getService('classA'));
-Assert::type('ClassB', $container->getService('classB1'));
-Assert::type('ClassB', $container->getService('classB2'));
-Assert::type('ClassC', $container->getService('classC'));
+Assert::type(ClassA::class, $container->getService('classA'));
+Assert::type(ClassB::class, $container->getService('classB1'));
+Assert::type(ClassB::class, $container->getService('classB2'));
+Assert::type(ClassC::class, $container->getService('classC'));

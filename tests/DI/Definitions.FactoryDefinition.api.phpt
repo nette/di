@@ -54,45 +54,45 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('stdClass');
+	$def->setImplement(stdClass::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface 'stdClass' not found.");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Bad1');
+	$def->setImplement(Bad1::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad1 must have just one non-static method create().");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Bad2');
+	$def->setImplement(Bad2::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad2 must have just one non-static method create().");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Bad3');
+	$def->setImplement(Bad3::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad3 must have just one non-static method create().");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Bad4');
+	$def->setImplement(Bad4::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad4 must have just one non-static method create().");
 
 
 Assert::noError(function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Good1');
-	Assert::same('Good1', $def->getImplement());
-	Assert::same('Good1', $def->getType());
+	$def->setImplement(Good1::class);
+	Assert::same(Good1::class, $def->getImplement());
+	Assert::same(Good1::class, $def->getType());
 });
 
 
 test('', function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 
 	$def->setParameters(['a' => 1]);
 	Assert::same(['a' => 1], $def->getParameters());
@@ -101,13 +101,13 @@ test('', function () {
 
 test('', function () {
 	$def = new FactoryDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 
 	Assert::null($def->getResultType());
 
 	$resDefinition = $def->getResultDefinition();
 	Assert::type(Nette\DI\Definitions\ServiceDefinition::class, $resDefinition);
 
-	$resDefinition->setType('stdClass');
-	Assert::same('stdClass', $def->getResultType());
+	$resDefinition->setType(stdClass::class);
+	Assert::same(stdClass::class, $def->getResultType());
 });

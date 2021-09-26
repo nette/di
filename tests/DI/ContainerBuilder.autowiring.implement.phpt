@@ -46,5 +46,5 @@ services:
 ');
 
 
-$test = $container->getByType('ITestFactory')->create();
+$test = $container->getByType(ITestFactory::class)->create();
 Assert::type(Foo::class, $test->foo);

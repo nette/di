@@ -23,7 +23,7 @@ services:
 	- {factory: stdClass, tags: [run]}
 ', 'neon'));
 
-@eval($compiler->addConfig($config)->setClassName('Container1')->compile()); // @ tag is deprecated
+@eval($compiler->addConfig($config)->setClassName(Container1::class)->compile()); // @ tag is deprecated
 
 $container = new Container1;
 Assert::false($container->isCreated('std'));

@@ -57,59 +57,59 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition('one1')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one2')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one3')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one4')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one5')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one6')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one7')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one8')
-			->setFactory('Lorem', [1])
+			->setFactory(Lorem::class, [1])
 			->addSetup('__construct', [2]);
 		$builder->addDefinition('one9')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 		$builder->addDefinition('one10')
-			->setFactory('Lorem', [1]);
+			->setFactory(Lorem::class, [1]);
 
 		$builder->addDefinition('two1')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two2')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two3')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two4')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two5')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two6')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two7')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two8')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two9')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two10')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 		$builder->addDefinition('two11')
-			->setType('Lorem')
+			->setType(Lorem::class)
 			->setFactory('Factory::createLorem', [1]);
 
 		$builder->addDefinition('three1')

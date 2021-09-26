@@ -61,21 +61,21 @@ class FooExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		if (!$builder->getByType('Foo')) {
+		if (!$builder->getByType(Foo::class)) {
 			Assert::fail('Foo service should be defined.');
 		}
-		if (!$builder->getByType('IBar')) {
+		if (!$builder->getByType(IBar::class)) {
 			Assert::fail('IBar service should be defined.');
 		}
-		if (!$builder->getByType('Lorem')) {
+		if (!$builder->getByType(Lorem::class)) {
 			Assert::fail('Lorem service should be defined.');
 		}
-		if (!$builder->getByType('IIpsumFactory')) {
+		if (!$builder->getByType(IIpsumFactory::class)) {
 			Assert::fail('IIpsumFactory service should be defined.');
 		}
 
-		if (!$builder->getByType('FooBar')) {
-			$builder->addDefinition('five')->setType('FooBar');
+		if (!$builder->getByType(FooBar::class)) {
+			$builder->addDefinition('five')->setType(FooBar::class);
 		}
 	}
 }
@@ -102,4 +102,4 @@ Assert::type(Bar::class, $container->getService('two'));
 Assert::type(Lorem::class, $container->getService('three'));
 Assert::type(IIpsumFactory::class, $container->getService('four'));
 
-Assert::type(FooBar::class, $container->getByType('IFooBar'));
+Assert::type(FooBar::class, $container->getByType(IFooBar::class));

@@ -77,73 +77,73 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('stdClass');
+	$def->setImplement(stdClass::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface 'stdClass' not found.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad1');
+	$def->setImplement(Bad1::class);
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad1 must have at least one method.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad2');
+	$def->setImplement(Bad2::class);
 }, Nette\InvalidArgumentException::class, "Service '': Method Bad2::create() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad3');
+	$def->setImplement(Bad3::class);
 }, Nette\InvalidArgumentException::class, "Service '': Method Bad3::get() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad4');
+	$def->setImplement(Bad4::class);
 }, Nette\InvalidArgumentException::class, "Service '': Method Bad4::foo() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad5');
+	$def->setImplement(Bad5::class);
 }, Nette\InvalidArgumentException::class, "Service '': Method Bad5::get() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.");
 
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Bad6');
+	$def->setImplement(Bad6::class);
 }, Nette\InvalidArgumentException::class, "Service '': Method Bad6::get() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.");
 
 
 Assert::noError(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good1');
-	Assert::same('Good1', $def->getImplement());
-	Assert::same('Good1', $def->getType());
+	$def->setImplement(Good1::class);
+	Assert::same(Good1::class, $def->getImplement());
+	Assert::same(Good1::class, $def->getType());
 });
 
 
 Assert::noError(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good2');
-	Assert::same('Good2', $def->getImplement());
-	Assert::same('Good2', $def->getType());
+	$def->setImplement(Good2::class);
+	Assert::same(Good2::class, $def->getImplement());
+	Assert::same(Good2::class, $def->getType());
 });
 
 
 Assert::noError(function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good3');
-	Assert::same('Good3', $def->getImplement());
-	Assert::same('Good3', $def->getType());
+	$def->setImplement(Good3::class);
+	Assert::same(Good3::class, $def->getImplement());
+	Assert::same(Good3::class, $def->getType());
 });
 
 
 test('', function () {
 	$def = new LocatorDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 
 	$def->setReferences(['a' => 'stdClass', 'b' => '@one']);
 	Assert::equal(['a' => new Reference('\stdClass'), 'b' => new Reference('one')], $def->getReferences());

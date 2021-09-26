@@ -33,12 +33,12 @@ class Test
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 
 $container = createContainer($builder);
 
-$test = $container->createInstance('Test');
+$test = $container->createInstance(Test::class);
 Assert::type(Test::class, $test);
 Assert::same($container, $test->container);
 Assert::false($container->callMethod([$test, 'method']));

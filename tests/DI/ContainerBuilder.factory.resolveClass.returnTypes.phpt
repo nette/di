@@ -41,7 +41,7 @@ namespace
 	$builder = new DI\ContainerBuilder;
 
 	$builder->addDefinition('one')
-		->setType('A\Factory');
+		->setType(A\Factory::class);
 
 	$builder->addDefinition('two')
 		->setFactory('@one::createBar');
@@ -49,5 +49,5 @@ namespace
 
 	$container = createContainer($builder);
 
-	Assert::type(B\Bar::class, $container->getByType('B\Bar'));
+	Assert::type(B\Bar::class, $container->getByType(B\Bar::class));
 }

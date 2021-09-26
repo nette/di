@@ -28,5 +28,5 @@ class Test implements Foo
 
 
 Assert::exception(function () {
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodIntersection'), [], function () {});
+	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodIntersection'), [], function () {});
 }, Nette\InvalidStateException::class, 'Parameter $self in Test::methodIntersection() has intersection type, so its value must be specified.');

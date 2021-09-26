@@ -30,15 +30,15 @@ interface Factory
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setType('Service');
+	->setType(Service::class);
 $child = $builder->addAccessorDefinition('acc')
-	->setImplement('Accessor');
+	->setImplement(Accessor::class);
 $two = $builder->addFactoryDefinition('fac')
-	->setImplement('Factory');
+	->setImplement(Factory::class);
 
 $container = createContainer($builder);
 
 
-Assert::same('Service', $container->getServiceType('one'));
-Assert::same('Accessor', $container->getServiceType('acc'));
-Assert::same('Factory', $container->getServiceType('fac'));
+Assert::same(Service::class, $container->getServiceType('one'));
+Assert::same(Accessor::class, $container->getServiceType('acc'));
+Assert::same(Factory::class, $container->getServiceType('fac'));

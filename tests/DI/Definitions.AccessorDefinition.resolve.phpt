@@ -33,7 +33,7 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement('Good1');
+	$def->setImplement(Good1::class);
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
@@ -42,8 +42,8 @@ Assert::exception(function () {
 
 Assert::noError(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement('Good1');
-	$def->setReference('stdClass');
+	$def->setImplement(Good1::class);
+	$def->setReference(stdClass::class);
 
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
@@ -52,7 +52,7 @@ Assert::noError(function () {
 
 Assert::noError(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement('Good2');
+	$def->setImplement(Good2::class);
 
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
@@ -61,7 +61,7 @@ Assert::noError(function () {
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	$def->setImplement('Good2');
+	$def->setImplement(Good2::class);
 
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);

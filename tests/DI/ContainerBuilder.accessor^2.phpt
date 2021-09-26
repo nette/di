@@ -26,13 +26,13 @@ interface StdClassAccessorAccessor
 
 $builder = new DI\ContainerBuilder;
 $builder->addAccessorDefinition('one')
-	->setImplement('StdClassAccessorAccessor');
+	->setImplement(StdClassAccessorAccessor::class);
 
 $builder->addAccessorDefinition('two')
-	->setImplement('StdClassAccessor');
+	->setImplement(StdClassAccessor::class);
 
 $builder->addDefinition('three')
-	->setClass('stdClass');
+	->setClass(stdClass::class);
 
 
 $container = createContainer($builder);

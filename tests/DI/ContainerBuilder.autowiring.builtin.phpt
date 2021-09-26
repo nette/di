@@ -30,9 +30,9 @@ class Bar
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('foo')
-	->setType('Foo');
+	->setType(Foo::class);
 $builder->addDefinition('bar')
-	->setType('Bar');
+	->setType(Bar::class);
 
 $container = createContainer($builder);
 

@@ -74,7 +74,7 @@ interface Bad4
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement('Bad4');
+		->setImplement(Bad4::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Return type of Bad4::create() is not declared.");
 
@@ -87,7 +87,7 @@ interface Bad5
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addAccessorDefinition('one')
-		->setImplement('Bad5');
+		->setImplement(Bad5::class);
 	$builder->complete();
 }, Nette\InvalidArgumentException::class, "Service 'one': Method Bad5::get() must have no parameters.");
 
@@ -129,7 +129,7 @@ class Bad8
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setType('Bad8');
+	$builder->addDefinition('one')->setType(Bad8::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad8): Class Bad8 has private constructor.");
 
@@ -144,14 +144,14 @@ class Good
 // fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Good', [new Statement('Unknown')]);
+	$builder->addDefinition('one')->setFactory(Good::class, [new Statement('Unknown')]);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class 'Unknown' not found. (used in Good::__construct())");
 
 // fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Good', [new Statement('Bad8')]);
+	$builder->addDefinition('one')->setFactory(Good::class, [new Statement(Bad8::class)]);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Bad8 has private constructor. (used in Good::__construct())");
 
@@ -166,7 +166,7 @@ abstract class Bad9
 // abstract class cannot be instantiated
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setType('Bad9');
+	$builder->addDefinition('one')->setType(Bad9::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad9): Class Bad9 is abstract.");
 

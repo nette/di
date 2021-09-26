@@ -153,13 +153,13 @@ class TestExtension extends DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$builder->addFactoryDefinition('fooFactory2')
 			->setParameters(['Baz baz' => null])
-			->setImplement('IFooFactory')
+			->setImplement(IFooFactory::class)
 			->getResultDefinition()
-				->setFactory('Foo')
+				->setFactory(Foo::class)
 				->setArguments([1 => $builder::literal('$baz')]);
 
 		$builder->addFactoryDefinition('overridenFactory')
-			->setImplement('ILoremFactory')
+			->setImplement(ILoremFactory::class)
 			->setAutowired(false);
 
 		// see definition by config in Compiler::parseService()
@@ -177,7 +177,7 @@ Assert::type(Lorem::class, $lorem);
 Assert::type(Ipsum::class, $lorem->ipsum);
 Assert::same($container->getService('ipsum'), $lorem->ipsum);
 
-Assert::type(ILoremFactory::class, $container->getByType('ILoremFactory'));
+Assert::type(ILoremFactory::class, $container->getByType(ILoremFactory::class));
 
 Assert::type(IFinderFactory::class, $container->getService('finder'));
 $finder = $container->getService('finder')->create();
@@ -290,9 +290,9 @@ interface Bad2
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement('Bad2')
+		->setImplement(Bad2::class)
 		->getResultDefinition()
-			->setFactory('Bad1');
+			->setFactory(Bad1::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
 
@@ -313,9 +313,9 @@ interface Bad4
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement('Bad4')
+		->setImplement(Bad4::class)
 		->getResultDefinition()
-			->setFactory('Bad3');
+			->setFactory(Bad3::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
 
@@ -336,9 +336,9 @@ interface Bad6
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
-		->setImplement('Bad6')
+		->setImplement(Bad6::class)
 		->getResultDefinition()
-			->setFactory('Bad5');
+			->setFactory(Bad5::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
 
@@ -351,10 +351,10 @@ interface Bad7
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('stdClass')->setFactory('stdClass');
+	$builder->addDefinition(stdClass::class)->setFactory(stdClass::class);
 	$builder->addAccessorDefinition('one')
-		->setImplement('Bad7')
-		->setClass('stdClass')
+		->setImplement(Bad7::class)
+		->setClass(stdClass::class)
 		->addSetup('method');
 	$builder->complete();
 }, Nette\MemberAccessException::class, 'Call to undefined method Nette\DI\Definitions\AccessorDefinition::addSetup().');

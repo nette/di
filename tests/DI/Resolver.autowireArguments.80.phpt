@@ -33,15 +33,15 @@ class Test
 
 
 Assert::exception(function () {
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnion'), [], function () {});
+	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnion'), [], function () {});
 }, Nette\InvalidStateException::class, 'Parameter $self in Test::methodUnion() has union type and no default value, so its value must be specified.');
 
 Assert::same(
 	[null],
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnionNullable'), [], function () {}),
+	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnionNullable'), [], function () {}),
 );
 
 Assert::same(
 	[],
-	Resolver::autowireArguments(new ReflectionMethod('Test', 'methodUnionDefault'), [], function () {}),
+	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnionDefault'), [], function () {}),
 );

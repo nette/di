@@ -33,7 +33,7 @@ interface FooFactory
 
 $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('fooFactory')
-	->setImplement('FooFactory')
+	->setImplement(FooFactory::class)
 	->getResultDefinition()
 		->setArguments(['bar']);
 

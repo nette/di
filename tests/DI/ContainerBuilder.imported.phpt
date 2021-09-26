@@ -24,12 +24,12 @@ class Service extends ParentClass
 
 $builder = new DI\ContainerBuilder;
 $builder->addImportedDefinition('one')
-	->setType('ParentClass');
+	->setType(ParentClass::class);
 
 
 // compile-time
 
-Assert::same('one', $builder->getByType('ParentClass'));
+Assert::same('one', $builder->getByType(ParentClass::class));
 
 $container = createContainer($builder);
 

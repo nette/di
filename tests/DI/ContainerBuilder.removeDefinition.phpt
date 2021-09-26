@@ -25,13 +25,13 @@ class A extends B
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('one')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 $builder->addDefinition('two')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
 $builder->addDefinition('three')
-	->setType('stdClass')
+	->setType(stdClass::class)
 	->setAutowired(false);
 
 $builder->addDefinition('four')
@@ -39,26 +39,26 @@ $builder->addDefinition('four')
 
 
 Assert::exception(function () use ($builder) {
-	$builder->getByType('stdClass');
+	$builder->getByType(stdClass::class);
 }, Nette\DI\ServiceCreationException::class, 'Multiple services of type stdClass found: four, one, two');
 
-Assert::count(4, $builder->findByType('stdClass'));
+Assert::count(4, $builder->findByType(stdClass::class));
 
 
 $builder->removeDefinition('one');
 $builder->removeDefinition('four');
 
-Assert::same('two', $builder->getByType('stdClass'));
+Assert::same('two', $builder->getByType(stdClass::class));
 
-Assert::count(2, $builder->findByType('stdClass'));
+Assert::count(2, $builder->findByType(stdClass::class));
 
 
 $builder->removeDefinition('three');
 
-Assert::count(1, $builder->findByType('stdClass'));
+Assert::count(1, $builder->findByType(stdClass::class));
 
 
 $builder->addDefinition('one')
-	->setType('stdClass');
+	->setType(stdClass::class);
 
-Assert::count(2, $builder->findByType('stdClass'));
+Assert::count(2, $builder->findByType(stdClass::class));
