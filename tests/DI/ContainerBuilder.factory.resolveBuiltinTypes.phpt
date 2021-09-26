@@ -75,7 +75,7 @@ namespace
 			->setType(A\Factory::class);
 		$builder->addDefinition('a')
 			->setFactory('@factory::createArray');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'a']
 Return type of A\\Factory::createArray() is not expected to be nullable/union/intersection/built-in, 'array' given.");
 
@@ -85,7 +85,7 @@ Return type of A\\Factory::createArray() is not expected to be nullable/union/in
 			->setType(A\Factory::class);
 		$builder->addDefinition('c')
 			->setFactory('@factory::createCallable');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'c']
 Return type of A\\Factory::createCallable() is not expected to be nullable/union/intersection/built-in, 'callable' given.");
 
@@ -95,7 +95,7 @@ Return type of A\\Factory::createCallable() is not expected to be nullable/union
 			->setType(A\Factory::class);
 		$builder->addDefinition('s')
 			->setFactory('@factory::createString');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 's']
 Return type of A\\Factory::createString() is not expected to be nullable/union/intersection/built-in, 'string' given.");
 
@@ -105,7 +105,7 @@ Return type of A\\Factory::createString() is not expected to be nullable/union/i
 			->setType(A\Factory::class);
 		$builder->addDefinition('i')
 			->setFactory('@factory::createInt');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'i']
 Return type of A\\Factory::createInt() is not expected to be nullable/union/intersection/built-in, 'int' given.");
 
@@ -115,7 +115,7 @@ Return type of A\\Factory::createInt() is not expected to be nullable/union/inte
 			->setType(A\Factory::class);
 		$builder->addDefinition('b')
 			->setFactory('@factory::createBool');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'b']
 Return type of A\\Factory::createBool() is not expected to be nullable/union/intersection/built-in, 'bool' given.");
 
@@ -125,7 +125,7 @@ Return type of A\\Factory::createBool() is not expected to be nullable/union/int
 			->setType(A\Factory::class);
 		$builder->addDefinition('f')
 			->setFactory('@factory::createFloat');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
 Return type of A\\Factory::createFloat() is not expected to be nullable/union/intersection/built-in, 'float' given.");
 
@@ -135,7 +135,7 @@ Return type of A\\Factory::createFloat() is not expected to be nullable/union/in
 			->setType(A\Factory::class);
 		$builder->addDefinition('f')
 			->setFactory('@factory::createObject');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
 Return type of A\\Factory::createObject() is not expected to be nullable/union/intersection/built-in, 'object' given.");
 
@@ -145,7 +145,7 @@ Return type of A\\Factory::createObject() is not expected to be nullable/union/i
 			->setType(A\Factory::class);
 		$builder->addDefinition('f')
 			->setFactory('@factory::createMixed');
-		$container = @createContainer($builder); // annotation @return is deprecated
+		$container = createContainer($builder);
 	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
 Return type of A\\Factory::createMixed() is not expected to be nullable/union/intersection/built-in, 'mixed' given.");
 

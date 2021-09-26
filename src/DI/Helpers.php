@@ -191,19 +191,6 @@ final class Helpers
 	}
 
 
-	public static function getReturnTypeAnnotation(\ReflectionFunctionAbstract $func): ?Type
-	{
-		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
-		if (!$type || $type === 'object' || $type === 'mixed') {
-			return null;
-		} elseif ($func instanceof \ReflectionMethod) {
-			$type = $type === '$this' ? 'static' : $type;
-			$type = Reflection::expandClassName($type, $func->getDeclaringClass());
-		}
-		return Type::fromString($type);
-	}
-
-
 	public static function ensureClassType(
 		?Type $type,
 		string $hint,
