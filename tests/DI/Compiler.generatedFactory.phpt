@@ -141,7 +141,6 @@ class TestExtension extends DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addFactoryDefinition('fooFactory2')
-			->setParameters(['Baz baz' => null])
 			->setImplement(IFooFactory::class)
 			->getResultDefinition()
 				->setCreator(Foo::class)
