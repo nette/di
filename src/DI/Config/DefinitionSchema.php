@@ -92,6 +92,10 @@ class DefinitionSchema implements Schema
 			return ['factory' => $def];
 
 		} elseif (is_array($def)) {
+			if (isset($def['create']) && !isset($def['factory'])) {
+				$def['factory'] = $def['create'];
+				unset($def['create']);
+			}
 			if (isset($def['class']) && !isset($def['type'])) {
 				if ($def['class'] instanceof Statement) {
 					$key = end($context->path);
