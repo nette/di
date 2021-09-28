@@ -170,10 +170,6 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			}
 		}
 
-		if (isset($config->parameters)) {
-			$definition->setParameters($config->parameters);
-		}
-
 		if (isset($config->inject)) {
 			$definition->addTag(InjectExtension::TAG_INJECT, $config->inject);
 		}
