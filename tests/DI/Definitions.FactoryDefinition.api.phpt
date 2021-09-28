@@ -94,7 +94,7 @@ test('', function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Good1::class);
 
-	$def->setParameters(['a' => 1]);
+	@$def->setParameters(['a' => 1]); // parameters are deprecated
 	Assert::same(['a' => 1], $def->getParameters());
 });
 
