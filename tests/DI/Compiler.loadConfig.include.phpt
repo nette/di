@@ -24,10 +24,12 @@ Assert::same([
 	__DIR__ . DIRECTORY_SEPARATOR . 'files/loader.includes.grandchild.neon',
 	(new ReflectionClass(Nette\DI\Extensions\ServicesExtension::class))->getFileName(),
 	(new ReflectionClass(Nette\DI\Extensions\ParametersExtension::class))->getFileName(),
+	(new ReflectionClass(Nette\DI\Extensions\ConfiguratorsExtension::class))->getFileName(),
 ], array_keys($compiler->exportDependencies()[1]));
 
 
 Assert::equal([
+	'configurators' => [],
 	'parameters' => [
 		'me' => [
 			'loader.includes.child.neon',

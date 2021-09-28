@@ -29,6 +29,7 @@ test('Compiler config', function () {
 
 	Assert::same(
 		[
+			'configurators' => [],
 			'parameters' => [
 				'item1' => 1,
 			],

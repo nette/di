@@ -23,7 +23,8 @@ class Compiler
 	private const
 		SERVICES = 'services',
 		PARAMETERS = 'parameters',
-		DI = 'di';
+		DI = 'di',
+		CONFIGURATORS = 'configurators';
 
 	/** @var CompilerExtension[] */
 	private $extensions = [];
@@ -53,6 +54,7 @@ class Compiler
 		$this->dependencies = new DependencyChecker;
 		$this->addExtension(self::SERVICES, new Extensions\ServicesExtension);
 		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->configs));
+		$this->addExtension(self::CONFIGURATORS, new Extensions\ConfiguratorsExtension);
 	}
 
 
@@ -211,7 +213,10 @@ class Compiler
 	/** @internal */
 	public function processExtensions(): void
 	{
-		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions(Extensions\ExtensionsExtension::class);
+		$first = $this->getExtensions(Extensions\ConfiguratorsExtension::class)
+			+ $this->getExtensions(Extensions\ParametersExtension::class)
+			+ $this->getExtensions(Extensions\ExtensionsExtension::class);
+
 		foreach ($first as $name => $extension) {
 			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
 			$extension->setConfig($this->config[$name] = $config);
@@ -227,7 +232,11 @@ class Compiler
 
 		$extensions = array_diff_key($this->extensions, $first, [self::SERVICES => 1]);
 		foreach ($extensions as $name => $extension) {
-			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+			$config = $this->processSchema(
+				$extension->getConfigSchema(),
+				array_merge([(array) $extension->getConfig()], $this->configs[$name] ?? []),
+				$name
+			);
 			$extension->setConfig($this->config[$name] = $config);
 		}
 

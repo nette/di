@@ -24,7 +24,10 @@ final class PhpAdapter implements Nette\DI\Config\Adapter
 	 */
 	public function load(string $file): array
 	{
-		return require $file;
+		$data = require $file;
+		return $data instanceof \Closure
+			? ['configurators' => [$data]]
+			: $data;
 	}
 
 
