@@ -26,8 +26,8 @@ $builder->addFactoryDefinition('one')
 		->setFactory(stdClass::class)
 		->addSetup('$a', [$builder::literal('$a')]);
 
-$builder->addFactoryDefinition('two')
-	->setParameters(['stdClass foo', 'array bar', 'foobar' => null])
+@$builder->addFactoryDefinition('two')
+	->setParameters(['stdClass foo', 'array bar', 'foobar' => null]) // parameters is deprecated
 	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
 		->setFactory(stdClass::class)
