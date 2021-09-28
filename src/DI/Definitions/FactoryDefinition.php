@@ -95,14 +95,31 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	/** @return static */
+	/** @deprecated */
 	public function setParameters(array $params)
 	{
+		if ($params) {
+			$old = $new = [];
+			foreach ($params as $k => $v) {
+				$tmp = explode(' ', is_int($k) ? $v : $k);
+				$old[] = '%' . end($tmp) . '%';
+				$new[] = '$' . end($tmp);
+			}
+
+			trigger_error(sprintf(
+				"Service '%s': Option 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
+				$this->getName(),
+				implode(', ', $old),
+				implode(', ', $new)
+			), E_USER_DEPRECATED);
+		}
+
 		$this->parameters = $params;
 		return $this;
 	}
 
 
+	/** @deprecated */
 	public function getParameters(): array
 	{
 		return $this->parameters;
