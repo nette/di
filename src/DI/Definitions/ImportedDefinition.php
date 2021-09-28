@@ -42,12 +42,4 @@ final class ImportedDefinition extends Definition
 				["Unable to create imported service '{$this->getName()}', it must be added using addService()"],
 			);
 	}
-
-
-	/** @deprecated use '$def instanceof ImportedDefinition' */
-	public function isDynamic(): bool
-	{
-		trigger_error(sprintf('Service %s: %s() is deprecated, use "instanceof ImportedDefinition".', $this->getName(), __METHOD__), E_USER_DEPRECATED);
-		return true;
-	}
 }
