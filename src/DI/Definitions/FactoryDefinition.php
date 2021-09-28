@@ -13,7 +13,6 @@ use Nette;
 use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
-use Nette\Utils\Reflection;
 use Nette\Utils\Type;
 
 
@@ -24,7 +23,6 @@ final class FactoryDefinition extends Definition
 {
 	private const METHOD_CREATE = 'create';
 
-	public array $parameters = [];
 	private Definition $resultDefinition;
 
 
@@ -87,35 +85,6 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	/** @deprecated */
-	public function setParameters(array $params): static
-	{
-		if ($params) {
-			$old = $new = [];
-			foreach ($params as $k => $v) {
-				$tmp = explode(' ', is_int($k) ? $v : $k);
-				$old[] = '%' . end($tmp) . '%';
-				$new[] = '$' . end($tmp);
-			}
-			trigger_error(sprintf(
-				"[%s]\nOption 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
-				$this->getDescriptor(),
-				implode(', ', $old),
-				implode(', ', $new),
-			), E_USER_DEPRECATED);
-		}
-		$this->parameters = $params;
-		return $this;
-	}
-
-
-	/** @deprecated */
-	public function getParameters(): array
-	{
-		return $this->parameters;
-	}
-
-
 	public function resolveType(Nette\DI\Resolver $resolver): void
 	{
 		$interface = $this->getType();
@@ -152,9 +121,7 @@ final class FactoryDefinition extends Definition
 		$resultDef = $this->resultDefinition;
 
 		if ($resultDef instanceof ServiceDefinition) {
-			if (!$this->parameters) {
-				$this->completeParameters($resolver);
-			}
+			$this->completeParameters($resolver);
 			$this->convertArguments($resultDef->getFactory()->arguments);
 			foreach ($resultDef->getSetup() as $setup) {
 				$this->convertArguments($setup->arguments);
@@ -188,11 +155,10 @@ final class FactoryDefinition extends Definition
 		}
 
 		foreach ($method->getParameters() as $param) {
-			$methodType = Type::fromReflection($param);
 			if (isset($ctorParams[$param->name])) {
 				$ctorParam = $ctorParams[$param->name];
 				$ctorType = Type::fromReflection($ctorParam);
-				if ($ctorType && !$ctorType->allows((string) $methodType)) {
+				if ($ctorType && !$ctorType->allows((string) Type::fromReflection($param))) {
 					throw new ServiceCreationException(sprintf(
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
 						$param->name,
@@ -209,13 +175,6 @@ final class FactoryDefinition extends Definition
 					$param->name,
 					$interface,
 				) . ($hint ? ", did you mean \${$hint}?" : '.'));
-			}
-
-			$paramDef = $methodType . ' ' . $param->name;
-			if ($param->isDefaultValueAvailable()) {
-				$this->parameters[$paramDef] = Reflection::getParameterDefaultValue($param);
-			} else {
-				$this->parameters[] = $paramDef;
 			}
 		}
 	}
@@ -252,7 +211,7 @@ final class FactoryDefinition extends Definition
 
 		$rm = new \ReflectionMethod($this->getType(), self::METHOD_CREATE);
 		$methodCreate
-			->setParameters($generator->convertParameters($this->parameters))
+			->setParameters(array_map([new Php\Factory, 'fromParameterReflection'], $rm->getParameters()))
 			->setReturnType((string) (Type::fromReflection($rm) ?? $this->getResultType()))
 			->setBody($body);
 
