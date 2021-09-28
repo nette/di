@@ -84,28 +84,29 @@ class DefinitionSchema implements Schema
 				$res += $def->arguments;
 			} elseif (count($def->arguments) > 1) {
 				$res['references'] = $def->arguments;
-			} elseif ($factory = array_shift($def->arguments)) {
-				$res['factory'] = $factory;
+			} elseif ($creator = array_shift($def->arguments)) {
+				$res['create'] = $creator;
 			}
 			return $res;
 
 		} elseif (!is_array($def) || isset($def[0], $def[1])) {
-			return ['factory' => $def];
+			return ['create' => $def];
 
 		} elseif (is_array($def)) {
-			if (isset($def['create']) && !isset($def['factory'])) {
-				$def['factory'] = $def['create'];
-				unset($def['create']);
-			}
 			// back compatibility
+			if (isset($def['factory']) && !isset($def['create'])) {
+				$def['create'] = $def['factory'];
+				unset($def['factory']);
+			}
+
 			if (
 				isset($def['class'])
 				&& !isset($def['type'])
-				&& !isset($def['factory'])
+				&& !isset($def['create'])
 				&& !isset($def['dynamic'])
 				&& !isset($def['imported'])
 			) {
-				$def['factory'] = $def['class'];
+				$def['create'] = $def['class'];
 				unset($def['class']);
 			}
 
@@ -200,7 +201,7 @@ class DefinitionSchema implements Schema
 	{
 		return Expect::structure([
 			'type' => Expect::type('string'),
-			'factory' => Expect::type('callable|Nette\DI\Definitions\Statement'),
+			'create' => Expect::type('callable|Nette\DI\Definitions\Statement'),
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
 			'inject' => Expect::bool(),
@@ -217,7 +218,7 @@ class DefinitionSchema implements Schema
 		return Expect::structure([
 			'type' => Expect::string(),
 			'implement' => Expect::string(),
-			'factory' => Expect::type('callable|Nette\DI\Definitions\Statement'),
+			'create' => Expect::type('callable|Nette\DI\Definitions\Statement'),
 			'autowired' => Expect::type('bool|string|array'),
 			'tags' => Expect::array(),
 		]);
@@ -228,7 +229,7 @@ class DefinitionSchema implements Schema
 	{
 		return Expect::structure([
 			'type' => Expect::string(),
-			'factory' => Expect::type('callable|Nette\DI\Definitions\Statement'),
+			'create' => Expect::type('callable|Nette\DI\Definitions\Statement'),
 			'implement' => Expect::string(),
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
