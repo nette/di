@@ -8,9 +8,8 @@ services:
 	finder: IFinderFactory
 
 	article:
-		create: Article(%title%)
+		create: Article($title)
 		implement: IArticleFactory
-		parameters: [title]
 		setup:
 			- method(@self::Abc)
 			- $prop = @self::Abc
@@ -18,12 +17,10 @@ services:
 	article2:
 		implement: IArticleFactory
 		arguments: [$title]
-		parameters: [title]
 
 	fooFactory1:
-		create: Foo(_, %baz%)
+		create: Foo(_, $baz)
 		implement: IFooFactory
-		parameters: [Baz baz = null]
 
 	fooFactory3:
 		type: Foo

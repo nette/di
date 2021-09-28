@@ -185,29 +185,6 @@ declare(strict_types=1);
 	}
 
 
-	/**
-	 * Converts parameters from Definition to PhpGenerator.
-	 * @return Php\Parameter[]
-	 */
-	public function convertParameters(array $parameters): array
-	{
-		$res = [];
-		foreach ($parameters as $k => $v) {
-			$tmp = explode(' ', is_int($k) ? $v : $k);
-			$param = $res[] = new Php\Parameter(end($tmp));
-			if (!is_int($k)) {
-				$param->setDefaultValue($v);
-			}
-
-			if (isset($tmp[1])) {
-				$param->setType($tmp[0]);
-			}
-		}
-
-		return $res;
-	}
-
-
 	public function getClassName(): ?string
 	{
 		return $this->className;

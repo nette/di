@@ -173,15 +173,7 @@ class DefinitionSchema implements Schema
 
 	private function expandParameters(array $config): array
 	{
-		$params = $this->builder->parameters;
-		if (isset($config['parameters'])) {
-			foreach ((array) $config['parameters'] as $k => $v) {
-				$v = explode(' ', is_int($k) ? $v : $k);
-				$params[end($v)] = $this->builder::literal('$' . end($v));
-			}
-		}
-
-		return Nette\DI\Helpers::expand($config, $params);
+		return Nette\DI\Helpers::expand($config, $this->builder->parameters);
 	}
 
 
@@ -235,7 +227,6 @@ class DefinitionSchema implements Schema
 			'implement' => Expect::string(),
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
-			'parameters' => Expect::array(),
 			'references' => Expect::array(),
 			'tagged' => Expect::string(),
 			'inject' => Expect::bool(),
