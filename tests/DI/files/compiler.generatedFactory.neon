@@ -17,7 +17,7 @@ services:
 
 	article2:
 		implement: IArticleFactory
-		arguments: [%title%]
+		arguments: [$title]
 		parameters: [title]
 
 	fooFactory1:

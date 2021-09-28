@@ -12,6 +12,7 @@ namespace Nette\DI\Definitions;
 use Nette;
 use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
+use Nette\PhpGenerator as Php;
 use Nette\Utils\Reflection;
 use Nette\Utils\Type;
 
@@ -206,6 +207,10 @@ final class FactoryDefinition extends Definition
 			if (!$this->parameters) {
 				$this->completeParameters($resolver);
 			}
+			$this->convertArguments($resultDef->getFactory()->arguments);
+			foreach ($resultDef->getSetup() as $setup) {
+				$this->convertArguments($setup->arguments);
+			}
 
 			if ($resultDef->getEntity() instanceof Reference && !$resultDef->getFactory()->arguments) {
 				$resultDef->setFactory([ // render as $container->createMethod()
@@ -247,7 +252,7 @@ final class FactoryDefinition extends Definition
 						$class
 					));
 				}
-				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = Nette\DI\ContainerBuilder::literal('$' . $ctorParam->name);
+				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->name);
@@ -268,9 +273,19 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function convertArguments(array &$args): void
 	{
-		$class = (new Nette\PhpGenerator\ClassType)
+		foreach ($args as &$v) {
+			if (is_string($v) && $v[0] === '$') {
+				$v = new Php\Literal($v);
+			}
+		}
+	}
+
+
+	public function generateMethod(Php\Method $method, Nette\DI\PhpGenerator $generator): void
+	{
+		$class = (new Php\ClassType)
 			->addImplement($this->getType());
 
 		$class->addProperty('container')
