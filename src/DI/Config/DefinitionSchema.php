@@ -159,6 +159,9 @@ class DefinitionSchema implements Schema
 		} elseif (isset($def['imported'])) {
 			return Definitions\ImportedDefinition::class;
 
+		} elseif (!$def) {
+			throw new Nette\DI\InvalidConfigurationException("Service '$key': Empty definition.");
+
 		} else {
 			return Definitions\ServiceDefinition::class;
 		}
