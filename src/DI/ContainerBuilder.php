@@ -55,9 +55,7 @@ class ContainerBuilder
 
 	/**
 	 * Adds new service definition.
-	 * @template T of Definition
-	 * @param  T  $definition
-	 * @return T|Definitions\ServiceDefinition
+	 * @return Definitions\ServiceDefinition
 	 */
 	public function addDefinition(?string $name, Definition $definition = null): Definition
 	{
