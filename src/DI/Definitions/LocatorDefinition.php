@@ -45,11 +45,7 @@ final class LocatorDefinition extends Definition
 				));
 			}
 			if ($method->getNumberOfParameters() === 0) {
-				try {
-					Nette\DI\Helpers::ensureClassType(Nette\Utils\Type::fromReflection($method), "return type of $interface::$method->name()", $this->getDescriptor(), true);
-				} catch (Nette\DI\ServiceCreationException $e) {
-					trigger_error($e->getMessage(), E_USER_DEPRECATED);
-				}
+				Nette\DI\Helpers::ensureClassType(Nette\Utils\Type::fromReflection($method), "return type of $interface::$method->name()", $this->getDescriptor(), true);
 			}
 		}
 		return parent::setType($interface);

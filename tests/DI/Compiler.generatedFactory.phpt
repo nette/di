@@ -7,7 +7,6 @@
 declare(strict_types=1);
 
 use Nette\DI;
-use Nette\DI\Config\Adapters as Adapt;
 use Tester\Assert;
 
 
@@ -28,14 +27,6 @@ class Lorem
 	{
 		$this->ipsum = $ipsum;
 	}
-}
-
-interface IFinderFactory
-{
-	/**
-	 * @return Adapt\NeonAdapter comment
-	 */
-	public function create();
 }
 
 interface IArticleFactory
@@ -154,7 +145,7 @@ class TestExtension extends DI\CompilerExtension
 
 $compiler = new DI\Compiler;
 $compiler->addExtension('test', new TestExtension);
-@$container = createContainer($compiler, 'files/compiler.generatedFactory.neon'); // missing type triggers warning
+$container = createContainer($compiler, 'files/compiler.generatedFactory.neon');
 
 
 Assert::type(ILoremFactory::class, $container->getService('lorem'));
@@ -164,11 +155,6 @@ Assert::type(Ipsum::class, $lorem->ipsum);
 Assert::same($container->getService('ipsum'), $lorem->ipsum);
 
 Assert::type(ILoremFactory::class, $container->getByType(ILoremFactory::class));
-
-Assert::type(IFinderFactory::class, $container->getService('finder'));
-$finder = $container->getService('finder')->create();
-Assert::type(Nette\DI\Config\Adapters\NeonAdapter::class, $finder);
-
 
 Assert::type(IArticleFactory::class, $container->getService('article'));
 $article = $container->getService('article')->create('nemam');

@@ -40,6 +40,11 @@ interface Bad5
 	public function get($arg);
 }
 
+interface Bad6
+{
+	public function get();
+}
+
 interface Good1
 {
 	public function get(): stdClass;
@@ -101,9 +106,16 @@ Assert::exception(function () {
 Method Bad5::get() must have no parameters.');
 
 
+Assert::exception(function () {
+	$def = new AccessorDefinition;
+	$def->setImplement(Bad6::class);
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
+Return type of Bad6::get() is not declared.');
+
+
 Assert::noError(function () {
 	$def = new AccessorDefinition;
-	@$def->setImplement(Good1::class); // missing type triggers warning
+	$def->setImplement(Good1::class);
 	Assert::same(Good1::class, $def->getImplement());
 	Assert::same(Good1::class, $def->getType());
 });

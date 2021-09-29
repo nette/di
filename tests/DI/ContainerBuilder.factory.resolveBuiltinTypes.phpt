@@ -11,29 +11,25 @@ namespace A
 
 	class Factory
 	{
-		/** @return array */
-		public function createArray()
+		public function createArray(): array
 		{
 			return [];
 		}
 
 
-		/** @return callable */
-		public function createCallable()
+		public function createCallable(): callable
 		{
 			return function () {};
 		}
 
 
-		/** @return string */
-		public function createString()
+		public function createString(): string
 		{
 			return '';
 		}
 
 
-		/** @return int */
-		public function createInt()
+		public function createInt(): int
 		{
 			return 0;
 		}
@@ -51,15 +47,13 @@ namespace A
 		}
 
 
-		/** @return object */
-		public function createObject()
+		public function createObject(): object
 		{
 			return (object) null;
 		}
 
 
-		/** @return mixed */
-		public function createMixed()
+		public function createMixed(): mixed
 		{
 		}
 	}
@@ -143,7 +137,7 @@ Return type of A\\Factory::createFloat() is not expected to be nullable/union/in
 			->setFactory('@factory::createObject');
 		$container = @createContainer($builder); // annotation @return is deprecated
 	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
-Unknown service type, specify it or declare return type of factory.");
+Return type of A\\Factory::createObject() is not expected to be nullable/union/intersection/built-in, 'object' given.");
 
 	Assert::exception(function () {
 		$builder = new DI\ContainerBuilder;
@@ -153,6 +147,6 @@ Unknown service type, specify it or declare return type of factory.");
 			->setFactory('@factory::createMixed');
 		$container = @createContainer($builder); // annotation @return is deprecated
 	}, Nette\DI\ServiceCreationException::class, "[Service 'f']
-Unknown service type, specify it or declare return type of factory.");
+Return type of A\\Factory::createMixed() is not expected to be nullable/union/intersection/built-in, 'mixed' given.");
 
 }
