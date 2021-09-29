@@ -178,24 +178,31 @@ final class FactoryDefinition extends Definition
 
 	public function resolveType(Nette\DI\Resolver $resolver): void
 	{
+		$interface = $this->getType();
+		if (!$interface) {
+			throw new ServiceCreationException('Type is missing in definition of service.');
+		}
+		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
+		$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
+
 		$resultDef = $this->resultDefinition;
 		try {
 			$resolver->resolveDefinition($resultDef);
-			return;
 		} catch (ServiceCreationException $e) {
-		}
-
-		if (!$resultDef->getType()) {
-			$interface = $this->getType();
-			if (!$interface) {
-				throw new ServiceCreationException('Type is missing in definition of service.');
+			if ($resultDef->getType()) {
+				throw $e;
 			}
-			$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
-			$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
 			$resultDef->setType(Helpers::ensureClassType($type, "return type of $interface::create()"));
+			$resolver->resolveDefinition($resultDef);
 		}
 
-		$resolver->resolveDefinition($resultDef);
+		if ($type && !$type->allows($resultDef->getType())) {
+			throw new ServiceCreationException(sprintf(
+				'Factory for %s cannot create incompatible %s type.',
+				$type,
+				$resultDef->getType()
+			));
+		}
 	}
 
 
