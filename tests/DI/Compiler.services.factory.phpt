@@ -58,7 +58,7 @@ Assert::type(Ipsum::class, $container->getService('two'));
 Assert::same(1, $container->getService('two')->arg);
 
 Assert::type(Lorem::class, $container->getService('three'));
-Assert::same('Factory::createLorem 5 2', $container->getService('three')->arg);
+Assert::same('Factory::createLorem 1 2', $container->getService('three')->arg);
 
 Assert::type(Lorem::class, $container->getService('four'));
 Assert::same('Factory::createLorem 1', $container->getService('four')->arg);
@@ -74,7 +74,7 @@ Assert::type(Lorem::class, $container->getService('seven'));
 Assert::type(Lorem::class, $container->getService('eight'));
 
 Assert::type(Lorem::class, $container->getService('nine'));
-Assert::same('Factory::createLorem 5 2', $container->getService('nine')->arg);
+Assert::same('Factory::createLorem 1 2', $container->getService('nine')->arg);
 Assert::same([], $container->getService('nine')->foo);
 
 Assert::type(Ipsum::class, $container->getService('referencedService'));

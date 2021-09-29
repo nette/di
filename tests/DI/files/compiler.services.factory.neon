@@ -25,7 +25,7 @@ services:
 	three:
 		type: Lorem
 		factory: Factory::createLorem
-		arguments: [arg: 5, 1, 2]
+		arguments: [1, 2]
 
 	four:
 		factory: Factory::createLorem(1)

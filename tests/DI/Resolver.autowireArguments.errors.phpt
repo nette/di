@@ -31,3 +31,13 @@ Assert::exception(function () {
 Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionFunction(function (int $x) {}), [], function () {});
 }, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');
+
+
+Assert::exception(function () {
+	Resolver::autowireArguments(new ReflectionFunction(function (int $x) {}), [10, 'x' => 10], function () {});
+}, Nette\DI\ServiceCreationException::class, 'Named parameter $x used at the same time as a positional in {closure}%a?%.');
+
+
+Assert::exception(function () {
+	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), ['args' => []], function () {});
+}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');

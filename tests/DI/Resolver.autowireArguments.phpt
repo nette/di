@@ -38,3 +38,15 @@ Assert::equal(
 		return $type === Test::class ? new Test : null;
 	})
 );
+
+
+// variadics
+Assert::equal(
+	[],
+	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), [], function () {})
+);
+
+Assert::equal(
+	[1, 2, 3],
+	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), [1, 2, 3], function () {})
+);
