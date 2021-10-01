@@ -283,7 +283,7 @@ final class FactoryDefinition extends Definition
 	public function convertArguments(array &$args): void
 	{
 		foreach ($args as &$v) {
-			if (is_string($v) && $v[0] === '$') {
+			if (is_string($v) && $v && $v[0] === '$') {
 				$v = new Php\Literal($v);
 			}
 		}
