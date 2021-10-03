@@ -519,15 +519,8 @@ class Resolver
 		foreach ($method->getParameters() as $num => $param) {
 			$paramName = $param->name;
 			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
-				if (array_key_exists($num, $arguments)) {
-					throw new ServiceCreationException(sprintf(
-						'Named parameter $%s used at the same time as a positional in %s.',
-						$paramName,
-						Reflection::toString($method)
-					));
-				}
 				$res[$num] = $arguments[$paramName];
-				unset($arguments[$paramName]);
+				unset($arguments[$paramName], $arguments[$num]);
 
 			} elseif (array_key_exists($num, $arguments)) {
 				$res[$num] = $arguments[$num];
