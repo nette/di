@@ -113,24 +113,19 @@ final class InjectExtension extends DI\CompilerExtension
 		$res = [];
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
 			$name = $rp->getName();
-			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
-			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
+			if (
+				$rp->getAttributes(DI\Attributes\Inject::class)
+				|| DI\Helpers::parseAnnotation($rp, 'inject') !== null
+			) {
 				if (!$rp->isPublic() || $rp->isStatic()) {
 					trigger_error(sprintf('Property %s for injection must be public and non-static.', Reflection::toString($rp)), E_USER_WARNING);
-					continue;
-				}
 
-				if (PHP_VERSION_ID >= 80100 && $rp->isReadOnly()) {
+				} elseif (PHP_VERSION_ID >= 80100 && $rp->isReadOnly()) {
 					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be readonly.', Reflection::toString($rp)));
-				}
 
-				$type = Nette\Utils\Type::fromReflection($rp);
-				if (!$type && !$hasAttr && ($annotation = DI\Helpers::parseAnnotation($rp, 'var'))) {
-					$annotation = Reflection::expandClassName($annotation, Reflection::getPropertyDeclaringClass($rp));
-					$type = Nette\Utils\Type::fromString($annotation);
+				} else {
+					$res[$name] = DI\Helpers::ensureClassType(Nette\Utils\Type::fromReflection($rp), 'type of property ' . Reflection::toString($rp));
 				}
-
-				$res[$rp->getName()] = DI\Helpers::ensureClassType($type, 'type of property ' . Reflection::toString($rp));
 			}
 		}
 
