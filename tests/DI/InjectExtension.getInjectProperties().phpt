@@ -21,9 +21,6 @@ namespace A
 
 		/** @var AInjected */
 		public $varD;
-
-		/** @var AInjected @inject */
-		protected $varE;
 	}
 
 	class AInjected

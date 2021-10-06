@@ -35,11 +35,23 @@ class ServiceC
 }
 
 
-$compiler = new DI\Compiler;
-$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
+class ServiceD
+{
+	/** @inject */
+	protected $a;
+}
 
 
-Assert::exception(function () use ($compiler) {
+class ServiceE
+{
+	/** @inject */
+	public static $a;
+}
+
+
+Assert::exception(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
 	createContainer($compiler, '
 services:
 	service:
@@ -49,7 +61,9 @@ services:
 }, InvalidStateException::class, "Service 'service' (type of ServiceA): Service of type DateTimeImmutable not found. Did you add it to configuration file?");
 
 
-Assert::exception(function () use ($compiler) {
+Assert::exception(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
 	createContainer($compiler, '
 services:
 	service:
@@ -60,7 +74,9 @@ services:
 Check the type of property ServiceB::\$a.");
 
 
-Assert::exception(function () use ($compiler) {
+Assert::exception(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
 	createContainer($compiler, '
 services:
 	service:
@@ -68,3 +84,27 @@ services:
 		inject: yes
 ');
 }, InvalidStateException::class, 'Type of property ServiceC::$a is not declared.');
+
+
+Assert::error(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
+	createContainer($compiler, '
+services:
+	service:
+		factory: ServiceD
+		inject: yes
+');
+}, E_USER_WARNING, 'Property ServiceD::$a for injection must be public and non-static.');
+
+
+Assert::error(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
+	createContainer($compiler, '
+services:
+	service:
+		factory: ServiceE
+		inject: yes
+');
+}, E_USER_WARNING, 'Property ServiceE::$a for injection must be public and non-static.');

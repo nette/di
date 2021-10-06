@@ -34,9 +34,6 @@ class ParentClass
 	/** @var stdClass @inject */
 	public $a;
 
-	/** @var stdClass @inject */
-	protected $b;
-
 
 	public function injectA()
 	{
@@ -55,9 +52,6 @@ class Service extends ParentClass
 
 	/** @var AbstractDependency @inject */
 	public $e;
-
-	/** @var stdClass @inject */
-	protected $d;
 
 
 	public function injectC()

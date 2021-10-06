@@ -18,9 +18,6 @@ namespace A
 		public AInjected $varC;
 
 		public AInjected $varD;
-
-		/** @inject */
-		protected AInjected $varE;
 	}
 
 	class AInjected
