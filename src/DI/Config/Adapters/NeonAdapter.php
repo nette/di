@@ -31,7 +31,11 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	 */
 	public function load(string $file): array
 	{
-		return $this->process((array) Neon\Neon::decode(Nette\Utils\FileSystem::read($file)));
+		$decoder = new Neon\Decoder;
+		$node = $decoder->parseToNode(Nette\Utils\FileSystem::read($file));
+		$traverser = new Neon\Traverser;
+		$node = $traverser->traverse($node, [$this, 'removeUnderscoreVisitor']);
+		return $this->process((array) $node->toValue());
 	}
 
 
@@ -127,5 +131,23 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			}
 		}
 		return new Neon\Entity($entity, $val->arguments);
+	}
+
+
+	public function removeUnderscoreVisitor(Neon\Node $node)
+	{
+		if (!$node instanceof Neon\Node\EntityNode) {
+			return;
+		}
+		$index = false;
+		foreach ($node->attributes as $i => $attr) {
+			if ($index) {
+				$attr->key = $attr->key ?? new Neon\Node\LiteralNode((string) $i);
+			}
+			if ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '_') {
+				unset($node->attributes[$i]);
+				$index = true;
+			}
+		}
 	}
 }

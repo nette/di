@@ -128,12 +128,12 @@ final class Helpers
 
 
 	/**
-	 * Removes ... / _ and process constants recursively.
+	 * Removes ... and process constants recursively.
 	 */
 	public static function filterArguments(array $args): array
 	{
 		foreach ($args as $k => $v) {
-			if ($v === '...' || $v === '_') {
+			if ($v === '...') {
 				unset($args[$k]);
 			} elseif (
 				PHP_VERSION_ID >= 80100
