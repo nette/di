@@ -44,7 +44,7 @@ final class FactoryDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nInterface '%s' not found.",
 				$this->getDescriptor(),
-				$interface
+				$interface,
 			));
 		}
 		$rc = new \ReflectionClass($interface);
@@ -53,7 +53,7 @@ final class FactoryDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nInterface %s must have just one non-static method create().",
 				$this->getDescriptor(),
-				$interface
+				$interface,
 			));
 		}
 		try {
@@ -106,7 +106,7 @@ final class FactoryDefinition extends Definition
 				"[%s]\nOption 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
 				$this->getDescriptor(),
 				implode(', ', $old),
-				implode(', ', $new)
+				implode(', ', $new),
 			), E_USER_DEPRECATED);
 		}
 		$this->parameters = $params;
@@ -146,7 +146,7 @@ final class FactoryDefinition extends Definition
 				"[%s]\nFactory for %s cannot create incompatible %s type.",
 				$this->getDescriptor(),
 				$type,
-				$resultDef->getType()
+				$resultDef->getType(),
 			));
 		}
 	}
@@ -202,7 +202,7 @@ final class FactoryDefinition extends Definition
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
 						$param->name,
 						$interface,
-						$class
+						$class,
 					));
 				}
 				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
@@ -212,7 +212,7 @@ final class FactoryDefinition extends Definition
 				throw new ServiceCreationException(sprintf(
 					'Unused parameter $%s when implementing method %s::create()',
 					$param->name,
-					$interface
+					$interface,
 				) . ($hint ? ", did you mean \${$hint}?" : '.'));
 			}
 

@@ -32,7 +32,7 @@ final class AccessorDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nInterface '%s' not found.",
 				$this->getDescriptor(),
-				$interface
+				$interface,
 			));
 		}
 		$rc = new \ReflectionClass($interface);
@@ -47,13 +47,13 @@ final class AccessorDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nInterface %s must have just one non-static method get().",
 				$this->getDescriptor(),
-				$interface
+				$interface,
 			));
 		} elseif ($method->getNumberOfParameters()) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"[%s]\nMethod %s::get() must have no parameters.",
 				$this->getDescriptor(),
-				$interface
+				$interface,
 			));
 		}
 		try {

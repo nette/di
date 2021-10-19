@@ -44,7 +44,7 @@ final class LocatorDefinition extends Definition
 					"[%s]\nMethod %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
 					$this->getDescriptor(),
 					$interface,
-					$method->name
+					$method->name,
 				));
 			}
 			if ($method->getNumberOfParameters() === 0) {
@@ -114,7 +114,7 @@ final class LocatorDefinition extends Definition
 						"[%s]\nDuplicated tag '%s' with value '%s'.",
 						$this->getDescriptor(),
 						$this->tagged,
-						$tag
+						$tag,
 					), E_USER_NOTICE);
 				}
 				$this->references[$tag] = new Reference($name);
@@ -149,7 +149,7 @@ final class LocatorDefinition extends Definition
 				->setReturnType((string) Nette\Utils\Type::fromReflection($rm));
 
 			if (!$name) {
-				$class->addProperty('mapping', array_map(function ($item) { return $item->getValue(); }, $this->references))
+				$class->addProperty('mapping', array_map(fn($item) => $item->getValue(), $this->references))
 					->setPrivate();
 
 				$methodInner->setBody('if (!isset($this->mapping[$name])) {
