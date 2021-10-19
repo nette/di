@@ -18,7 +18,7 @@ Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
 	['a', 'b', 3 => ['c'], [1 => 'd']],
-	Helpers::filterArguments(['a', 'b', '...', ['c', '...'], ['...', 'd']])
+	@Helpers::filterArguments(['a', 'b', '...', ['c', '...'], ['...', 'd']]) // ... is deprecated
 );
 
 Assert::same(
@@ -33,5 +33,5 @@ Assert::equal(
 
 Assert::equal(
 	[new Statement('class', ['a', 2 => Nette\DI\ContainerBuilder::THIS_CONTAINER])],
-	Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])])
+	@Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])]) // ... is deprecated
 );
