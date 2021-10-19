@@ -41,7 +41,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = array_key_exists($key, $params)
-				? new DynamicParameter($generator->formatPhp('($this->parameters[?] \?\? ?)', $resolver->completeArguments(Nette\DI\Helpers::filterArguments([$key, $params[$key]], 'parameters'))))
+				? new DynamicParameter($generator->formatPhp('($this->parameters[?] \?\? ?)', $resolver->completeArguments(Nette\DI\Helpers::filterArguments([$key, $params[$key]]))))
 				: new DynamicParameter((new Nette\PhpGenerator\Dumper)->format('$this->parameters[?]', $key));
 		}
 

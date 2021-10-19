@@ -85,9 +85,8 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	 */
 	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, \stdClass $config): void
 	{
-		$desc = $definition->getDescriptor();
 		if ($config->create) {
-			$definition->setFactory(Helpers::filterArguments([$config->create], $desc)[0]);
+			$definition->setFactory(Helpers::filterArguments([$config->create])[0]);
 			$definition->setType(null);
 		}
 
@@ -96,7 +95,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($config->arguments) {
-			$arguments = Helpers::filterArguments($config->arguments, $desc);
+			$arguments = Helpers::filterArguments($config->arguments);
 			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $definition->getFactory()->arguments;
 			}
@@ -107,7 +106,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			if (!empty($config->reset['setup'])) {
 				$definition->setSetup([]);
 			}
-			foreach (Helpers::filterArguments($config->setup, $desc) as $id => $setup) {
+			foreach (Helpers::filterArguments($config->setup) as $id => $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
@@ -136,7 +135,6 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	private function updateFactoryDefinition(Definitions\FactoryDefinition $definition, \stdClass $config): void
 	{
 		$resultDef = $definition->getResultDefinition();
-		$desc = $definition->getDescriptor();
 
 		if (isset($config->implement)) {
 			$definition->setImplement($config->implement);
@@ -144,7 +142,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($config->create) {
-			$resultDef->setFactory(Helpers::filterArguments([$config->create], $desc)[0]);
+			$resultDef->setFactory(Helpers::filterArguments([$config->create])[0]);
 		}
 
 		if ($config->type) {
@@ -152,7 +150,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($config->arguments) {
-			$arguments = Helpers::filterArguments($config->arguments, $desc);
+			$arguments = Helpers::filterArguments($config->arguments);
 			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
 				$arguments += $resultDef->getFactory()->arguments;
 			}
@@ -163,7 +161,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			if (!empty($config->reset['setup'])) {
 				$resultDef->setSetup([]);
 			}
-			foreach (Helpers::filterArguments($config->setup, $desc) as $id => $setup) {
+			foreach (Helpers::filterArguments($config->setup) as $id => $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
