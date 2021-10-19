@@ -130,10 +130,11 @@ final class Helpers
 	/**
 	 * Removes ... and process constants recursively.
 	 */
-	public static function filterArguments(array $args): array
+	public static function filterArguments(array $args, string $hint = ''): array
 	{
 		foreach ($args as $k => $v) {
 			if ($v === '...') {
+				trigger_error("[$hint] Replace ... with _ in configuration file.", E_USER_DEPRECATED);
 				unset($args[$k]);
 			} elseif (
 				PHP_VERSION_ID >= 80100
@@ -147,10 +148,10 @@ final class Helpers
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
 			} elseif (is_array($v)) {
-				$args[$k] = self::filterArguments($v);
+				$args[$k] = self::filterArguments($v, $hint);
 			} elseif ($v instanceof Statement) {
-				[$tmp] = self::filterArguments([$v->getEntity()]);
-				$args[$k] = new Statement($tmp, self::filterArguments($v->arguments));
+				[$tmp] = self::filterArguments([$v->getEntity()], $hint);
+				$args[$k] = new Statement($tmp, self::filterArguments($v->arguments, $hint));
 			}
 		}
 		return $args;
