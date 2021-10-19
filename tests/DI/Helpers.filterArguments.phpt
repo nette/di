@@ -17,11 +17,6 @@ require __DIR__ . '/../bootstrap.php';
 Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
-	['a', 'b', 3 => ['c'], [1 => 'd']],
-	Helpers::filterArguments(['a', 'b', '...', ['c', '...'], ['...', 'd']])
-);
-
-Assert::same(
 	['a', 'b', Nette\DI\ContainerBuilder::THIS_CONTAINER],
 	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])
 );
@@ -32,6 +27,6 @@ Assert::equal(
 );
 
 Assert::equal(
-	[new Statement('class', ['a', 2 => Nette\DI\ContainerBuilder::THIS_CONTAINER])],
-	Helpers::filterArguments([new Statement('class', ['a', '...', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])])
+	[new Statement('class', ['a', Nette\DI\ContainerBuilder::THIS_CONTAINER])],
+	Helpers::filterArguments([new Statement('class', ['a', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])])
 );

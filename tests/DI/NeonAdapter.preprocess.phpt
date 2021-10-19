@@ -70,3 +70,14 @@ Assert::equal(
 	[new Statement('Class', ['arg1', 2 => ['_']])],
 	$data
 );
+
+
+// ... deprecated
+$data = @$adapter->load(Tester\FileMock::create('
+- Class(arg1, ..., [...])
+', 'neon'));
+
+Assert::equal(
+	[new Statement('Class', ['arg1', 2 => ['...']])],
+	$data
+);
