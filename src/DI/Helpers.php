@@ -137,14 +137,12 @@ final class Helpers
 
 
 	/**
-	 * Removes ... and process constants recursively.
+	 * Process constants recursively.
 	 */
 	public static function filterArguments(array $args): array
 	{
 		foreach ($args as $k => $v) {
-			if ($v === '...') {
-				unset($args[$k]);
-			} elseif (
+			if (
 				PHP_VERSION_ID >= 80100
 				&& is_string($v)
 				&& preg_match('#^([\w\\\\]+)::\w+$#D', $v, $m)

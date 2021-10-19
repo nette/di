@@ -150,6 +150,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
+	/** @internal */
 	public function removeUnderscoreVisitor(Neon\Node $node)
 	{
 		if (!$node instanceof Neon\Node\EntityNode) {
@@ -163,6 +164,11 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			}
 
 			if ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '_') {
+				unset($node->attributes[$i]);
+				$index = true;
+
+			} elseif ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '...') {
+				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
 				unset($node->attributes[$i]);
 				$index = true;
 			}
