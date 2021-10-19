@@ -169,7 +169,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$index = true;
 
 			} elseif ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '...') {
-				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
+				throw new Nette\DI\InvalidConfigurationException("Replace ... with _ in configuration file '$this->file'.");
 				unset($node->attributes[$i]);
 				$index = true;
 			}
