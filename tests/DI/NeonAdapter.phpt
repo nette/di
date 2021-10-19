@@ -164,7 +164,7 @@ services:
 
 	rich3: Factory::createLorem(1)::foo()
 	rich4: Factory()::createLorem(1)::foo()
-	0: Lorem(1)::foo()
+	- Lorem(1)::foo()
 
 EOD
 , file_get_contents(TEMP_FILE));
