@@ -64,31 +64,28 @@ class ContainerLoader
 		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
 			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		}
-		
-		try {
-			if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
-				if (isset($updatedMeta)) {
-					$toWrite["$file.meta"] = $updatedMeta;
-				} else {
-					[$toWrite[$file], $toWrite["$file.meta"]] = $this->generate($class, $generator);
-				}
 
-				foreach ($toWrite as $name => $content) {
-					if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
-						@unlink("$name.tmp"); // @ - file may not exist
-						throw new Nette\IOException(sprintf("Unable to create file '%s'.", $name));
-					} elseif (function_exists('opcache_invalidate')) {
-						@opcache_invalidate($name, true); // @ can be restricted
-					}
-				}
+		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
+			if (isset($updatedMeta)) {
+				$toWrite["$file.meta"] = $updatedMeta;
+			} else {
+				[$toWrite[$file], $toWrite["$file.meta"]] = $this->generate($class, $generator);
 			}
 
-			if ((@include $file) === false) { // @ - error escalated to exception
-				throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+			foreach ($toWrite as $name => $content) {
+				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
+					@unlink("$name.tmp"); // @ - file may not exist
+					throw new Nette\IOException(sprintf("Unable to create file '%s'.", $name));
+				} elseif (function_exists('opcache_invalidate')) {
+					@opcache_invalidate($name, true); // @ can be restricted
+				}
 			}
-		} finally {
-			flock($handle, LOCK_UN);
 		}
+
+		if ((@include $file) === false) { // @ - error escalated to exception
+			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+		}
+		flock($handle, LOCK_UN);
 	}
 
 
