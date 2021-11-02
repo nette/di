@@ -517,8 +517,13 @@ class Resolver
 		$res = [];
 
 		foreach ($method->getParameters() as $num => $param) {
+			if ($param->isVariadic()) {
+				$num--;
+				break;
+			}
+
 			$paramName = $param->name;
-			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
+			if (array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
 
@@ -530,8 +535,8 @@ class Resolver
 				$res[$num] = self::autowireArgument($param, $getter);
 			}
 
-			$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
-				? $optCount + 1
+			$optCount += $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
+				? 1
 				: 0;
 		}
 
@@ -611,8 +616,10 @@ class Resolver
 			|| $parameter->isOptional()
 			|| $parameter->isDefaultValueAvailable()
 		) {
-			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
-			// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
+			// !optional + defaultAvailable, !optional + !defaultAvailable since 8.1.0 = func($a = null, $b)
+			// optional + !defaultAvailable, optional + defaultAvailable since 8.0.0 = i.e. Exception::__construct, mysqli::mysqli, ...
+			// optional + !defaultAvailable = variadics
+			// in other cases the optional and defaultAvailable are identical
 			return $parameter->isDefaultValueAvailable()
 				? Reflection::getParameterDefaultValue($parameter)
 				: null;
