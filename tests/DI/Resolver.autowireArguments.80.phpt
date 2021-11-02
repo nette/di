@@ -36,10 +36,9 @@ Assert::exception(function () {
 	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnion'), [], function () {});
 }, Nette\InvalidStateException::class, 'Parameter $self in Test::methodUnion() has union type and no default value, so its value must be specified.');
 
-Assert::same(
-	[null],
-	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnionNullable'), [], function () {}),
-);
+Assert::error(function () {
+	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodUnionNullable'), [], function () {});
+}, E_USER_DEPRECATED, 'The parameter $nullable in Test::methodUnionNullable() should have a declared value in the configuration. Value NULL is currently used.');
 
 Assert::same(
 	[],

@@ -623,9 +623,18 @@ class Resolver
 			// optional + !defaultAvailable, optional + defaultAvailable since 8.0.0 = i.e. Exception::__construct, mysqli::mysqli, ...
 			// optional + !defaultAvailable = variadics
 			// in other cases the optional and defaultAvailable are identical
-			return $parameter->isDefaultValueAvailable()
+			$default = $parameter->isDefaultValueAvailable()
 				? Reflection::getParameterDefaultValue($parameter)
 				: null;
+
+			if (!$parameter->isOptional()) {
+				trigger_error(sprintf(
+					'The parameter %s should have a declared value in the configuration. Value %s is currently used.',
+					$desc,
+					var_export($default, true)
+				), E_USER_DEPRECATED);
+			}
+			return $default;
 
 		} else {
 			throw new ServiceCreationException(sprintf(
