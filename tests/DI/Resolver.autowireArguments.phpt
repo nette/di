@@ -32,12 +32,11 @@ Assert::equal(
 	})
 );
 
-Assert::equal(
-	[new Test, new Test, null, null],
+Assert::error(function () {
 	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodNullable'), [], function ($type) {
 		return $type === Test::class ? new Test : null;
-	})
-);
+	});
+}, E_USER_DEPRECATED, 'The parameter $nullable2 in Test::methodNullable() should have a declared value in the configuration. Value NULL is currently used.');
 
 
 // variadics
