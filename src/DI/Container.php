@@ -19,7 +19,7 @@ class Container
 {
 	use Nette\SmartObject;
 
-	/** @var array  user parameters */
+	/** @var array<mixed>  user parameters */
 	public $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
@@ -28,10 +28,10 @@ class Container
 	/** @var string[]  alias => service name */
 	protected $aliases = [];
 
-	/** @var array[]  tag name => service name => tag value */
+	/** @var array<array<mixed>>  tag name => service name => tag value */
 	protected $tags = [];
 
-	/** @var array[]  type => level => services */
+	/** @var array<class-string, array<int, array<int, string>>>  type => level => services */
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
