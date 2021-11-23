@@ -122,7 +122,9 @@ declare(strict_types=1);
 				return $this->formatPhp($entity, $arguments);
 
 			case is_string($entity): // create class
-				return $this->formatPhp("new $entity" . ($arguments ? '(...?)' : ''), $arguments ? [$arguments] : []);
+				return $arguments
+					? $this->formatPhp("new $entity(...?)", [$arguments])
+					: $this->formatPhp("new $entity", []);
 
 			case is_array($entity):
 				switch (true) {
@@ -134,9 +136,9 @@ declare(strict_types=1);
 
 						$prop = $entity[0] instanceof Reference
 							? $this->formatPhp('?->?', [$entity[0], $name])
-							: $this->formatPhp($entity[0] . '::$?', [$name]);
+							: $this->formatPhp('?::$?', [$entity[0], $name]);
 						return $arguments
-							? $this->formatPhp($prop . ($append ? '[]' : '') . ' = ?', [$arguments[0]])
+							? $this->formatPhp(($append ? '?[]' : '?') . ' = ?', [new Php\Literal($prop), $arguments[0]])
 							: $prop;
 
 					case $entity[0] instanceof Statement:
@@ -145,16 +147,16 @@ declare(strict_types=1);
 							$inner = "($inner)";
 						}
 
-						return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);
+						return $this->formatPhp('?->?(...?)', [new Php\Literal($inner), $entity[1], $arguments]);
 
 					case $entity[0] instanceof Reference:
 						return $this->formatPhp('?->?(...?)', [$entity[0], $entity[1], $arguments]);
 
 					case $entity[0] === '': // function call
-						return $this->formatPhp("$entity[1](...?)", [$arguments]);
+						return $this->formatPhp('?(...?)', [new Php\Literal($entity[1]), $arguments]);
 
 					case is_string($entity[0]): // static method call
-						return $this->formatPhp("$entity[0]::$entity[1](...?)", [$arguments]);
+						return $this->formatPhp('?::?(...?)', [new Php\Literal($entity[0]), $entity[1], $arguments]);
 				}
 		}
 
