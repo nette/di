@@ -16,7 +16,7 @@ require __DIR__ . '/../bootstrap.php';
 class AClass
 {
 	/** @inject */
-	public AClass|\stdClass $var;
+	public AClass|stdClass $var;
 }
 
 class EClass

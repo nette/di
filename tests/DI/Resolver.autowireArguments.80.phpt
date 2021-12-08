@@ -16,17 +16,17 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public function methodUnion(\stdClass|self $self)
+	public function methodUnion(stdClass|self $self)
 	{
 	}
 
 
-	public function methodUnionNullable(\stdClass|self|null $nullable)
+	public function methodUnionNullable(stdClass|self|null $nullable)
 	{
 	}
 
 
-	public function methodUnionDefault(\stdClass|int $default = 1)
+	public function methodUnionDefault(stdClass|int $default = 1)
 	{
 	}
 }
