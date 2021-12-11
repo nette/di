@@ -177,7 +177,7 @@ class DependencyChecker
 				(string) Type::fromReflection($param),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
-					? [Reflection::getParameterDefaultValue($param)]
+					? is_object($tmp = Reflection::getParameterDefaultValue($param)) ? ['object' => get_class($tmp)] : ['value' => $tmp]
 					: null,
 			];
 		}

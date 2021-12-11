@@ -60,3 +60,25 @@ Assert::same(
 $res = $compiler->exportDependencies();
 $res[1]['file4'] = 123;
 Assert::true(DependencyChecker::isExpired(...$res));
+
+
+if (PHP_VERSION_ID >= 80100) {
+	// test serialization of parameters
+
+	require $file = realpath(__DIR__ . '/fixtures/dependency.php81.php');
+
+	$compiler->addDependencies([new ReflectionClass(Dep1::class)]);
+	Assert::same(
+		[
+			DependencyChecker::VERSION,
+			['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
+			[$file => filemtime($file)],
+			['Dep1'],
+			[],
+			'ff31f9bba26681aa5b228503003778cc',
+		],
+		$compiler->exportDependencies()
+	);
+
+	Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
+}
