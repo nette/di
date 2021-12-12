@@ -546,8 +546,13 @@ class Resolver
 				$res[$num] = $arguments[$num];
 				unset($arguments[$num]);
 
+			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
+				$res[$num] = $aw;
+
 			} else {
-				$res[$num] = self::autowireArgument($param, $getter);
+				$res[$num] = $param->isDefaultValueAvailable()
+					? Reflection::getParameterDefaultValue($param)
+					: null;
 			}
 
 			$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
@@ -634,9 +639,7 @@ class Resolver
 		) {
 			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
 			// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
-			return $parameter->isDefaultValueAvailable()
-				? Reflection::getParameterDefaultValue($parameter)
-				: null;
+			return null;
 
 		} else {
 			throw new ServiceCreationException(sprintf(
