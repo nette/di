@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Nette\DI\Attributes\Inject;
 use Nette\DI\Extensions\InjectExtension;
 use Tester\Assert;
 
@@ -16,12 +17,12 @@ require __DIR__ . '/../bootstrap.php';
 class AClass
 {
 	/** @inject */
-	public AClass|\stdClass $var;
+	public AClass|stdClass $var;
 }
 
 class EClass
 {
-	#[\Nette\DI\Attributes\Inject]
+	#[Inject]
 	public stdClass $varA;
 }
 

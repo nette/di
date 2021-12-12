@@ -40,4 +40,4 @@ Assert::error(function () {
 	foo:
 		key: hello
 	');
-}, E_USER_DEPRECATED, "The item 'foo › key' is deprecated.");
+}, E_USER_DEPRECATED, "The item 'foo\u{a0}›\u{a0}key' is deprecated.");

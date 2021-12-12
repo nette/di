@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 /**
  * @inject @var  type
- *@return bool|int */
+ * @return bool|int */
 class TestClass
 {
 }

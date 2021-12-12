@@ -62,7 +62,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		foreach (array_filter($this->config) as $name => $batch) {
 			if (!is_dir($batch->in)) {
 				throw new Nette\DI\InvalidConfigurationException(sprintf(
-					"Option '%s › %s › in' must be valid directory name, '%s' given.",
+					"Option '%s\u{a0}›\u{a0}%s\u{a0}›\u{a0}in' must be valid directory name, '%s' given.",
 					$this->name,
 					$name,
 					$batch->in

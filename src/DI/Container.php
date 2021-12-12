@@ -252,7 +252,7 @@ class Container
 				$methodType = (new \ReflectionMethod(static::class, $method))->getReturnType()->getName();
 				if (is_a($methodType, $type, true)) {
 					throw new MissingServiceException(sprintf(
-						'Service of type %s is not autowired or is missing in di › export › types.',
+						"Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.",
 						$type
 					));
 				}

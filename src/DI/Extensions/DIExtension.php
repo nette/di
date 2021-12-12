@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Tracy;
 
 
 /**
@@ -87,7 +88,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 
 		if (
 			$this->debugMode &&
-			($this->config->debugger ?? $this->getContainerBuilder()->getByType(\Tracy\Bar::class))
+			($this->config->debugger ?? $this->getContainerBuilder()->getByType(Tracy\Bar::class))
 		) {
 			$this->enableTracyIntegration();
 		}

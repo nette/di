@@ -16,4 +16,4 @@ $compiler = new DI\Config\Loader;
 
 Assert::exception(function () use ($compiler) {
 	$compiler->load('files/loader.recursiveInclude.neon');
-}, \Nette\InvalidStateException::class, "Recursive included file 'files/loader.recursiveInclude.neon'");
+}, Nette\InvalidStateException::class, "Recursive included file 'files/loader.recursiveInclude.neon'");

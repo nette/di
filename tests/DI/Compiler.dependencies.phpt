@@ -16,7 +16,14 @@ require __DIR__ . '/../bootstrap.php';
 $compiler = new DI\Compiler;
 
 Assert::same(
-	[DependencyChecker::VERSION, [], [], [], [], '40cd750bba9870f18aada2478b24840a'],
+	[
+		DependencyChecker::VERSION,
+		[],
+		[],
+		[],
+		[],
+		'40cd750bba9870f18aada2478b24840a',
+	],
 	$compiler->exportDependencies()
 );
 Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
@@ -24,7 +31,14 @@ Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 
 $compiler->addDependencies(['file1', __FILE__]);
 Assert::same(
-	[DependencyChecker::VERSION, ['file1' => false, __FILE__ => filemtime(__FILE__)], [], [], [], '40cd750bba9870f18aada2478b24840a'],
+	[
+		DependencyChecker::VERSION,
+		['file1' => false, __FILE__ => filemtime(__FILE__)],
+		[],
+		[],
+		[],
+		'40cd750bba9870f18aada2478b24840a',
+	],
 	$compiler->exportDependencies()
 );
 Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
@@ -32,7 +46,14 @@ Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 
 $compiler->addDependencies(['file1', null, 'file3']);
 Assert::same(
-	[DependencyChecker::VERSION, ['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false], [], [], [], '40cd750bba9870f18aada2478b24840a'],
+	[
+		DependencyChecker::VERSION,
+		['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
+		[],
+		[],
+		[],
+		'40cd750bba9870f18aada2478b24840a',
+	],
 	$compiler->exportDependencies()
 );
 

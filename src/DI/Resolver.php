@@ -73,7 +73,7 @@ class Resolver
 			if (!$def->getType()) {
 				throw new ServiceCreationException('Type of service is unknown.');
 			}
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			throw $this->completeException($e, $def);
 
 		} finally {
@@ -163,7 +163,7 @@ class Resolver
 
 			$this->addDependency(new \ReflectionClass($def->getType()));
 
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			throw $this->completeException($e, $def);
 
 		} finally {
@@ -428,7 +428,7 @@ class Resolver
 	}
 
 
-	private function completeException(\Exception $e, Definition $def): ServiceCreationException
+	private function completeException(\Throwable $e, Definition $def): ServiceCreationException
 	{
 		if ($e instanceof ServiceCreationException && Strings::startsWith($e->getMessage(), "Service '")) {
 			return $e;

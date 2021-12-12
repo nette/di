@@ -112,7 +112,7 @@ class Dolor
 	public $foo;
 
 
-	public function __construct(Bar $bar = null, $foo)
+	public function __construct(?Bar $bar, $foo)
 	{
 		$this->bar = $bar;
 		$this->foo = $foo;
@@ -122,7 +122,7 @@ class Dolor
 interface DolorFactory
 {
 	/** @return Dolor */
-	public function create(Bar $bar = null, $foo);
+	public function create(?Bar $bar, $foo);
 }
 
 

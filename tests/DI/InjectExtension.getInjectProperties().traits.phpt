@@ -26,9 +26,11 @@ namespace B
 
 namespace C
 {
+	use B;
+
 	class CClass
 	{
-		use \B\BTrait;
+		use B\BTrait;
 	}
 }
 

@@ -22,4 +22,4 @@ Assert::throws(function () {
 			setups: []
 			foo: bar
 	');
-}, Nette\DI\InvalidConfigurationException::class, "Unexpected item 'services › 0 › autowire', did you mean 'autowired'?");
+}, Nette\DI\InvalidConfigurationException::class, "Unexpected item 'services\u{a0}›\u{a0}0\u{a0}›\u{a0}autowire', did you mean 'autowired'?");

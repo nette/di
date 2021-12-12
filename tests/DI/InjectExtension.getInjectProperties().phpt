@@ -16,7 +16,7 @@ namespace A
 		/** @var B\BInjected @inject */
 		public $varB;
 
-		/** @var \A\AInjected @inject */
+		/** @var AInjected @inject */
 		public $varC;
 
 		/** @var AInjected */
@@ -30,7 +30,9 @@ namespace A
 
 namespace A\B
 {
-	class BClass extends \A\AClass
+	use A;
+
+	class BClass extends A\AClass
 	{
 		/** @var BInjected @inject */
 		public $varF;

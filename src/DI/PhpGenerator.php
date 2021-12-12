@@ -103,7 +103,7 @@ declare(strict_types=1);
 			$def->generateMethod($method, $this);
 			return $method;
 
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
 		}
 	}

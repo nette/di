@@ -69,7 +69,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			];
 			$this->{$methods[$config->defType]}($def, $config);
 			$this->updateDefinition($def, $config);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			throw new Nette\DI\InvalidConfigurationException(($name ? "Service '$name': " : '') . $e->getMessage(), 0, $e);
 		}
 	}
