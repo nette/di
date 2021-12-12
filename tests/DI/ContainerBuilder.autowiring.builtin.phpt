@@ -22,7 +22,7 @@ class Foo
 
 class Bar
 {
-	public function __construct(array $arr = null)
+	public function __construct(?array $arr = null)
 	{
 	}
 }

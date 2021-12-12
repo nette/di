@@ -83,7 +83,7 @@ abstract class CompilerExtension
 	 * @throws Nette\InvalidStateException
 	 * @deprecated  use getConfigSchema()
 	 */
-	public function validateConfig(array $expected, array $config = null, string $name = null): array
+	public function validateConfig(array $expected, ?array $config = null, ?string $name = null): array
 	{
 		if (func_num_args() === 1) {
 			return $this->config = $this->validateConfig($expected, $this->config);

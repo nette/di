@@ -47,7 +47,7 @@ class Compiler
 	private $className = 'Container';
 
 
-	public function __construct(ContainerBuilder $builder = null)
+	public function __construct(?ContainerBuilder $builder = null)
 	{
 		$this->builder = $builder ?: new ContainerBuilder;
 		$this->dependencies = new DependencyChecker;
@@ -84,7 +84,7 @@ class Compiler
 	}
 
 
-	public function getExtensions(string $type = null): array
+	public function getExtensions(?string $type = null): array
 	{
 		return $type
 			? array_filter($this->extensions, function ($item) use ($type): bool { return $item instanceof $type; })
@@ -125,7 +125,7 @@ class Compiler
 	 * Adds new configuration from file.
 	 * @return static
 	 */
-	public function loadConfig(string $file, Config\Loader $loader = null)
+	public function loadConfig(string $file, ?Config\Loader $loader = null)
 	{
 		$sources = $this->sources . "// source: $file\n";
 		$loader = $loader ?: new Config\Loader;

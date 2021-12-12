@@ -81,7 +81,7 @@ class Foo
 	public $baz;
 
 
-	public function __construct(Bar $bar, Baz $baz = null)
+	public function __construct(Bar $bar, ?Baz $baz = null)
 	{
 		$this->bar = $bar;
 		$this->baz = $baz;
@@ -102,7 +102,7 @@ interface IFooFactory
 	 * @param Baz
 	 * @return Foo
 	 */
-	public function create(Baz $baz = null);
+	public function create(?Baz $baz = null);
 }
 
 class Dolor

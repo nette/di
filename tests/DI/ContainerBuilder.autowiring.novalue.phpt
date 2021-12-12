@@ -57,7 +57,7 @@ Assert::noError(function () {
 
 class Bar3
 {
-	public function __construct(stdClass $x = null)
+	public function __construct(?stdClass $x = null)
 	{
 	}
 }

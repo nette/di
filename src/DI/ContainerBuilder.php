@@ -57,7 +57,7 @@ class ContainerBuilder
 	 * Adds new service definition.
 	 * @return Definitions\ServiceDefinition
 	 */
-	public function addDefinition(?string $name, Definition $definition = null): Definition
+	public function addDefinition(?string $name, ?Definition $definition = null): Definition
 	{
 		$this->needsResolve = true;
 		if ($name === null) {
@@ -396,7 +396,7 @@ class ContainerBuilder
 	}
 
 
-	public static function literal(string $code, array $args = null): Nette\PhpGenerator\PhpLiteral
+	public static function literal(string $code, ?array $args = null): Nette\PhpGenerator\PhpLiteral
 	{
 		return new Nette\PhpGenerator\PhpLiteral(
 			$args === null ? $code : (new Nette\PhpGenerator\Dumper)->format($code, ...$args)

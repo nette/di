@@ -25,7 +25,7 @@ class Foo
 	 * @param Foo[] $foos
 	 * @param string[] $strings
 	 */
-	public function __construct(array $bars = [], array $foos = null, array $strings = ['default'])
+	public function __construct(array $bars = [], ?array $foos = null, array $strings = ['default'])
 	{
 		$this->bars = $bars;
 		$this->foos = $foos;

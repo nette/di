@@ -97,7 +97,7 @@ class ContainerLoader
 	}
 
 
-	private function isExpired(string $file, string &$updatedMeta = null): bool
+	private function isExpired(string $file, ?string &$updatedMeta = null): bool
 	{
 		if ($this->autoRebuild) {
 			$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
