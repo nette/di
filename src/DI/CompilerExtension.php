@@ -51,6 +51,7 @@ abstract class CompilerExtension
 		if (!is_array($config) && !is_object($config)) {
 			throw new Nette\InvalidArgumentException;
 		}
+
 		$this->config = $config;
 		return $this;
 	}
@@ -87,6 +88,7 @@ abstract class CompilerExtension
 		if (func_num_args() === 1) {
 			return $this->config = $this->validateConfig($expected, $this->config);
 		}
+
 		if ($extra = array_diff_key((array) $config, $expected)) {
 			$name = $name ? str_replace('.', "\u{a0}›\u{a0}", $name) : $this->name;
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($expected), key($extra));
@@ -96,6 +98,7 @@ abstract class CompilerExtension
 				$hint ? key($extra) : implode("', '{$name}\u{a0}›\u{a0}", array_keys($extra))
 			) . ($hint ? ", did you mean '{$name}\u{a0}›\u{a0}{$hint}'?" : '.'));
 		}
+
 		return Nette\Schema\Helpers::merge($config, $expected);
 	}
 
@@ -129,6 +132,7 @@ abstract class CompilerExtension
 			$key = is_string($key) ? $this->name . '.' . $key : $key;
 			$res[$key] = Helpers::prefixServiceName($config, $this->name);
 		}
+
 		$this->compiler->loadDefinitionsFromConfig($res);
 	}
 

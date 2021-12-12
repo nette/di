@@ -67,6 +67,7 @@ class Compiler
 		} elseif (isset($this->extensions[$name])) {
 			throw new Nette\InvalidArgumentException(sprintf("Name '%s' is already used or reserved.", $name));
 		}
+
 		$lname = strtolower($name);
 		foreach (array_keys($this->extensions) as $nm) {
 			if ($lname === strtolower((string) $nm)) {
@@ -77,6 +78,7 @@ class Compiler
 				));
 			}
 		}
+
 		$this->extensions[$name] = $extension->setCompiler($this, $name);
 		return $this;
 	}
@@ -113,6 +115,7 @@ class Compiler
 		foreach ($config as $section => $data) {
 			$this->configs[$section][] = $data;
 		}
+
 		$this->sources .= "// source: array\n";
 		return $this;
 	}
@@ -129,6 +132,7 @@ class Compiler
 		foreach ($loader->load($file, false) as $data) {
 			$this->addConfig($data);
 		}
+
 		$this->dependencies->add($loader->getDependencies());
 		$this->sources = $sources;
 		return $this;
@@ -185,6 +189,7 @@ class Compiler
 			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
 			$this->extensions[self::DI]->exportedTags[$tag] = true;
 		}
+
 		return $this;
 	}
 
@@ -196,6 +201,7 @@ class Compiler
 			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
 			$this->extensions[self::DI]->exportedTypes[$type] = true;
 		}
+
 		return $this;
 	}
 
@@ -286,9 +292,11 @@ class Compiler
 		} catch (Schema\ValidationException $e) {
 			throw new Nette\DI\InvalidConfigurationException($e->getMessage());
 		}
+
 		foreach ($processor->getWarnings() as $warning) {
 			trigger_error($warning, E_USER_DEPRECATED);
 		}
+
 		return $res;
 	}
 

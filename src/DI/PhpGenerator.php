@@ -131,6 +131,7 @@ declare(strict_types=1);
 						if ($append = (substr($name, -2) === '[]')) {
 							$name = substr($name, 0, -2);
 						}
+
 						$prop = $entity[0] instanceof Reference
 							? $this->formatPhp('?->?', [$entity[0], $name])
 							: $this->formatPhp($entity[0] . '::$?', [$name]);
@@ -143,6 +144,7 @@ declare(strict_types=1);
 						if (substr($inner, 0, 4) === 'new ') {
 							$inner = "($inner)";
 						}
+
 						return $this->formatPhp("$inner->?(...?)", [$entity[1], $arguments]);
 
 					case $entity[0] instanceof Reference:
@@ -198,10 +200,12 @@ declare(strict_types=1);
 			if (!is_int($k)) {
 				$param->setDefaultValue($v);
 			}
+
 			if (isset($tmp[1])) {
 				$param->setType($tmp[0]);
 			}
 		}
+
 		return $res;
 	}
 

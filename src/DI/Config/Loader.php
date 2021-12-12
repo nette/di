@@ -46,6 +46,7 @@ class Loader
 		if (isset($this->loadedFiles[$file])) {
 			throw new Nette\InvalidStateException(sprintf("Recursive included file '%s'", $file));
 		}
+
 		$this->loadedFiles[$file] = true;
 
 		$this->dependencies[] = $file;
@@ -60,6 +61,7 @@ class Loader
 				$res = Nette\Schema\Helpers::merge($this->load($include, $merge), $res);
 			}
 		}
+
 		unset($data[self::INCLUDES_KEY], $this->loadedFiles[$file]);
 
 		if ($merge === false) {
@@ -67,6 +69,7 @@ class Loader
 		} else {
 			$res = Nette\Schema\Helpers::merge($data, $res);
 		}
+
 		return $res;
 	}
 
@@ -120,6 +123,7 @@ class Loader
 		if (!isset($this->adapters[$extension])) {
 			throw new Nette\InvalidArgumentException(sprintf("Unknown file extension '%s'.", $file));
 		}
+
 		return is_object($this->adapters[$extension])
 			? $this->adapters[$extension]
 			: new $this->adapters[$extension];

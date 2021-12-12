@@ -35,6 +35,7 @@ final class AccessorDefinition extends Definition
 				$interface
 			));
 		}
+
 		$rc = new \ReflectionClass($interface);
 
 		$method = $rc->getMethods()[0] ?? null;
@@ -56,6 +57,7 @@ final class AccessorDefinition extends Definition
 				$interface
 			));
 		}
+
 		return parent::setType($interface);
 	}
 
@@ -79,6 +81,7 @@ final class AccessorDefinition extends Definition
 				? new Reference(substr($reference, 1))
 				: Reference::fromType($reference);
 		}
+
 		return $this;
 	}
 

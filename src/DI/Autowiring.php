@@ -53,8 +53,10 @@ class Autowiring
 				if (!class_exists($type) && !interface_exists($type)) {
 					throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
 				}
+
 				throw new MissingServiceException(sprintf('Service of type %s not found. Did you add it to configuration file?', $type));
 			}
+
 			return null;
 
 		} elseif (count($types[$type]) === 1) {
@@ -88,6 +90,7 @@ class Autowiring
 		foreach ($names as $name) {
 			$res[$name] = $definitions[$name];
 		}
+
 		return $res;
 	}
 
@@ -147,6 +150,7 @@ class Autowiring
 								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent] ?? [], $this->highPriority[$parent]);
 								$this->highPriority[$parent] = [];
 							}
+
 							$preferred[$parent] = $priority = true;
 							break;
 						}
@@ -154,6 +158,7 @@ class Autowiring
 				} else {
 					$priority = empty($preferred[$parent]);
 				}
+
 				$list = $priority ? 'highPriority' : 'lowPriority';
 				$this->$list[$parent][] = $name;
 			}

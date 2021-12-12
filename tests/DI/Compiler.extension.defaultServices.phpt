@@ -64,12 +64,15 @@ class FooExtension extends Nette\DI\CompilerExtension
 		if (!$builder->getByType(Foo::class)) {
 			Assert::fail('Foo service should be defined.');
 		}
+
 		if (!$builder->getByType(IBar::class)) {
 			Assert::fail('IBar service should be defined.');
 		}
+
 		if (!$builder->getByType(Lorem::class)) {
 			Assert::fail('Lorem service should be defined.');
 		}
+
 		if (!$builder->getByType(IIpsumFactory::class)) {
 			Assert::fail('IIpsumFactory service should be defined.');
 		}

@@ -89,10 +89,12 @@ class Resolver
 		} elseif ($ref->isType()) {
 			return ltrim($ref->getValue(), '\\');
 		}
+
 		$def = $this->resolveReference($ref);
 		if (!$def->getType()) {
 			$this->resolveDefinition($def);
 		}
+
 		return $def->getType();
 	}
 
@@ -124,12 +126,14 @@ class Resolver
 			))) {
 				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)), 0, $e ?? null);
 			}
+
 			$this->addDependency($reflection);
 
 			$type = Nette\Utils\Type::fromReflection($reflection) ?? Helpers::getReturnTypeAnnotation($reflection);
 			if ($type) {
 				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)));
 			}
+
 			return null;
 
 		} elseif ($entity instanceof Reference) { // alias or factory
@@ -144,8 +148,10 @@ class Resolver
 					$entity
 				));
 			}
+
 			return $entity;
 		}
+
 		return null;
 	}
 
@@ -195,6 +201,7 @@ class Resolver
 						count($arguments)
 					));
 				}
+
 				$entity = ['', '!'];
 				break;
 
@@ -209,6 +216,7 @@ class Resolver
 						count($arguments)
 					));
 				}
+
 				$arguments = [$arguments[0], $entity];
 				$entity = [Helpers::class, 'convertType'];
 				break;
@@ -229,6 +237,7 @@ class Resolver
 						$entity
 					));
 				}
+
 				break;
 
 			case $entity instanceof Reference:
@@ -253,6 +262,7 @@ class Resolver
 						} elseif (!function_exists($entity[1])) {
 							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
 						}
+
 						$rf = new \ReflectionFunction($entity[1]);
 						$arguments = self::autowireArguments($rf, $arguments, $getter);
 						$this->addDependency($rf);
@@ -280,6 +290,7 @@ class Resolver
 								if (!$rm->isPublic()) {
 									throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $type, $entity[1]));
 								}
+
 								$arguments = self::autowireArguments($rm, $arguments, $getter);
 								$this->addDependency($rm);
 
@@ -296,6 +307,7 @@ class Resolver
 			if (!strpos($e->getMessage(), ' (used in')) {
 				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
 			}
+
 			throw $e;
 		}
 
@@ -320,11 +332,11 @@ class Resolver
 							}
 						}
 					}
+
 					$val = $this->completeArguments($services);
 				} else {
 					$val = $this->completeStatement($val, $this->currentServiceAllowed);
 				}
-
 			} elseif ($val instanceof Definition || $val instanceof Reference) {
 				$val = $this->normalizeEntity(new Statement($val));
 			}
@@ -348,8 +360,10 @@ class Resolver
 			if ($name === false) {
 				throw new ServiceCreationException(sprintf("Service '%s' not found in definitions.", $item->getName()));
 			}
+
 			$item = new Reference($name);
 		}
+
 		if ($item instanceof Reference) {
 			$item = $this->normalizeReference($item);
 		}
@@ -370,10 +384,12 @@ class Resolver
 			if (!$this->builder->hasDefinition($service)) {
 				throw new ServiceCreationException(sprintf("Reference to missing service '%s'.", $service));
 			}
+
 			return $this->currentService && $service === $this->currentService->getName()
 				? new Reference(Reference::SELF)
 				: $ref;
 		}
+
 		try {
 			return $this->getByType($service);
 		} catch (NotAllowedDuringResolvingException $e) {
@@ -412,6 +428,7 @@ class Resolver
 		) {
 			throw new MissingServiceException;
 		}
+
 		return new Reference($name);
 	}
 
@@ -445,6 +462,7 @@ class Resolver
 		} else {
 			$message = '';
 		}
+
 		$message .= $type
 			? str_replace("$type::", preg_replace('~.*\\\\~', '', $type) . '::', $e->getMessage())
 			: $e->getMessage();
@@ -470,13 +488,16 @@ class Resolver
 			if (strpos($entity[1], '$') === false) {
 				$entity[1] .= '()';
 			}
+
 			if ($entity[0] instanceof Reference) {
 				$entity[0] = $referenceToText($entity[0]);
 			} elseif (!is_string($entity[0])) {
 				return $entity[1];
 			}
+
 			return implode('::', $entity);
 		}
+
 		return (string) $entity;
 	}
 
@@ -493,7 +514,6 @@ class Resolver
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
 				}
-
 			} elseif (is_string($val) && substr($val, 0, 2) === '@@') { // escaped text @@
 				$val = substr($val, 1);
 			}
@@ -541,6 +561,7 @@ class Resolver
 			unset($arguments[$num]);
 			$optCount = 0;
 		}
+
 		if ($arguments) {
 			throw new ServiceCreationException(sprintf(
 				'Unable to pass specified arguments to %s.',
@@ -581,6 +602,7 @@ class Resolver
 			} catch (ServiceCreationException $e) {
 				throw new ServiceCreationException("{$e->getMessage()} (required by $desc)", 0, $e);
 			}
+
 			if ($res !== null || $parameter->allowsNull()) {
 				return $res;
 			} elseif (class_exists($class) || interface_exists($class)) {
@@ -596,7 +618,6 @@ class Resolver
 					$desc
 				));
 			}
-
 		} elseif (
 			$method instanceof \ReflectionMethod
 			&& $type && $type->getSingleName() === 'array'

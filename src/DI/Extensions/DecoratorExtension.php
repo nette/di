@@ -37,9 +37,11 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new Nette\DI\InvalidConfigurationException(sprintf("Decorated class '%s' not found.", $type));
 			}
+
 			if ($info->inject !== null) {
 				$info->tags[InjectExtension::TAG_INJECT] = $info->inject;
 			}
+
 			$this->addSetups($type, Nette\DI\Helpers::filterArguments($info->setup));
 			$this->addTags($type, Nette\DI\Helpers::filterArguments($info->tags));
 		}
@@ -52,10 +54,12 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 			if ($def instanceof Definitions\FactoryDefinition) {
 				$def = $def->getResultDefinition();
 			}
+
 			foreach ($setups as $setup) {
 				if (is_array($setup)) {
 					$setup = new Definitions\Statement(key($setup), array_values($setup));
 				}
+
 				$def->addSetup($setup);
 			}
 		}

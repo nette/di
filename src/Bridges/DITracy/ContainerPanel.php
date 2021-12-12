@@ -65,6 +65,7 @@ class ContainerPanel implements Tracy\IBarPanel
 				$types[lcfirst(str_replace('__', '.', $m[1]))] = $method->getReturnType()->getName();
 			}
 		}
+
 		$types = $this->getContainerProperty('types') + $types;
 		ksort($types, SORT_NATURAL);
 		foreach ($this->getContainerProperty('tags') as $tag => $tmp) {

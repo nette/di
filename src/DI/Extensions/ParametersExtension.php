@@ -71,6 +71,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			if ($param instanceof Nette\DI\Definitions\Statement) {
 				continue;
 			}
+
 			$cnstr->addBody('Nette\Utils\Validators::assert(?, ?, ?);', [$param, $expected, 'dynamic parameter']);
 		}
 	}

@@ -43,6 +43,7 @@ class ContainerLoader
 		if (!class_exists($class, false)) {
 			$this->loadFile($class, $generator);
 		}
+
 		return $class;
 	}
 
@@ -105,6 +106,7 @@ class ContainerLoader
 				|| DependencyChecker::isExpired(...$meta)
 				|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
 		}
+
 		return false;
 	}
 

@@ -45,6 +45,7 @@ final class ServiceDefinition extends Definition
 				$this->setFactory($type, $args);
 			}
 		}
+
 		return $this;
 	}
 
@@ -109,6 +110,7 @@ final class ServiceDefinition extends Definition
 				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Definitions\Statement[].');
 			}
 		}
+
 		$this->setup = $setup;
 		return $this;
 	}
@@ -177,6 +179,7 @@ final class ServiceDefinition extends Definition
 			if (!$this->getType()) {
 				throw new ServiceCreationException('Factory and type are missing in definition of service.');
 			}
+
 			$this->setFactory($this->getType(), $this->factory->arguments ?? []);
 
 		} elseif (!$this->getType()) {
@@ -184,6 +187,7 @@ final class ServiceDefinition extends Definition
 			if (!$type) {
 				throw new ServiceCreationException('Unknown service type, specify it or declare return type of factory.');
 			}
+
 			$this->setType($type);
 			$resolver->addDependency(new \ReflectionClass($type));
 		}
@@ -212,6 +216,7 @@ final class ServiceDefinition extends Definition
 			) { // auto-prepend @self
 				$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
 			}
+
 			$setup = $resolver->completeStatement($setup, true);
 		}
 	}

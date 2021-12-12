@@ -115,6 +115,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		if ($option === true) {
 			return;
 		}
+
 		$prop = $class->getProperty('wiring');
 		$prop->setValue(array_intersect_key(
 			$prop->getValue(),

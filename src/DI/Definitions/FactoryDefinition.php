@@ -47,6 +47,7 @@ final class FactoryDefinition extends Definition
 				$interface
 			));
 		}
+
 		$rc = new \ReflectionClass($interface);
 		$method = $rc->getMethods()[0] ?? null;
 		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
@@ -56,6 +57,7 @@ final class FactoryDefinition extends Definition
 				$interface
 			));
 		}
+
 		return parent::setType($interface);
 	}
 
@@ -182,6 +184,7 @@ final class FactoryDefinition extends Definition
 		if (!$interface) {
 			throw new ServiceCreationException('Type is missing in definition of service.');
 		}
+
 		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
 		$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
 
@@ -192,6 +195,7 @@ final class FactoryDefinition extends Definition
 			if ($resultDef->getType()) {
 				throw $e;
 			}
+
 			$resultDef->setType(Helpers::ensureClassType($type, "return type of $interface::create()"));
 			$resolver->resolveDefinition($resultDef);
 		}
@@ -214,6 +218,7 @@ final class FactoryDefinition extends Definition
 			if (!$this->parameters) {
 				$this->completeParameters($resolver);
 			}
+
 			$this->convertArguments($resultDef->getFactory()->arguments);
 			foreach ($resultDef->getSetup() as $setup) {
 				$this->convertArguments($setup->arguments);
@@ -259,6 +264,7 @@ final class FactoryDefinition extends Definition
 						$class
 					));
 				}
+
 				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
 
 			} elseif (!$this->resultDefinition->getSetup()) {

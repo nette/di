@@ -100,6 +100,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 					$class
 				));
 			}
+
 			$rc = new \ReflectionClass($class);
 			if (
 				($rc->isInstantiable()
@@ -116,6 +117,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				$found[] = $rc->name;
 			}
 		}
+
 		return $found;
 	}
 
@@ -150,6 +152,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			$mask = str_replace('\*', '\w*', $mask);
 			$res[] = $mask;
 		}
+
 		return $res ? '#^(' . implode('|', $res) . ')$#i' : null;
 	}
 }

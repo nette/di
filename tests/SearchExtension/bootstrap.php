@@ -23,6 +23,7 @@ function check(string $config): array
 			$res[$def->getType()] = $def->getTags();
 		}
 	}
+
 	ksort($res);
 	return $res;
 }

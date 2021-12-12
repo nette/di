@@ -35,6 +35,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		if (substr($input, 0, 3) === "\u{FEFF}") { // BOM
 			$input = substr($input, 3);
 		}
+
 		$decoder = new Neon\Decoder;
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
@@ -55,6 +56,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 						$key
 					));
 				}
+
 				$key = substr($key, 0, -1);
 				$val[Helpers::PREVENT_MERGING] = true;
 			}
@@ -71,17 +73,21 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 							$st->arguments
 						);
 					}
+
 					$val = $tmp;
 				} else {
 					$tmp = $this->process([$val->value]);
 					if (is_string($tmp[0]) && strpos($tmp[0], '?') !== false) {
 						trigger_error('Operator ? is deprecated in config files.', E_USER_DEPRECATED);
 					}
+
 					$val = new Statement($tmp[0], $this->process($val->attributes));
 				}
 			}
+
 			$res[$key] = $val;
 		}
+
 		return $res;
 	}
 
@@ -134,6 +140,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$entity = $entity[0] . '::' . $entity[1];
 			}
 		}
+
 		return new Neon\Entity($entity, $val->arguments);
 	}
 
@@ -143,11 +150,13 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		if (!$node instanceof Neon\Node\EntityNode) {
 			return;
 		}
+
 		$index = false;
 		foreach ($node->attributes as $i => $attr) {
 			if ($index) {
 				$attr->key = $attr->key ?? new Neon\Node\LiteralNode((string) $i);
 			}
+
 			if ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '_') {
 				unset($node->attributes[$i]);
 				$index = true;
