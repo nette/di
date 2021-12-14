@@ -19,8 +19,7 @@ class Service
 	public $methods;
 
 
-	/** @return Service */
-	public static function create(?DI\Container $container = null)
+	public static function create(?DI\Container $container = null): self
 	{
 		return new self(array_slice(func_get_args(), 1));
 	}

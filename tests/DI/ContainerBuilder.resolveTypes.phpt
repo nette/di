@@ -97,7 +97,7 @@ Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createClassPhpDoc']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 });
 
 Assert::noError(function () {
@@ -111,7 +111,7 @@ Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createNullableClassPhpDoc']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 });
 
 Assert::exception(function () {
@@ -125,7 +125,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createScalarPhpDoc']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is not expected to be nullable/union/intersection/built-in, 'array' given.");
 
 Assert::exception(function () {
@@ -139,7 +139,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createObjectPhpDoc']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
@@ -160,7 +160,7 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createMixedPhpDoc']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
@@ -174,6 +174,6 @@ Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createGeneric']);
-	$container = createContainer($builder);
+	$container = @createContainer($builder); // @return is deprecated
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Class 'T' not found.
 Check the return type of Factory::createGeneric().");

@@ -15,8 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Factory
 {
-	/** @return Model  auto-wiring using annotation */
-	public static function createModel()
+	public static function createModel(): Model
 	{
 		return new Model;
 	}
