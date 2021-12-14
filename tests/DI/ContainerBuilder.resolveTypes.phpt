@@ -60,6 +60,12 @@ class Factory
 	}
 
 
+	public function createObjectNullable(): ?object
+	{
+		return (object) null;
+	}
+
+
 	/** @return mixed */
 	public function createMixedPhpDoc()
 	{
@@ -141,7 +147,14 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createObject']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObject() is not expected to be nullable/union/intersection/built-in, 'object' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('a')
+		->setFactory([Factory::class, 'createObjectNullable']);
+	$container = createContainer($builder);
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is not expected to be nullable/union/intersection/built-in, '?object' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
@@ -155,7 +168,7 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createMixed']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createMixed() is not expected to be nullable/union/intersection/built-in, 'mixed' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;

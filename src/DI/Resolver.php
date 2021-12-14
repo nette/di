@@ -130,7 +130,7 @@ class Resolver
 			$this->addDependency($reflection);
 
 			$type = Nette\Utils\Type::fromReflection($reflection) ?? Helpers::getReturnTypeAnnotation($reflection);
-			if ($type) {
+			if ($type && !in_array((string) $type, ['object', 'mixed'], true)) {
 				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)));
 			}
 
