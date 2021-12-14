@@ -587,12 +587,23 @@ class Resolver
 					$useName = true;
 				} else {
 					$res[$num] = null;
+					trigger_error(sprintf(
+						'The parameter %s should have a declared value in the configuration.',
+						Reflection::toString($param)
+					), E_USER_DEPRECATED);
 				}
 
 			} else {
 				$res[$num] = $param->isDefaultValueAvailable()
 					? Reflection::getParameterDefaultValue($param)
 					: null;
+
+				if (!$param->isOptional()) {
+					trigger_error(sprintf(
+						'The parameter %s should have a declared value in the configuration.',
+						Reflection::toString($param)
+					), E_USER_DEPRECATED);
+				}
 			}
 
 			if (PHP_VERSION_ID < 80000) {

@@ -38,26 +38,6 @@ Assert::equal(
 	)
 );
 
-// nullable unknown class
-Assert::equal(
-	[null],
-	Resolver::autowireArguments(
-		new ReflectionFunction(function (?stdClass $arg) {}),
-		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
-);
-
-// nullable scalar
-Assert::equal(
-	[null],
-	Resolver::autowireArguments(
-		new ReflectionFunction(function (?int $arg) {}),
-		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
-);
-
 // nullable optional class
 Assert::equal(
 	[new Test],
