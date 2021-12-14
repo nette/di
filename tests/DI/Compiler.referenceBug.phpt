@@ -32,7 +32,7 @@ services:
 	- stdClass
 	a: Lorem(x: true)
 	b: Lorem(x: Lorem(x: true))
-	c: Lorem(@@test)
+	c: Lorem("@test")
 ');
 
 

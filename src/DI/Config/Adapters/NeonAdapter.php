@@ -44,6 +44,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
 		$node = $traverser->traverse($node, [$this, 'removeUnderscoreVisitor']);
+		$node = $traverser->traverse($node, [$this, 'convertAtSignVisitor']);
 		return $this->process((array) $node->toValue());
 	}
 
@@ -172,6 +173,26 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				unset($node->attributes[$i]);
 				$index = true;
 			}
+		}
+	}
+
+
+	/** @internal */
+	public function convertAtSignVisitor(Neon\Node $node)
+	{
+		if ($node instanceof Neon\Node\StringNode) {
+			if (substr($node->value, 0, 2) === '@@') {
+				trigger_error("There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
+			} else {
+				$node->value = preg_replace('#^@#', '$0$0', $node->value); // escape
+			}
+
+		} elseif (
+			$node instanceof Neon\Node\LiteralNode
+			&& is_string($node->value)
+			&& substr($node->value, 0, 2) === '@@'
+		) {
+			trigger_error("There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
 		}
 	}
 }
