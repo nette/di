@@ -11,7 +11,6 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\Utils\Reflection;
-use Nette\Utils\Type;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -121,8 +120,8 @@ class DependencyChecker
 						$name,
 						$prop->name,
 						$prop->getDocComment(),
-						(string) Type::fromReflection($prop),
-						PHP_VERSION_ID >= 80000 ? count($prop->getAttributes(Attributes\Inject::class)) : null,
+						(string) $prop->getType(),
+						count($prop->getAttributes(Attributes\Inject::class)),
 					];
 				}
 			}
@@ -134,7 +133,7 @@ class DependencyChecker
 						$method->name,
 						$method->getDocComment(),
 						self::hashParameters($method),
-						(string) Type::fromReflection($method),
+						(string) $method->getReturnType(),
 					];
 				}
 			}
@@ -160,7 +159,7 @@ class DependencyChecker
 				$uses,
 				$method->getDocComment(),
 				self::hashParameters($method),
-				(string) Type::fromReflection($method),
+				(string) $method->getReturnType(),
 			];
 		}
 
@@ -174,7 +173,7 @@ class DependencyChecker
 		foreach ($method->getParameters() as $param) {
 			$res[] = [
 				$param->name,
-				(string) Type::fromReflection($param),
+				(string) $param->getType(),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
 					? is_object($tmp = Reflection::getParameterDefaultValue($param)) ? ['object' => $tmp::class] : ['value' => $tmp]

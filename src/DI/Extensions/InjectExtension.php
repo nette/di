@@ -112,7 +112,7 @@ final class InjectExtension extends DI\CompilerExtension
 		$res = [];
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
 			$name = $rp->getName();
-			$hasAttr = PHP_VERSION_ID >= 80000 && $rp->getAttributes(DI\Attributes\Inject::class);
+			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if (!$rp->isPublic() || $rp->isStatic()) {
 					trigger_error(sprintf('Property %s for injection must be public and non-static.', Reflection::toString($rp)), E_USER_WARNING);

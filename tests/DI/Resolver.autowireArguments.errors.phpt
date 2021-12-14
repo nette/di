@@ -73,6 +73,26 @@ Assert::error(function () {
 }, E_USER_DEPRECATED, 'The parameter $arg in {closure}() should have a declared value in the configuration.');
 
 
+// union
+Assert::exception(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass|Test $x) {}),
+		[],
+		function () {},
+	);
+}, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has union type and no default value, so its value must be specified.');
+
+
+// nullable union
+Assert::error(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass|Test|null $x) {}),
+		[],
+		function () {},
+	);
+}, E_USER_DEPRECATED, 'The parameter $x in {closure}() should have a declared value in the configuration.');
+
+
 // bad variadics (this is actually what PHP allows)
 Assert::exception(function () {
 	Resolver::autowireArguments(

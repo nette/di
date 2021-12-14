@@ -87,6 +87,12 @@ class Factory
 	{
 		return (object) null;
 	}
+
+
+	public function createUnion(): stdClass|array
+	{
+		return [];
+	}
 }
 
 
@@ -177,3 +183,11 @@ Assert::exception(function () {
 	$container = @createContainer($builder); // @return is deprecated
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Class 'T' not found.
 Check the return type of Factory::createGeneric().");
+
+Assert::exception(function () {
+	$builder = new DI\ContainerBuilder;
+	$builder->addDefinition('a')
+		->setFactory([Factory::class, 'createUnion']);
+	$container = createContainer($builder);
+}, Nette\DI\ServiceCreationException::class, "[Service 'a']
+Return type of Factory::createUnion() is not expected to be nullable/union/intersection/built-in, 'stdClass|array' given.");

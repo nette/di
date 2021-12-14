@@ -64,3 +64,10 @@ Assert::exception(function () use ($container) {
 	@$container->addService('six', function () {}); // @ triggers service should be defined as "imported"
 	$container->getService('six');
 }, Nette\UnexpectedValueException::class, "Unable to create service 'six', value returned by closure is not object.");
+
+
+// union type
+Assert::exception(function () use ($container) {
+	@$container->addService('six', function (): stdClass|Closure {}); // @ triggers service should be defined as "imported"
+	$container->getService('six');
+}, Nette\InvalidStateException::class, "Return type of closure is not expected to be nullable/union/intersection/built-in, 'stdClass|Closure' given.");
