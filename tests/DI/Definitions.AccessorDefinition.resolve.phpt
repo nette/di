@@ -34,11 +34,8 @@ Type of service is unknown.');
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	@$def->setImplement(Bad1::class); // missing type triggers warning
-	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
-	$resolver->resolveDefinition($def);
-	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, '[Service of type Bad1]
+	$def->setImplement(Bad1::class);
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
 Return type of Bad1::get() is not declared.');
 
 

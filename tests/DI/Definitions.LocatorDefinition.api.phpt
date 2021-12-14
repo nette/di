@@ -20,39 +20,39 @@ interface Bad1
 
 interface Bad2
 {
-	public function create(): stdClass;
+	public function create();
 }
 
 interface Bad3
 {
-	public function get(): stdClass;
+	public function get();
 }
 
 interface Bad4
 {
-	public function get($name): stdClass;
+	public function get($name);
 
-	public function foo(): stdClass;
+	public function foo();
 }
 
 interface Bad5
 {
-	public static function get($name): stdClass;
+	public static function get($name);
 }
 
 interface Bad6
 {
-	public function get($arg, $arg2): stdClass;
+	public function get($arg, $arg2);
 }
 
 interface Good1
 {
-	public function get($name): stdClass;
+	public function get($name);
 }
 
 interface Good2
 {
-	public function create($name): stdClass;
+	public function create($name);
 }
 
 interface Good3
