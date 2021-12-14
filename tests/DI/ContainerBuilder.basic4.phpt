@@ -9,8 +9,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-/** @return ClassA */
-function func()
+function func(): ClassA
 {
 	return new ClassA;
 }
@@ -18,8 +17,7 @@ function func()
 
 class ClassA
 {
-	/** @return ClassB */
-	public function funcA(stdClass $arg)
+	public function funcA(stdClass $arg): ClassB
 	{
 		return new ClassB;
 	}
@@ -27,8 +25,7 @@ class ClassA
 
 class ClassB
 {
-	/** @return ClassC */
-	public function funcB(stdClass $arg)
+	public function funcB(stdClass $arg): ClassC
 	{
 		return new ClassC;
 	}

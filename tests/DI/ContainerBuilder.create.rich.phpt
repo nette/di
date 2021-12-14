@@ -19,8 +19,7 @@ class Factory
 	public $mark;
 
 
-	/** @return Obj */
-	public function create()
+	public function create(): Obj
 	{
 		return new Obj;
 	}
@@ -38,8 +37,7 @@ class Obj
 	public $mark;
 
 
-	/** @return Obj */
-	public function foo(...$args)
+	public function foo(...$args): self
 	{
 		$this->args[] = $args;
 		return $this;
