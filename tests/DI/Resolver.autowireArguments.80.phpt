@@ -46,3 +46,13 @@ Assert::same(
 		function () {}
 	),
 );
+
+// named variadics
+Assert::equal(
+	['a' => 1, 'b' => 2, 'c' => 3],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		['a' => 1, 'b' => 2, 'c' => 3],
+		function () {}
+	)
+);

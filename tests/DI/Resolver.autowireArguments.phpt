@@ -118,12 +118,22 @@ Assert::equal(
 	)
 );
 
-// variadics
+// variadics as items
 Assert::equal(
 	[1, 2, 3],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		[1, 2, 3],
+		function () {}
+	)
+);
+
+// variadics as array
+Assert::equal(
+	[1, 2, 3],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		['args' => [1, 2, 3]],
 		function () {}
 	)
 );

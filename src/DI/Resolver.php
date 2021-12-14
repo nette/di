@@ -538,7 +538,28 @@ class Resolver
 
 		foreach ($method->getParameters() as $num => $param) {
 			$paramName = $param->name;
-			if (!$param->isVariadic() && array_key_exists($paramName, $arguments)) {
+
+			if ($param->isVariadic()) {
+				if (array_key_exists($paramName, $arguments)) {
+					if (!is_array($arguments[$paramName])) {
+						throw new ServiceCreationException(sprintf(
+							'Parameter %s must be array, %s given.',
+							Reflection::toString($param),
+							gettype($arguments[$paramName])
+						));
+					}
+
+					$res = array_merge($res, $arguments[$paramName]);
+					unset($arguments[$paramName]);
+				} else {
+					$res = array_merge($res, $arguments);
+					$arguments = [];
+				}
+
+				$optCount = 0;
+				break;
+
+			} elseif (array_key_exists($paramName, $arguments)) {
 				$res[$num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
 
@@ -637,8 +658,10 @@ class Resolver
 			|| $parameter->isOptional()
 			|| $parameter->isDefaultValueAvailable()
 		) {
-			// !optional + defaultAvailable = func($a = null, $b) since 5.4.7
-			// optional + !defaultAvailable = i.e. Exception::__construct, mysqli::mysqli, ...
+			// !optional + defaultAvailable, !optional + !defaultAvailable since 8.1.0 = func($a = null, $b)
+			// optional + !defaultAvailable, optional + defaultAvailable since 8.0.0 = i.e. Exception::__construct, mysqli::mysqli, ...
+			// optional + !defaultAvailable = variadics
+			// in other cases the optional and defaultAvailable are identical
 			return null;
 
 		} else {
