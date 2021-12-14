@@ -52,11 +52,7 @@ final class FactoryDefinition extends Definition
 			));
 		}
 
-		try {
-			Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::create()", $this->getDescriptor());
-		} catch (Nette\DI\ServiceCreationException $e) {
-			trigger_error($e->getMessage(), E_USER_DEPRECATED);
-		}
+		Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::create()", $this->getDescriptor());
 
 		return parent::setType($interface);
 	}
@@ -90,13 +86,11 @@ final class FactoryDefinition extends Definition
 
 	public function resolveType(Nette\DI\Resolver $resolver): void
 	{
-		$interface = $this->getType();
-		if (!$interface) {
+		if (!$this->getType()) {
 			throw new ServiceCreationException('Type is missing in definition of service.');
 		}
 
-		$method = new \ReflectionMethod($interface, self::MethodCreate);
-		$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
+		$type = Type::fromReflection(new \ReflectionMethod($this->getType(), self::MethodCreate));
 
 		$resultDef = $this->resultDefinition;
 		try {
@@ -106,7 +100,7 @@ final class FactoryDefinition extends Definition
 				throw $e;
 			}
 
-			$resultDef->setType(Helpers::ensureClassType($type, "return type of $interface::create()"));
+			$resultDef->setType($type->getSingleName());
 			$resolver->resolveDefinition($resultDef);
 		}
 
@@ -219,7 +213,7 @@ final class FactoryDefinition extends Definition
 		$rm = new \ReflectionMethod($this->getType(), self::MethodCreate);
 		$methodCreate
 			->setParameters(array_map([new Php\Factory, 'fromParameterReflection'], $rm->getParameters()))
-			->setReturnType((string) (Type::fromReflection($rm) ?? $this->getResultType()))
+			->setReturnType((string) Type::fromReflection($rm))
 			->setBody($body);
 
 		$method->setBody('return new class ($this) ' . $class . ';');

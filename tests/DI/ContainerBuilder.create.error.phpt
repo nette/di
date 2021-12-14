@@ -80,10 +80,9 @@ interface Bad4
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	@$builder->addFactoryDefinition('one')
-		->setImplement(Bad4::class); // missing type triggers warning
-	$builder->complete();
-}, Nette\InvalidStateException::class, "[Service 'one' of type Bad4]
+	$builder->addFactoryDefinition('one')
+		->setImplement(Bad4::class);
+}, Nette\InvalidStateException::class, "[Service 'one']
 Return type of Bad4::create() is not declared.");
 
 
