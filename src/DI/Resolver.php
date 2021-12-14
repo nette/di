@@ -533,6 +533,7 @@ class Resolver
 		callable $getter
 	): array {
 		$optCount = 0;
+		$useName = false;
 		$num = -1;
 		$res = [];
 
@@ -549,26 +550,39 @@ class Resolver
 						));
 					}
 
-					$res = array_merge($res, $arguments[$paramName]);
+					$variadics = $arguments[$paramName];
 					unset($arguments[$paramName]);
 				} else {
-					$res = array_merge($res, $arguments);
+					$variadics = array_merge($arguments);
 					$arguments = [];
+				}
+
+				if ($useName) {
+					$res[$paramName] = $variadics;
+				} else {
+					$res = array_merge($res, $variadics);
 				}
 
 				$optCount = 0;
 				break;
 
 			} elseif (array_key_exists($paramName, $arguments)) {
-				$res[$num] = $arguments[$paramName];
+				$res[$useName ? $paramName : $num] = $arguments[$paramName];
 				unset($arguments[$paramName], $arguments[$num]);
 
 			} elseif (array_key_exists($num, $arguments)) {
-				$res[$num] = $arguments[$num];
+				$res[$useName ? $paramName : $num] = $arguments[$num];
 				unset($arguments[$num]);
 
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
-				$res[$num] = $aw;
+				$res[$useName ? $paramName : $num] = $aw;
+
+			} elseif (PHP_VERSION_ID >= 80000) {
+				if ($param->isOptional()) {
+					$useName = true;
+				} else {
+					$res[$num] = null;
+				}
 
 			} else {
 				$res[$num] = $param->isDefaultValueAvailable()
@@ -576,13 +590,15 @@ class Resolver
 					: null;
 			}
 
-			$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
-				? $optCount + 1
-				: 0;
+			if (PHP_VERSION_ID < 80000) {
+				$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
+					? $optCount + 1
+					: 0;
+			}
 		}
 
 		// extra parameters
-		while (!$optCount && array_key_exists(++$num, $arguments)) {
+		while (!$useName && !$optCount && array_key_exists(++$num, $arguments)) {
 			$res[$num] = $arguments[$num];
 			unset($arguments[$num]);
 		}

@@ -31,3 +31,13 @@ Assert::exception(function () {
 		function () {}
 	);
 }, Nette\InvalidStateException::class, 'Parameter $x in {closure}%a?% has intersection type, so its value must be specified.');
+
+// object as default
+Assert::same(
+	['b' => 10],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = new stdClass, $b = null) {}),
+		[1 => 10],
+		function () {}
+	),
+);

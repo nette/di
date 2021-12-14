@@ -80,7 +80,7 @@ Assert::equal(
 
 // optional arguments + positional
 Assert::equal(
-	[1, 'new'],
+	PHP_VERSION_ID < 80000 ? [1, 'new'] : ['b' => 'new'],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		[1 => 'new'],
@@ -90,7 +90,7 @@ Assert::equal(
 
 // optional arguments + named
 Assert::equal(
-	[1, 'new'],
+	PHP_VERSION_ID < 80000 ? [1, 'new'] : ['b' => 'new'],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		['b' => 'new'],
@@ -100,7 +100,7 @@ Assert::equal(
 
 // optional arguments + variadics
 Assert::equal(
-	[1, 'new1', 'new2'],
+	PHP_VERSION_ID < 80000 ? [1, 'new1', 'new2'] : ['args' => ['new1', 'new2']],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, ...$args) {}),
 		[1 => 'new1', 2 => 'new2'],

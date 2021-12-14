@@ -2,6 +2,7 @@
 
 /**
  * Test: Nette\DI\Compiler and service referencing.
+ * @phpVersion < 8.0
  */
 
 declare(strict_types=1);
