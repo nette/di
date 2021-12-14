@@ -18,12 +18,6 @@ interface StdClassAccessor
 	public function get(): stdClass;
 }
 
-interface AnnotatedAccessor
-{
-	/** @return stdClass */
-	public function get();
-}
-
 class AccessorReceiver
 {
 	public $accessor;
@@ -48,9 +42,6 @@ $builder->addAccessorDefinition('one')
 	->setImplement(StdClassAccessor::class)
 	->setReference(stdClass::class);
 
-@$builder->addAccessorDefinition('two')
-	->setImplement(AnnotatedAccessor::class); // missing type triggers warning
-
 $builder->addAccessorDefinition('three')
 	->setImplement(StdClassAccessor::class)
 	->setAutowired(false)
@@ -64,9 +55,6 @@ $container = createContainer($builder);
 
 Assert::type(StdClassAccessor::class, $container->getService('one'));
 Assert::same($container->getService('one')->get(), $container->getService('service'));
-
-Assert::type(AnnotatedAccessor::class, $container->getService('two'));
-Assert::same($container->getService('two')->get(), $container->getService('service'));
 
 Assert::type(StdClassAccessor::class, $container->getService('three'));
 Assert::same($container->getService('three')->get(), $container->getService('service2'));

@@ -56,12 +56,7 @@ final class AccessorDefinition extends Definition
 			));
 		}
 
-		try {
-			Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::get()");
-		} catch (Nette\DI\ServiceCreationException $e) {
-			trigger_error($e->getMessage(), E_USER_DEPRECATED);
-		}
-
+		Helpers::ensureClassType(Type::fromReflection($method), "return type of $interface::get()");
 		return parent::setType($interface);
 	}
 
@@ -100,10 +95,12 @@ final class AccessorDefinition extends Definition
 	public function complete(Nette\DI\Resolver $resolver): void
 	{
 		if (!$this->reference) {
-			$interface = $this->getType();
-			$method = new \ReflectionMethod($interface, self::MethodGet);
-			$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
-			$this->setReference(Helpers::ensureClassType($type, "return type of $interface::get()"));
+			if (!$this->getType()) {
+				throw new Nette\DI\ServiceCreationException('Type is missing in definition of service.');
+			}
+
+			$method = new \ReflectionMethod($this->getType(), self::MethodGet);
+			$this->setReference(Type::fromReflection($method)->getSingleName());
 		}
 
 		$this->reference = $resolver->normalizeReference($this->reference);
