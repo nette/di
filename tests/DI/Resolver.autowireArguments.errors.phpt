@@ -53,6 +53,26 @@ Assert::exception(function () {
 }, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}() has no class type or default value, so its value must be specified.');
 
 
+// nullable unknown class
+Assert::error(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?stdClass $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	);
+}, E_USER_DEPRECATED, 'The parameter $arg in {closure}() should have a declared value in the configuration.');
+
+
+// nullable scalar
+Assert::error(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?int $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	);
+}, E_USER_DEPRECATED, 'The parameter $arg in {closure}() should have a declared value in the configuration.');
+
+
 // bad variadics (this is actually what PHP allows)
 Assert::exception(function () {
 	Resolver::autowireArguments(

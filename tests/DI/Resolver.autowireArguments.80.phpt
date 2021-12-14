@@ -28,14 +28,13 @@ Assert::exception(function () {
 }, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has union type and no default value, so its value must be specified.');
 
 // nullable union
-Assert::same(
-	[null],
+Assert::error(function () {
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test|null $x) {}),
 		[],
 		function () {}
-	),
-);
+	);
+}, E_USER_DEPRECATED, 'The parameter $x in {closure}() should have a declared value in the configuration.');
 
 // optional union
 Assert::same(
