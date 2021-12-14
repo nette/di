@@ -19,7 +19,7 @@ class Lorem
 	public $args;
 
 
-	public function __construct($arg1 = '@foo', $arg2 = '@@foo', $arg3 = '@\stdClass')
+	public function __construct($arg1 = '@foo', $arg2 = '@@foo', $arg3 = '@\stdClass', $x = null)
 	{
 		$this->args = func_get_args();
 	}
@@ -29,8 +29,8 @@ class Lorem
 $container = createContainer(new DI\Compiler, '
 services:
 	- stdClass
-	a: Lorem(3 = true)
-	b: Lorem(3 = Lorem(3 = true))
+	a: Lorem(x: true)
+	b: Lorem(x: Lorem(x: true))
 	c: Lorem(@@test)
 ');
 

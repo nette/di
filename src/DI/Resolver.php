@@ -582,10 +582,9 @@ class Resolver
 		}
 
 		// extra parameters
-		while (array_key_exists(++$num, $arguments)) {
+		while (!$optCount && array_key_exists(++$num, $arguments)) {
 			$res[$num] = $arguments[$num];
 			unset($arguments[$num]);
-			$optCount = 0;
 		}
 
 		if ($arguments) {
