@@ -34,6 +34,11 @@ interface Bad4
 	public static function create();
 }
 
+interface Bad5
+{
+	public function create();
+}
+
 interface Good1
 {
 	public function create(): stdClass;
@@ -76,9 +81,15 @@ Assert::exception(function () {
 }, Nette\InvalidArgumentException::class, "Service '': Interface Bad4 must have just one non-static method create().");
 
 
+Assert::exception(function () {
+	$def = new FactoryDefinition;
+	$def->setImplement(Bad5::class);
+}, Nette\DI\ServiceCreationException::class, 'Return type of Bad5::create() is not declared.');
+
+
 Assert::noError(function () {
 	$def = new FactoryDefinition;
-	@$def->setImplement(Good1::class); // missing type triggers warning
+	$def->setImplement(Good1::class);
 	Assert::same(Good1::class, $def->getImplement());
 	Assert::same(Good1::class, $def->getType());
 });

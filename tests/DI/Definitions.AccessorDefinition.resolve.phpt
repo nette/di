@@ -33,11 +33,8 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	@$def->setImplement(Bad1::class); // missing type triggers warning
-	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
-	$resolver->resolveDefinition($def);
-	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Bad1: Return type of Bad1::get() is not declared.');
+	$def->setImplement(Bad1::class);
+}, Nette\DI\ServiceCreationException::class, 'Return type of Bad1::get() is not declared.');
 
 
 Assert::noError(function () {
