@@ -81,3 +81,22 @@ Assert::equal(
 	[new Statement('Class', ['arg1', 2 => ['...']])],
 	$data
 );
+
+
+// @ escaping
+$data = @$adapter->load(Tester\FileMock::create('
+- @@double
+- "@@doublequoted"
+- @simple
+- "@simplequoted"
+', 'neon'));
+
+Assert::equal(
+	[
+		'@@double',
+		'@@doublequoted',
+		'@simple',
+		'@@simplequoted', // escaped
+	],
+	$data
+);
