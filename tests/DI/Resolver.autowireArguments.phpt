@@ -15,38 +15,125 @@ require __DIR__ . '/../bootstrap.php';
 
 class Test
 {
-	public function method(self $class, self $self, Undefined $nullable1 = null, int $nullable2 = null)
-	{
-	}
-
-
-	public function methodNullable(?self $class, ?self $self, ?Undefined $nullable1, ?int $nullable2)
-	{
-	}
 }
 
+
+// class
 Assert::equal(
-	[new Test, new Test],
-	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'method'), [], function ($type) {
-		return $type === Test::class ? new Test : null;
-	})
+	[new Test],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (Test $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
 );
 
+// nullable class
 Assert::equal(
-	[new Test, new Test, null, null],
-	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodNullable'), [], function ($type) {
-		return $type === Test::class ? new Test : null;
-	})
+	[new Test],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?Test $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
 );
 
+// nullable unknown class
+Assert::equal(
+	[null],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?stdClass $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
+);
+
+// nullable scalar
+Assert::equal(
+	[null],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?int $arg) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
+);
+
+// nullable optional class
+Assert::equal(
+	[new Test],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?Test $arg = null) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
+);
+
+// nullable optional scalar
+Assert::equal(
+	[],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (?int $arg = null) {}),
+		[],
+		function ($type) { return $type === Test::class ? new Test : null; }
+	)
+);
+
+// optional arguments + positional
+Assert::equal(
+	[1, 'new'],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = 1, $b = 2) {}),
+		[1 => 'new'],
+		function () {}
+	)
+);
+
+// optional arguments + named
+Assert::equal(
+	[1, 'new'],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = 1, $b = 2) {}),
+		['b' => 'new'],
+		function () {}
+	)
+);
+
+// optional arguments + variadics
+Assert::equal(
+	[1, 'new1', 'new2'],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = 1, ...$args) {}),
+		[1 => 'new1', 2 => 'new2'],
+		function () {}
+	)
+);
+
+// optional arguments + variadics
+Assert::equal(
+	['new', 'new1', 'new2'],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = 1, ...$args) {}),
+		['a' => 'new', 1 => 'new1', 2 => 'new2'],
+		function () {}
+	)
+);
 
 // variadics
 Assert::equal(
-	[],
-	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), [], function () {})
+	[1, 2, 3],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		[1, 2, 3],
+		function () {}
+	)
 );
 
+// named parameter intentionally overwrites the indexed one (due to overwriting in the configuration)
 Assert::equal(
-	[1, 2, 3],
-	Resolver::autowireArguments(new ReflectionFunction(function (...$args) {}), [1, 2, 3], function () {})
+	[2],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a) {}),
+		[1, 'a' => 2],
+		function () {}
+	)
 );

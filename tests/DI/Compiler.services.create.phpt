@@ -48,7 +48,7 @@ class Ipsum
 }
 
 
-$container = createContainer(new DI\Compiler, 'files/compiler.services.factory.neon');
+$container = createContainer(new DI\Compiler, 'files/compiler.services.create.neon');
 
 
 Assert::type(Ipsum::class, $container->getService('one'));

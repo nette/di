@@ -15,7 +15,6 @@ require __DIR__ . '/../bootstrap.php';
 define('TEMP_FILE', getTempDir() . '/cfg.php');
 
 
-// Load INI
 $config = new Config\Loader;
 $data = $config->load('files/phpAdapter.php');
 Assert::same([

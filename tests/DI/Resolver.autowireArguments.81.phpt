@@ -18,15 +18,16 @@ interface Foo
 {
 }
 
-
-class Test implements Foo
+class Test
 {
-	public function methodIntersection(Foo&Test $self)
-	{
-	}
 }
 
 
+// intersection
 Assert::exception(function () {
-	Resolver::autowireArguments(new ReflectionMethod(Test::class, 'methodIntersection'), [], function () {});
-}, Nette\InvalidStateException::class, 'Parameter $self in Test::methodIntersection() has intersection type, so its value must be specified.');
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (Foo&Test $x) {}),
+		[],
+		function () {}
+	);
+}, Nette\InvalidStateException::class, 'Parameter $x in {closure}%a?% has intersection type, so its value must be specified.');
