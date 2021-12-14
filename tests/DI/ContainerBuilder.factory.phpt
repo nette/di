@@ -18,12 +18,6 @@ interface StdClassFactory
 	public function create(): stdClass;
 }
 
-interface AnnotatedFactory
-{
-	/** @return stdClass */
-	public function create();
-}
-
 class FactoryReceiver
 {
 	public function __construct(StdClassFactory $factory)
@@ -38,9 +32,6 @@ $builder->addFactoryDefinition('one')
 	->getResultDefinition()
 		->setCreator(stdClass::class);
 
-@$builder->addFactoryDefinition('two')
-	->setImplement(AnnotatedFactory::class); // missing type triggers warning
-
 $builder->addDefinition('three')
 	->setType(FactoryReceiver::class);
 
@@ -53,10 +44,6 @@ $container = createContainer($builder);
 Assert::type(StdClassFactory::class, $container->getService('one'));
 Assert::type(stdClass::class, $container->getService('one')->create());
 Assert::notSame($container->getService('one')->create(), $container->getService('one')->create());
-
-Assert::type(AnnotatedFactory::class, $container->getService('two'));
-Assert::type(stdClass::class, $container->getService('two')->create());
-Assert::notSame($container->getService('two')->create(), $container->getService('two')->create());
 
 Assert::type(FactoryReceiver::class, $container->getService('three'));
 
