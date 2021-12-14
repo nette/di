@@ -612,15 +612,7 @@ class Resolver
 		} elseif ($itemType = self::isArrayOf($parameter, $type)) {
 			return $getter($itemType, false);
 
-		} elseif (
-			($type && $parameter->allowsNull())
-			|| $parameter->isOptional()
-			|| $parameter->isDefaultValueAvailable()
-		) {
-			// !optional + defaultAvailable, !optional + !defaultAvailable since 8.1.0 = func($a = null, $b)
-			// optional + !defaultAvailable, optional + defaultAvailable since 8.0.0 = i.e. Exception::__construct, mysqli::mysqli, ...
-			// optional + !defaultAvailable = variadics
-			// in other cases the optional and defaultAvailable are identical
+		} elseif ($parameter->isOptional()) {
 			return null;
 
 		} else {
