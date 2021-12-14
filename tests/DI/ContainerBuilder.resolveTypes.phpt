@@ -140,14 +140,14 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createObjectPhpDoc']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createObject']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
@@ -161,14 +161,14 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createMixedPhpDoc']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createMixed']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;

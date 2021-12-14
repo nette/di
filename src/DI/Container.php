@@ -77,7 +77,7 @@ class Container
 
 		if ($service instanceof \Closure) {
 			$rt = Nette\Utils\Type::fromReflection(new \ReflectionFunction($service));
-			$type = $rt ? Helpers::ensureClassType($rt, 'return type of factory') : '';
+			$type = $rt ? Helpers::ensureClassType($rt, 'return type of closure') : '';
 		} else {
 			$type = get_class($service);
 		}
