@@ -18,12 +18,12 @@ Assert::same([], Helpers::filterArguments([]));
 
 Assert::same(
 	['a', 'b', Nette\DI\ContainerBuilder::THIS_CONTAINER],
-	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::THIS_CONTAINER'])
+	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::THIS_CONTAINER']),
 );
 
 Assert::equal(
 	['a', 'b', new Nette\DI\Definitions\Reference('service')],
-	Helpers::filterArguments(['a', 'b', '@service'])
+	Helpers::filterArguments(['a', 'b', '@service']),
 );
 
 Assert::equal(

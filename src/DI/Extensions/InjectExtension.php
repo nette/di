@@ -96,11 +96,9 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		$methods = array_keys($classes);
-		uksort($classes, function (string $a, string $b) use ($classes, $methods): int {
-			return $classes[$a] === $classes[$b]
+		uksort($classes, fn(string $a, string $b): int => $classes[$a] === $classes[$b]
 				? array_search($a, $methods, true) <=> array_search($b, $methods, true)
-				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1);
-		});
+				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1));
 		return array_keys($classes);
 	}
 
@@ -150,11 +148,11 @@ final class InjectExtension extends DI\CompilerExtension
 			throw new Nette\InvalidArgumentException(sprintf('Service must be object, %s given.', gettype($service)));
 		}
 
-		foreach (self::getInjectMethods(get_class($service)) as $method) {
+		foreach (self::getInjectMethods($service::class) as $method) {
 			$container->callMethod([$service, $method]);
 		}
 
-		foreach (self::getInjectProperties(get_class($service)) as $property => $type) {
+		foreach (self::getInjectProperties($service::class) as $property => $type) {
 			$service->$property = $container->getByType($type);
 		}
 	}

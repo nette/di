@@ -24,7 +24,7 @@ Assert::same(
 		[],
 		'40cd750bba9870f18aada2478b24840a',
 	],
-	$compiler->exportDependencies()
+	$compiler->exportDependencies(),
 );
 Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 
@@ -39,7 +39,7 @@ Assert::same(
 		[],
 		'40cd750bba9870f18aada2478b24840a',
 	],
-	$compiler->exportDependencies()
+	$compiler->exportDependencies(),
 );
 Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 
@@ -54,7 +54,7 @@ Assert::same(
 		[],
 		'40cd750bba9870f18aada2478b24840a',
 	],
-	$compiler->exportDependencies()
+	$compiler->exportDependencies(),
 );
 
 $res = $compiler->exportDependencies();
@@ -77,7 +77,7 @@ if (PHP_VERSION_ID >= 80100) {
 			[],
 			'ff31f9bba26681aa5b228503003778cc',
 		],
-		$compiler->exportDependencies()
+		$compiler->exportDependencies(),
 	);
 
 	Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));

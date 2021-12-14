@@ -78,7 +78,7 @@ $builder = $compiler->getContainerBuilder();
 
 Assert::same(
 	['a' => true, 'tag' => 2, DI\Extensions\InjectExtension::TAG_INJECT => true, 'Iface' => true],
-	$builder->getDefinition('one')->getTags()
+	$builder->getDefinition('one')->getTags(),
 );
 
 Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));

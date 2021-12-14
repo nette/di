@@ -73,6 +73,6 @@ Assert::same([
 
 Assert::same(
 	['two' => $builder->getDefinition('two'), 'three' => $builder->getDefinition('three')],
-	$builder->findByType(Service2::class)
+	$builder->findByType(Service2::class),
 );
 Assert::same([], $builder->findByType('unknown'));

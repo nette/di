@@ -49,7 +49,7 @@ class Container
 		$this->parameters = $params;
 		$this->methods = array_flip(array_filter(
 			get_class_methods($this),
-			function ($s) { return preg_match('#^createService.#', $s); }
+			fn($s) => preg_match('#^createService.#', $s),
 		));
 	}
 
@@ -79,7 +79,7 @@ class Container
 			$rt = Nette\Utils\Type::fromReflection(new \ReflectionFunction($service));
 			$type = $rt ? Helpers::ensureClassType($rt, 'return type of closure') : '';
 		} else {
-			$type = get_class($service);
+			$type = $service::class;
 		}
 
 		if (!isset($this->methods[self::getMethodName($name)])) {
@@ -90,7 +90,7 @@ class Container
 				"Service '%s' must be instance of %s, %s.",
 				$name,
 				$expectedType,
-				$type ? "$type given" : 'add typehint to closure'
+				$type ? "$type given" : 'add typehint to closure',
 			));
 		}
 
@@ -222,7 +222,7 @@ class Container
 		if (!is_object($service)) {
 			throw new Nette\UnexpectedValueException(sprintf(
 				"Unable to create service '$name', value returned by %s is not object.",
-				$cb instanceof \Closure ? 'closure' : "method $method()"
+				$cb instanceof \Closure ? 'closure' : "method $method()",
 			));
 		}
 
@@ -258,14 +258,14 @@ class Container
 				if (is_a($methodType, $type, true)) {
 					throw new MissingServiceException(sprintf(
 						"Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.",
-						$type
+						$type,
 					));
 				}
 			}
 
 			throw new MissingServiceException(sprintf(
 				'Service of type %s not found. Did you add it to configuration file?',
-				$type
+				$type,
 			));
 		}
 
@@ -355,11 +355,9 @@ class Container
 
 	private function autowireArguments(\ReflectionFunctionAbstract $function, array $args = []): array
 	{
-		return Resolver::autowireArguments($function, $args, function (string $type, bool $single) {
-			return $single
+		return Resolver::autowireArguments($function, $args, fn(string $type, bool $single) => $single
 				? $this->getByType($type)
-				: array_map([$this, 'getService'], $this->findAutowired($type));
-		});
+				: array_map([$this, 'getService'], $this->findAutowired($type)));
 	}
 
 
