@@ -119,6 +119,15 @@ declare(strict_types=1);
 			case is_string($entity) && Strings::contains($entity, '?'): // PHP literal
 				return $this->formatPhp($entity, $arguments);
 
+			case $entity === 'not':
+				return $this->formatPhp('!(?)', $arguments);
+
+			case $entity === 'bool':
+			case $entity === 'int':
+			case $entity === 'float':
+			case $entity === 'string':
+				return $this->formatPhp('?::?(?, ?)', [Helpers::class, 'convertType', $arguments[0], $entity]);
+
 			case is_string($entity): // create class
 				return $arguments
 					? $this->formatPhp("new $entity(...?:)", [$arguments])
