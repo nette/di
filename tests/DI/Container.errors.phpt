@@ -21,10 +21,6 @@ Assert::exception(function () use ($container, $service) {
 }, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string.');
 
 Assert::exception(function () use ($container) {
-	$container->addService('one', null);
-}, Nette\InvalidArgumentException::class, "Service 'one' must be a object, NULL given.");
-
-Assert::exception(function () use ($container) {
 	$container->getService('one');
 }, Nette\DI\MissingServiceException::class, "Service 'one' not found.");
 

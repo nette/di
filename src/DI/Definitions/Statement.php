@@ -26,10 +26,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 	private string|array|Definition|Reference|null $entity;
 
 
-	/**
-	 * @param  string|array|Definition|Reference|null  $entity
-	 */
-	public function __construct($entity, array $arguments = [])
+	public function __construct(string|array|Definition|Reference|null $entity, array $arguments = [])
 	{
 		if (
 			$entity !== null
@@ -62,8 +59,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 	}
 
 
-	/** @return string|array|Definition|Reference|null */
-	public function getEntity()
+	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->entity;
 	}
