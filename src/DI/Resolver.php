@@ -192,13 +192,6 @@ class Resolver
 				break;
 
 			case $entity === 'not':
-				if (count($arguments) !== 1) {
-					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
-				}
-
-				$entity = ['', '!'];
-				break;
-
 			case $entity === 'bool':
 			case $entity === 'int':
 			case $entity === 'float':
@@ -206,9 +199,6 @@ class Resolver
 				if (count($arguments) !== 1) {
 					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
 				}
-
-				$arguments = [$arguments[0], $entity];
-				$entity = [Helpers::class, 'convertType'];
 				break;
 
 			case is_string($entity): // create class
