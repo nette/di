@@ -21,7 +21,7 @@ function create(): stdClass
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory('::create');
+	->setCreator('::create');
 
 
 $container = createContainer($builder);

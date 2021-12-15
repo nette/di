@@ -17,43 +17,43 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setType('X')->setFactory('Unknown');
+	$builder->addDefinition('one')->setType('X')->setCreator('Unknown');
 }, Nette\InvalidArgumentException::class, "Service 'one': Class or interface 'X' not found.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition(null)->setFactory('Unknown');
+	$builder->addDefinition(null)->setCreator('Unknown');
 	$builder->complete();
 }, Nette\DI\ServiceCreationException::class, "Service (Unknown::__construct()): Class 'Unknown' not found.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('@two');
-	$builder->addDefinition('two')->setFactory('Unknown');
+	$builder->addDefinition('one')->setCreator('@two');
+	$builder->addDefinition('two')->setCreator('Unknown');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'two': Class 'Unknown' not found.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory(new Reference('two'));
-	$builder->addDefinition('two')->setFactory('Unknown');
+	$builder->addDefinition('one')->setCreator(new Reference('two'));
+	$builder->addDefinition('two')->setCreator('Unknown');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'two': Class 'Unknown' not found.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('stdClass::foo');
+	$builder->addDefinition('one')->setCreator('stdClass::foo');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method stdClass::foo() is not callable.");
 
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Nette\DI\Container::foo'); // has __magic
+	$builder->addDefinition('one')->setCreator('Nette\DI\Container::foo'); // has __magic
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method Nette\\DI\\Container::foo() is not callable.");
 
@@ -101,7 +101,7 @@ class Bad6
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Bad6::create');
+	$builder->addDefinition('one')->setCreator('Bad6::create');
 	$builder->complete();
 }, Nette\DI\ServiceCreationException::class, "Service 'one': Method Bad6::create() is not callable.");
 
@@ -115,7 +115,7 @@ class Bad7
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Bad7::create');
+	$builder->addDefinition('one')->setCreator('Bad7::create');
 	$builder->complete();
 }, Nette\DI\ServiceCreationException::class, "Service 'one': Unknown service type, specify it or declare return type of factory method.");
 
@@ -144,14 +144,14 @@ class Good
 // fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory(Good::class, [new Statement('Unknown')]);
+	$builder->addDefinition('one')->setCreator(Good::class, [new Statement('Unknown')]);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class 'Unknown' not found. (used in Good::__construct())");
 
 // fail in argument
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory(Good::class, [new Statement(Bad8::class)]);
+	$builder->addDefinition('one')->setCreator(Good::class, [new Statement(Bad8::class)]);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class Bad8 has private constructor. (used in Good::__construct())");
 
@@ -181,7 +181,7 @@ trait Bad10
 // trait cannot be instantiated
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('one')->setFactory('Bad10::method');
+	$builder->addDefinition('one')->setCreator('Bad10::method');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method Bad10::method() is not callable.");
 

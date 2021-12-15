@@ -69,33 +69,33 @@ namespace {
 	$builder->addFactoryDefinition('one')
 		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
-			->setFactory(stdClass::class);
+			->setCreator(stdClass::class);
 
 	$builder->addFactoryDefinition('two')
 		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
-			->setFactory('@eight');
+			->setCreator('@eight');
 
 	$builder->addFactoryDefinition('three')
 		->setImplement(StdClassFactory::class)
 		->getResultDefinition()
-			->setFactory('@one::create') // alias
+			->setCreator('@one::create') // alias
 			->setType(stdClass::class); // type is needed
 
 	$builder->addDefinition('four')
 		->setType(A\Factory::class);
 
 	$builder->addDefinition('five')
-		->setFactory('@four::createFoo');
+		->setCreator('@four::createFoo');
 
 	$builder->addDefinition('six')
-		->setFactory('@four::createBar');
+		->setCreator('@four::createBar');
 
 	$builder->addDefinition('seven')
-		->setFactory('C\SelfFactory::create');
+		->setCreator('C\SelfFactory::create');
 
 	$builder->addDefinition('eight')
-		->setFactory('stdClass');
+		->setCreator('stdClass');
 
 
 	$container = createContainer($builder);

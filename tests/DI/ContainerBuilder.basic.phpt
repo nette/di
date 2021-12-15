@@ -40,31 +40,31 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory(Service::class, ['@@string']);
+	->setCreator(Service::class, ['@@string']);
 $builder->addDefinition('three')
-	->setFactory(Service::class, ['a', 'b']);
+	->setCreator(Service::class, ['a', 'b']);
 
 $builder->addDefinition('four')
-	->setFactory(Service::class, ['a', 'b'])
+	->setCreator(Service::class, ['a', 'b'])
 	->addSetup('methodA', ['a', 'b'])
 	->addSetup('@four::methodB', [1, 2])
 	->addSetup('methodC', ['@self', '@container'])
 	->addSetup('methodD', ['@one']);
 
 $builder->addDefinition('five', null)
-	->setFactory('Service::create');
+	->setCreator('Service::create');
 
 $six = $builder->addDefinition('six')
-	->setFactory('Service::create', ['@container', 'a', 'b'])
+	->setCreator('Service::create', ['@container', 'a', 'b'])
 	->addSetup(['@six', 'methodA'], ['a', 'b']);
 
 $builder->addDefinition('seven')
-	->setFactory([$six, 'create'], ['@container', $six])
+	->setCreator([$six, 'create'], ['@container', $six])
 	->addSetup([$six, 'methodA'])
 	->addSetup('$service->methodA(?)', ['a']);
 
 $six = $builder->addDefinition('eight')
-	->setFactory('Service::create', [new Reference('container'), 'a', 'b'])
+	->setCreator('Service::create', [new Reference('container'), 'a', 'b'])
 	->addSetup([new Reference('self'), 'methodA'], [new Reference('eight'), new Reference('self')])
 	->addSetup([new Reference('eight'), 'methodB'])
 	->addSetup([new Reference('six'), 'methodC'])

@@ -167,13 +167,13 @@ final class FactoryDefinition extends Definition
 				$this->completeParameters($resolver);
 			}
 
-			$this->convertArguments($resultDef->getFactory()->arguments);
+			$this->convertArguments($resultDef->getCreator()->arguments);
 			foreach ($resultDef->getSetup() as $setup) {
 				$this->convertArguments($setup->arguments);
 			}
 
-			if ($resultDef->getEntity() instanceof Reference && !$resultDef->getFactory()->arguments) {
-				$resultDef->setFactory([ // render as $container->createMethod()
+			if ($resultDef->getEntity() instanceof Reference && !$resultDef->getCreator()->arguments) {
+				$resultDef->setCreator([ // render as $container->createMethod()
 					new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER),
 					Nette\DI\Container::getMethodName($resultDef->getEntity()->getValue()),
 				]);
@@ -191,7 +191,7 @@ final class FactoryDefinition extends Definition
 
 		$ctorParams = [];
 		if (
-			($class = $resolver->resolveEntityType($this->resultDefinition->getFactory()))
+			($class = $resolver->resolveEntityType($this->resultDefinition->getCreator()))
 			&& ($ctor = (new \ReflectionClass($class))->getConstructor())
 		) {
 			foreach ($ctor->getParameters() as $param) {
@@ -213,7 +213,7 @@ final class FactoryDefinition extends Definition
 					));
 				}
 
-				$this->resultDefinition->getFactory()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
+				$this->resultDefinition->getCreator()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->name);

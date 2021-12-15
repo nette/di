@@ -144,7 +144,7 @@ class TestExtension extends DI\CompilerExtension
 			->setParameters(['Baz baz' => null])
 			->setImplement(IFooFactory::class)
 			->getResultDefinition()
-				->setFactory(Foo::class)
+				->setCreator(Foo::class)
 				->setArguments([1 => $builder::literal('$baz')]);
 
 		$builder->addFactoryDefinition('overridenFactory')
@@ -334,7 +334,7 @@ interface Bad7
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition(stdClass::class)->setFactory(stdClass::class);
+	$builder->addDefinition(stdClass::class)->setCreator(stdClass::class);
 	$builder->addAccessorDefinition('one')
 		->setImplement(Bad7::class)
 		->setClass(stdClass::class)

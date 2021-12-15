@@ -11,13 +11,13 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('01')
-	->setFactory(stdClass::class);
+	->setCreator(stdClass::class);
 
 $builder->addDefinition(null)
-	->setFactory(stdClass::class);
+	->setCreator(stdClass::class);
 
 $builder->addDefinition(null)
-	->setFactory(stdClass::class);
+	->setCreator(stdClass::class);
 
 
 $container = createContainer($builder);

@@ -27,6 +27,6 @@ $compilerExtension = (new CompilerExtension)->setCompiler($compiler, 'blog');
 $compilerExtension->loadDefinitionsFromConfig($config['services']);
 
 
-Assert::same('@blog.articles', $builder->getDefinition('blog.comments')->getFactory()->arguments[1]);
-Assert::equal(new Reference('blog.articles'), $builder->getDefinition('blog.articlesList')->getFactory()->arguments[0]);
-Assert::equal(new Reference('blog.comments'), $builder->getDefinition('blog.commentsControl')->getFactory()->arguments[0]->getEntity());
+Assert::same('@blog.articles', $builder->getDefinition('blog.comments')->getCreator()->arguments[1]);
+Assert::equal(new Reference('blog.articles'), $builder->getDefinition('blog.articlesList')->getCreator()->arguments[0]);
+Assert::equal(new Reference('blog.comments'), $builder->getDefinition('blog.commentsControl')->getCreator()->arguments[0]->getEntity());

@@ -38,11 +38,11 @@ class AccessorReceiver
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('service')
-	->setFactory(stdClass::class);
+	->setCreator(stdClass::class);
 
 $builder->addDefinition('service2')
 	->setAutowired(false)
-	->setFactory(stdClass::class);
+	->setCreator(stdClass::class);
 
 $builder->addAccessorDefinition('one')
 	->setImplement(StdClassAccessor::class)

@@ -32,12 +32,12 @@ $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('serviceFactory')
 	->setImplement(ServiceFactory::class)
 	->getResultDefinition()
-		->setFactory('@service');
+		->setCreator('@service');
 
 $builder->addFactoryDefinition('serviceFactoryViaClass')
 	->setImplement(ServiceFactory2::class)
 	->getResultDefinition()
-		->setFactory('@\Service');
+		->setCreator('@\Service');
 
 $builder->addDefinition('service')
 	->setType(stdClass::class);

@@ -47,11 +47,11 @@ class Obj
 
 $builder = new DI\ContainerBuilder;
 $one = $builder->addDefinition('one')
-	->setFactory([new Statement(Factory::class), 'create'])
+	->setCreator([new Statement(Factory::class), 'create'])
 	->addSetup([new Statement(Factory::class), 'mark'], ['@self']);
 
 $two = $builder->addDefinition('two')
-	->setFactory([new Statement([$one, 'foo'], [1]), 'foo'], [2]);
+	->setCreator([new Statement([$one, 'foo'], [1]), 'foo'], [2]);
 
 
 $container = createContainer($builder);

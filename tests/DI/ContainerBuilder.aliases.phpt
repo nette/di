@@ -30,38 +30,38 @@ interface ServiceFactory2
 $builder = new DI\ContainerBuilder;
 
 $builder->addDefinition('aliasForFactory')
-	->setFactory('@serviceFactory');
+	->setCreator('@serviceFactory');
 
 $builder->addDefinition('aliasForFactoryViaClass')
-	->setFactory('@\ServiceFactory');
+	->setCreator('@\ServiceFactory');
 
 $builder->addFactoryDefinition('aliasedFactory')
 	->setImplement(ServiceFactory::class)
 	->setAutowired(false)
 	->getResultDefinition()
-		->setFactory('@service');
+		->setCreator('@service');
 
 $builder->addFactoryDefinition('aliasedFactoryViaClass')
 	->setImplement(ServiceFactory::class)
 	->setAutowired(false)
 	->getResultDefinition()
-		->setFactory('@\Service');
+		->setCreator('@\Service');
 
 $builder->addDefinition('aliasedService')
-	->setFactory('@service');
+	->setCreator('@service');
 
 $builder->addDefinition('aliasedServiceViaClass')
-	->setFactory('@\Service');
+	->setCreator('@\Service');
 
 $builder->addFactoryDefinition('serviceFactory')
 	->setImplement(ServiceFactory::class)
 	->getResultDefinition()
-		->setFactory('@service');
+		->setCreator('@service');
 
 $builder->addFactoryDefinition('serviceFactoryViaClass')
 	->setImplement(ServiceFactory2::class)
 	->getResultDefinition()
-		->setFactory('@\Service');
+		->setCreator('@\Service');
 
 $builder->addDefinition('service')
 	->setType(Service::class);

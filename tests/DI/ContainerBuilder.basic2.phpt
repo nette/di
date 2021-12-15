@@ -29,7 +29,7 @@ class Factory
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory('Factory::create');
+	->setCreator('Factory::create');
 
 
 $container = createContainer($builder);

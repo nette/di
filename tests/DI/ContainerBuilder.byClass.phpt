@@ -72,30 +72,30 @@ $builder->addDefinition('annotatedFactory')
 $builder->addDefinition('two')
 	->setType(stdClass::class)
 	->setAutowired(false)
-	->setFactory('@factory::create', ['@\Factory'])
+	->setCreator('@factory::create', ['@\Factory'])
 	->addSetup(['@\Factory', 'create'], ['@\Factory']);
 
 $builder->addDefinition('three')
 	->setType(stdClass::class)
 	->setAutowired(false)
-	->setFactory('@\Factory::create', ['@\Factory']);
+	->setCreator('@\Factory::create', ['@\Factory']);
 
 $builder->addDefinition('four')
 	->setAutowired(false)
-	->setFactory('@\AnnotatedFactory::create');
+	->setCreator('@\AnnotatedFactory::create');
 
 $builder->addDefinition('five')
 	->setType(stdClass::class)
 	->setAutowired(false)
-	->setFactory('@\IFactory::create');
+	->setCreator('@\IFactory::create');
 
 $builder->addDefinition('uninstantiableFactory')
 	->setType(UninstantiableFactory::class)
-	->setFactory('UninstantiableFactory::getInstance');
+	->setCreator('UninstantiableFactory::getInstance');
 
 $builder->addDefinition('six')
 	->setAutowired(false)
-	->setFactory('@\UninstantiableFactory::create');
+	->setCreator('@\UninstantiableFactory::create');
 
 
 

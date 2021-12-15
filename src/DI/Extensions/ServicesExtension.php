@@ -81,7 +81,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, \stdClass $config): void
 	{
 		if ($config->create) {
-			$definition->setFactory(Helpers::filterArguments([$config->create])[0]);
+			$definition->setCreator(Helpers::filterArguments([$config->create])[0]);
 			$definition->setType(null);
 		}
 
@@ -92,7 +92,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		if ($config->arguments) {
 			$arguments = Helpers::filterArguments($config->arguments);
 			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
-				$arguments = array_replace($definition->getFactory()->arguments, $arguments);
+				$arguments = array_replace($definition->getCreator()->arguments, $arguments);
 			}
 
 			$definition->setArguments($arguments);
@@ -140,17 +140,17 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($config->create) {
-			$resultDef->setFactory(Helpers::filterArguments([$config->create])[0]);
+			$resultDef->setCreator(Helpers::filterArguments([$config->create])[0]);
 		}
 
 		if ($config->type) {
-			$resultDef->setFactory($config->type);
+			$resultDef->setCreator($config->type);
 		}
 
 		if ($config->arguments) {
 			$arguments = Helpers::filterArguments($config->arguments);
 			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
-				$arguments = array_replace($resultDef->getFactory()->arguments, $arguments);
+				$arguments = array_replace($resultDef->getCreator()->arguments, $arguments);
 			}
 
 			$resultDef->setArguments($arguments);
