@@ -63,6 +63,22 @@ final class ServiceDefinition extends Definition
 	 */
 	public function setFactory($factory, array $args = [])
 	{
+		return $this->setCreator($factory, $args);
+	}
+
+
+	public function getFactory(): Statement
+	{
+		return $this->getCreator();
+	}
+
+
+	/**
+	 * @param  string|array|Definition|Reference|Statement  $factory
+	 * @return static
+	 */
+	public function setCreator($factory, array $args = [])
+	{
 		$this->factory = $factory instanceof Statement
 			? $factory
 			: new Statement($factory, $args);
@@ -70,7 +86,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function getFactory(): Statement
+	public function getCreator(): Statement
 	{
 		return $this->factory;
 	}
