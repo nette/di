@@ -23,25 +23,25 @@ $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('one')
 	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory(stdClass::class)
+		->setCreator(stdClass::class)
 		->addSetup('$a', [$builder::literal('$a')]);
 
 @$builder->addFactoryDefinition('two')
 	->setParameters(['stdClass foo', 'array bar', 'foobar' => null]) // parameters is deprecated
 	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory(stdClass::class)
+		->setCreator(stdClass::class)
 		->addSetup('$a', [$builder::literal('$foo')]);
 
 $builder->addDefinition('three')
 	->setType(stdClass::class);
 
 $builder->addDefinition('four')
-	->setFactory('@one::create', [1 => [1]])
+	->setCreator('@one::create', [1 => [1]])
 	->setAutowired(false);
 
 $builder->addDefinition('five')
-	->setFactory('@two::create', [1 => [1]])
+	->setCreator('@two::create', [1 => [1]])
 	->setAutowired(false);
 
 

@@ -23,9 +23,9 @@ class Service
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
-	->setFactory('@two::get');
+	->setCreator('@two::get');
 $builder->addDefinition('two')
-	->setFactory('@one::get');
+	->setCreator('@one::get');
 
 Assert::exception(function () use ($builder) {
 	$container = createContainer($builder);

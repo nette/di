@@ -23,7 +23,7 @@ class Foo
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition(null)
-	->setFactory(Foo::class);
+	->setCreator(Foo::class);
 
 Assert::exception(function () use ($builder) {
 	createContainer($builder);

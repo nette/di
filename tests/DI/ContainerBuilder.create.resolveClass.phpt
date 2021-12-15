@@ -31,7 +31,7 @@ $builder->addDefinition('one')
 	->setType(Factory::class);
 
 $builder->addDefinition('two')
-	->setFactory('@one::createBar');
+	->setCreator('@one::createBar');
 
 
 $container = createContainer($builder);

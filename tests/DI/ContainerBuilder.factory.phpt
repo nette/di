@@ -36,7 +36,7 @@ $builder = new DI\ContainerBuilder;
 $builder->addFactoryDefinition('one')
 	->setImplement(StdClassFactory::class)
 	->getResultDefinition()
-		->setFactory(stdClass::class);
+		->setCreator(stdClass::class);
 
 @$builder->addFactoryDefinition('two')
 	->setImplement(AnnotatedFactory::class); // missing type triggers warning
@@ -45,7 +45,7 @@ $builder->addDefinition('three')
 	->setType(FactoryReceiver::class);
 
 $builder->addDefinition('four')
-	->setFactory(FactoryReceiver::class, ['@one']);
+	->setCreator(FactoryReceiver::class, ['@one']);
 
 
 $container = createContainer($builder);

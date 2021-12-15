@@ -55,79 +55,79 @@ class FooExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$builder->addDefinition('one1')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one2')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one3')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one4')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one5')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one6')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one7')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one8')
-			->setFactory(Lorem::class, [1])
+			->setCreator(Lorem::class, [1])
 			->addSetup('__construct', [2]);
 		$builder->addDefinition('one9')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 		$builder->addDefinition('one10')
-			->setFactory(Lorem::class, [1]);
+			->setCreator(Lorem::class, [1]);
 
 		$builder->addDefinition('two1')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two2')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two3')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two4')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1, 2]);
+			->setCreator('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two5')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two6')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1, 2]);
+			->setCreator('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two7')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two8')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1, 2]);
+			->setCreator('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two9')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1, 2]);
+			->setCreator('Factory::createLorem', [1, 2]);
 		$builder->addDefinition('two10')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('two11')
 			->setType(Lorem::class)
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 
 		$builder->addDefinition('three1')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three2')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three3')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three4')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three5')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three6')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three7')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three8')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 		$builder->addDefinition('three9')
-			->setFactory('Factory::createLorem', [1]);
+			->setCreator('Factory::createLorem', [1]);
 	}
 }
 
