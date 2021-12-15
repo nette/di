@@ -74,11 +74,10 @@ class Loader
 	}
 
 
-	/**
-	 * Save configuration to file.
-	 */
+	/** @deprecated */
 	public function save(array $data, string $file): void
 	{
+		trigger_error(__METHOD__ . "() is deprecated, use adapter's dump() method.", E_USER_DEPRECATED);
 		if (file_put_contents($file, $this->getAdapter($file)->dump($data)) === false) {
 			throw new Nette\IOException(sprintf("Cannot write file '%s'.", $file));
 		}
