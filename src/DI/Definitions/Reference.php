@@ -27,7 +27,7 @@ final class Reference
 	private string $value;
 
 
-	public static function fromType(string $value): self
+	public static function fromType(string $value): static
 	{
 		if (strpos($value, '\\') === false) {
 			$value = '\\' . $value;
