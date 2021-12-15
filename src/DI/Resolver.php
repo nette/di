@@ -198,12 +198,8 @@ class Resolver
 				break;
 
 			case $entity === 'not':
-				if (count($arguments) > 1) {
-					throw new ServiceCreationException(sprintf(
-						'Function %s() expects at most 1 parameter, %s given.',
-						$entity,
-						count($arguments)
-					));
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
 				}
 
 				$entity = ['', '!'];
@@ -213,12 +209,8 @@ class Resolver
 			case $entity === 'int':
 			case $entity === 'float':
 			case $entity === 'string':
-				if (count($arguments) > 1) {
-					throw new ServiceCreationException(sprintf(
-						'Function %s() expects at most 1 parameter, %s given.',
-						$entity,
-						count($arguments)
-					));
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
 				}
 
 				$arguments = [$arguments[0], $entity];
