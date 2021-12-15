@@ -63,7 +63,7 @@ class Notes
 }
 
 
-function createContainer($source, $config = null, $params = []): ?Nette\DI\Container
+function createContainer($source, $config = null, array $params = []): ?Nette\DI\Container
 {
 	$class = 'Container' . md5((string) lcg_value());
 	if ($source instanceof Nette\DI\ContainerBuilder) {
