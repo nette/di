@@ -48,9 +48,8 @@ class Compiler
 
 	/**
 	 * Add custom configurator extension.
-	 * @return static
 	 */
-	public function addExtension(?string $name, CompilerExtension $extension)
+	public function addExtension(?string $name, CompilerExtension $extension): static
 	{
 		if ($name === null) {
 			$name = '_' . count($this->extensions);
@@ -88,8 +87,7 @@ class Compiler
 	}
 
 
-	/** @return static */
-	public function setClassName(string $className)
+	public function setClassName(string $className): static
 	{
 		$this->className = $className;
 		return $this;
@@ -98,9 +96,8 @@ class Compiler
 
 	/**
 	 * Adds new configuration.
-	 * @return static
 	 */
-	public function addConfig(array $config)
+	public function addConfig(array $config): static
 	{
 		foreach ($config as $section => $data) {
 			$this->configs[$section][] = $data;
@@ -113,9 +110,8 @@ class Compiler
 
 	/**
 	 * Adds new configuration from file.
-	 * @return static
 	 */
-	public function loadConfig(string $file, ?Config\Loader $loader = null)
+	public function loadConfig(string $file, ?Config\Loader $loader = null): static
 	{
 		$sources = $this->sources . "// source: $file\n";
 		$loader = $loader ?: new Config\Loader;
@@ -141,9 +137,8 @@ class Compiler
 
 	/**
 	 * Sets the names of dynamic parameters.
-	 * @return static
 	 */
-	public function setDynamicParameterNames(array $names)
+	public function setDynamicParameterNames(array $names): static
 	{
 		assert($this->extensions[self::Parameters] instanceof Extensions\ParametersExtension);
 		$this->extensions[self::Parameters]->dynamicParams = $names;
@@ -154,9 +149,8 @@ class Compiler
 	/**
 	 * Adds dependencies to the list.
 	 * @param  array  $deps  of ReflectionClass|\ReflectionFunctionAbstract|string
-	 * @return static
 	 */
-	public function addDependencies(array $deps)
+	public function addDependencies(array $deps): static
 	{
 		$this->dependencies->add(array_filter($deps));
 		return $this;
@@ -172,8 +166,7 @@ class Compiler
 	}
 
 
-	/** @return static */
-	public function addExportedTag(string $tag)
+	public function addExportedTag(string $tag): static
 	{
 		if (isset($this->extensions[self::DI])) {
 			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
@@ -184,8 +177,7 @@ class Compiler
 	}
 
 
-	/** @return static */
-	public function addExportedType(string $type)
+	public function addExportedType(string $type): static
 	{
 		if (isset($this->extensions[self::DI])) {
 			assert($this->extensions[self::DI] instanceof Extensions\DIExtension);
@@ -268,9 +260,8 @@ class Compiler
 
 	/**
 	 * Merges and validates configurations against scheme.
-	 * @return array|object
 	 */
-	private function processSchema(Schema\Schema $schema, array $configs, $name = null)
+	private function processSchema(Schema\Schema $schema, array $configs, $name = null): array|object
 	{
 		$processor = new Schema\Processor;
 		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {

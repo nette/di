@@ -61,9 +61,8 @@ class Container
 	/**
 	 * Adds the service to the container.
 	 * @param  object  $service  service or its factory
-	 * @return static
 	 */
-	public function addService(string $name, object $service)
+	public function addService(string $name, object $service): static
 	{
 		$name = $this->aliases[$name] ?? $name;
 		if (isset($this->instances[$name])) {
@@ -304,7 +303,6 @@ class Container
 
 	/**
 	 * Creates new instance using autowiring.
-	 * @throws Nette\InvalidArgumentException
 	 */
 	public function createInstance(string $class, array $args = []): object
 	{
@@ -334,9 +332,8 @@ class Container
 
 	/**
 	 * Calls method using autowiring.
-	 * @return mixed
 	 */
-	public function callMethod(callable $function, array $args = [])
+	public function callMethod(callable $function, array $args = []): mixed
 	{
 		return $function(...$this->autowireArguments(Nette\Utils\Callback::toReflection($function), $args));
 	}

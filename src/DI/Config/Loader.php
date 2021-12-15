@@ -103,10 +103,8 @@ class Loader
 
 	/**
 	 * Registers adapter for given file extension.
-	 * @param  string|Adapter  $adapter
-	 * @return static
 	 */
-	public function addAdapter(string $extension, $adapter)
+	public function addAdapter(string $extension, string|Adapter $adapter): static
 	{
 		$this->adapters[strtolower($extension)] = $adapter;
 		return $this;
@@ -126,8 +124,7 @@ class Loader
 	}
 
 
-	/** @return static */
-	public function setParameters(array $params)
+	public function setParameters(array $params): static
 	{
 		$this->parameters = $params;
 		return $this;
