@@ -86,10 +86,10 @@ class DefinitionSchema implements Schema
 			$res = ['implement' => $def->getEntity()];
 			if (array_keys($def->arguments) === ['tagged']) {
 				$res += $def->arguments;
-			} elseif (count($def->arguments) > 1) {
+			} elseif (array_keys($def->arguments) === [0]) {
+				$res['factory'] = $def->arguments[0];
+			} elseif ($def->arguments) {
 				$res['references'] = $def->arguments;
-			} elseif ($factory = array_shift($def->arguments)) {
-				$res['factory'] = $factory;
 			}
 
 			return $res;

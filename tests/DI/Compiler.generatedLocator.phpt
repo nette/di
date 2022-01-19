@@ -67,6 +67,7 @@ services:
 	four: LocatorFactory(tagged: b)
 	five: LocatorN(tagged: a)
 	six: LocatorFactoryN(tagged: a)
+	seven: Locator(a: @lorem1)
 ');
 
 
@@ -111,3 +112,7 @@ $six = $container->getService('six');
 Assert::type(Lorem::class, $six->create('1'));
 Assert::type(Lorem::class, $six->create('2'));
 Assert::null($six->create('3'));
+
+// accessor with one service
+$one = $container->getService('seven');
+Assert::type(Lorem::class, $one->get('a'));
