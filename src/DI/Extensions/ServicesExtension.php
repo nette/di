@@ -80,8 +80,8 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	 */
 	private function updateServiceDefinition(Definitions\ServiceDefinition $definition, \stdClass $config): void
 	{
-		if ($config->factory) {
-			$definition->setFactory(Helpers::filterArguments([$config->factory])[0]);
+		if ($config->create) {
+			$definition->setFactory(Helpers::filterArguments([$config->create])[0]);
 			$definition->setType(null);
 		}
 
@@ -124,7 +124,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			$definition->setImplement($config->implement);
 		}
 
-		if ($ref = $config->factory ?? $config->type ?? null) {
+		if ($ref = $config->create ?? $config->type ?? null) {
 			$definition->setReference($ref);
 		}
 	}
@@ -139,8 +139,8 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			$definition->setAutowired(true);
 		}
 
-		if ($config->factory) {
-			$resultDef->setFactory(Helpers::filterArguments([$config->factory])[0]);
+		if ($config->create) {
+			$resultDef->setFactory(Helpers::filterArguments([$config->create])[0]);
 		}
 
 		if ($config->type) {

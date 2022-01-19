@@ -26,17 +26,17 @@ Assert::with(DefinitionSchema::class, function () {
 	Assert::same([], $schema->normalize(null, $context));
 	Assert::same([], $schema->normalize([], $context));
 	Assert::same([false], $schema->normalize(false, $context));
-	Assert::same(['factory' => true], $schema->normalize(true, $context));
-	Assert::same(['factory' => 'class'], $schema->normalize('class', $context));
+	Assert::same(['create' => true], $schema->normalize(true, $context));
+	Assert::same(['create' => 'class'], $schema->normalize('class', $context));
 	Assert::same(['implement' => Iface::class], $schema->normalize(Iface::class, $context));
-	Assert::same(['factory' => ['class', 'method']], $schema->normalize(['class', 'method'], $context));
-	Assert::same(['factory' => [Iface::class, 'method']], $schema->normalize([Iface::class, 'method'], $context));
+	Assert::same(['create' => ['class', 'method']], $schema->normalize(['class', 'method'], $context));
+	Assert::same(['create' => [Iface::class, 'method']], $schema->normalize([Iface::class, 'method'], $context));
 
 	$statement = new Statement(['class', 'method']);
-	Assert::same(['factory' => $statement], $schema->normalize($statement, $context));
+	Assert::same(['create' => $statement], $schema->normalize($statement, $context));
 
 	$statement = new Statement(Iface::class, ['foo']);
-	Assert::same(['implement' => Iface::class, 'factory' => 'foo'], $schema->normalize($statement, $context));
+	Assert::same(['implement' => Iface::class, 'create' => 'foo'], $schema->normalize($statement, $context));
 
 	$statement = new Statement(Iface::class, ['stdClass', 'stdClass']);
 	Assert::same(['implement' => Iface::class, 'references' => ['stdClass', 'stdClass']], $schema->normalize($statement, $context));
@@ -45,7 +45,8 @@ Assert::with(DefinitionSchema::class, function () {
 	Assert::same(['implement' => Iface::class, 'tagged' => 123], $schema->normalize($statement, $context));
 
 	// aliases
-	Assert::same(['factory' => 'val'], $schema->normalize(['class' => 'val'], $context));
+	Assert::same(['create' => 'val'], $schema->normalize(['class' => 'val'], $context));
+	Assert::same(['create' => 'val'], $schema->normalize(['factory' => 'val'], $context));
 	Assert::same(['imported' => 'val'], $schema->normalize(['dynamic' => 'val'], $context));
 
 	Assert::exception(function () use ($schema, $context) {
