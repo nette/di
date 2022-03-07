@@ -23,7 +23,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 {
 	use Nette\SmartObject;
 
-	private const PREVENT_MERGING_SUFFIX = '!';
+	private const PreventMergingSuffix = '!';
 
 	/** @var string */
 	private $file;
@@ -53,7 +53,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {
-			if (is_string($key) && substr($key, -1) === self::PREVENT_MERGING_SUFFIX) {
+			if (is_string($key) && substr($key, -1) === self::PreventMergingSuffix) {
 				if (!is_array($val) && $val !== null) {
 					throw new Nette\DI\InvalidConfigurationException(sprintf(
 						"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",

@@ -21,8 +21,8 @@ class Compiler
 	use Nette\SmartObject;
 
 	private const
-		SERVICES = 'services',
-		PARAMETERS = 'parameters',
+		Services = 'services',
+		Parameters = 'parameters',
 		DI = 'di';
 
 	/** @var CompilerExtension[] */
@@ -51,8 +51,8 @@ class Compiler
 	{
 		$this->builder = $builder ?: new ContainerBuilder;
 		$this->dependencies = new DependencyChecker;
-		$this->addExtension(self::SERVICES, new Extensions\ServicesExtension);
-		$this->addExtension(self::PARAMETERS, new Extensions\ParametersExtension($this->configs));
+		$this->addExtension(self::Services, new Extensions\ServicesExtension);
+		$this->addExtension(self::Parameters, new Extensions\ParametersExtension($this->configs));
 	}
 
 
@@ -155,8 +155,8 @@ class Compiler
 	 */
 	public function setDynamicParameterNames(array $names)
 	{
-		assert($this->extensions[self::PARAMETERS] instanceof Extensions\ParametersExtension);
-		$this->extensions[self::PARAMETERS]->dynamicParams = $names;
+		assert($this->extensions[self::Parameters] instanceof Extensions\ParametersExtension);
+		$this->extensions[self::Parameters]->dynamicParams = $names;
 		return $this;
 	}
 
@@ -231,7 +231,7 @@ class Compiler
 			Nette\Utils\Arrays::insertBefore($this->extensions, key($decorator), $this->getExtensions(Extensions\SearchExtension::class));
 		}
 
-		$extensions = array_diff_key($this->extensions, $first, [self::SERVICES => 1]);
+		$extensions = array_diff_key($this->extensions, $first, [self::Services => 1]);
 		foreach ($extensions as $name => $extension) {
 			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
 			$extension->setConfig($this->config[$name] = $config);
@@ -247,7 +247,7 @@ class Compiler
 			$extension->loadConfiguration();
 		}
 
-		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::SERVICES => 1])) {
+		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::Services => 1])) {
 			throw new Nette\DeprecatedException(sprintf(
 				"Extensions '%s' were added while container was being compiled.",
 				implode("', '", array_keys($extra))
@@ -285,7 +285,7 @@ class Compiler
 		$processor = new Schema\Processor;
 		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {
 			$context->path = $name ? [$name] : [];
-			$context->dynamics = &$this->extensions[self::PARAMETERS]->dynamicValidators;
+			$context->dynamics = &$this->extensions[self::Parameters]->dynamicValidators;
 		};
 		try {
 			$res = $processor->processMultiple($schema, $configs);
@@ -322,7 +322,7 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
-		$extension = $this->extensions[self::SERVICES];
+		$extension = $this->extensions[self::Services];
 		assert($extension instanceof Extensions\ServicesExtension);
 		$extension->loadDefinitions($this->processSchema($extension->getConfigSchema(), [$configList]));
 	}

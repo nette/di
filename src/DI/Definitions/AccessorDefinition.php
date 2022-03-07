@@ -19,7 +19,7 @@ use Nette\Utils\Type;
  */
 final class AccessorDefinition extends Definition
 {
-	private const METHOD_GET = 'get';
+	private const MethodGet = 'get';
 
 	/** @var Reference|null */
 	private $reference;
@@ -42,7 +42,7 @@ final class AccessorDefinition extends Definition
 		if (
 			!$method
 			|| $method->isStatic()
-			|| $method->getName() !== self::METHOD_GET
+			|| $method->getName() !== self::MethodGet
 			|| count($rc->getMethods()) > 1
 		) {
 			throw new Nette\InvalidArgumentException(sprintf(
@@ -101,7 +101,7 @@ final class AccessorDefinition extends Definition
 	{
 		if (!$this->reference) {
 			$interface = $this->getType();
-			$method = new \ReflectionMethod($interface, self::METHOD_GET);
+			$method = new \ReflectionMethod($interface, self::MethodGet);
 			$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
 			$this->setReference(Helpers::ensureClassType($type, "return type of $interface::get()"));
 		}
@@ -123,9 +123,9 @@ final class AccessorDefinition extends Definition
 			->addParameter('container')
 			->setType($generator->getClassName());
 
-		$rm = new \ReflectionMethod($this->getType(), self::METHOD_GET);
+		$rm = new \ReflectionMethod($this->getType(), self::MethodGet);
 
-		$class->addMethod(self::METHOD_GET)
+		$class->addMethod(self::MethodGet)
 			->setBody('return $this->container->getService(?);', [$this->reference->getValue()])
 			->setReturnType((string) Type::fromReflection($rm));
 

@@ -22,7 +22,7 @@ use Nette\Utils\Type;
  */
 final class FactoryDefinition extends Definition
 {
-	private const METHOD_CREATE = 'create';
+	private const MethodCreate = 'create';
 
 	/** @var array */
 	public $parameters = [];
@@ -50,7 +50,7 @@ final class FactoryDefinition extends Definition
 
 		$rc = new \ReflectionClass($interface);
 		$method = $rc->getMethods()[0] ?? null;
-		if (!$method || $method->isStatic() || $method->name !== self::METHOD_CREATE || count($rc->getMethods()) > 1) {
+		if (!$method || $method->isStatic() || $method->name !== self::MethodCreate || count($rc->getMethods()) > 1) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface %s must have just one non-static method create().",
 				$this->getName(),
@@ -185,7 +185,7 @@ final class FactoryDefinition extends Definition
 			throw new ServiceCreationException('Type is missing in definition of service.');
 		}
 
-		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
+		$method = new \ReflectionMethod($interface, self::MethodCreate);
 		$type = Type::fromReflection($method) ?? Helpers::getReturnTypeAnnotation($method);
 
 		$resultDef = $this->resultDefinition;
@@ -239,7 +239,7 @@ final class FactoryDefinition extends Definition
 	private function completeParameters(Nette\DI\Resolver $resolver): void
 	{
 		$interface = $this->getType();
-		$method = new \ReflectionMethod($interface, self::METHOD_CREATE);
+		$method = new \ReflectionMethod($interface, self::MethodCreate);
 
 		$ctorParams = [];
 		if (
@@ -309,13 +309,13 @@ final class FactoryDefinition extends Definition
 			->addParameter('container')
 			->setType($generator->getClassName());
 
-		$methodCreate = $class->addMethod(self::METHOD_CREATE);
+		$methodCreate = $class->addMethod(self::MethodCreate);
 		$this->resultDefinition->generateMethod($methodCreate, $generator);
 		$body = $methodCreate->getBody();
 		$body = str_replace('$this', '$this->container', $body);
 		$body = str_replace('$this->container->container', '$this->container', $body);
 
-		$rm = new \ReflectionMethod($this->getType(), self::METHOD_CREATE);
+		$rm = new \ReflectionMethod($this->getType(), self::MethodCreate);
 		$methodCreate
 			->setParameters($generator->convertParameters($this->parameters))
 			->setReturnType((string) (Type::fromReflection($rm) ?? $this->getResultType()))
