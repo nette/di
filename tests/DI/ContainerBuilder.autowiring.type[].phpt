@@ -22,7 +22,7 @@ class Foo
 
 	/**
 	 * @param Service[] $bars
-	 * @param Foo[] $foos
+	 * @param array<int,Foo> $foos
 	 * @param string[] $strings
 	 */
 	public function __construct(array $bars = [], ?array $foos = null, array $strings = ['default'])
