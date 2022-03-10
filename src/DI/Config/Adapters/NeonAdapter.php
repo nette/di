@@ -54,7 +54,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {
-			if (is_string($key) && substr($key, -1) === self::PreventMergingSuffix) {
+			if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
 				if (!is_array($val) && $val !== null) {
 					throw new Nette\DI\InvalidConfigurationException(sprintf(
 						"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
@@ -83,7 +83,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 					$val = $tmp;
 				} else {
 					$tmp = $this->process([$val->value]);
-					if (is_string($tmp[0]) && strpos($tmp[0], '?') !== false) {
+					if (is_string($tmp[0]) && str_contains($tmp[0], '?')) {
 						throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
 					}
 
