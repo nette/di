@@ -53,7 +53,7 @@ use Tracy\Helpers;
 			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : (isset($wiring[$type]) ? 'no' : '?') ?></td>
 			<td>
 				<?php if (isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container): ?>
-					<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true]); ?>
+					<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5]); ?>
 				<?php elseif (isset($instances[$name])): ?>
 					<code><?= get_class($instances[$name]) ?></code>
 				<?php elseif (is_string($type)): ?>
