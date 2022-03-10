@@ -77,7 +77,7 @@ final class AccessorDefinition extends Definition
 		if ($reference instanceof Reference) {
 			$this->reference = $reference;
 		} else {
-			$this->reference = substr($reference, 0, 1) === '@'
+			$this->reference = str_starts_with($reference, '@')
 				? new Reference(substr($reference, 1))
 				: Reference::fromType($reference);
 		}
