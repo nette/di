@@ -140,7 +140,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	{
 		$res = [];
 		foreach ((array) $masks as $mask) {
-			$mask = (strpos($mask, '\\') === false ? '**\\' : '') . $mask;
+			$mask = (str_contains($mask, '\\') ? '' : '**\\') . $mask;
 			$mask = preg_quote($mask, '#');
 			$mask = str_replace('\*\*\\\\', '(.*\\\\)?', $mask);
 			$mask = str_replace('\\\\\*\*', '(\\\\.*)?', $mask);
