@@ -140,7 +140,7 @@ abstract class CompilerExtension
 	 */
 	public function prefix(string $id): string
 	{
-		return substr_replace($id, $this->name . '.', substr($id, 0, 1) === '@' ? 1 : 0, 0);
+		return substr_replace($id, $this->name . '.', str_starts_with($id, '@') ? 1 : 0, 0);
 	}
 
 

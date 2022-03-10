@@ -73,7 +73,7 @@ final class LocatorDefinition extends Definition
 	{
 		$this->references = [];
 		foreach ($references as $name => $ref) {
-			$this->references[$name] = substr($ref, 0, 1) === '@'
+			$this->references[$name] = str_starts_with($ref, '@')
 				? new Reference(substr($ref, 1))
 				: Reference::fromType($ref);
 		}
