@@ -55,7 +55,7 @@ public function createServiceAbc(): Good2
 	};
 }
 XX
-,
+		,
 		$method->__toString()
 	);
 });

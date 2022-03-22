@@ -67,4 +67,4 @@ services:
 	- Lorem(1)::foo()
 
 EOD
-, $adapter->dump($data));
+	, $adapter->dump($data));

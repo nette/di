@@ -71,8 +71,7 @@ namespace C
 	}
 }
 
-namespace
-{
+namespace {
 	use Nette\DI;
 	use Tester\Assert;
 

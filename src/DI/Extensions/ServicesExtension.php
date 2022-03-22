@@ -60,7 +60,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 			$def = $this->retrieveDefinition($name, $config);
 
-			static $methods = [
+			$methods = [
 				Definitions\ServiceDefinition::class => 'updateServiceDefinition',
 				Definitions\AccessorDefinition::class => 'updateAccessorDefinition',
 				Definitions\FactoryDefinition::class => 'updateFactoryDefinition',

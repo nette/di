@@ -47,4 +47,4 @@ return [
 	],
 ];
 EOD
-, file_get_contents(TEMP_FILE));
+	, file_get_contents(TEMP_FILE));

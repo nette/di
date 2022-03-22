@@ -47,7 +47,7 @@ public function createServiceAbc(): void
 	throw new Nette\DI\ServiceCreationException('Unable to create imported service \'abc\', it must be added using addService()');
 }
 XX
-,
+		,
 		$method->__toString()
 	);
 });

@@ -43,7 +43,7 @@ Assert::match(<<<'EOD'
 - ent(2)::inner(3, 4)
 - ent(3)::inner(5)
 EOD
-, $adapter->dump($data));
+	, $adapter->dump($data));
 
 
 // references
@@ -58,7 +58,7 @@ Assert::match(<<<'EOD'
 a: @foo::method(@bar)
 b: @foo()
 EOD
-, $adapter->dump($data));
+	, $adapter->dump($data));
 
 
 // _

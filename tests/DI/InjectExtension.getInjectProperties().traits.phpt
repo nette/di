@@ -34,8 +34,7 @@ namespace C
 	}
 }
 
-namespace
-{
+namespace {
 	use Nette\DI\Extensions\InjectExtension;
 	use Tester\Assert;
 

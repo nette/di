@@ -112,8 +112,8 @@ class Resolver
 			}
 
 			try {
-				/** @var \ReflectionMethod|\ReflectionFunction $reflection */
 				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+				assert($reflection instanceof \ReflectionMethod || $reflection instanceof \ReflectionFunction);
 				$refClass = $reflection instanceof \ReflectionMethod
 					? $reflection->getDeclaringClass()
 					: null;
@@ -531,7 +531,8 @@ class Resolver
 		\ReflectionFunctionAbstract $method,
 		array $arguments,
 		callable $getter
-	): array {
+	): array
+	{
 		$optCount = 0;
 		$useName = false;
 		$num = -1;

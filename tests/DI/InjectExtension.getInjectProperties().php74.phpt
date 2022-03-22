@@ -25,8 +25,7 @@ namespace A
 	}
 }
 
-namespace
-{
+namespace {
 	use Nette\DI\Extensions\InjectExtension;
 	use Tester\Assert;
 

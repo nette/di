@@ -45,7 +45,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 					|| $entity[0] instanceof self
 					|| $entity[0] instanceof Reference
 					|| $entity[0] instanceof Definition)
-		)) {
+			)) {
 			throw new Nette\InvalidArgumentException('Argument is not valid Statement entity.');
 		}
 
