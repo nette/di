@@ -70,7 +70,6 @@ class ContainerLoader
 		if (!$handle) {
 			throw new Nette\IOException(sprintf("Unable to create file '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
-			// the lock will automatically be freed when $handle goes out of scope
 			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		}
 
@@ -94,6 +93,7 @@ class ContainerLoader
 		if ((@include $file) === false) { // @ - error escalated to exception
 			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
 		}
+		flock($handle, LOCK_UN);
 	}
 
 
