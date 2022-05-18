@@ -53,12 +53,10 @@ class FirstExtension extends DI\CompilerExtension
 
 class CustomExtensionsExtension extends DI\CompilerExtension
 {
-
 	public function loadConfiguration()
 	{
-		$this->compiler->addExtension('first', new FirstExtension());
+		$this->compiler->addExtension('first', new FirstExtension);
 	}
-
 }
 
 $compiler = new DI\Compiler;
