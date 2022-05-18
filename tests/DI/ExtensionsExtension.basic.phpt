@@ -84,3 +84,5 @@ $compiler = new DI\Compiler;
 $compiler->addExtension('extensions', new CustomExtensionsExtension);
 $container = createContainer($compiler);
 Assert::same(['services', 'parameters', 'extensions', 'first'], $container->parameters['first']);
+
+
