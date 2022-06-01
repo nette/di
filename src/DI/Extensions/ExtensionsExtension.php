@@ -15,7 +15,7 @@ use Nette;
 /**
  * Enables registration of other extensions in $config file
  */
-final class ExtensionsExtension extends Nette\DI\CompilerExtension
+class ExtensionsExtension extends Nette\DI\CompilerExtension
 {
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
