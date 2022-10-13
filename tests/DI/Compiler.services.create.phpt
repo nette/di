@@ -25,6 +25,10 @@ class Factory
 
 class Lorem
 {
+	public $arg;
+	public $foo;
+
+
 	public function __construct($arg = null)
 	{
 		$this->arg = $arg;
@@ -41,6 +45,9 @@ class Lorem
 
 class Ipsum
 {
+	public $arg;
+
+
 	public function __construct($arg)
 	{
 		$this->arg = $arg;

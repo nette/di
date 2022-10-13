@@ -7,7 +7,7 @@ services:
 	referencedServiceWithSetup:
 		factory: @one
 		setup:
-			- $x(10)
+			- $arg(10)
 
 	serviceAsParam: Ipsum(@one)
 	calledService: @one()

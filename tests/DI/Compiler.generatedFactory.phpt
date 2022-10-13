@@ -25,6 +25,7 @@ interface ILoremFactory
 class Lorem
 {
 	public $ipsum;
+	public $var;
 
 
 	public function __construct(Ipsum $ipsum)
@@ -56,6 +57,7 @@ class Article
 
 	public $title;
 	public $method;
+	public $prop;
 
 
 	public function __construct($title)

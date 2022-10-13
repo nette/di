@@ -15,6 +15,9 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
+	public $args;
+
+
 	public function __construct()
 	{
 	}

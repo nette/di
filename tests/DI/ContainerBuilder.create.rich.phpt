@@ -16,6 +16,9 @@ require __DIR__ . '/../bootstrap.php';
 
 class Factory
 {
+	public $mark;
+
+
 	/** @return Obj */
 	public function create()
 	{
@@ -31,6 +34,10 @@ class Factory
 
 class Obj
 {
+	public $args;
+	public $mark;
+
+
 	/** @return Obj */
 	public function foo(...$args)
 	{

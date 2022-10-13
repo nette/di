@@ -15,6 +15,10 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
+	public $test;
+	public $arr;
+
+
 	public function test(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
@@ -28,6 +32,7 @@ class Ipsum
 
 	public static $instances;
 
+	public $args;
 	public $test;
 
 
