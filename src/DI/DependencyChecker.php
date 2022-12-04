@@ -23,7 +23,10 @@ class DependencyChecker
 {
 	use Nette\SmartObject;
 
-	public const VERSION = 1;
+	public const Version = 1;
+
+	/** @deprecated use DependencyChecker::Version */
+	public const VERSION = self::Version;
 
 	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
 	private $dependencies = [];
@@ -73,7 +76,7 @@ class DependencyChecker
 		$hash = self::calculateHash($classes, $functions);
 		$files = @array_map('filemtime', array_combine($files, $files)); // @ - file may not exist
 		$phpFiles = @array_map('filemtime', array_combine($phpFiles, $phpFiles)); // @ - file may not exist
-		return [self::VERSION, $files, $phpFiles, $classes, $functions, $hash];
+		return [self::Version, $files, $phpFiles, $classes, $functions, $hash];
 	}
 
 
@@ -93,7 +96,7 @@ class DependencyChecker
 			$currentFiles = @array_map('filemtime', array_combine($tmp = array_keys($files), $tmp)); // @ - files may not exist
 			$origPhpFiles = $phpFiles;
 			$phpFiles = @array_map('filemtime', array_combine($tmp = array_keys($phpFiles), $tmp)); // @ - files may not exist
-			return $version !== self::VERSION
+			return $version !== self::Version
 				|| $files !== $currentFiles
 				|| ($phpFiles !== $origPhpFiles && $hash !== self::calculateHash($classes, $functions));
 		} catch (\ReflectionException $e) {

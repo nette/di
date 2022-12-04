@@ -12,8 +12,8 @@ services:
 		implement: IArticleFactory
 		parameters: [title]
 		setup:
-			- method(@self::ABC)
-			- $prop = @self::ABC
+			- method(@self::Abc)
+			- $prop = @self::Abc
 
 	article2:
 		implement: IArticleFactory

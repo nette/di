@@ -34,8 +34,8 @@ Assert::false($ref->isSelf());
 Assert::same('\a', $ref->getValue());
 
 
-$ref = new Reference(Reference::SELF);
+$ref = new Reference(Reference::Self);
 Assert::false($ref->isName());
 Assert::false($ref->isType());
 Assert::true($ref->isSelf());
-Assert::same(Reference::SELF, $ref->getValue());
+Assert::same(Reference::Self, $ref->getValue());

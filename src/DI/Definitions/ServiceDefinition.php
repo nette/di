@@ -172,7 +172,7 @@ final class ServiceDefinition extends Definition
 		$entity = $this->creator->getEntity();
 		if ($entity instanceof Reference && !$this->creator->arguments && !$this->setup) {
 			$ref = $resolver->normalizeReference($entity);
-			$this->setCreator([new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER), 'getService'], [$ref->getValue()]);
+			$this->setCreator([new Reference(Nette\DI\ContainerBuilder::ThisContainer), 'getService'], [$ref->getValue()]);
 		}
 
 		$this->creator = $resolver->completeStatement($this->creator);
@@ -182,7 +182,7 @@ final class ServiceDefinition extends Definition
 				is_string($setup->getEntity())
 				&& strpbrk($setup->getEntity(), ':@?\\') === false
 			) { // auto-prepend @self
-				$setup = new Statement([new Reference(Reference::SELF), $setup->getEntity()], $setup->arguments);
+				$setup = new Statement([new Reference(Reference::Self), $setup->getEntity()], $setup->arguments);
 			}
 
 			$setup = $resolver->completeStatement($setup, true);

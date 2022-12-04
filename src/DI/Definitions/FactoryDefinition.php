@@ -174,7 +174,7 @@ final class FactoryDefinition extends Definition
 
 			if ($resultDef->getEntity() instanceof Reference && !$resultDef->getCreator()->arguments) {
 				$resultDef->setCreator([ // render as $container->createMethod()
-					new Reference(Nette\DI\ContainerBuilder::THIS_CONTAINER),
+					new Reference(Nette\DI\ContainerBuilder::ThisContainer),
 					Nette\DI\Container::getMethodName($resultDef->getEntity()->getValue()),
 				]);
 			}

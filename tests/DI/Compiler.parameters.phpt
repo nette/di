@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	public const NAME = 'hello';
+	public const Name = 'hello';
 
 	public $arg;
 
@@ -47,12 +47,12 @@ test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
-		bar: Service::NAME
+		bar: Service::Name
 
 	services:
 		one: Service(%bar%)
 	');
-	Assert::same('Service::NAME', $container->parameters['bar']); // not resolved
+	Assert::same('Service::Name', $container->parameters['bar']); // not resolved
 	Assert::same('hello', $container->getService('one')->arg);
 });
 
@@ -61,7 +61,7 @@ test('', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
-		bar: Service::method(Service::NAME)
+		bar: Service::method(Service::Name)
 
 	services:
 		one: Service(%bar%)

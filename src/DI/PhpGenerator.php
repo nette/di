@@ -62,7 +62,7 @@ class PhpGenerator
 			$class->addMember($this->generateMethod($def));
 		}
 
-		$class->getMethod(Container::getMethodName(ContainerBuilder::THIS_CONTAINER))
+		$class->getMethod(Container::getMethodName(ContainerBuilder::ThisContainer))
 			->setReturnType($className)
 			->setBody('return $this;');
 
@@ -178,7 +178,7 @@ declare(strict_types=1);
 				$name = $val->getValue();
 				if ($val->isSelf()) {
 					$val = new Php\Literal('$service');
-				} elseif ($name === ContainerBuilder::THIS_CONTAINER) {
+				} elseif ($name === ContainerBuilder::ThisContainer) {
 					$val = new Php\Literal('$this');
 				} else {
 					$val = ContainerBuilder::literal('$this->getService(?)', [$name]);

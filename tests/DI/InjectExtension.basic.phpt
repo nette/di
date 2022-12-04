@@ -77,7 +77,7 @@ class LastExtension extends DI\CompilerExtension
 		$this->getContainerBuilder()->addDefinition($this->prefix('one'))
 			->setType(Service::class)
 			->addSetup('$e', ['@\ConcreteDependencyA'])
-			->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT);
+			->addTag(Nette\DI\Extensions\InjectExtension::TagInject);
 	}
 }
 

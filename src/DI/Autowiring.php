@@ -127,7 +127,7 @@ class Autowiring
 			$autowired = $def->getAutowired();
 			if (is_array($autowired)) {
 				foreach ($autowired as $k => $autowiredType) {
-					if ($autowiredType === ContainerBuilder::THIS_SERVICE) {
+					if ($autowiredType === ContainerBuilder::ThisService) {
 						$autowired[$k] = $type;
 					} elseif (!is_a($type, $autowiredType, true)) {
 						throw new ServiceCreationException(sprintf(

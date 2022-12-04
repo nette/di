@@ -51,10 +51,10 @@ services:
 
 $builder = $compiler->getContainerBuilder();
 
-Assert::true($builder->getDefinition('foo')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));
+Assert::true($builder->getDefinition('foo')->getTag(DI\Extensions\InjectExtension::TagInject));
 Assert::true($builder->getDefinition('foo')->getTag('a'));
 Assert::count(1, $builder->getDefinition('foo')->getResultDefinition()->getSetup());
 
-Assert::true($builder->getDefinition('bar')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));
+Assert::true($builder->getDefinition('bar')->getTag(DI\Extensions\InjectExtension::TagInject));
 Assert::true($builder->getDefinition('bar')->getTag('a'));
 Assert::count(1, $builder->getDefinition('bar')->getResultDefinition()->getSetup());

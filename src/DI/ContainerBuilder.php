@@ -21,8 +21,14 @@ class ContainerBuilder
 	use Nette\SmartObject;
 
 	public const
-		THIS_SERVICE = 'self',
-		THIS_CONTAINER = 'container';
+		ThisService = 'self',
+		ThisContainer = 'container';
+
+	/** @deprecated use ContainerBuilder::ThisService */
+	public const THIS_SERVICE = self::ThisService;
+
+	/** @deprecated use ContainerBuilder::ThisContainer */
+	public const THIS_CONTAINER = self::ThisContainer;
 
 	/** @var array */
 	public $parameters = [];
@@ -49,7 +55,7 @@ class ContainerBuilder
 	public function __construct()
 	{
 		$this->autowiring = new Autowiring($this);
-		$this->addImportedDefinition(self::THIS_CONTAINER)->setType(Container::class);
+		$this->addImportedDefinition(self::ThisContainer)->setType(Container::class);
 	}
 
 

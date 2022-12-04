@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	public const NAME = 'hello';
+	public const Name = 'hello';
 
 	public $arg;
 
@@ -119,7 +119,7 @@ test('', function () {
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
 	parameters:
-		dynamic: Service::NAME
+		dynamic: Service::Name
 
 	services:
 		one: Service(%dynamic%)

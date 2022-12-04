@@ -237,7 +237,7 @@ class Resolver
 				break;
 
 			case $entity instanceof Reference:
-				$entity = [new Reference(ContainerBuilder::THIS_CONTAINER), Container::getMethodName($entity->getValue())];
+				$entity = [new Reference(ContainerBuilder::ThisContainer), Container::getMethodName($entity->getValue())];
 				break;
 
 			case is_array($entity):
@@ -382,7 +382,7 @@ class Resolver
 			}
 
 			return $this->currentService && $service === $this->currentService->getName()
-				? new Reference(Reference::SELF)
+				? new Reference(Reference::Self)
 				: $ref;
 		}
 
@@ -414,7 +414,7 @@ class Resolver
 			&& $this->currentServiceAllowed
 			&& is_a($this->currentServiceType, $type, true)
 		) {
-			return new Reference(Reference::SELF);
+			return new Reference(Reference::Self);
 		}
 
 		$name = $this->builder->getByType($type, true);

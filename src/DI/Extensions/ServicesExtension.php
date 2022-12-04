@@ -113,7 +113,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (isset($config->inject)) {
-			$definition->addTag(InjectExtension::TAG_INJECT, $config->inject);
+			$definition->addTag(InjectExtension::TagInject, $config->inject);
 		}
 	}
 
@@ -175,7 +175,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (isset($config->inject)) {
-			$definition->addTag(InjectExtension::TAG_INJECT, $config->inject);
+			$definition->addTag(InjectExtension::TagInject, $config->inject);
 		}
 	}
 

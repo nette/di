@@ -20,7 +20,10 @@ use Nette\Utils\Reflection;
  */
 final class InjectExtension extends DI\CompilerExtension
 {
-	public const TAG_INJECT = 'nette.inject';
+	public const TagInject = 'nette.inject';
+
+	/** @deprecated use InjectExtension::TagInject */
+	public const TAG_INJECT = self::TagInject;
 
 
 	public function getConfigSchema(): Nette\Schema\Schema
@@ -32,7 +35,7 @@ final class InjectExtension extends DI\CompilerExtension
 	public function beforeCompile()
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
-			if ($def->getTag(self::TAG_INJECT)) {
+			if ($def->getTag(self::TagInject)) {
 				$def = $def instanceof Definitions\FactoryDefinition
 					? $def->getResultDefinition()
 					: $def;

@@ -46,7 +46,7 @@ interface IArticleFactory
 
 class Article
 {
-	public const ABC = 123;
+	public const Abc = 123;
 
 	public $title;
 	public $method;

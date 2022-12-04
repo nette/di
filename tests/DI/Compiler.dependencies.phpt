@@ -17,7 +17,7 @@ $compiler = new DI\Compiler;
 
 Assert::same(
 	[
-		DependencyChecker::VERSION,
+		DependencyChecker::Version,
 		[],
 		[],
 		[],
@@ -32,7 +32,7 @@ Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 $compiler->addDependencies(['file1', __FILE__]);
 Assert::same(
 	[
-		DependencyChecker::VERSION,
+		DependencyChecker::Version,
 		['file1' => false, __FILE__ => filemtime(__FILE__)],
 		[],
 		[],
@@ -47,7 +47,7 @@ Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
 $compiler->addDependencies(['file1', null, 'file3']);
 Assert::same(
 	[
-		DependencyChecker::VERSION,
+		DependencyChecker::Version,
 		['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
 		[],
 		[],
@@ -70,7 +70,7 @@ if (PHP_VERSION_ID >= 80100) {
 	$compiler->addDependencies([new ReflectionClass(Dep1::class)]);
 	Assert::same(
 		[
-			DependencyChecker::VERSION,
+			DependencyChecker::Version,
 			['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
 			[$file => filemtime($file)],
 			['Dep1'],

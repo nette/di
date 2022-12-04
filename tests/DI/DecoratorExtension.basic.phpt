@@ -17,7 +17,7 @@ require __DIR__ . '/../bootstrap.php';
 
 interface Iface
 {
-	public const NAME = self::class;
+	public const Name = self::class;
 }
 
 
@@ -54,10 +54,10 @@ decorator:
 
 	Iface:
 		setup:
-			- setup(Iface::NAME)
+			- setup(Iface::Name)
 			- setup
 			- $a = 10
-		tags: [Iface::NAME, tag: 1]
+		tags: [Iface::Name, tag: 1]
 
 	spec1:
 		setup:
@@ -77,11 +77,11 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::same(
-	['a' => true, 'tag' => 2, DI\Extensions\InjectExtension::TAG_INJECT => true, 'Iface' => true],
+	['a' => true, 'tag' => 2, DI\Extensions\InjectExtension::TagInject => true, 'Iface' => true],
 	$builder->getDefinition('one')->getTags()
 );
 
-Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtension::TAG_INJECT));
+Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtension::TagInject));
 
 Assert::equal([
 	new Statement([new Reference('self'), 'setup'], ['Service']),
