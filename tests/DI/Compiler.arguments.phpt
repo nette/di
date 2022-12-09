@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 class Lorem
 {
-	public const DOLOR_SIT = 10;
+	public const DolorSit = 10;
 
 	public $args;
 
@@ -53,19 +53,19 @@ if (PHP_VERSION_ID < 80000) {
 
 
 
-define('MY_CONSTANT_TEST', 'one');
+define('MyConstantTest', 'one');
 
 $container = createContainer(new DI\Compiler, "
 services:
 	lorem:
-		factory: Lorem(::MY_CONSTANT_TEST, Lorem::DOLOR_SIT, MY_FAILING_CONSTANT_TEST)
+		factory: Lorem(::MyConstantTest, Lorem::DolorSit, NOT_CONSTANT_TEST)
 		setup:
 			- method( @lorem, @self, @container )
 			- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )
 			- method( [Lorem, method], 'Lorem::add', Lorem::add )
 			- method( not(true) )
 			- method( @lorem::var, @self::var, @container::parameters )
-			- method( @lorem::DOLOR_SIT, @self::DOLOR_SIT )
+			- method( @lorem::DolorSit, @self::DolorSit )
 ");
 
 $container->parameters = ['something'];
@@ -73,7 +73,7 @@ $container->parameters = ['something'];
 $lorem = $container->getService('lorem');
 
 // constants
-Assert::same(['one', Lorem::DOLOR_SIT, 'MY_FAILING_CONSTANT_TEST'], $lorem->args[0]);
+Assert::same(['one', Lorem::DolorSit, 'NOT_CONSTANT_TEST'], $lorem->args[0]);
 
 // services
 Assert::same([$lorem, $lorem, $container], $lorem->args[1]);
@@ -91,4 +91,4 @@ Assert::same([false], $lorem->args[4]);
 Assert::same([$lorem->var, $lorem->var, $container->parameters], $lorem->args[5]);
 
 // service constant
-Assert::same([Lorem::DOLOR_SIT, Lorem::DOLOR_SIT], $lorem->args[6]);
+Assert::same([Lorem::DolorSit, Lorem::DolorSit], $lorem->args[6]);

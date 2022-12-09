@@ -505,7 +505,7 @@ class Resolver
 				$pair = explode('::', substr($val, 1), 2);
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
-				} elseif (preg_match('#^[A-Z][A-Z0-9_]*$#D', $pair[1], $m)) { // @service::CONSTANT
+				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1], $m)) { // @service::CONSTANT
 					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);

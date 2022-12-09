@@ -149,7 +149,7 @@ final class Helpers
 				&& enum_exists($m[1])
 			) {
 				$args[$k] = new Nette\PhpGenerator\PhpLiteral($v);
-			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][A-Z0-9_]*$#D', $v)) {
+			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][a-zA-Z0-9_]*$#D', $v)) {
 				$args[$k] = constant(ltrim($v, ':'));
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
