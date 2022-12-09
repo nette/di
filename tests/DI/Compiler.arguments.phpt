@@ -41,18 +41,6 @@ class Lorem
 }
 
 
-if (PHP_VERSION_ID < 80000) {
-	Assert::error(function () use (&$container) {
-		$container = createContainer(new DI\Compiler, '
-		services:
-			dolor: Lorem(::MY_FAILING_CONSTANT_TEST)
-		');
-	}, E_WARNING, "%a?%Couldn't find constant MY_FAILING_CONSTANT_TEST");
-	Assert::same([null], $container->getService('dolor')->args[0]);
-}
-
-
-
 define('MyConstantTest', 'one');
 
 $container = createContainer(new DI\Compiler, "

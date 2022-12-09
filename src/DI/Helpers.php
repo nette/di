@@ -150,7 +150,7 @@ final class Helpers
 			) {
 				$args[$k] = new Nette\PhpGenerator\PhpLiteral($v);
 			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][a-zA-Z0-9_]*$#D', $v)) {
-				$args[$k] = constant(ltrim($v, ':'));
+				$args[$k] = new Nette\PhpGenerator\PhpLiteral(ltrim($v, ':'));
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
 			} elseif (is_array($v)) {

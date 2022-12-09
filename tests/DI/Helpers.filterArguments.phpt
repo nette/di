@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+use Nette\DI\ContainerBuilder;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
 use Tester\Assert;
@@ -16,8 +17,8 @@ require __DIR__ . '/../bootstrap.php';
 
 Assert::same([], Helpers::filterArguments([]));
 
-Assert::same(
-	['a', 'b', Nette\DI\ContainerBuilder::ThisContainer],
+Assert::equal(
+	['a', 'b', ContainerBuilder::literal('Nette\DI\ContainerBuilder::ThisContainer')],
 	Helpers::filterArguments(['a', 'b', 'Nette\DI\ContainerBuilder::ThisContainer'])
 );
 
@@ -27,6 +28,6 @@ Assert::equal(
 );
 
 Assert::equal(
-	[new Statement('class', ['a', Nette\DI\ContainerBuilder::ThisContainer])],
+	[new Statement('class', ['a', ContainerBuilder::literal('Nette\DI\ContainerBuilder::ThisContainer')])],
 	Helpers::filterArguments([new Statement('class', ['a', 'Nette\DI\ContainerBuilder::ThisContainer'])])
 );
