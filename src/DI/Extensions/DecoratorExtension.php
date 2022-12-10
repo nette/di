@@ -43,7 +43,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 			}
 
 			$this->addSetups($type, Nette\DI\Helpers::filterArguments($info->setup));
-			$this->addTags($type, Nette\DI\Helpers::filterArguments($info->tags));
+			$this->addTags($type, $info->tags);
 		}
 	}
 
