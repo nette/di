@@ -100,32 +100,9 @@ class DefinitionSchema implements Schema
 				$def['create'] = $def['factory'];
 				unset($def['factory']);
 			}
-
-			if (
-				isset($def['class'])
-				&& !isset($def['type'])
-				&& !isset($def['dynamic'])
-				&& !isset($def['imported'])
-			) {
+			if (isset($def['class']) && !isset($def['type']) && !isset($def['imported'])) {
 				$def[isset($def['create']) ? 'type' : 'create'] = $def['class'];
 				unset($def['class']);
-			}
-
-			foreach (['class' => 'type', 'dynamic' => 'imported'] as $alias => $original) {
-				if (array_key_exists($alias, $def)) {
-					if (array_key_exists($original, $def)) {
-						throw new Nette\DI\InvalidConfigurationException(sprintf(
-							"Options '%s' and '%s' are aliases, use only '%s'.",
-							$alias,
-							$original,
-							$original,
-						));
-					}
-
-					trigger_error(sprintf("Service '%s': option '$alias' should be changed to '$original'.", end($context->path)), E_USER_DEPRECATED);
-					$def[$original] = $def[$alias];
-					unset($def[$alias]);
-				}
 			}
 
 			return $def;
