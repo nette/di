@@ -18,7 +18,7 @@ class Service
 }
 
 
-$container = createContainer(new DI\Compiler, '
+$container = @createContainer(new DI\Compiler, '
 services:
 	one:
 		type: Service
@@ -42,7 +42,7 @@ Assert::exception(function () use ($container) {
 }, Nette\DI\ServiceCreationException::class, "Unable to create imported service 'one', it must be added using addService()");
 
 
-$container = createContainer(new DI\Compiler, '
+$container = @createContainer(new DI\Compiler, '
 services:
 	one:
 		class: Service

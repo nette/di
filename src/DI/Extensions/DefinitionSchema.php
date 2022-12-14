@@ -127,6 +127,7 @@ class DefinitionSchema implements Schema
 						));
 					}
 
+					trigger_error(sprintf("Service '%s': option '$alias' should be changed to '$original'.", end($context->path)), E_USER_DEPRECATED);
 					$def[$original] = $def[$alias];
 					unset($def[$alias]);
 				}
