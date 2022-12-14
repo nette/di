@@ -19,11 +19,6 @@ interface Adapter
 	 * Reads configuration from file.
 	 */
 	function load(string $file): array;
-
-	/**
-	 * Generates configuration string.
-	 */
-	function dump(array $data): string;
 }
 
 
