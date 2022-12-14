@@ -106,7 +106,7 @@ class DefinitionSchema implements Schema
 			if (isset($def['class']) && !isset($def['type'])) {
 				if ($def['class'] instanceof Statement) {
 					$key = end($context->path);
-					trigger_error(sprintf("Service '%s': option 'class' should be changed to 'factory'.", $key), E_USER_DEPRECATED);
+					trigger_error(sprintf("Service '%s': option 'class' should be changed to 'create'.", $key), E_USER_DEPRECATED);
 					$def['factory'] = $def['class'];
 					unset($def['class']);
 				} elseif (!isset($def['factory']) && !isset($def['dynamic']) && !isset($def['imported'])) {

@@ -143,7 +143,7 @@ class Resolver
 			if (!class_exists($entity)) {
 				throw new ServiceCreationException(sprintf(
 					interface_exists($entity)
-						? "Interface %s can not be used as 'factory', did you mean 'implement'?"
+						? "Interface %s can not be used as 'create' or 'factory', did you mean 'implement'?"
 						: "Class '%s' not found.",
 					$entity
 				));
