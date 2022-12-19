@@ -373,6 +373,3 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 		throw new Nette\InvalidStateException;
 	}
 }
-
-
-class_exists(Nette\DI\Statement::class);
