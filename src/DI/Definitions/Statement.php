@@ -64,6 +64,3 @@ final class Statement implements Nette\Schema\DynamicParameter
 		return $this->entity;
 	}
 }
-
-
-class_exists(Nette\DI\Statement::class);
