@@ -4,9 +4,6 @@ parameters:
 	paths:
 		- src
 
-	excludePaths:
-		- src/compatibility.php
-
 	fileExtensions:
 		- php
 		- phtml
