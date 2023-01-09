@@ -19,17 +19,14 @@
 		"ext-tokenizer": "*",
 		"nette/neon": "^3.3 || ^4.0",
 		"nette/php-generator": "^3.5.4 || ^4.0",
-		"nette/robot-loader": "^3.2",
-		"nette/schema": "^1.1",
-		"nette/utils": "^3.2.5"
+		"nette/robot-loader": "^3.2 || ~4.0.0",
+		"nette/schema": "^1.2",
+		"nette/utils": "^3.2.5 || ~4.0.0"
 	},
 	"require-dev": {
-		"nette/tester": "^2.2",
-		"tracy/tracy": "^2.3",
-		"phpstan/phpstan": "^0.12"
-	},
-	"conflict": {
-		"nette/bootstrap": "<3.0"
+		"nette/tester": "^2.4",
+		"tracy/tracy": "^2.9",
+		"phpstan/phpstan": "^1.0"
 	},
 	"autoload": {
 		"classmap": ["src/"]
