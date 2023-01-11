@@ -234,8 +234,8 @@ final class Helpers
 	{
 		if (!$type) {
 			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
-		} elseif (!$type->isClass() || $type->isUnion()) {
-			throw new ServiceCreationException(sprintf("%s is not expected to be nullable/union/intersection/built-in, '%s' given.", ucfirst($hint), $type));
+		} elseif (!$type->isClass() || $type->allows('null')) {
+			throw new ServiceCreationException(sprintf("%s is expected to not be nullable/built-in/complex, '%s' given.", ucfirst($hint), $type));
 		}
 
 		$class = $type->getSingleName();

@@ -30,7 +30,7 @@ Assert::exception(function () {
 		[],
 		function () {}
 	);
-}, Nette\InvalidStateException::class, 'Parameter $x in {closure}%a?% has intersection type, so its value must be specified.');
+}, Nette\InvalidStateException::class, 'Parameter $x in {closure}%a?% has complex type and no default value, so its value must be specified.');
 
 // object as default
 Assert::same(
