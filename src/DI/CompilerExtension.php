@@ -95,7 +95,7 @@ abstract class CompilerExtension
 			throw new Nette\DI\InvalidConfigurationException(sprintf(
 				"Unknown configuration option '%s\u{a0}›\u{a0}%s'",
 				$name,
-				$hint ? key($extra) : implode("', '{$name}\u{a0}›\u{a0}", array_keys($extra))
+				$hint ? key($extra) : implode("', '{$name}\u{a0}›\u{a0}", array_keys($extra)),
 			) . ($hint ? ", did you mean '{$name}\u{a0}›\u{a0}{$hint}'?" : '.'));
 		}
 

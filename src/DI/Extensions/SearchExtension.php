@@ -48,12 +48,10 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 					'implements' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 				]),
 				'tags' => Expect::array(),
-			])
-		)->before(function ($val) {
-			return is_string($val['in'] ?? null)
+			]),
+		)->before(fn($val) => is_string($val['in'] ?? null)
 				? ['default' => $val]
-				: $val;
-		});
+				: $val);
 	}
 
 
@@ -65,7 +63,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 					"Option '%s\u{a0}›\u{a0}%s\u{a0}›\u{a0}in' must be valid directory name, '%s' given.",
 					$this->name,
 					$name,
-					$batch->in
+					$batch->in,
 				));
 			}
 
@@ -97,7 +95,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			if (!class_exists($class) && !interface_exists($class) && !trait_exists($class)) {
 				throw new Nette\InvalidStateException(sprintf(
 					'Class %s was found, but it cannot be loaded by autoloading.',
-					$class
+					$class,
 				));
 			}
 
@@ -111,8 +109,8 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				)
 				&& (!$acceptRE || preg_match($acceptRE, $rc->name))
 				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))
-				&& (!$acceptParent || Arrays::some($acceptParent, function ($nm) use ($rc) { return $rc->isSubclassOf($nm); }))
-				&& (!$rejectParent || Arrays::every($rejectParent, function ($nm) use ($rc) { return !$rc->isSubclassOf($nm); }))
+				&& (!$acceptParent || Arrays::some($acceptParent, fn($nm) => $rc->isSubclassOf($nm)))
+				&& (!$rejectParent || Arrays::every($rejectParent, fn($nm) => !$rc->isSubclassOf($nm)))
 			) {
 				$found[] = $rc->name;
 			}

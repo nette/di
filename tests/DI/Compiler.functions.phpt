@@ -70,7 +70,7 @@ Assert::same(
 		'int' => [0, 1, 231, 123],
 		'float' => [0.0, 1.0, 231.0, 123.0],
 	],
-	$obj->args
+	$obj->args,
 );
 
 Assert::exception(function () use ($container) {

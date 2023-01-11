@@ -39,15 +39,15 @@ Assert::exception(function () use ($builder) {
 
 Assert::same(
 	['one' => $builder->getDefinition('one'), 'two' => $builder->getDefinition('two')],
-	$builder->findByType(Service::class)
+	$builder->findByType(Service::class),
 );
 
 Assert::same(
 	['one' => $builder->getDefinition('one'), 'two' => $builder->getDefinition('two')],
-	$builder->findByType(Alias::class)
+	$builder->findByType(Alias::class),
 );
 
 Assert::same(
 	['one' => $builder->getDefinition('one'), 'two' => $builder->getDefinition('two')],
-	$builder->findByType('\service')
+	$builder->findByType('\service'),
 );
