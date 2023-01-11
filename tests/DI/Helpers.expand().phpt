@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 use Nette\DI\DynamicParameter;
 use Nette\DI\Helpers;
-use Nette\PhpGenerator\PhpLiteral;
+use Nette\PhpGenerator\Literal;
 use Tester\Assert;
 
 
@@ -33,7 +33,7 @@ Assert::same(
 	], true),
 );
 
-Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
+Assert::equal(new Literal('func()'), Helpers::expand('%key%', ['key' => new Literal('func()')]));
 
 Assert::equal(new DynamicParameter("'text' . (func())"), Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]));
 Assert::equal(new DynamicParameter("(func()) . 'text'"), Helpers::expand('%key%text', ['key' => new DynamicParameter('func()')]));

@@ -240,7 +240,7 @@ class Resolver
 				break;
 
 			case is_array($entity):
-				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::PHP_IDENT . ')+(\[\])?$#D', $entity[1])) {
+				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
 					throw new ServiceCreationException(sprintf(
 						"Expected function, method or property name, '%s' given.",
 						$entity[1],
@@ -635,7 +635,7 @@ class Resolver
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has %s, so its value must be specified.',
 				$desc,
-				$type && !$type->isSingle() ? 'complex type and no default value' : 'no class type or default value',
+				$type && !$type->isSimple() ? 'complex type and no default value' : 'no class type or default value',
 			));
 		}
 	}

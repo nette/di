@@ -86,7 +86,7 @@ Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtensio
 Assert::equal([
 	new Statement([new Reference('self'), 'setup'], ['Service']),
 	new Statement([new Reference('self'), 'setup'], ['Object']),
-	new Statement([new Reference('self'), 'setup'], [new Nette\PhpGenerator\PhpLiteral('Iface::Name')]),
+	new Statement([new Reference('self'), 'setup'], [new Nette\PhpGenerator\Literal('Iface::Name')]),
 	new Statement([new Reference('self'), 'setup']),
 	new Statement([new Reference('self'), '$a'], [10]),
 ], $builder->getDefinition('one')->getSetup());

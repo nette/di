@@ -15,6 +15,6 @@ use Nette;
 /**
  * @internal
  */
-final class DynamicParameter extends Nette\PhpGenerator\PhpLiteral implements Nette\Schema\DynamicParameter
+final class DynamicParameter extends Nette\PhpGenerator\Literal implements Nette\Schema\DynamicParameter
 {
 }
