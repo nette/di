@@ -2,7 +2,7 @@
 
 /**
  * Test: Nette\DI\Resolver::autowireArguments()
- * @phpVersion 8.1
+ * @phpVersion 8.2
  */
 
 declare(strict_types=1);
@@ -23,21 +23,11 @@ class Test
 }
 
 
-// intersection
+// disjunctive normal form types
 Assert::exception(function () {
 	Resolver::autowireArguments(
-		new ReflectionFunction(function (Foo&Test $x) {}),
+		new ReflectionFunction(function ((Foo&Test)|string $x) {}),
 		[],
 		function () {}
 	);
 }, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.');
-
-// object as default
-Assert::same(
-	['b' => 10],
-	Resolver::autowireArguments(
-		new ReflectionFunction(function ($a = new stdClass, $b = null) {}),
-		[1 => 10],
-		function () {}
-	),
-);

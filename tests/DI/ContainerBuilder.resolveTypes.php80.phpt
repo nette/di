@@ -27,4 +27,4 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createUnion']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createUnion() is not expected to be nullable/union/intersection/built-in, 'stdClass|array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createUnion() is expected to not be nullable/built-in/complex, 'stdClass|array' given.");

@@ -119,21 +119,21 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createNullableClass']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createNullableClass() is not expected to be nullable/union/intersection/built-in, '?stdClass' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createNullableClass() is expected to not be nullable/built-in/complex, '?stdClass' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createScalarPhpDoc']);
 	$container = @createContainer($builder); // @return is deprecated
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is not expected to be nullable/union/intersection/built-in, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is expected to not be nullable/built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createScalar']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is not expected to be nullable/union/intersection/built-in, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is expected to not be nullable/built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
@@ -154,7 +154,7 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createObjectNullable']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is not expected to be nullable/union/intersection/built-in, '?object' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is expected to not be nullable/built-in/complex, '?object' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;

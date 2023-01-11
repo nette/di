@@ -232,8 +232,8 @@ final class Helpers
 	{
 		if (!$type) {
 			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
-		} elseif (!$type->isClass() || (!$allowNullable && $type->isUnion())) {
-			throw new ServiceCreationException(sprintf("%s is not expected to be %sunion/intersection/built-in, '%s' given.", ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
+		} elseif (!$type->isClass() || (!$allowNullable && $type->allows('null'))) {
+			throw new ServiceCreationException(sprintf("%s is expected to not be %sbuilt-in/complex, '%s' given.", ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
 		}
 
 		$class = $type->getSingleName();
