@@ -18,7 +18,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 			Expect::structure([
 				'string' => Expect::string()->dynamic(),
 				'intnull' => Expect::int()->nullable()->dynamic(),
-			])
+			]),
 		);
 	}
 }

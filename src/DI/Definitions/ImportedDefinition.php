@@ -40,7 +40,7 @@ final class ImportedDefinition extends Definition
 		$method->setReturnType('void')
 			->setBody(
 				'throw new Nette\\DI\\ServiceCreationException(?);',
-				["Unable to create imported service '{$this->getName()}', it must be added using addService()"]
+				["Unable to create imported service '{$this->getName()}', it must be added using addService()"],
 			);
 	}
 
