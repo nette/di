@@ -89,7 +89,7 @@ class DependencyChecker
 		array &$phpFiles,
 		array $classes,
 		array $functions,
-		string $hash
+		string $hash,
 	): bool
 	{
 		try {
@@ -181,7 +181,7 @@ class DependencyChecker
 				(string) Type::fromReflection($param),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
-					? is_object($tmp = Reflection::getParameterDefaultValue($param)) ? ['object' => get_class($tmp)] : ['value' => $tmp]
+					? is_object($tmp = Reflection::getParameterDefaultValue($param)) ? ['object' => $tmp::class] : ['value' => $tmp]
 					: null,
 			];
 		}
