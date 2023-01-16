@@ -60,7 +60,7 @@ Assert::equal(
 
 // optional arguments + positional
 Assert::equal(
-	PHP_VERSION_ID < 80000 ? [1, 'new'] : ['b' => 'new'],
+	['b' => 'new'],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		[1 => 'new'],
@@ -70,7 +70,7 @@ Assert::equal(
 
 // optional arguments + named
 Assert::equal(
-	PHP_VERSION_ID < 80000 ? [1, 'new'] : ['b' => 'new'],
+	['b' => 'new'],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		['b' => 'new'],
@@ -80,7 +80,7 @@ Assert::equal(
 
 // optional arguments + variadics
 Assert::equal(
-	PHP_VERSION_ID < 80000 ? [1, 'new1', 'new2'] : ['args' => ['new1', 'new2']],
+	['args' => ['new1', 'new2']],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, ...$args) {}),
 		[1 => 'new1', 2 => 'new2'],
@@ -124,6 +124,26 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a) {}),
 		[1, 'a' => 2],
+		function () {},
+	),
+);
+
+// optional union
+Assert::same(
+	[],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass|int $x = 1) {}),
+		[],
+		function () {},
+	),
+);
+
+// named variadics
+Assert::equal(
+	['a' => 1, 'b' => 2, 'c' => 3],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		['a' => 1, 'b' => 2, 'c' => 3],
 		function () {},
 	),
 );
