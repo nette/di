@@ -154,7 +154,7 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createObjectNullable']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is expected to not be nullable/built-in/complex, '?object' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;

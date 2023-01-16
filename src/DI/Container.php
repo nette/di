@@ -65,14 +65,11 @@ class Container
 	 * @param  object  $service  service or its factory
 	 * @return static
 	 */
-	public function addService(string $name, $service)
+	public function addService(string $name, object $service)
 	{
 		$name = $this->aliases[$name] ?? $name;
 		if (isset($this->instances[$name])) {
 			throw new Nette\InvalidStateException(sprintf("Service '%s' already exists.", $name));
-
-		} elseif (!is_object($service)) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s' must be a object, %s given.", $name, gettype($service)));
 		}
 
 		if ($service instanceof \Closure) {
@@ -117,10 +114,9 @@ class Container
 
 	/**
 	 * Gets the service object by name.
-	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function getService(string $name)
+	public function getService(string $name): object
 	{
 		if (!isset($this->instances[$name])) {
 			if (isset($this->aliases[$name])) {
@@ -136,10 +132,9 @@ class Container
 
 	/**
 	 * Gets the service object by name.
-	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function getByName(string $name)
+	public function getByName(string $name): object
 	{
 		return $this->getService($name);
 	}
@@ -194,10 +189,9 @@ class Container
 
 	/**
 	 * Creates new instance of the service.
-	 * @return object
 	 * @throws MissingServiceException
 	 */
-	public function createService(string $name, array $args = [])
+	public function createService(string $name, array $args = []): object
 	{
 		$name = $this->aliases[$name] ?? $name;
 		$method = self::getMethodName($name);
@@ -237,7 +231,7 @@ class Container
 	 * @return ?T
 	 * @throws MissingServiceException
 	 */
-	public function getByType(string $type, bool $throw = true)
+	public function getByType(string $type, bool $throw = true): ?object
 	{
 		$type = Helpers::normalizeClass($type);
 		if (!empty($this->wiring[$type][0])) {
@@ -313,10 +307,9 @@ class Container
 
 	/**
 	 * Creates new instance using autowiring.
-	 * @return object
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public function createInstance(string $class, array $args = [])
+	public function createInstance(string $class, array $args = []): object
 	{
 		$rc = new \ReflectionClass($class);
 		if (!$rc->isInstantiable()) {
@@ -335,9 +328,8 @@ class Container
 
 	/**
 	 * Calls all methods starting with with "inject" using autowiring.
-	 * @param  object  $service
 	 */
-	public function callInjects($service): void
+	public function callInjects(object $service): void
 	{
 		Extensions\InjectExtension::callInjects($this, $service);
 	}
