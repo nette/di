@@ -122,20 +122,10 @@ class Resolver
 
 			$this->addDependency($reflection);
 
-			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = Helpers::getReturnTypeAnnotation($reflection));
-			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)) {
-				if (isset($annotation)) {
-					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
-				}
-
-				return Helpers::ensureClassType(
-					$type,
-					sprintf('return type of %s()', Callback::toString($entity)),
-					allowNullable: true,
-				);
-			}
-
-			return null;
+			$type = Nette\Utils\Type::fromReflection($reflection);
+			return $type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)
+				? Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)), allowNullable: true)
+				: null;
 
 		} elseif ($entity instanceof Reference) { // alias or factory
 			return $this->resolveReferenceType($entity);
