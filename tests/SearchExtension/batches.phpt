@@ -22,7 +22,7 @@ search:
 
 	third:
 		in: fixtures
-		files: foo*
+		files: Foo*
 		tags:
 			- foo
 ');
