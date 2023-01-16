@@ -232,9 +232,7 @@ class Container
 
 	/**
 	 * Resolves service by type.
-	 * @template T
-	 * @param  class-string<T>  $type
-	 * @return ?T
+	 * @return object|null  service
 	 * @throws MissingServiceException
 	 */
 	public function getByType(string $type, bool $throw = true)
