@@ -24,21 +24,7 @@ class Lorem
 
 class Factory
 {
-	/** @return Lorem */
-	public function createClassPhpDoc()
-	{
-		return [];
-	}
-
-
 	public function createClass(): Lorem
-	{
-		return [];
-	}
-
-
-	/** @return Lorem|null */
-	public function createNullableClassPhpDoc()
 	{
 		return [];
 	}
@@ -50,23 +36,9 @@ class Factory
 	}
 
 
-	/** @return array */
-	public function createScalarPhpDoc()
-	{
-		return [];
-	}
-
-
 	public function createScalar(): array
 	{
 		return [];
-	}
-
-
-	/** @return object */
-	public function createObjectPhpDoc()
-	{
-		return (object) null;
 	}
 
 
@@ -77,13 +49,6 @@ class Factory
 
 
 	public function createObjectNullable(): ?object
-	{
-		return (object) null;
-	}
-
-
-	/** @return mixed */
-	public function createMixedPhpDoc()
 	{
 		return (object) null;
 	}
@@ -118,22 +83,8 @@ require __DIR__ . '/../bootstrap.php';
 Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createClassPhpDoc']), 'next']);
-	$container = @createContainer($builder); // @return is deprecated
-});
-
-Assert::noError(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
 		->setFactory([new Statement([Factory::class, 'createClass']), 'next']);
 	$container = createContainer($builder);
-});
-
-Assert::noError(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createNullableClassPhpDoc']), 'next']);
-	$container = @createContainer($builder); // @return is deprecated
 });
 
 Assert::exception(function () {
@@ -147,26 +98,10 @@ Return type of Factory::createNullableClass() is expected to not be nullable/bui
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createScalarPhpDoc']), 'next']);
-	$container = @createContainer($builder); // @return is deprecated
-}, Nette\DI\ServiceCreationException::class, "[Service 'a']
-Return type of Factory::createScalarPhpDoc() is expected to not be nullable/built-in/complex, 'array' given.");
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
 		->setFactory([new Statement([Factory::class, 'createScalar']), 'next']);
 	$container = createContainer($builder);
 }, Nette\DI\ServiceCreationException::class, "[Service 'a']
 Return type of Factory::createScalar() is expected to not be nullable/built-in/complex, 'array' given.");
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createObjectPhpDoc']), 'next']);
-	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "[Service 'a']
-Unknown service type, specify it or declare return type of factory method.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
@@ -187,27 +122,10 @@ Unknown service type, specify it or declare return type of factory method.");
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createMixedPhpDoc']), 'next']);
-	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "[Service 'a']
-Unknown service type, specify it or declare return type of factory method.");
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
 		->setFactory([new Statement([Factory::class, 'createMixed']), 'next']);
 	$container = createContainer($builder);
 }, Nette\DI\ServiceCreationException::class, "[Service 'a']
 Unknown service type, specify it or declare return type of factory method.");
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createGeneric']), 'next']);
-	$container = @createContainer($builder); // @return is deprecated
-}, Nette\DI\ServiceCreationException::class, "[Service 'a']
-Class 'T' not found.
-Check the return type of Factory::createGeneric().");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
