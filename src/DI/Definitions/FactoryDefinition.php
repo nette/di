@@ -170,12 +170,20 @@ final class FactoryDefinition extends Definition
 				$this->resultDefinition->getCreator()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
 
 			} elseif (!$this->resultDefinition->getSetup()) {
-				$hint = Nette\Utils\Helpers::getSuggestion(array_keys($ctorParams), $param->name);
+				// [param1, param2] => '$param1, $param2'
+				$stringifyParams = static fn(array $params): string => implode(', ', array_map(
+					static fn(string $param): string => sprintf('$%s', $param),
+					$params,
+				));
+				$ctorParamsKeys = array_keys($ctorParams);
+				$hint = Nette\Utils\Helpers::getSuggestion($ctorParamsKeys, $param->name);
 				throw new ServiceCreationException(sprintf(
-					'Unused parameter $%s when implementing method %s::create()',
-					$param->name,
+					'Cannot implement %s::create(): factory method parameters (%s) are not matching %s::__construct() parameters (%s).',
 					$interface,
-				) . ($hint ? ", did you mean \${$hint}?" : '.'));
+					$stringifyParams(array_map(static fn(\ReflectionParameter $param): string => $param->name, $method->getParameters())),
+					$class,
+					$stringifyParams($ctorParamsKeys),
+				) . ($hint ? " Did you mean to use '\${$hint}' in factory method?" : ''));
 			}
 		}
 	}
