@@ -64,3 +64,23 @@ Assert::same([
 	'InterfaceOk1',
 	'InterfaceOk2',
 ], array_keys($services));
+
+
+
+$services = check('
+search:
+	in: fixtures
+	exclude:
+		files:
+			- Foo*.*
+			- ./subdir/*
+');
+
+Assert::same([
+	'ClassOk1',
+	'ClassOk2',
+	'CountableClass',
+	'ExtendsStdClass',
+	'InterfaceOk1',
+	'InterfaceOk2',
+], array_keys($services));

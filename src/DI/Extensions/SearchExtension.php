@@ -40,6 +40,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				'extends' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 				'implements' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 				'exclude' => Expect::structure([
+					'files' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 					'classes' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 					'extends' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
 					'implements' => Expect::anyOf(Expect::listOf('string'), Expect::string()->castTo('array'))->default([]),
@@ -73,15 +74,16 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 	public function findClasses(\stdClass $config): array
 	{
+		$exclude = $config->exclude;
 		$robot = new RobotLoader;
 		$robot->setTempDirectory($this->tempDir);
 		$robot->addDirectory($config->in);
 		$robot->acceptFiles = $config->files ?: ['*.php'];
+		$robot->ignoreDirs = array_merge($robot->ignoreDirs, $exclude->files);
 		$robot->reportParseErrors(false);
 		$robot->refresh();
 		$classes = array_unique(array_keys($robot->getIndexedClasses()));
 
-		$exclude = $config->exclude;
 		$acceptRE = self::buildNameRegexp($config->classes);
 		$rejectRE = self::buildNameRegexp($exclude->classes);
 		$acceptParent = array_merge($config->extends, $config->implements);
