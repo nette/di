@@ -226,7 +226,7 @@ class Container
 
 	/**
 	 * Resolves service by type.
-	 * @template T
+	 * @template T of object
 	 * @param  class-string<T>  $type
 	 * @return ?T
 	 * @throws MissingServiceException
