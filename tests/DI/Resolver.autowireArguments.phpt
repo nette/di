@@ -78,27 +78,17 @@ Assert::equal(
 	)
 );
 
-// optional arguments + variadics
+// optional arguments + named variadics
 Assert::equal(
-	PHP_VERSION_ID < 80000 ? [1, 'new1', 'new2'] : ['args' => ['new1', 'new2']],
+	PHP_VERSION_ID < 80000 ? [1, 'k1' => 'new1', 'k2' => 'new2'] : ['k1' => 'new1', 'k2' => 'new2'],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, ...$args) {}),
-		[1 => 'new1', 2 => 'new2'],
+		['k1' => 'new1', 'k2' => 'new2'],
 		function () {}
 	)
 );
 
-// optional arguments + variadics
-Assert::equal(
-	['new', 'new1', 'new2'],
-	Resolver::autowireArguments(
-		new ReflectionFunction(function ($a = 1, ...$args) {}),
-		['a' => 'new', 1 => 'new1', 2 => 'new2'],
-		function () {}
-	)
-);
-
-// variadics as items
+// variadics
 Assert::equal(
 	[1, 2, 3],
 	Resolver::autowireArguments(
@@ -108,9 +98,9 @@ Assert::equal(
 	)
 );
 
-// variadics as array
+// name of variadics is ignored
 Assert::equal(
-	[1, 2, 3],
+	['args' => [1, 2, 3]],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		['args' => [1, 2, 3]],
