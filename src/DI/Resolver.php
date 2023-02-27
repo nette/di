@@ -537,7 +537,10 @@ class Resolver
 				$res = array_merge($res, $arguments);
 				$arguments = [];
 			} elseif (array_key_exists($key = $paramName, $arguments) || array_key_exists($key = $num, $arguments)) {
-				$res[$useName ? $paramName : $num] = $arguments[$key];
+				$val = $arguments[$key];
+				$res[$useName ? $paramName : $num] = is_scalar($val) && self::isSensitive($param)
+					? ContainerBuilder::literal('/*sensitive{*/?/*}*/', [$val])
+					: $val;
 				unset($arguments[$key], $arguments[$num]); // unset $num to enable overwriting in configuration
 
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
@@ -639,5 +642,11 @@ class Resolver
 			&& (class_exists($itemType) || interface_exists($itemType))
 				? $itemType
 				: null;
+	}
+
+
+	private static function isSensitive(\ReflectionParameter $param): bool
+	{
+		return (bool) $param->getAttributes(\SensitiveParameter::class);
 	}
 }
