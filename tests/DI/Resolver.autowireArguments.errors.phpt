@@ -53,21 +53,13 @@ Assert::exception(function () {
 }, Nette\DI\ServiceCreationException::class, 'Parameter $x in {closure}%a?% has no class type or default value, so its value must be specified.');
 
 
-// bad variadics (this is actually what PHP allows)
-Assert::exception(function () {
-	Resolver::autowireArguments(
-		new ReflectionFunction(function (...$args) {}),
-		[1, 'args' => []],
-		function () {}
-	);
-}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
-
-
 // bad variadics
-Assert::exception(function () {
-	Resolver::autowireArguments(
-		new ReflectionFunction(function (...$args) {}),
-		['args' => [], 1],
-		function () {}
-	);
-}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
+if (PHP_VERSION_ID >= 80000) {
+	Assert::exception(function () {
+		Resolver::autowireArguments(
+			new ReflectionFunction(function ($a = 1, ...$args) {}),
+			[1 => 'new1', 2 => 'new2'],
+			function () {}
+		);
+	}, Nette\DI\ServiceCreationException::class, 'Cannot use positional argument after named or omitted argument in $args in {closure}%a?%.');
+}
