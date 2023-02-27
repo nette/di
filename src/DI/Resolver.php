@@ -547,7 +547,10 @@ class Resolver
 				}
 
 			} elseif (array_key_exists($key = $paramName, $arguments) || array_key_exists($key = $num, $arguments)) {
-				$res[$useName ? $paramName : $num] = $arguments[$key];
+				$val = $arguments[$key];
+				$res[$useName ? $paramName : $num] = is_scalar($val) && $param->getAttributes(\SensitiveParameter::class)
+					? ContainerBuilder::literal('/*sensitive{*/?/*}*/', [$val])
+					: $val;
 				unset($arguments[$key], $arguments[$num]); // unset $num to enable overwriting in configuration
 
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
