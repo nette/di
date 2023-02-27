@@ -551,13 +551,9 @@ class Resolver
 				$optCount = 0;
 				break;
 
-			} elseif (array_key_exists($paramName, $arguments)) {
-				$res[$useName ? $paramName : $num] = $arguments[$paramName];
-				unset($arguments[$paramName], $arguments[$num]);
-
-			} elseif (array_key_exists($num, $arguments)) {
-				$res[$useName ? $paramName : $num] = $arguments[$num];
-				unset($arguments[$num]);
+			} elseif (array_key_exists($key = $paramName, $arguments) || array_key_exists($key = $num, $arguments)) {
+				$res[$useName ? $paramName : $num] = $arguments[$key];
+				unset($arguments[$key], $arguments[$num]); // unset $num to enable overwriting in configuration
 
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
 				$res[$useName ? $paramName : $num] = $aw;
