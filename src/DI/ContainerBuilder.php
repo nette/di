@@ -75,7 +75,7 @@ class ContainerBuilder
 			$name = '0' . $i; // prevents converting to integer in array key
 
 		} elseif (is_int(key([$name => 1])) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
-			throw new Nette\InvalidArgumentException(sprintf('Service name must be a alpha-numeric string and not a number, %s given.', gettype($name)));
+			throw new Nette\InvalidArgumentException(sprintf("Service name must be a alpha-numeric string and not a number, '%s' given.", $name));
 
 		} else {
 			$name = $this->aliases[$name] ?? $name;
@@ -176,10 +176,10 @@ class ContainerBuilder
 	public function addAlias(string $alias, string $service): void
 	{
 		if (!$alias) { // builder is not ready for falsy names such as '0'
-			throw new Nette\InvalidArgumentException(sprintf('Alias name must be a non-empty string, %s given.', gettype($alias)));
+			throw new Nette\InvalidArgumentException(sprintf("Alias name must be a non-empty string, '%s' given.", $alias));
 
 		} elseif (!$service) { // builder is not ready for falsy names such as '0'
-			throw new Nette\InvalidArgumentException(sprintf('Service name must be a non-empty string, %s given.', gettype($service)));
+			throw new Nette\InvalidArgumentException(sprintf("Service name must be a non-empty string, '%s' given.", $service));
 
 		} elseif (isset($this->aliases[$alias])) {
 			throw new Nette\InvalidStateException(sprintf("Alias '%s' has already been added.", $alias));
