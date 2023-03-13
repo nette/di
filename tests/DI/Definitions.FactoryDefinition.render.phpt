@@ -39,12 +39,9 @@ test('', function () {
 			public function createServiceAbc(): Good2
 			{
 				return new class ($this) implements Good2 {
-					private $container;
-
-
-					public function __construct($container)
-					{
-						$this->container = $container;
+					public function __construct(
+						private $container,
+					) {
 					}
 
 

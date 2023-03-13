@@ -40,13 +40,12 @@ test('', function () {
 			public function createServiceAbc(): Good
 			{
 				return new class ($this) implements Good {
-					private $container;%A?%
 					private $mapping = ['first' => 'a', 'second' => 'a'];
 
 
-					public function __construct($container)
-					{
-						$this->container = $container;
+					public function __construct(
+						private $container,
+					) {
 					}
 
 
