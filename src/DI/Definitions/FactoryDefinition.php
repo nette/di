@@ -201,13 +201,10 @@ final class FactoryDefinition extends Definition
 		$class = (new Php\ClassType)
 			->addImplement($this->getType());
 
-		$class->addProperty('container')
-			->setPrivate();
-
 		$class->addMethod('__construct')
-			->addBody('$this->container = $container;')
-			->addParameter('container')
-			->setType($generator->getClassName());
+			->addPromotedParameter('container')
+				->setPrivate()
+				->setType($generator->getClassName());
 
 		$methodCreate = $class->addMethod(self::MethodCreate);
 		$this->resultDefinition->generateMethod($methodCreate, $generator);

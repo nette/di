@@ -132,13 +132,10 @@ final class LocatorDefinition extends Definition
 		$class = (new Nette\PhpGenerator\ClassType)
 			->addImplement($this->getType());
 
-		$class->addProperty('container')
-			->setPrivate();
-
 		$class->addMethod('__construct')
-			->addBody('$this->container = $container;')
-			->addParameter('container')
-			->setType($generator->getClassName());
+			->addPromotedParameter('container')
+				->setPrivate()
+				->setType($generator->getClassName());
 
 		foreach ((new \ReflectionClass($this->getType()))->getMethods() as $rm) {
 			preg_match('#^(get|create)(.*)#', $rm->name, $m);
