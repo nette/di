@@ -230,12 +230,12 @@ final class Helpers
 	}
 
 
-	public static function ensureClassType(?Type $type, string $hint): string
+	public static function ensureClassType(?Type $type, string $hint, bool $allowNullable = false): string
 	{
 		if (!$type) {
 			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
-		} elseif (!$type->isClass() || $type->allows('null')) {
-			throw new ServiceCreationException(sprintf("%s is expected to not be nullable/built-in/complex, '%s' given.", ucfirst($hint), $type));
+		} elseif (!$type->isClass() || (!$allowNullable && $type->allows('null'))) {
+			throw new ServiceCreationException(sprintf("%s is expected to not be %sbuilt-in/complex, '%s' given.", ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
 		}
 
 		$class = $type->getSingleName();

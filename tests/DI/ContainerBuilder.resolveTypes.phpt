@@ -114,26 +114,26 @@ Assert::noError(function () {
 	$container = createContainer($builder);
 });
 
-Assert::exception(function () {
+Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createNullableClass']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createNullableClass() is expected to not be nullable/built-in/complex, '?stdClass' given.");
+});
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createScalarPhpDoc']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is expected to not be nullable/built-in/complex, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is expected to not be built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createScalar']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is expected to not be nullable/built-in/complex, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is expected to not be built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
@@ -154,7 +154,7 @@ Assert::exception(function () {
 	$builder->addDefinition('a')
 		->setFactory([Factory::class, 'createObjectNullable']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is expected to not be nullable/built-in/complex, '?object' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createObjectNullable() is expected to not be built-in/complex, '?object' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
