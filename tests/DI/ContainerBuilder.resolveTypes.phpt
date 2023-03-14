@@ -121,26 +121,26 @@ Assert::noError(function () {
 	$container = @createContainer($builder); // @return is deprecated
 });
 
-Assert::exception(function () {
+Assert::noError(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createNullableClass']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createNullableClass() is expected to not be nullable/built-in/complex, '?stdClass' given.");
+});
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createScalarPhpDoc']);
 	$container = @createContainer($builder); // @return is deprecated
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is expected to not be nullable/built-in/complex, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalarPhpDoc() is expected to not be built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
 		->setCreator([Factory::class, 'createScalar']);
 	$container = createContainer($builder);
-}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is expected to not be nullable/built-in/complex, 'array' given.");
+}, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createScalar() is expected to not be built-in/complex, 'array' given.");
 
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;

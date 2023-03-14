@@ -136,7 +136,7 @@ class Resolver
 					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
 				}
 
-				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)));
+				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)), true);
 			}
 
 			return null;
