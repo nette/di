@@ -48,7 +48,6 @@ class DefinitionSchema implements Schema
 			}
 		}
 
-		$def = $this->expandParameters($def);
 		$type = $this->sniffType(end($context->path), $def);
 		$def = $this->getSchema($type)->complete($def, $context);
 		if ($def) {
@@ -168,12 +167,6 @@ class DefinitionSchema implements Schema
 		} else {
 			return Definitions\ServiceDefinition::class;
 		}
-	}
-
-
-	private function expandParameters(array $config): array
-	{
-		return Nette\DI\Helpers::expand($config, $this->builder->parameters);
 	}
 
 

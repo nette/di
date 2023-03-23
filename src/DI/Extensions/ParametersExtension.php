@@ -44,11 +44,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		}
 
 		$builder->parameters = Helpers::expand($params, $params, recursive: true);
-
-		// expand all except 'services'
-		$slice = array_diff_key($this->compilerConfig, ['services' => 1]);
-		$slice = Helpers::expand($slice, $builder->parameters);
-		$this->compilerConfig = $slice + $this->compilerConfig;
+		$this->compilerConfig = Helpers::expand($this->compilerConfig, $builder->parameters);
 	}
 
 
