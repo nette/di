@@ -72,7 +72,7 @@ final class Helpers
 					if (is_array($val) && array_key_exists($key, $val)) {
 						$val = $val[$key];
 					} elseif ($val instanceof DynamicParameter) {
-						$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
+						$val = new DynamicParameter($val . '[' . var_export($key, return: true) . ']');
 					} else {
 						throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $part));
 					}

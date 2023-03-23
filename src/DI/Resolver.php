@@ -129,7 +129,11 @@ class Resolver
 					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
 				}
 
-				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)), true);
+				return Helpers::ensureClassType(
+					$type,
+					sprintf('return type of %s()', Callback::toString($entity)),
+					allowNullable: true,
+				);
 			}
 
 			return null;
@@ -409,7 +413,7 @@ class Resolver
 			return new Reference(Reference::Self);
 		}
 
-		$name = $this->builder->getByType($type, true);
+		$name = $this->builder->getByType($type, throw: true);
 		if (
 			!$this->currentServiceAllowed
 			&& $this->currentService === $this->builder->getDefinition($name)

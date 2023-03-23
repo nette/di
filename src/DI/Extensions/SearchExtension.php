@@ -131,7 +131,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			$def = class_exists($class)
 				? $builder->addDefinition(null)->setType($class)
 				: $builder->addFactoryDefinition(null)->setImplement($class);
-			$def->setTags(Arrays::normalize($tags, true));
+			$def->setTags(Arrays::normalize($tags, filling: true));
 		}
 	}
 

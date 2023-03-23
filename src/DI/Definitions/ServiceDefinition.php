@@ -169,7 +169,7 @@ final class ServiceDefinition extends Definition
 				$setup = new Statement([new Reference(Reference::Self), $setup->getEntity()], $setup->arguments);
 			}
 
-			$setup = $resolver->completeStatement($setup, true);
+			$setup = $resolver->completeStatement($setup, currentServiceAllowed: true);
 		}
 	}
 

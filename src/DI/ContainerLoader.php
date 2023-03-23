@@ -36,7 +36,7 @@ class ContainerLoader
 	public function load(callable $generator, mixed $key = null): string
 	{
 		$class = $this->getClassName($key);
-		if (!class_exists($class, false)) {
+		if (!class_exists($class, autoload: false)) {
 			$this->loadFile($class, $generator);
 		}
 
@@ -78,7 +78,7 @@ class ContainerLoader
 					@unlink("$name.tmp"); // @ - file may not exist
 					throw new Nette\IOException(sprintf("Unable to create file '%s'.", $name));
 				} elseif (function_exists('opcache_invalidate')) {
-					@opcache_invalidate($name, true); // @ can be restricted
+					@opcache_invalidate($name, force: true); // @ can be restricted
 				}
 			}
 		}

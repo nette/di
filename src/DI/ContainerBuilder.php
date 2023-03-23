@@ -230,7 +230,7 @@ class ContainerBuilder
 	 */
 	public function getDefinitionByType(string $type): Definition
 	{
-		return $this->getDefinition($this->getByType($type, true));
+		return $this->getDefinition($this->getByType($type, throw: true));
 	}
 
 

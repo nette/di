@@ -149,7 +149,7 @@ class DefinitionSchema implements Schema
 	{
 		if (is_string($key)) {
 			$name = preg_match('#^@[\w\\\\]+$#D', $key)
-				? $this->builder->getByType(substr($key, 1), false)
+				? $this->builder->getByType(substr($key, 1))
 				: $key;
 
 			if ($name && $this->builder->hasDefinition($name)) {

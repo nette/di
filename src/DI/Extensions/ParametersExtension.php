@@ -45,7 +45,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 				: new DynamicParameter((new Nette\PhpGenerator\Dumper)->format('$this->parameters[?]', $key));
 		}
 
-		$builder->parameters = Nette\DI\Helpers::expand($params, $params, true);
+		$builder->parameters = Nette\DI\Helpers::expand($params, $params, recursive: true);
 
 		// expand all except 'services'
 		$slice = array_diff_key($this->compilerConfig, ['services' => 1]);

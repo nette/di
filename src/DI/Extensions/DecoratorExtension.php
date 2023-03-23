@@ -68,7 +68,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 
 	public function addTags(string $type, array $tags): void
 	{
-		$tags = Nette\Utils\Arrays::normalize($tags, true);
+		$tags = Nette\Utils\Arrays::normalize($tags, filling: true);
 		foreach ($this->findByType($type) as $def) {
 			$def->setTags($def->getTags() + $tags);
 		}
