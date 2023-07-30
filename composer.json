@@ -15,7 +15,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7.2 <8.3",
+		"php": "7.2 - 8.3",
 		"ext-tokenizer": "*",
 		"nette/neon": "^3.3 || ^4.0",
 		"nette/php-generator": "^3.5.4 || ^4.0",
