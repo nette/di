@@ -61,7 +61,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		$params = $this->getContainerBuilder()->parameters;
 		array_walk_recursive($params, function (&$val): void {
 			if ($val instanceof Nette\DI\Definitions\Statement) {
-				$val = null;
+				$val = '* unavailable value *';
 			}
 		});
 

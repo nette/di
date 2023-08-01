@@ -38,7 +38,7 @@ test('', function () {
 	services:
 		one: Service(%bar%)
 	');
-	Assert::null($container->parameters['bar']);
+	Assert::same('* unavailable value *', $container->parameters['bar']);
 	Assert::same('a', $container->getService('one')->arg);
 });
 
@@ -66,7 +66,7 @@ test('', function () {
 	services:
 		one: Service(%bar%)
 	');
-	Assert::null($container->parameters['bar']);
+	Assert::same('* unavailable value *', $container->parameters['bar']);
 	Assert::same('Service::method hello', $container->getService('one')->arg);
 });
 
@@ -96,7 +96,7 @@ test('', function () {
 		one: Service(%bar%)
 		two: Service(two)
 	');
-	Assert::null($container->parameters['bar']);
+	Assert::same('* unavailable value *', $container->parameters['bar']);
 	Assert::same($container->getService('two'), $container->getService('one')->arg->arg);
 });
 
@@ -111,6 +111,6 @@ test('', function () {
 		one: Service(%bar%)
 		two: Service(two)
 	');
-	Assert::null($container->parameters['bar']);
+	Assert::same('* unavailable value *', $container->parameters['bar']);
 	Assert::same([$container->getService('two')], $container->getService('one')->arg);
 });
