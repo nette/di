@@ -17,8 +17,6 @@ use Nette;
  */
 abstract class CompilerExtension
 {
-	use Nette\SmartObject;
-
 	protected Compiler $compiler;
 	protected string $name;
 

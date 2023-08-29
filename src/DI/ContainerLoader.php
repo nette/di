@@ -17,8 +17,6 @@ use Nette;
  */
 class ContainerLoader
 {
-	use Nette\SmartObject;
-
 	public function __construct(
 		private string $tempDirectory,
 		private bool $autoRebuild = false,

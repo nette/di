@@ -23,8 +23,6 @@ use Nette\Schema\Schema;
  */
 class DefinitionSchema implements Schema
 {
-	use Nette\SmartObject;
-
 	private Nette\DI\ContainerBuilder $builder;
 
 

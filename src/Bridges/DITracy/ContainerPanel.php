@@ -19,8 +19,6 @@ use Tracy;
  */
 class ContainerPanel implements Tracy\IBarPanel
 {
-	use Nette\SmartObject;
-
 	public static ?float $compilationTime = null;
 	private Nette\DI\Container $container;
 	private ?float $elapsedTime;

@@ -9,16 +9,12 @@ declare(strict_types=1);
 
 namespace Nette\DI\Definitions;
 
-use Nette;
-
 
 /**
  * Reference to service. Either by name or by type or reference to the 'self' service.
  */
 final class Reference
 {
-	use Nette\SmartObject;
-
 	public const Self = 'self';
 
 	/** @deprecated use Reference::Self */

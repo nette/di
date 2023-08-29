@@ -20,8 +20,6 @@ use Nette\PhpGenerator as Php;
  */
 class PhpGenerator
 {
-	use Nette\SmartObject;
-
 	private ContainerBuilder $builder;
 	private ?string $className = null;
 

@@ -17,8 +17,6 @@ use Nette;
  */
 class Container
 {
-	use Nette\SmartObject;
-
 	/**
 	 * @var mixed[]
 	 * @deprecated use Container::getParameter() or getParameters()

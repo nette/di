@@ -18,8 +18,6 @@ use Nette\Schema;
  */
 class Compiler
 {
-	use Nette\SmartObject;
-
 	private const
 		Services = 'services',
 		Parameters = 'parameters',

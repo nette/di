@@ -18,8 +18,6 @@ use Nette\DI\Definitions\Definition;
  */
 class ContainerBuilder
 {
-	use Nette\SmartObject;
-
 	public const
 		ThisService = 'self',
 		ThisContainer = 'container';

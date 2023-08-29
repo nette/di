@@ -22,6 +22,8 @@ use Nette\DI\ServiceCreationException;
  */
 final class ServiceDefinition extends Definition
 {
+	use Nette\SmartObject;
+
 	private Statement $creator;
 
 	/** @var Statement[] */

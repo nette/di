@@ -20,8 +20,6 @@ use ReflectionMethod;
  */
 class DependencyChecker
 {
-	use Nette\SmartObject;
-
 	public const Version = 1;
 
 	/** @deprecated use DependencyChecker::Version */
