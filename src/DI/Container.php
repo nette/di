@@ -17,8 +17,6 @@ use Nette;
  */
 class Container
 {
-	use Nette\SmartObject;
-
 	/** @var array  user parameters */
 	public $parameters = [];
 

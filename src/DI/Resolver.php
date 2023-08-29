@@ -28,8 +28,6 @@ use ReflectionClass;
  */
 class Resolver
 {
-	use Nette\SmartObject;
-
 	private ContainerBuilder $builder;
 	private ?Definition $currentService = null;
 	private ?string $currentServiceType = null;

@@ -20,8 +20,6 @@ use Nette\DI\Helpers;
  */
 final class ServicesExtension extends Nette\DI\CompilerExtension
 {
-	use Nette\SmartObject;
-
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
 		return Nette\Schema\Expect::arrayOf(new DefinitionSchema($this->getContainerBuilder()));

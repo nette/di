@@ -21,8 +21,6 @@ use Nette\Utils\Strings;
  */
 class PhpGenerator
 {
-	use Nette\SmartObject;
-
 	private ContainerBuilder $builder;
 	private ?string $className = null;
 

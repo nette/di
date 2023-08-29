@@ -18,8 +18,6 @@ use Nette\Utils\Validators;
  */
 class Loader
 {
-	use Nette\SmartObject;
-
 	private const IncludesKey = 'includes';
 
 	private array $adapters = [

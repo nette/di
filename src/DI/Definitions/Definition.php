@@ -17,8 +17,6 @@ use Nette;
  */
 abstract class Definition
 {
-	use Nette\SmartObject;
-
 	private ?string $name = null;
 	private ?string $type = null;
 	private array $tags = [];

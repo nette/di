@@ -9,16 +9,12 @@ declare(strict_types=1);
 
 namespace Nette\DI;
 
-use Nette;
-
 
 /**
  * Autowiring.
  */
 class Autowiring
 {
-	use Nette\SmartObject;
-
 	private ContainerBuilder $builder;
 
 	/** @var array[]  type => services, used by getByType() */

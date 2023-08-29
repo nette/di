@@ -324,20 +324,3 @@ Assert::exception(function () {
 		->setImplement(Bad6::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
-
-
-
-interface Bad7
-{
-	public function get(): stdClass;
-}
-
-Assert::exception(function () {
-	$builder = new DI\ContainerBuilder;
-	$builder->addDefinition(stdClass::class)->setCreator(stdClass::class);
-	$builder->addAccessorDefinition('one')
-		->setImplement(Bad7::class)
-		->setClass(stdClass::class)
-		->addSetup('method');
-	$builder->complete();
-}, Nette\MemberAccessException::class, 'Call to undefined method Nette\DI\Definitions\AccessorDefinition::addSetup().');
