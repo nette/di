@@ -48,12 +48,6 @@ interface Good1
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
-	$def->setType('Foo');
-}, Nette\MemberAccessException::class);
-
-
-Assert::exception(function () {
-	$def = new AccessorDefinition;
 	$def->setImplement('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Interface 'Foo' not found.");
 

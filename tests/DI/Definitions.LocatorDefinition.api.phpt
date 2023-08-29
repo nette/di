@@ -65,12 +65,6 @@ interface Good3
 
 Assert::exception(function () {
 	$def = new LocatorDefinition;
-	$def->setType('Foo');
-}, Nette\MemberAccessException::class);
-
-
-Assert::exception(function () {
-	$def = new LocatorDefinition;
 	$def->setImplement('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Interface 'Foo' not found.");
 

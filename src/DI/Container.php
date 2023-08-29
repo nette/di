@@ -217,7 +217,7 @@ class Container
 	 * Creates new instance of the service.
 	 * @throws MissingServiceException
 	 */
-	public function createService(string $name, array $args = []): object
+	public function createService(string $name): object
 	{
 		$name = $this->aliases[$name] ?? $name;
 		$method = self::getMethodName($name);
@@ -226,10 +226,10 @@ class Container
 			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));
 		}
 
-		$service = $this->preventDeadLock($name, function () use ($callback, $args, $method) {
+		$service = $this->preventDeadLock($name, function () use ($callback, $method) {
 			return $callback instanceof \Closure
-				? $callback(...$args)
-				: $this->$method(...$args);
+				? $callback()
+				: $this->$method();
 		});
 
 		if (!is_object($service)) {
