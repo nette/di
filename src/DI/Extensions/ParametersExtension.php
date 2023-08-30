@@ -58,21 +58,19 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
-		$parameters = $this->getContainerBuilder()->parameters;
-		array_walk_recursive($parameters, function (&$val): void {
+		$params = $this->getContainerBuilder()->parameters;
+		array_walk_recursive($params, function (&$val): void {
 			if ($val instanceof Nette\DI\Definitions\Statement || $val instanceof DynamicParameter) {
 				$val = null;
 			}
 		});
 
 		$cnstr = $class->getMethod('__construct');
-		$cnstr->addBody('$this->parameters += ?;', [$parameters]);
+		$cnstr->addBody('$this->parameters += ?;', [$params]);
 		foreach ($this->dynamicValidators as [$param, $expected]) {
-			if ($param instanceof Nette\DI\Definitions\Statement) {
-				continue;
+			if (!$param instanceof Nette\DI\Definitions\Statement) {
+				$cnstr->addBody('Nette\Utils\Validators::assert(?, ?, ?);', [$param, $expected, 'dynamic parameter']);
 			}
-
-			$cnstr->addBody('Nette\Utils\Validators::assert(?, ?, ?);', [$param, $expected, 'dynamic parameter']);
 		}
 	}
 }
