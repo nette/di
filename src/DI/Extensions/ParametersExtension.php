@@ -36,13 +36,9 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$params = $this->config;
-		$resolver = new Nette\DI\Resolver($builder);
-		$generator = new Nette\DI\PhpGenerator($builder);
 
 		foreach ($this->dynamicParams as $key) {
-			$params[$key] = array_key_exists($key, $params)
-				? new DynamicParameter($generator->formatPhp('($this->parameters[?] \?\? ?)', $resolver->completeArguments(Nette\DI\Helpers::filterArguments([$key, $params[$key]]))))
-				: new DynamicParameter((new Nette\PhpGenerator\Dumper)->format('$this->parameters[?]', $key));
+			$params[$key] = new DynamicParameter('$this->parameters[' . var_export($key, return: true) . ']');
 		}
 
 		$builder->parameters = Nette\DI\Helpers::expand($params, $params, recursive: true);
@@ -67,6 +63,11 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			->setProtected()
 			->setReturnType('void');
 		$method->addParameter('params')->setType('array');
+		$method->addBody(<<<'XX'
+			if ($tmp = array_diff(?, array_keys($params))) {
+				throw new Nette\InvalidArgumentException('Missing parameters: ' . implode(', ', $tmp));
+			}
+			XX, [$this->dynamicParams]);
 		$method->addBody('$this->parameters = $params;');
 		$method->addBody('$this->parameters += ?;', [$params]);
 

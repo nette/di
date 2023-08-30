@@ -47,14 +47,14 @@ test('', function () {
 test('', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
-	$container = createContainer($compiler, '
-	parameters:
-		dynamic: default
-
-	services:
-		one: Service(%dynamic%)
-	');
-	Assert::same('default', $container->getService('one')->arg);
+	Assert::exception(
+		fn() => createContainer($compiler, '
+		parameters:
+			dynamic: default
+		'),
+		Nette\InvalidArgumentException::class,
+		'Missing parameters: dynamic',
+	);
 });
 
 
@@ -97,47 +97,4 @@ test('', function () {
 		one: Service(%expand%)
 	', ['dynamic' => ['item' => 123]]);
 	Assert::same(123, $container->getService('one')->arg);
-});
-
-
-test('', function () {
-	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['dynamic']);
-	$container = createContainer($compiler, '
-	parameters:
-		dynamic: ::trim(" a ")
-
-	services:
-		one: Service(%dynamic%)
-	');
-	Assert::same('a', $container->getService('one')->arg);
-});
-
-
-test('', function () {
-	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['dynamic']);
-	$container = createContainer($compiler, '
-	parameters:
-		dynamic: Service::Name
-
-	services:
-		one: Service(%dynamic%)
-	');
-	Assert::same('hello', $container->getService('one')->arg);
-});
-
-
-test('', function () {
-	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['dynamic']);
-	Assert::exception(function () use ($compiler) {
-		createContainer($compiler, '
-		parameters:
-			dynamic: @one
-
-		services:
-			one: Service
-		');
-	}, Nette\DI\ServiceCreationException::class, "Reference to missing service 'one'.");
 });
