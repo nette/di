@@ -39,10 +39,6 @@ class PhpGenerator
 		$this->className = $className;
 		$class = new Php\ClassType($this->className);
 		$class->setExtends(Container::class);
-		$class->addMethod('__construct')
-			->addBody('parent::__construct($params);')
-			->addParameter('params', [])
-				->setType('array');
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
 			$class->addProperty($key)

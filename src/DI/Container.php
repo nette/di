@@ -42,11 +42,17 @@ class Container
 
 	public function __construct(array $params = [])
 	{
-		$this->parameters = $params;
+		$this->setupParameters($params);
 		$this->methods = array_flip(array_filter(
 			get_class_methods($this),
 			fn($s) => preg_match('#^createService.#', $s),
 		));
+	}
+
+
+	protected function setupParameters(array $params): void
+	{
+		$this->parameters = $params;
 	}
 
 
