@@ -108,11 +108,10 @@ class DefinitionSchema implements Schema
 			if (
 				isset($def['class'])
 				&& !isset($def['type'])
-				&& !isset($def['create'])
 				&& !isset($def['dynamic'])
 				&& !isset($def['imported'])
 			) {
-				$def['create'] = $def['class'];
+				$def[isset($def['create']) ? 'type' : 'create'] = $def['class'];
 				unset($def['class']);
 			}
 
