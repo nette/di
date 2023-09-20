@@ -73,6 +73,25 @@ Assert::error(function () {
 }, E_USER_DEPRECATED, 'The parameter $arg in {closure}() should have a declared value in the configuration.');
 
 
+// non-array named variadics
+Assert::exception(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		['args' => 1],
+		function () {}
+	);
+}, Nette\DI\ServiceCreationException::class, 'Parameter $args in {closure}() must be array, integer given.');
+
+
+// bad variadics (this is actually what PHP allows)
+Assert::exception(function () {
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (...$args) {}),
+		[1, 'args' => []],
+		function () {}
+	);
+}, Nette\DI\ServiceCreationException::class, 'Unable to pass specified arguments to {closure}%a?%.');
+
 
 // bad variadics
 if (PHP_VERSION_ID >= 80000) {

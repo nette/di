@@ -544,10 +544,24 @@ class Resolver
 						'Cannot use positional argument after named or omitted argument in %s.',
 						Reflection::toString($param)
 					));
+
+				} elseif (array_key_exists($paramName, $arguments)) {
+					if (!is_array($arguments[$paramName])) {
+						throw new ServiceCreationException(sprintf(
+							'Parameter %s must be array, %s given.',
+							Reflection::toString($param),
+							gettype($arguments[$paramName])
+						));
+					}
+
+					$res = array_merge($res, $arguments[$paramName]);
+					unset($arguments[$paramName]);
+
+				} else {
+					$res = array_merge($res, $arguments);
+					$arguments = [];
 				}
 
-				$res = array_merge($res, $arguments);
-				$arguments = [];
 				$optCount = 0;
 				break;
 

@@ -88,7 +88,7 @@ Assert::equal(
 	)
 );
 
-// variadics
+// positional variadics
 Assert::equal(
 	[1, 2, 3],
 	Resolver::autowireArguments(
@@ -98,9 +98,9 @@ Assert::equal(
 	)
 );
 
-// name of variadics is ignored
+// named variadics
 Assert::equal(
-	['args' => [1, 2, 3]],
+	[1, 2, 3],
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		['args' => [1, 2, 3]],
