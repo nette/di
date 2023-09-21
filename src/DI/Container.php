@@ -363,4 +363,9 @@ class Container
 
 		return 'createService' . str_replace('.', '__', ucfirst($name));
 	}
+
+
+	public function initialize(): void
+	{
+	}
 }

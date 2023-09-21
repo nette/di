@@ -36,7 +36,7 @@ class Container extends Nette\DI\Container
 	}
 
 
-	public function initialize()
+	public function initialize(): void
 	{
 	}
 }
