@@ -66,7 +66,8 @@ class PhpGenerator
 			->setReturnType($className)
 			->setBody('return $this;');
 
-		$class->addMethod('initialize');
+		$class->addMethod('initialize')
+			->setReturnType('void');
 
 		return $class;
 	}
