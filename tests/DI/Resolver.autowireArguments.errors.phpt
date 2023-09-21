@@ -62,26 +62,26 @@ Assert::exception(
 
 
 // nullable unknown class
-Assert::error(
+Assert::exception(
 	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function (?stdClass $arg) {}),
 		[],
 		fn($type) => $type === Test::class ? new Test : null,
 	),
-	E_USER_DEPRECATED,
-	'The parameter $arg in {closure}() should have a declared value in the configuration.',
+	Nette\DI\ServiceCreationException::class,
+	'Service of type stdClass required by $arg in {closure}() not found. Did you add it to configuration file?',
 );
 
 
 // nullable scalar
-Assert::error(
+Assert::exception(
 	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function (?int $arg) {}),
 		[],
 		fn($type) => $type === Test::class ? new Test : null,
 	),
-	E_USER_DEPRECATED,
-	'The parameter $arg in {closure}() should have a declared value in the configuration.',
+	Nette\DI\ServiceCreationException::class,
+	'Parameter $arg in {closure}() has no class type or default value, so its value must be specified.',
 );
 
 
@@ -122,14 +122,14 @@ Assert::exception(
 
 
 // nullable union
-Assert::error(
+Assert::exception(
 	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test|null $x) {}),
 		[],
 		function () {},
 	),
-	E_USER_DEPRECATED,
-	'The parameter $x in {closure}() should have a declared value in the configuration.',
+	Nette\DI\ServiceCreationException::class,
+	'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.',
 );
 
 
