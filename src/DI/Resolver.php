@@ -690,7 +690,7 @@ class Resolver
 			&& $type
 			&& $type->getSingleName() === 'array'
 			&& preg_match(
-				'#@param[ \t]+(?|([\w\\\\]+)\[\]|array<int,\s*([\w\\\\]+)>)[ \t]+\$' . $parameter->name . '#',
+				'#@param[ \t]+(?|([\w\\\\]+)\[\]|list<([\w\\\\]+)>|array<int,\s*([\w\\\\]+)>)[ \t]+\$' . $parameter->name . '#',
 				(string) $method->getDocComment(),
 				$m
 			)
