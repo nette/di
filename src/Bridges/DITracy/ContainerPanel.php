@@ -21,14 +21,9 @@ class ContainerPanel implements Tracy\IBarPanel
 {
 	use Nette\SmartObject;
 
-	/** @var float|null */
-	public static $compilationTime;
-
-	/** @var Nette\DI\Container */
-	private $container;
-
-	/** @var float|null */
-	private $elapsedTime;
+	public static ?float $compilationTime = null;
+	private Nette\DI\Container $container;
+	private ?float $elapsedTime;
 
 
 	public function __construct(Container $container)

@@ -22,13 +22,11 @@ use Nette\PhpGenerator\Method;
 final class ParametersExtension extends Nette\DI\CompilerExtension
 {
 	/** @var string[] */
-	public $dynamicParams = [];
+	public array $dynamicParams = [];
 
 	/** @var string[][] */
-	public $dynamicValidators = [];
-
-	/** @var array */
-	private $compilerConfig;
+	public array $dynamicValidators = [];
+	private array $compilerConfig;
 
 
 	public function __construct(array &$compilerConfig)

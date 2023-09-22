@@ -26,25 +26,25 @@ class Container
 	public $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
-	protected $types = [];
+	protected array $types = [];
 
 	/** @var string[]  alias => service name */
-	protected $aliases = [];
+	protected array $aliases = [];
 
 	/** @var array[]  tag name => service name => tag value */
-	protected $tags = [];
+	protected array $tags = [];
 
 	/** @var array[]  type => level => services */
-	protected $wiring = [];
+	protected array $wiring = [];
 
 	/** @var object[]  service name => instance */
-	private $instances = [];
+	private array $instances = [];
 
 	/** @var array<string, true> circular reference detector */
-	private $creating;
+	private array $creating;
 
 	/** @var array<string, string|\Closure> */
-	private $methods;
+	private array $methods;
 
 
 	public function __construct(array $params = [])

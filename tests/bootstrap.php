@@ -39,7 +39,7 @@ function getTempDir(): string
 
 class Notes
 {
-	public static $notes = [];
+	public static array $notes = [];
 
 
 	public static function add($message): void

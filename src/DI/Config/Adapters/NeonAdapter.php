@@ -24,9 +24,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	use Nette\SmartObject;
 
 	private const PreventMergingSuffix = '!';
-
-	/** @var string */
-	private $file;
+	private string $file;
 
 
 	/**

@@ -34,22 +34,12 @@ class ContainerBuilder
 	public $parameters = [];
 
 	/** @var Definition[] */
-	private $definitions = [];
-
-	/** @var array of alias => service */
-	private $aliases = [];
-
-	/** @var Autowiring */
-	private $autowiring;
-
-	/** @var bool */
-	private $needsResolve = true;
-
-	/** @var bool */
-	private $resolving = false;
-
-	/** @var array */
-	private $dependencies = [];
+	private array $definitions = [];
+	private array $aliases = [];
+	private Autowiring $autowiring;
+	private bool $needsResolve = true;
+	private bool $resolving = false;
+	private array $dependencies = [];
 
 
 	public function __construct()

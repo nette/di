@@ -22,11 +22,10 @@ use Nette\DI\ServiceCreationException;
  */
 final class ServiceDefinition extends Definition
 {
-	/** @var Statement */
-	private $creator;
+	private Statement $creator;
 
 	/** @var Statement[] */
-	private $setup = [];
+	private array $setup = [];
 
 
 	public function __construct()

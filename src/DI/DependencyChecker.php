@@ -27,8 +27,8 @@ class DependencyChecker
 	/** @deprecated use DependencyChecker::Version */
 	public const VERSION = self::Version;
 
-	/** @var array of ReflectionClass|\ReflectionFunctionAbstract|string */
-	private $dependencies = [];
+	/** @var array<ReflectionClass|\ReflectionFunctionAbstract|string> */
+	private array $dependencies = [];
 
 
 	/**

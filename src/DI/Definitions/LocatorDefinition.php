@@ -18,10 +18,8 @@ use Nette;
 final class LocatorDefinition extends Definition
 {
 	/** @var Reference[] */
-	private $references = [];
-
-	/** @var string|null */
-	private $tagged;
+	private array $references = [];
+	private ?string $tagged = null;
 
 
 	/** @return static */

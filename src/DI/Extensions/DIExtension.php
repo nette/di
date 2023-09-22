@@ -18,17 +18,10 @@ use Tracy;
  */
 final class DIExtension extends Nette\DI\CompilerExtension
 {
-	/** @var array */
-	public $exportedTags = [];
-
-	/** @var array */
-	public $exportedTypes = [];
-
-	/** @var bool */
-	private $debugMode;
-
-	/** @var float */
-	private $time;
+	public array $exportedTags = [];
+	public array $exportedTypes = [];
+	private bool $debugMode;
+	private float $time;
 
 
 	public function __construct(bool $debugMode = false)
@@ -37,27 +30,21 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->time = microtime(true);
 
 		$this->config = new class {
-			/** @var ?bool */
-			public $debugger;
+			public ?bool $debugger = null;
 
 			/** @var string[] */
-			public $excluded = [];
-
-			/** @var ?string */
-			public $parentClass;
-
-			/** @var object */
-			public $export;
+			public array $excluded = [];
+			public ?string $parentClass = null;
+			public object $export;
 		};
 		$this->config->export = new class {
-			/** @var bool */
-			public $parameters = true;
+			public bool $parameters = true;
 
 			/** @var string[]|bool|null */
-			public $tags = true;
+			public array|bool|null $tags = true;
 
 			/** @var string[]|bool|null */
-			public $types = true;
+			public array|bool|null $types = true;
 		};
 	}
 
