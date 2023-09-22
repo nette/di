@@ -140,5 +140,19 @@ test('Reference as parameter', function () {
 	');
 	Assert::exception(function () use ($container) {
 		$container->getService('one');
-	}, Nette\InvalidStateException::class, 'Circular reference detected for services: one.');
+	}, Nette\InvalidStateException::class, 'Circular reference detected for: one, %dynamic%.');
+});
+
+
+test('Circula references', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['one', 'two']);
+	$container = createContainer($compiler, '
+	parameters:
+		one: %two%
+		two: %one%
+	');
+	Assert::exception(function () use ($container) {
+		$container->getParameter('one');
+	}, Nette\InvalidStateException::class, 'Circular reference detected for: %one%, %two%.');
 });
