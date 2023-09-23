@@ -1,0 +1,60 @@
+<?php
+
+declare(strict_types=1);
+
+use Tester\Assert;
+
+require __DIR__ . '/../bootstrap.php';
+
+
+class Service
+{
+	public function __construct()
+	{
+	}
+}
+
+
+$loader = new Nette\DI\Config\Loader;
+$config = $loader->load(Tester\FileMock::create('
+parameters:
+	static: 123
+	expr: ::trim(" a ")
+	dynamic: 123
+	arrayExpr:
+		expr: ::trim(" a ")
+	arrayExpr2:
+		expr: %expr%
+	arrayDynamic:
+		dynamic: %dynamic%
+	refStatic: %static%
+	refDynamic: %dynamic%
+	refDynamic2: %dynamic.foo%
+	refExpr: %expr%
+	refArrayE1: %arrayExpr%
+	refArrayE2: %arrayExpr.expr%
+	refArrayD1: %arrayDynamic%
+	refArrayD2: %arrayDynamic.dynamic%
+
+services:
+	- Service(
+		%static%
+		%expr%
+		%dynamic%
+		%dynamic.foo%
+		%arrayExpr%
+		%arrayExpr.expr%
+		%arrayDynamic%
+		%arrayDynamic.dynamic%
+	)
+', 'neon'));
+
+$compiler = new Nette\DI\Compiler;
+$compiler->setDynamicParameterNames(['dynamic']);
+$code = $compiler->addConfig($config)
+	->compile();
+
+Assert::matchFile(
+	__DIR__ . '/expected/compiler.parameters.php',
+	$code
+);
