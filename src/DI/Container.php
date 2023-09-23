@@ -19,7 +19,7 @@ class Container
 {
 	use Nette\SmartObject;
 
-	/** @var array  user parameters */
+	/** @var mixed[]  user parameters */
 	public $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
@@ -37,10 +37,10 @@ class Container
 	/** @var object[]  service name => instance */
 	private $instances = [];
 
-	/** @var array circular reference detector */
+	/** @var array<string, true> circular reference detector */
 	private $creating;
 
-	/** @var array */
+	/** @var array<string, string|\Closure> */
 	private $methods;
 
 
