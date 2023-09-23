@@ -114,3 +114,19 @@ test('', function () {
 	Assert::null($container->parameters['bar']);
 	Assert::same([$container->getService('two')], $container->getService('one')->arg);
 });
+
+
+test('Not circular reference', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		array:
+			foo: foo
+			bar: %array.foo%
+	');
+
+	Assert::same(
+		['array' => ['foo' => 'foo', 'bar' => 'foo']],
+		$container->getParameters()
+	);
+});

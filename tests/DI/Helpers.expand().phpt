@@ -22,6 +22,7 @@ Assert::same('item', Helpers::expand('%key%', ['key' => 'item']));
 Assert::same(123, Helpers::expand('%key%', ['key' => 123]));
 Assert::same('a123b123c', Helpers::expand('a%key%b%key%c', ['key' => 123]));
 Assert::same(123, Helpers::expand('%key1.key2%', ['key1' => ['key2' => 123]]));
+Assert::same('%key2%', Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => 123]));
 Assert::same(123, Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => 123], true));
 Assert::same([123], Helpers::expand(['%key1%'], ['key1' => '%key2%', 'key2' => 123], true));
 Assert::same(['hello' => 123], Helpers::expand(['%key1%' => '%key2%'], ['key1' => 'hello', 'key2' => 123], true));
@@ -32,12 +33,21 @@ Assert::same(
 		'keyB' => 'abc',
 	], true)
 );
+Assert::same( // no double expand
+	'%foo%',
+	Helpers::expand('%string%', ['string' => '%%foo%'], true)
+);
 
 Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
 
-Assert::equal(new DynamicParameter("'text' . (func())"), Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]));
-Assert::equal(new DynamicParameter("(func()) . 'text'"), Helpers::expand('%key%text', ['key' => new DynamicParameter('func()')]));
-Assert::equal(new DynamicParameter("'a' . (func()) . 'b' . '123' . (func()) . 'c'"), Helpers::expand('a%key1%b%key2%%key1%c', ['key1' => new DynamicParameter('func()'), 'key2' => 123]));
+Assert::equal(
+	new DynamicParameter("func()['foo']"),
+	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')])
+);
+Assert::equal(
+	new DynamicParameter("'text' . (func())"),
+	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')])
+);
 
 
 Assert::exception(function () {
@@ -51,6 +61,13 @@ Assert::exception(function () {
 Assert::exception(function () {
 	Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], true);
 }, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: key1, key2.');
+
+Assert::exception(function () {
+	Helpers::expand('%exp%', [
+		'array' => ['a' => '%array%'],
+		'exp' => '%array.a%',
+	], true);
+}, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: exp, array.a, array.');
 
 
 Assert::same(['key1' => 'hello', 'key2' => '*%key1%*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']));

@@ -24,3 +24,15 @@ parameters:
 	$compiler = new DI\Compiler;
 	$compiler->addConfig($loader->load(Tester\FileMock::create($config, 'neon')))->compile();
 }, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: foo, foobar, bar.');
+
+
+Assert::exception(function () {
+	$config = '
+parameters:
+	outer:
+		inner: %outer.inner%
+';
+	$loader = new DI\Config\Loader;
+	$compiler = new DI\Compiler;
+	$compiler->addConfig($loader->load(Tester\FileMock::create($config, 'neon')))->compile();
+}, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: outer.inner.');
