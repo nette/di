@@ -302,7 +302,7 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad4::class);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Unused parameter \$baz when implementing method Bad4::create(), did you mean \$bar?");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Cannot implement Bad4::create(): factory method parameters (\$baz) are not matching Bad3::__construct() parameters (\$bar). Did you mean to use '\$bar' in factory method?");
 
 
 
@@ -323,7 +323,7 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad6::class);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Unused parameter \$baz when implementing method Bad6::create().");
+}, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Cannot implement Bad6::create(): factory method parameters (\$baz) are not matching Bad5::__construct() parameters (\$xxx).");
 
 
 
