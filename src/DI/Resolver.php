@@ -648,7 +648,7 @@ class Resolver
 			throw new ServiceCreationException(sprintf(
 				'Parameter %s has %s, so its value must be specified.',
 				$desc,
-				$type && !$type->isSingle() ? 'complex type and no default value' : 'no class type or default value',
+				$type && !$type->isSimple() ? 'complex type and no default value' : 'no class type or default value',
 			));
 		}
 	}
