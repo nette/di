@@ -28,7 +28,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$this->loadDefinitions($this->config);
 	}
@@ -37,7 +37,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	/**
 	 * Loads list of service definitions.
 	 */
-	public function loadDefinitions(array $config)
+	public function loadDefinitions(array $config): void
 	{
 		foreach ($config as $key => $defConfig) {
 			$this->loadDefinition($this->convertKeyToName($key), $defConfig);

@@ -49,14 +49,14 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses($this->config->excluded);
 	}
 
 
-	public function afterCompile(Nette\PhpGenerator\ClassType $class)
+	public function afterCompile(Nette\PhpGenerator\ClassType $class): void
 	{
 		if ($this->config->parentClass) {
 			$class->setExtends($this->config->parentClass);

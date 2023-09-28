@@ -332,8 +332,8 @@ class Resolver
 	}
 
 
-	/** @return string|array|Reference  literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member] */
-	private function normalizeEntity(Statement $statement)
+	/** Returns literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member] */
+	private function normalizeEntity(Statement $statement): string|array|Reference|null
 	{
 		$entity = $statement->getEntity();
 		if (is_array($entity)) {
@@ -422,10 +422,8 @@ class Resolver
 
 	/**
 	 * Adds item to the list of dependencies.
-	 * @param  \ReflectionClass|\ReflectionFunctionAbstract|string  $dep
-	 * @return static
 	 */
-	public function addDependency($dep)
+	public function addDependency(\ReflectionClass|\ReflectionFunctionAbstract|string $dep): static
 	{
 		$this->builder->addDependency($dep);
 		return $this;
@@ -590,9 +588,8 @@ class Resolver
 	 * Resolves missing argument using autowiring.
 	 * @param  (callable(string $type, bool $single): (object|object[]|null))  $getter
 	 * @throws ServiceCreationException
-	 * @return mixed
 	 */
-	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter)
+	private static function autowireArgument(\ReflectionParameter $parameter, callable $getter): mixed
 	{
 		$desc = Reflection::toString($parameter);
 		$type = Nette\Utils\Type::fromReflection($parameter);

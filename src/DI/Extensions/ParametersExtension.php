@@ -35,7 +35,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		$builder = $this->getContainerBuilder();
 		$params = $this->config;
@@ -52,7 +52,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function afterCompile(Nette\PhpGenerator\ClassType $class)
+	public function afterCompile(Nette\PhpGenerator\ClassType $class): void
 	{
 		$builder = $this->getContainerBuilder();
 		$dynamicParams = array_fill_keys($this->dynamicParams, true);

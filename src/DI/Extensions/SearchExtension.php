@@ -52,7 +52,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		foreach (array_filter($this->config) as $name => $batch) {
 			if (!is_dir($batch->in)) {
@@ -117,7 +117,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$builder = $this->getContainerBuilder();
 

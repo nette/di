@@ -18,8 +18,7 @@ use Nette\DI\PhpGenerator;
  */
 final class ImportedDefinition extends Definition
 {
-	/** @return static */
-	public function setType(?string $type)
+	public function setType(?string $type): static
 	{
 		return parent::setType($type);
 	}

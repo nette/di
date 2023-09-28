@@ -23,7 +23,7 @@ class ExtensionsExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration()
+	public function loadConfiguration(): void
 	{
 		foreach ($this->getConfig() as $name => $class) {
 			if (is_int($name)) {

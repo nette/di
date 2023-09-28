@@ -63,7 +63,7 @@ class Container
 	}
 
 
-	public function getParameter($key)
+	public function getParameter(string|int $key): mixed
 	{
 		if (!array_key_exists($key, $this->parameters)) {
 			$this->parameters[$key] = $this->preventDeadLock("%$key%", fn() => $this->getDynamicParameter($key));
@@ -78,7 +78,7 @@ class Container
 	}
 
 
-	protected function getDynamicParameter($key)
+	protected function getDynamicParameter(string|int $key): mixed
 	{
 		throw new Nette\InvalidStateException(sprintf("Parameter '%s' not found. Check if 'di › export › parameters' is enabled.", $key));
 	}
@@ -87,9 +87,8 @@ class Container
 	/**
 	 * Adds the service to the container.
 	 * @param  object  $service  service or its factory
-	 * @return static
 	 */
-	public function addService(string $name, object $service)
+	public function addService(string $name, object $service): static
 	{
 		$name = $this->aliases[$name] ?? $name;
 		if (isset($this->instances[$name])) {
@@ -316,7 +315,7 @@ class Container
 	}
 
 
-	private function preventDeadLock(string $key, \Closure $callback)
+	private function preventDeadLock(string $key, \Closure $callback): mixed
 	{
 		if (isset($this->creating[$key])) {
 			throw new Nette\InvalidStateException(sprintf('Circular reference detected for: %s.', implode(', ', array_keys($this->creating))));
@@ -335,7 +334,6 @@ class Container
 
 	/**
 	 * Creates new instance using autowiring.
-	 * @throws Nette\InvalidArgumentException
 	 */
 	public function createInstance(string $class, array $args = []): object
 	{
@@ -365,9 +363,8 @@ class Container
 
 	/**
 	 * Calls method using autowiring.
-	 * @return mixed
 	 */
-	public function callMethod(callable $function, array $args = [])
+	public function callMethod(callable $function, array $args = []): mixed
 	{
 		return $function(...$this->autowireArguments(Nette\Utils\Callback::toReflection($function), $args));
 	}

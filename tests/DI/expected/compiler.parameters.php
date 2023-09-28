@@ -33,7 +33,7 @@ class Container extends Nette\DI\Container
 	}
 
 
-	protected function getDynamicParameter($key)
+	protected function getDynamicParameter(string|int $key): mixed
 	{
 		switch (true) {
 			case $key === 'dynamic': return 123;

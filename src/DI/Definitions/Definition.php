@@ -31,10 +31,9 @@ abstract class Definition
 
 
 	/**
-	 * @return static
 	 * @internal  This is managed by ContainerBuilder and should not be called by user
 	 */
-	final public function setName(string $name)
+	final public function setName(string $name): static
 	{
 		if ($this->name) {
 			throw new Nette\InvalidStateException('Name already has been set.');
@@ -51,8 +50,7 @@ abstract class Definition
 	}
 
 
-	/** @return static */
-	protected function setType(?string $type)
+	protected function setType(?string $type): static
 	{
 		if ($this->autowired && $this->notifier && $this->type !== $type) {
 			($this->notifier)();
@@ -80,8 +78,7 @@ abstract class Definition
 	}
 
 
-	/** @return static */
-	final public function setTags(array $tags)
+	final public function setTags(array $tags): static
 	{
 		$this->tags = $tags;
 		return $this;
@@ -94,29 +91,20 @@ abstract class Definition
 	}
 
 
-	/**
-	 * @param  mixed  $attr
-	 * @return static
-	 */
-	final public function addTag(string $tag, $attr = true)
+	final public function addTag(string $tag, mixed $attr = true): static
 	{
 		$this->tags[$tag] = $attr;
 		return $this;
 	}
 
 
-	/** @return mixed */
-	final public function getTag(string $tag)
+	final public function getTag(string $tag): mixed
 	{
 		return $this->tags[$tag] ?? null;
 	}
 
 
-	/**
-	 * @param  bool|string|string[]  $state
-	 * @return static
-	 */
-	final public function setAutowired($state = true)
+	final public function setAutowired(bool|string|array $state = true): static
 	{
 		if ($this->notifier && $this->autowired !== $state) {
 			($this->notifier)();
@@ -124,20 +112,19 @@ abstract class Definition
 
 		$this->autowired = is_string($state) || is_array($state)
 			? (array) $state
-			: (bool) $state;
+			: $state;
 		return $this;
 	}
 
 
 	/** @return bool|string[] */
-	final public function getAutowired()
+	final public function getAutowired(): bool|array
 	{
 		return $this->autowired;
 	}
 
 
-	/** @return static */
-	public function setExported(bool $state = true)
+	public function setExported(bool $state = true): static
 	{
 		return $this->addTag('nette.exported', $state);
 	}

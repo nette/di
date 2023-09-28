@@ -28,8 +28,7 @@ abstract class CompilerExtension
 	protected Nette\PhpGenerator\Closure $initialization;
 
 
-	/** @return static */
-	public function setCompiler(Compiler $compiler, string $name)
+	public function setCompiler(Compiler $compiler, string $name): static
 	{
 		$this->initialization = new Nette\PhpGenerator\Closure;
 		$this->compiler = $compiler;
@@ -38,16 +37,8 @@ abstract class CompilerExtension
 	}
 
 
-	/**
-	 * @param  array|object  $config
-	 * @return static
-	 */
-	public function setConfig($config)
+	public function setConfig(array|object $config): static
 	{
-		if (!is_array($config) && !is_object($config)) {
-			throw new Nette\InvalidArgumentException;
-		}
-
 		$this->config = $config;
 		return $this;
 	}
@@ -55,9 +46,8 @@ abstract class CompilerExtension
 
 	/**
 	 * Returns extension configuration.
-	 * @return array|object
 	 */
-	public function getConfig()
+	public function getConfig(): array|object
 	{
 		return $this->config;
 	}

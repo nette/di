@@ -22,8 +22,7 @@ final class LocatorDefinition extends Definition
 	private ?string $tagged = null;
 
 
-	/** @return static */
-	public function setImplement(string $interface)
+	public function setImplement(string $interface): static
 	{
 		if (!interface_exists($interface)) {
 			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface '%s' not found.", $this->getName(), $interface));
@@ -66,8 +65,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setReferences(array $references)
+	public function setReferences(array $references): static
 	{
 		$this->references = [];
 		foreach ($references as $name => $ref) {
@@ -87,8 +85,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	/** @return static */
-	public function setTagged(?string $tagged)
+	public function setTagged(?string $tagged): static
 	{
 		$this->tagged = $tagged;
 		return $this;
