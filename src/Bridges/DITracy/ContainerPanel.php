@@ -57,37 +57,29 @@ class ContainerPanel implements Tracy\IBarPanel
 	 */
 	public function getPanel(): string
 	{
-		$rc = new \ReflectionClass($this->container);
-		$tags = [];
-		$types = [];
-		foreach ($rc->getMethods() as $method) {
-			if (preg_match('#^createService(.+)#', $method->name, $m) && $method->getReturnType()) {
-				$types[lcfirst(str_replace('__', '.', $m[1]))] = $method->getReturnType()->getName();
-			}
+		$methods = (function () { return $this->methods; })->bindTo($this->container, Container::class)();
+		$services = [];
+		foreach ($methods as $name => $foo) {
+			$name = lcfirst(str_replace('__', '.', substr($name, 13)));
+			$services[$name] = $this->container->getServiceType($name);
 		}
+		ksort($services, SORT_NATURAL);
 
-		$types = $this->getContainerProperty('types') + $types;
-		ksort($types, SORT_NATURAL);
-		foreach ($this->getContainerProperty('tags') as $tag => $tmp) {
+		$propertyTags = (function () { return $this->tags; })->bindTo($this->container, $this->container)();
+		$tags = [];
+		foreach ($propertyTags as $tag => $tmp) {
 			foreach ($tmp as $service => $val) {
 				$tags[$service][$tag] = $val;
 			}
 		}
 
-		return Nette\Utils\Helpers::capture(function () use ($tags, $types, $rc) {
+		return Nette\Utils\Helpers::capture(function () use ($tags, $services) {
 			$container = $this->container;
+			$rc = (new \ReflectionClass($this->container));
 			$file = $rc->getFileName();
-			$instances = $this->getContainerProperty('instances');
-			$wiring = $this->getContainerProperty('wiring');
+			$instances = (function () { return $this->instances; })->bindTo($this->container, Container::class)();
+			$wiring = (function () { return $this->wiring; })->bindTo($this->container, $this->container)();
 			require __DIR__ . '/templates/ContainerPanel.panel.phtml';
 		});
-	}
-
-
-	private function getContainerProperty(string $name)
-	{
-		$prop = (new \ReflectionClass(Nette\DI\Container::class))->getProperty($name);
-		$prop->setAccessible(true);
-		return $prop->getValue($this->container);
 	}
 }
