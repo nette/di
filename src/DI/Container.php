@@ -40,7 +40,7 @@ class Container
 	/** @var array circular reference detector */
 	private $creating;
 
-	/** @var array */
+	/** @var array<string, string|\Closure> */
 	private $methods;
 
 

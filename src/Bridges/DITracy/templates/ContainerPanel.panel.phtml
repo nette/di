@@ -47,7 +47,7 @@ use Tracy\Helpers;
 		</tr>
 		</thead>
 		<tbody>
-		<?php foreach ($types as $name => $type): ?>
+		<?php foreach ($services as $name => $type): ?>
 		<?php $name = (string) $name ?>
 		<?php $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), true) ?>
 		<tr>
