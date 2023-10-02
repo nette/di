@@ -38,6 +38,7 @@ test('', function () {
 	services:
 		one: Service(%bar%)
 	');
+
 	Assert::null($container->parameters['bar']);
 	Assert::same('a', $container->getService('one')->arg);
 });
@@ -52,6 +53,7 @@ test('', function () {
 	services:
 		one: Service(%bar%)
 	');
+
 	Assert::same('Service::Name', $container->parameters['bar']); // not resolved
 	Assert::same('hello', $container->getService('one')->arg);
 });
@@ -66,6 +68,7 @@ test('', function () {
 	services:
 		one: Service(%bar%)
 	');
+
 	Assert::null($container->parameters['bar']);
 	Assert::same('Service::method hello', $container->getService('one')->arg);
 });
@@ -81,7 +84,9 @@ test('', function () {
 		one: Service(%bar%)
 		two: Service(two)
 	');
-	Assert::same('@two', $container->parameters['bar']); // not resolved
+
+	// intentionally not resolved, it is not possible to distinguish a string from a reference
+	Assert::same(['bar' => '@two'], $container->getParameters());
 	Assert::same($container->getService('two'), $container->getService('one')->arg);
 });
 
@@ -96,12 +101,13 @@ test('', function () {
 		one: Service(%bar%)
 		two: Service(two)
 	');
+
 	Assert::null($container->parameters['bar']);
 	Assert::same($container->getService('two'), $container->getService('one')->arg->arg);
 });
 
 
-test('', function () {
+test('circular reference', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -111,6 +117,7 @@ test('', function () {
 		one: Service(%bar%)
 		two: Service(two)
 	');
+
 	Assert::null($container->parameters['bar']);
 	Assert::same([$container->getService('two')], $container->getService('one')->arg);
 });

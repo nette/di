@@ -192,7 +192,6 @@ final class ServiceDefinition extends Definition
 
 	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
 	{
-		$entity = $this->creator->getEntity();
 		$code = $generator->formatStatement($this->creator) . ";\n";
 		if (!$this->setup) {
 			$method->setBody('return ' . $code);

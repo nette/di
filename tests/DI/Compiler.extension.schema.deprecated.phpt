@@ -15,27 +15,18 @@ require __DIR__ . '/../bootstrap.php';
 
 class FooExtension extends Nette\DI\CompilerExtension
 {
-	public $loadedConfig;
-
-
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
 		return Expect::structure([
 			'key' => Expect::string()->deprecated(),
 		]);
 	}
-
-
-	public function loadConfiguration()
-	{
-		$this->loadedConfig = $this->config;
-	}
 }
 
 
 Assert::error(function () {
 	$compiler = new Nette\DI\Compiler;
-	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '
 	foo:
 		key: hello

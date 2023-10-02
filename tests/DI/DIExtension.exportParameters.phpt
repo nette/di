@@ -26,7 +26,7 @@ test('', function () {
 			parameters: true
 	');
 
-	Assert::same(['key' => 'val'], $container->parameters);
+	Assert::same(['key' => 'val'], $container->getParameters());
 });
 
 
@@ -42,7 +42,7 @@ test('', function () {
 			parameters: false
 	');
 
-	Assert::same([], $container->parameters);
+	Assert::same([], $container->getParameters());
 });
 
 
@@ -59,7 +59,7 @@ test('', function () {
 			parameters: true
 	', ['dynamic' => 123]);
 
-	Assert::same(['dynamic' => 123, 'key' => null], $container->parameters);
+	Assert::same(['dynamic' => 123, 'key' => null], $container->getParameters());
 });
 
 
@@ -76,5 +76,5 @@ test('', function () {
 			parameters: false
 	', ['dynamic' => 123]);
 
-	Assert::same(['dynamic' => 123], $container->parameters);
+	Assert::same(['dynamic' => 123], $container->getParameters());
 });

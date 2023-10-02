@@ -38,22 +38,36 @@ final class Helpers
 			foreach ($var as $key => $val) {
 				$res[self::expand($key, $params, $recursive)] = self::expand($val, $params, $recursive);
 			}
-
 			return $res;
 
 		} elseif ($var instanceof Statement) {
-			return new Statement(self::expand($var->getEntity(), $params, $recursive), self::expand($var->arguments, $params, $recursive));
+			return new Statement(
+				self::expand($var->getEntity(), $params, $recursive),
+				self::expand($var->arguments, $params, $recursive)
+			);
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
 			return $recursive
-				? self::expand($params, $params, (is_array($recursive) ? $recursive : []))
+				? self::expand($params, $params, $recursive)
 				: $params;
 
-		} elseif (!is_string($var)) {
+		} elseif (is_string($var)) {
+			$recursive = is_array($recursive) ? $recursive : ($recursive ? [] : null);
+			return self::expandString($var, $params, $recursive);
+
+		} else {
 			return $var;
 		}
+	}
 
-		$parts = preg_split('#%([\w.-]*)%#i', $var, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+	/**
+	 * Expands %placeholders% in string
+	 * @throws Nette\InvalidArgumentException
+	 */
+	private static function expandString(string $string, array $params, ?array $recursive)
+	{
+		$parts = preg_split('#%([\w.-]*)%#i', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$res = [];
 		$php = false;
 		foreach ($parts as $n => $part) {
@@ -70,32 +84,14 @@ final class Helpers
 				));
 
 			} else {
-				$val = $params;
-				foreach (explode('.', $part) as $key) {
-					if (is_array($val) && array_key_exists($key, $val)) {
-						$val = $val[$key];
-					} elseif ($val instanceof DynamicParameter) {
-						$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
-					} else {
-						throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $part));
-					}
-				}
-
-				if ($recursive) {
-					$val = self::expand($val, $params, (is_array($recursive) ? $recursive : []) + [$part => 1]);
-				}
-
-				if (strlen($part) + 2 === strlen($var)) {
+				$res[] = $val = self::expandParameter($part, $params, $recursive);
+				if (strlen($part) + 2 === strlen($string)) {
 					return $val;
-				}
-
-				if ($val instanceof DynamicParameter) {
+				} elseif ($val instanceof DynamicParameter) {
 					$php = true;
 				} elseif (!is_scalar($val)) {
-					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $var));
+					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $string));
 				}
-
-				$res[] = $val;
 			}
 		}
 
@@ -110,6 +106,26 @@ final class Helpers
 		}
 
 		return implode('', $res);
+	}
+
+
+	private static function expandParameter(string $parameter, array $params, ?array $recursive)
+	{
+		$val = $params;
+		foreach (explode('.', $parameter) as $key) {
+			if (is_array($val) && array_key_exists($key, $val)) {
+				$val = $val[$key];
+			} elseif ($val instanceof DynamicParameter) {
+				$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
+			} else {
+				throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $parameter));
+			}
+		}
+
+		if (is_array($recursive)) {
+			$val = self::expand($val, $params, $recursive + [$parameter => 1]);
+		}
+		return $val;
 	}
 
 
