@@ -217,7 +217,11 @@ class Compiler
 	/** @internal */
 	public function processExtensions(): void
 	{
-		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions(Extensions\ExtensionsExtension::class);
+		$extensionsExtensionName = Nette\DI\Extensions\ExtensionsExtension::class;
+		if (array_key_exists('extensions', $this->extensions)) {
+			$extensionsExtensionName = get_class($this->extensions['extensions']);
+		}
+		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions($extensionsExtensionName);
 		foreach ($first as $name => $extension) {
 			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
 			$extension->setConfig($this->config[$name] = $config);
