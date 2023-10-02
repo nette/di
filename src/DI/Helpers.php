@@ -38,21 +38,34 @@ final class Helpers
 			foreach ($var as $key => $val) {
 				$res[self::expand($key, $params, $recursive)] = self::expand($val, $params, $recursive);
 			}
-
 			return $res;
 
 		} elseif ($var instanceof Statement) {
-			return new Statement(self::expand($var->getEntity(), $params, $recursive), self::expand($var->arguments, $params, $recursive));
+			return new Statement(
+				self::expand($var->getEntity(), $params, $recursive),
+				self::expand($var->arguments, $params, $recursive)
+			);
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
 			return $recursive
 				? self::expand($params, $params, (is_array($recursive) ? $recursive : []))
 				: $params;
 
-		} elseif (!is_string($var)) {
+		} elseif (is_string($var)) {
+			return self::expandString($var, $params, $recursive);
+
+		} else {
 			return $var;
 		}
+	}
 
+
+	/**
+	 * Expands %placeholders% in string
+	 * @throws Nette\InvalidArgumentException
+	 */
+	private static function expandString(string $var, array $params, $recursive = false)
+	{
 		$parts = preg_split('#%([\w.-]*)%#i', $var, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$res = [];
 		$php = false;

@@ -126,7 +126,10 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	{
 		Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
 		$this->initialization->addBody($this->getContainerBuilder()->formatPhp('?;', [
-			new Nette\DI\Definitions\Statement('@Tracy\Bar::addPanel', [new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)]),
+			new Nette\DI\Definitions\Statement(
+				'@Tracy\Bar::addPanel',
+				[new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)]
+			),
 		]));
 	}
 }

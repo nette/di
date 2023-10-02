@@ -15,20 +15,11 @@ require __DIR__ . '/../bootstrap.php';
 
 class FooExtension extends Nette\DI\CompilerExtension
 {
-	public $loadedConfig;
-
-
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
 		return Expect::structure([
 			'mapping' => Expect::arrayOf('string'),
 		]);
-	}
-
-
-	public function loadConfiguration()
-	{
-		$this->loadedConfig = $this->config;
 	}
 }
 
@@ -44,7 +35,7 @@ test('Merging config', function () {
 	foo:
 		mapping: [bar]
 	');
-	Assert::equal((object) ['mapping' => ['foo', 'bar']], $foo->loadedConfig);
+	Assert::equal((object) ['mapping' => ['foo', 'bar']], $foo->getConfig());
 });
 
 test('Prevent merging config', function () {
@@ -59,7 +50,7 @@ test('Prevent merging config', function () {
 	foo:
 		mapping!: [bar]
 	');
-	Assert::equal((object) ['mapping' => ['bar']], $foo->loadedConfig);
+	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
 });
 
 test('Prevent merging config with no predefined parameters', function () {
@@ -69,5 +60,5 @@ test('Prevent merging config with no predefined parameters', function () {
 	foo:
 		mapping!: [bar]
 	');
-	Assert::equal((object) ['mapping' => ['bar']], $foo->loadedConfig);
+	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
 });

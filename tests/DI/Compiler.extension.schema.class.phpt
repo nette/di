@@ -14,9 +14,6 @@ require __DIR__ . '/../bootstrap.php';
 
 class FooExtension extends Nette\DI\CompilerExtension
 {
-	public $loadedConfig;
-
-
 	public function __construct()
 	{
 		$this->config = new class {
@@ -24,18 +21,12 @@ class FooExtension extends Nette\DI\CompilerExtension
 			public $key;
 		};
 	}
-
-
-	public function loadConfiguration()
-	{
-		$this->loadedConfig = $this->config;
-	}
 }
 
 
 Assert::exception(function () {
 	$compiler = new Nette\DI\Compiler;
-	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '
 	foo:
 		unknown: 123
@@ -45,7 +36,7 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	$compiler = new Nette\DI\Compiler;
-	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '
 	foo:
 		key: 123
@@ -60,8 +51,8 @@ test('', function () {
 	foo:
 		key: hello
 	');
-	Assert::type('object', $foo->loadedConfig);
-	Assert::equal(['key' => 'hello'], (array) $foo->loadedConfig);
+	Assert::type('object', $foo->getConfig());
+	Assert::equal(['key' => 'hello'], (array) $foo->getConfig());
 });
 
 
@@ -71,8 +62,8 @@ test('', function () {
 	createContainer($compiler, '
 	foo:
 	');
-	Assert::type('object', $foo->loadedConfig);
-	Assert::equal(['key' => null], (array) $foo->loadedConfig);
+	Assert::type('object', $foo->getConfig());
+	Assert::equal(['key' => null], (array) $foo->getConfig());
 });
 
 
@@ -81,6 +72,6 @@ test('', function () {
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '
 	');
-	Assert::type('object', $foo->loadedConfig);
-	Assert::equal(['key' => null], (array) $foo->loadedConfig);
+	Assert::type('object', $foo->getConfig());
+	Assert::equal(['key' => null], (array) $foo->getConfig());
 });
