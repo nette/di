@@ -67,12 +67,13 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 		$cnstr = $class->getMethod('__construct');
 		$cnstr->addBody('$this->parameters += ?;', [$parameters]);
-		foreach ($this->dynamicValidators as [$param, $expected]) {
-			if ($param instanceof Nette\DI\Definitions\Statement) {
-				continue;
+		foreach ($this->dynamicValidators as [$param, $expected, $path]) {
+			if ($param instanceof DynamicParameter) {
+				$cnstr->addBody(
+					'Nette\Utils\Validators::assert(?, ?, ?);',
+					[$param, $expected, "dynamic parameter used in '" . implode("\u{a0}›\u{a0}", $path) . "'"]
+				);
 			}
-
-			$cnstr->addBody('Nette\Utils\Validators::assert(?, ?, ?);', [$param, $expected, 'dynamic parameter']);
 		}
 	}
 }
