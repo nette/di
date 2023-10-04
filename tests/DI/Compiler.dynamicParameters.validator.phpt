@@ -33,7 +33,7 @@ test("Dynamic parameter of type int given to 'string' configuration", function (
 			key:
 				string: %dynamic%
 		', ['dynamic' => 123]);
-	}, Nette\Utils\AssertionException::class, 'The dynamic parameter expects to be string, int 123 given.');
+	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
 });
 
 
@@ -47,7 +47,7 @@ test("Dynamic parameter of type null given to 'string' configuration", function 
 			key:
 				string: %dynamic%
 		', ['dynamic' => null]);
-	}, Nette\Utils\AssertionException::class, 'The dynamic parameter expects to be string, null given.');
+	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, null given.");
 });
 
 
@@ -61,7 +61,7 @@ test("Dynamic sub-parameter of type int given to 'string' configuration", functi
 			key:
 				string: %dynamic.sub%
 		', ['dynamic' => ['sub' => 123]]);
-	}, Nette\Utils\AssertionException::class, 'The dynamic parameter expects to be string, int 123 given.');
+	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
 });
 
 
