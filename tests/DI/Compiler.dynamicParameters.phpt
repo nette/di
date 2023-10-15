@@ -22,7 +22,7 @@ class Service
 	}
 }
 
-test('', function () {
+test('Dynamic parameter as scalar value', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -33,7 +33,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Dynamic parameter as array item', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -44,7 +44,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Default value', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -58,7 +58,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Overwriting default parameter', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -72,7 +72,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Dynamic parameter within string expansion', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -85,7 +85,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Array item as dynamic parameter within string expansion', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -100,7 +100,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Statement as parameter', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -114,7 +114,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Class constant as parameter', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$container = createContainer($compiler, '
@@ -128,7 +128,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Reference as parameter', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	Assert::exception(function () use ($compiler) {

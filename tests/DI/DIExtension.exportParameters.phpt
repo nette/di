@@ -14,7 +14,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-test('', function () {
+test('Parameters are exported when setting is true', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -30,7 +30,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Parameters are not exported when setting is false', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -46,7 +46,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Dynamic parameters are correctly exported when export setting is true', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$compiler->addExtension('di', new DIExtension);
@@ -63,7 +63,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Static parameters are not exported when setting is false', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
 	$compiler->addExtension('di', new DIExtension);

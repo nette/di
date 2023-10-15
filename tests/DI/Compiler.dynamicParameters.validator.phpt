@@ -23,7 +23,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 	}
 }
 
-test('', function () {
+test("Dynamic parameter of type int given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
@@ -37,7 +37,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test("Dynamic parameter of type null given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
@@ -51,7 +51,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test("Dynamic sub-parameter of type int given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
@@ -65,7 +65,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test("Dynamic parameter of type int successfully given to 'int|null' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
@@ -79,7 +79,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test("Dynamic parameter of type null successfully given to 'int|null' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
