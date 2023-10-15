@@ -13,13 +13,13 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::exception(function () {
+testException('Unknown class', function () {
 	$def = new ImportedDefinition;
 	$def->setType('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");
 
 
-Assert::exception(function () {
+testException('Unknown type', function () {
 	$def = new ImportedDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);

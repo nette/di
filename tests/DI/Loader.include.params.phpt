@@ -13,7 +13,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::exception(function () {
+testException('', function () {
 	$config = new Config\Loader;
 	$data = $config->load('files/loader.includes.params.neon');
 }, Nette\InvalidArgumentException::class, "Missing parameter 'name'.");

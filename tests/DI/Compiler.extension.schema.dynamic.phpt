@@ -24,7 +24,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 }
 
 
-Assert::exception(function () {
+testException('invalid type', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '

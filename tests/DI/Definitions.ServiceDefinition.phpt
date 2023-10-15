@@ -14,7 +14,7 @@ use Tester\Assert;
 require __DIR__ . '/../bootstrap.php';
 
 
-Assert::exception(function () {
+testException('Unknown type', function () {
 	$def = new ServiceDefinition;
 	$def->setType('Foo');
 }, Nette\InvalidArgumentException::class, "Service '': Class or interface 'Foo' not found.");

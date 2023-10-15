@@ -81,13 +81,13 @@ test('closure & matching typehint', function () {
 });
 
 
-Assert::exception(function () { // closure & wrong typehint
+testException('closure & wrong typehint', function () {
 	$container = new MyContainer;
 	$container->addService('typehint', fn() => new DateTime);
 }, Nette\InvalidArgumentException::class, "Service 'typehint' must be instance of stdClass, add typehint to closure.");
 
 
-Assert::exception(function () { // closure & wrong typehint
+testException('closure & wrong typehint', function () {
 	$container = new MyContainer;
 	$container->addService('typehint', fn(): DateTime => new DateTime);
 }, Nette\InvalidArgumentException::class, "Service 'typehint' must be instance of stdClass, DateTime given.");

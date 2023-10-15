@@ -59,15 +59,13 @@ test('closure with typehint', function () use ($container) {
 });
 
 
-// bad closure
-Assert::exception(function () use ($container) {
+testException('bad closure', function () use ($container) {
 	@$container->addService('six', function () {}); // @ triggers service should be defined as "imported"
 	$container->getService('six');
 }, Nette\UnexpectedValueException::class, "Unable to create service 'six', value returned by closure is not object.");
 
 
-// union type
-Assert::exception(function () use ($container) {
+testException('union type', function () use ($container) {
 	@$container->addService('six', function (): stdClass|Closure {}); // @ triggers service should be defined as "imported"
 	$container->getService('six');
 }, Nette\InvalidStateException::class, "Return type of closure is expected to not be nullable/built-in/complex, 'stdClass|Closure' given.");

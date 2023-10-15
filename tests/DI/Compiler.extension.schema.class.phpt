@@ -24,7 +24,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 }
 
 
-Assert::exception(function () {
+testException('Unexpected configuration item', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '
@@ -34,7 +34,7 @@ Assert::exception(function () {
 }, Nette\DI\InvalidConfigurationException::class, "Unexpected item 'foo\u{a0}›\u{a0}unknown'.");
 
 
-Assert::exception(function () {
+testException('Mismatched data type for configuration key', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	createContainer($compiler, '

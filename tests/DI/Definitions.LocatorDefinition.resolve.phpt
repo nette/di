@@ -29,7 +29,7 @@ class Service
 }
 
 
-Assert::exception(function () {
+testException('', function () {
 	$def = new LocatorDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);

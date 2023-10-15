@@ -23,49 +23,43 @@ class FooExtension extends Nette\DI\CompilerExtension
 	}
 }
 
-test("Dynamic parameter of type int given to 'string' configuration", function () {
+testException("Dynamic parameter of type int given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
-	Assert::exception(function () use ($compiler) {
-		$container = createContainer($compiler, '
-		foo:
-			key:
-				string: %dynamic%
-		', ['dynamic' => 123]);
-		$container->initialize();
-	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
-});
+	$container = createContainer($compiler, '
+	foo:
+		key:
+			string: %dynamic%
+	', ['dynamic' => 123]);
+	$container->initialize();
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
 
 
-test("Dynamic parameter of type null given to 'string' configuration", function () {
+testException("Dynamic parameter of type null given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
-	Assert::exception(function () use ($compiler) {
-		$container = createContainer($compiler, '
-		foo:
-			key:
-				string: %dynamic%
-		', ['dynamic' => null]);
-		$container->initialize();
-	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, null given.");
-});
+	$container = createContainer($compiler, '
+	foo:
+		key:
+			string: %dynamic%
+	', ['dynamic' => null]);
+	$container->initialize();
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, null given.");
 
 
-test("Dynamic sub-parameter of type int given to 'string' configuration", function () {
+testException("Dynamic sub-parameter of type int given to 'string' configuration", function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->setDynamicParameterNames(['dynamic']);
-	Assert::exception(function () use ($compiler) {
-		$container = createContainer($compiler, '
-		foo:
-			key:
-				string: %dynamic.sub%
-		', ['dynamic' => ['sub' => 123]]);
-		$container->initialize();
-	}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
-});
+	$container = createContainer($compiler, '
+	foo:
+		key:
+			string: %dynamic.sub%
+	', ['dynamic' => ['sub' => 123]]);
+	$container->initialize();
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
 
 
 test("Dynamic parameter of type int successfully given to 'int|null' configuration", function () {
