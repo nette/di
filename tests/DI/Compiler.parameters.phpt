@@ -29,7 +29,7 @@ class Service
 }
 
 
-test('', function () {
+test('Statement as parameter', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -44,7 +44,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('NOT class constant as parameter', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -59,7 +59,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Class method and constant resolution', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -74,7 +74,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Parameter NOT referencing a service', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -91,7 +91,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Parameter as an instantiated class', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:
@@ -107,7 +107,7 @@ test('', function () {
 });
 
 
-test('circular reference', function () {
+test('Parameter as array of services', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
 	parameters:

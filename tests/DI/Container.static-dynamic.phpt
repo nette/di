@@ -28,7 +28,7 @@ class MyContainer extends Container
 }
 
 
-test('', function () {
+test('basic', function () {
 	$container = new MyContainer;
 
 	Assert::true($container->hasService('one'));

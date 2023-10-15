@@ -30,7 +30,7 @@ class Bar extends Foo implements IBar
 }
 
 
-test('', function () {
+test('Autowiring limited to Bar class and its subclasses', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -43,7 +43,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to Bar class via self', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -56,7 +56,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to IBar interface and its implementations', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -69,7 +69,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to Foo class and its subclasses', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -82,7 +82,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to IFoo interface and its implementations', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -95,7 +95,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to two interfaces', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -108,7 +108,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to two classes', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -121,7 +121,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to class and interface', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -134,7 +134,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Autowiring limited to class and interface', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -147,7 +147,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Distribution between two services with parent-child relation', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -164,7 +164,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Distribution between two services of same type', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')
 		->setType(stdClass::class);

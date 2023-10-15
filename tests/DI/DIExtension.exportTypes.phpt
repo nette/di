@@ -19,7 +19,7 @@ class Foo
 }
 
 
-test('', function () {
+test('Types are exported when setting is true', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -40,7 +40,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Types are not exported when setting is false', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$container = createContainer($compiler, '
@@ -61,7 +61,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Mandatory types are exported when setting is false', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);
@@ -83,7 +83,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Mandatory types are exported without explicit setting', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);
@@ -107,7 +107,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Mandatory and specified types are exported', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('di', new DIExtension);
 	$compiler->addExportedType(stdClass::class);

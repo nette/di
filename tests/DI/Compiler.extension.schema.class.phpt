@@ -44,7 +44,7 @@ Assert::exception(function () {
 }, Nette\DI\InvalidConfigurationException::class, "The item 'foo\u{a0}›\u{a0}key' expects to be ?string, 123 given.");
 
 
-test('', function () {
+test('Successful configuration with a provided key', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '
@@ -56,7 +56,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Successful configuration without any specific key', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '
@@ -67,7 +67,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('Successful configuration with default values', function () {
 	$compiler = new Nette\DI\Compiler;
 	$compiler->addExtension('foo', $foo = new FooExtension);
 	createContainer($compiler, '

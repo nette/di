@@ -20,7 +20,7 @@ class Service
 
 $container = new Container;
 
-test('', function () use ($container) {
+test('basic', function () use ($container) {
 	$one = new Service;
 	$two = new Service;
 	$container->addService('one', $one);
