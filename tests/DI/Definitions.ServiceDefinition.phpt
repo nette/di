@@ -85,9 +85,9 @@ test('Setting setups with arguments/statements', function () {
 	$def->addSetup(new Statement(stdClass::class, [1, 2]));
 	$def->addSetup(new Statement(stdClass::class, [1, 2]), [99]); // 99 is ignored
 	Assert::equal([
-		new Statement(stdClass::class, [1, 2]),
-		new Statement(stdClass::class, [1, 2]),
-		new Statement(stdClass::class, [1, 2]),
+		new Statement(['@self', stdClass::class], [1, 2]),
+		new Statement(['@self', stdClass::class], [1, 2]),
+		new Statement(['@self', stdClass::class], [1, 2]),
 	], $def->getSetup());
 });
 

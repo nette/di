@@ -57,9 +57,9 @@ final class InjectExtension extends DI\CompilerExtension
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
 			$builder = $this->getContainerBuilder();
-			$inject = new Definitions\Statement('$' . $property, [Definitions\Reference::fromType((string) $type)]);
+			$inject = new Definitions\Statement(['@self', '$' . $property], [Definitions\Reference::fromType((string) $type)]);
 			foreach ($setups as $key => $setup) {
-				if ($setup->getEntity() === $inject->getEntity()) {
+				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;
 					$builder = null;
 					unset($setups[$key]);
@@ -70,9 +70,9 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		foreach (array_reverse(self::getInjectMethods($class)) as $method) {
-			$inject = new Definitions\Statement($method);
+			$inject = new Definitions\Statement(['@self', $method]);
 			foreach ($setups as $key => $setup) {
-				if ($setup->getEntity() === $inject->getEntity()) {
+				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;
 					unset($setups[$key]);
 				}
