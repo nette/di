@@ -22,6 +22,7 @@ class Lorem
 	public function test(...$args)
 	{
 		Notes::add(__METHOD__ . ' ' . implode(' ', $args));
+		return new self;
 	}
 }
 
@@ -79,6 +80,8 @@ Assert::same([
 	'globtest 7',
 	'Ipsum::test  a',
 	'Ipsum::test 10 b',
+	'Lorem::test outer',
+	'Lorem::test inner',
 ], Notes::fetch());
 
 Assert::same(8, $container->getService('lorem')->test);
