@@ -87,15 +87,14 @@ final class Helpers
 				foreach (explode('.', $part) as $key) {
 					if (is_array($val) && array_key_exists($key, $val)) {
 						$val = $val[$key];
+						if ($recursive) {
+							$val = self::expand($val, $params, (is_array($recursive) ? $recursive : []) + [$part => 1]);
+						}
 					} elseif ($val instanceof DynamicParameter) {
 						$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
 					} else {
 						throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $part));
 					}
-				}
-
-				if ($recursive) {
-					$val = self::expand($val, $params, (is_array($recursive) ? $recursive : []) + [$part => 1]);
 				}
 
 				if (strlen($part) + 2 === strlen($var)) {
