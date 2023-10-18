@@ -39,7 +39,8 @@ test('Statement as parameter', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same(['bar' => 'a'], $container->getParameters());
+	Assert::same('a', $container->getParameter('bar'));
 	Assert::same('a', $container->getService('one')->arg);
 });
 
@@ -55,7 +56,10 @@ test('Statement within string expansion', function () {
 		one: Service(%expand%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same(
+		['bar' => 'a', 'expand' => 'helloa'],
+		$container->getParameters()
+	);
 	Assert::same('helloa', $container->getService('one')->arg);
 });
 
@@ -70,7 +74,7 @@ test('NOT class constant as parameter', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::same('Service::Name', $container->parameters['bar']); // not resolved
+	Assert::same(['bar' => 'Service::Name'], $container->getParameters()); // not resolved
 	Assert::same('hello', $container->getService('one')->arg);
 });
 
@@ -85,7 +89,7 @@ test('Class method and constant resolution', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same(['bar' => 'Service::method hello'], $container->getParameters());
 	Assert::same('Service::method hello', $container->getService('one')->arg);
 });
 
@@ -118,7 +122,10 @@ test('Parameter as an instantiated class', function () {
 		two: Service(two)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::equal(
+		['bar' => new Service($container->getService('two'))],
+		$container->getParameters()
+	);
 	Assert::same($container->getService('two'), $container->getService('one')->arg->arg);
 });
 
@@ -134,6 +141,31 @@ test('Parameter as array of services', function () {
 		two: Service(two)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same(
+		['bar' => [$container->getService('one'), $container->getService('two')]],
+		$container->getParameters()
+	);
 	Assert::same([$container->getService('two')], $container->getService('one')->arg);
+});
+
+
+test('Invalid statement as parameter', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: unknown()
+	');
+
+	Assert::same(['bar' => 'unable to resolve'], $container->getParameters());
+});
+
+
+test('Invalid statement as parameter', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: Service::unknown()
+	');
+
+	Assert::same(['bar' => 'unable to resolve'], $container->getParameters());
 });

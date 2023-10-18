@@ -14,7 +14,6 @@ class Container extends Nette\DI\Container
 	public function __construct(array $params = [])
 	{
 		parent::__construct($params);
-		$this->parameters += [];
 	}
 
 
@@ -38,5 +37,11 @@ class Container extends Nette\DI\Container
 
 	public function initialize(): void
 	{
+	}
+
+
+	protected function getStaticParameters(): array
+	{
+		return [];
 	}
 }

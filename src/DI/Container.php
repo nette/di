@@ -19,7 +19,10 @@ class Container
 {
 	use Nette\SmartObject;
 
-	/** @var array  user parameters */
+	/**
+	 * @var mixed[]
+	 * @deprecated use Container::getParameter() or getParameters()
+	 */
 	public $parameters = [];
 
 	/** @var string[]  services name => type (complete list of available services) */
@@ -46,7 +49,7 @@ class Container
 
 	public function __construct(array $params = [])
 	{
-		$this->parameters = $params;
+		$this->parameters = $params + $this->getStaticParameters();
 		$this->methods = array_flip(array_filter(
 			get_class_methods($this),
 			function ($s) { return preg_match('#^createService.#', $s); }
@@ -57,6 +60,27 @@ class Container
 	public function getParameters(): array
 	{
 		return $this->parameters;
+	}
+
+
+	public function getParameter($key)
+	{
+		if (!array_key_exists($key, $this->parameters)) {
+			$this->parameters[$key] = $this->getDynamicParameter($key);
+		}
+		return $this->parameters[$key];
+	}
+
+
+	protected function getStaticParameters(): array
+	{
+		return [];
+	}
+
+
+	protected function getDynamicParameter($key)
+	{
+		throw new Nette\InvalidStateException(sprintf("Parameter '%s' not found. Check if 'di › export › parameters' is enabled.", $key));
 	}
 
 

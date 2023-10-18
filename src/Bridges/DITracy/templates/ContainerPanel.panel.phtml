@@ -75,7 +75,7 @@ use Tracy\Helpers;
 	<h2>Parameters</h2>
 
 	<div class="nette-ContainerPanel-parameters">
-		<?= $container->parameters ? Dumper::toHtml($container->parameters) : "<i>disabled via 'di › export › parameters'</i>" ?>
+		<?= $parameters === null ? "<i>disabled via 'di › export › parameters'</i>" : Dumper::toHtml($parameters) ?>
 	</div>
 </div>
 </div>
