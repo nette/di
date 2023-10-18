@@ -101,7 +101,7 @@ final class Helpers
 					return $val;
 				}
 
-				if ($val instanceof DynamicParameter) {
+				if ($val instanceof DynamicParameter || $val instanceof Statement) {
 					$php = true;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $var));
@@ -111,17 +111,9 @@ final class Helpers
 			}
 		}
 
-		if ($php) {
-			$res = array_filter($res, function ($val): bool { return $val !== ''; });
-			$res = array_map(function ($val): string {
-				return $val instanceof DynamicParameter
-					? "($val)"
-					: var_export((string) $val, true);
-			}, $res);
-			return new DynamicParameter(implode(' . ', $res));
-		}
-
-		return implode('', $res);
+		return $php
+			? new Statement('::implode', ['', $res])
+			: implode($res);
 	}
 
 
