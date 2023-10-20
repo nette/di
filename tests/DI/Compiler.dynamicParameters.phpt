@@ -131,13 +131,14 @@ test('Class constant as parameter', function () {
 test('Reference as parameter', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['dynamic']);
-	Assert::exception(function () use ($compiler) {
-		createContainer($compiler, '
-		parameters:
-			dynamic: @one
+	$container = createContainer($compiler, '
+	parameters:
+		dynamic: @one
 
-		services:
-			one: Service
-		');
-	}, Nette\DI\ServiceCreationException::class, "Reference to missing service 'one'.");
+	services:
+		one: Service(%dynamic%)
+	');
+	Assert::exception(function () use ($container) {
+		$container->getService('one');
+	}, Nette\InvalidStateException::class, 'Circular reference detected for services: one.');
 });

@@ -171,6 +171,12 @@ declare(strict_types=1);
 	 */
 	public function formatPhp(string $statement, array $args): string
 	{
+		return (new Php\Dumper)->format($statement, ...$this->convertArguments($args));
+	}
+
+
+	public function convertArguments(array $args): array
+	{
 		array_walk_recursive($args, function (&$val): void {
 			if ($val instanceof Statement) {
 				$val = new Php\Literal($this->formatStatement($val));
@@ -186,7 +192,7 @@ declare(strict_types=1);
 				}
 			}
 		});
-		return (new Php\Dumper)->format($statement, ...$args);
+		return $args;
 	}
 
 

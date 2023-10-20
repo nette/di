@@ -69,20 +69,13 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function beforeCompile()
-	{
-		if (!$this->config->export->parameters) {
-			$this->getContainerBuilder()->parameters = [];
-		}
-	}
-
-
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		if ($this->config->parentClass) {
 			$class->setExtends($this->config->parentClass);
 		}
 
+		$this->restrictParameters($class);
 		$this->restrictTags($class);
 		$this->restrictTypes($class);
 
@@ -91,6 +84,15 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			($this->config->debugger ?? $this->getContainerBuilder()->getByType(Tracy\Bar::class))
 		) {
 			$this->enableTracyIntegration();
+		}
+	}
+
+
+	private function restrictParameters(Nette\PhpGenerator\ClassType $class): void
+	{
+		if (!$this->config->export->parameters) {
+			$class->removeMethod('getParameters');
+			$class->removeMethod('getStaticParameters');
 		}
 	}
 

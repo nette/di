@@ -79,6 +79,9 @@ class ContainerPanel implements Tracy\IBarPanel
 			$file = $rc->getFileName();
 			$instances = (function () { return $this->instances; })->bindTo($this->container, Container::class)();
 			$wiring = (function () { return $this->wiring; })->bindTo($this->container, $this->container)();
+			$parameters = $rc->getMethod('getStaticParameters')->getDeclaringClass()->getName() === Container::class
+				? null
+				: $container->getParameters();
 			require __DIR__ . '/templates/ContainerPanel.panel.phtml';
 		});
 	}

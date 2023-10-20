@@ -39,7 +39,11 @@ test('Statement as parameter', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same([], $container->parameters);
+	Assert::same([], $container->getParameters());
+	Assert::exception(function () use ($container) {
+		$container->getParameter('bar');
+	}, Nette\InvalidStateException::class, "Parameter 'bar' not found. Check if 'di › export › parameters' is enabled.");
 	Assert::same('a', $container->getService('one')->arg);
 });
 
@@ -55,7 +59,7 @@ test('Statement within string expansion', function () {
 		one: Service(%expand%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same([], $container->getParameters());
 	Assert::same('helloa', $container->getService('one')->arg);
 });
 
@@ -70,7 +74,7 @@ test('NOT class constant as parameter', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::same('Service::Name', $container->parameters['bar']); // not resolved
+	Assert::same(['bar' => 'Service::Name'], $container->getParameters()); // not resolved
 	Assert::same('hello', $container->getService('one')->arg);
 });
 
@@ -85,7 +89,7 @@ test('Class method and constant resolution', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same([], $container->getParameters());
 	Assert::same('Service::method hello', $container->getService('one')->arg);
 });
 
@@ -118,7 +122,7 @@ test('Parameter as an instantiated class', function () {
 		two: Service(two)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::equal([], $container->getParameters());
 	Assert::same($container->getService('two'), $container->getService('one')->arg->arg);
 });
 
@@ -134,7 +138,7 @@ test('Parameter as array of services', function () {
 		two: Service(two)
 	');
 
-	Assert::null($container->parameters['bar']);
+	Assert::same([], $container->getParameters());
 	Assert::same([$container->getService('two')], $container->getService('one')->arg);
 });
 
