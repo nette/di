@@ -78,10 +78,7 @@ final class Helpers
 				$res[] = '%';
 
 			} elseif (isset($recursive[$part])) {
-				throw new Nette\InvalidArgumentException(sprintf(
-					'Circular reference detected for variables: %s.',
-					implode(', ', array_keys($recursive))
-				));
+				throw new Nette\InvalidArgumentException('Circular reference detected for parameters: %' . implode('%, %', array_keys($recursive)) . '%');
 
 			} else {
 				$res[] = $val = self::expandParameter($part, $params, $recursive);

@@ -60,14 +60,14 @@ Assert::exception(function () {
 
 Assert::exception(function () {
 	Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], true);
-}, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: key1, key2.');
+}, Nette\InvalidArgumentException::class, 'Circular reference detected for parameters: %key1%, %key2%');
 
 Assert::exception(function () {
 	Helpers::expand('%exp%', [
 		'array' => ['a' => '%array%'],
 		'exp' => '%array.a%',
 	], true);
-}, Nette\InvalidArgumentException::class, 'Circular reference detected for variables: exp, array.a, array.');
+}, Nette\InvalidArgumentException::class, 'Circular reference detected for parameters: %exp%, %array.a%, %array%');
 
 
 Assert::same(['key1' => 'hello', 'key2' => '*%key1%*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']));
