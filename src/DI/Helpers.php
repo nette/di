@@ -69,7 +69,7 @@ final class Helpers
 	{
 		$parts = preg_split('#%([\w.-]*)%#i', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$res = [];
-		$php = false;
+		$dynamic = false;
 		foreach ($parts as $n => $part) {
 			if ($n % 2 === 0) {
 				$res[] = $part;
@@ -79,25 +79,17 @@ final class Helpers
 				$res[] = $val = self::expandParameter($part, $params, $recursive, $onlyString);
 				if (strlen($part) + 2 === strlen($string)) {
 					return $val;
-				} elseif ($val instanceof DynamicParameter) {
-					$php = true;
+				} elseif ($val instanceof DynamicParameter || $val instanceof Statement) {
+					$dynamic = true;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $string));
 				}
 			}
 		}
 
-		if ($php) {
-			$res = array_filter($res, function ($val): bool { return $val !== ''; });
-			$res = array_map(function ($val): string {
-				return $val instanceof DynamicParameter
-					? "($val)"
-					: var_export((string) $val, true);
-			}, $res);
-			return new DynamicParameter(implode(' . ', $res));
-		}
-
-		return implode('', $res);
+		return $dynamic
+			? new Statement('::implode', ['', $res])
+			: implode('', $res);
 	}
 
 

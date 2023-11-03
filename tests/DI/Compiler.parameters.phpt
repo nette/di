@@ -44,6 +44,22 @@ test('Statement as parameter', function () {
 });
 
 
+test('Statement within string expansion', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: ::trim(" a ")
+		expand: hello%bar%
+
+	services:
+		one: Service(%expand%)
+	');
+
+	Assert::null($container->parameters['bar']);
+	Assert::same('helloa', $container->getService('one')->arg);
+});
+
+
 test('NOT class constant as parameter', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '

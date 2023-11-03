@@ -6,6 +6,7 @@
 
 declare(strict_types=1);
 
+use Nette\DI\Definitions\Statement;
 use Nette\DI\DynamicParameter;
 use Nette\DI\Helpers;
 use Nette\PhpGenerator\PhpLiteral;
@@ -52,7 +53,7 @@ Assert::equal(
 	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')])
 );
 Assert::equal(
-	new DynamicParameter("'text' . (func())"),
+	new Statement('::implode', ['', ['text', new DynamicParameter('func()'), '']]),
 	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')])
 );
 
