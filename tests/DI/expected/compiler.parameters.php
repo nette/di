@@ -13,7 +13,7 @@ class Container extends Nette\DI\Container
 			'dynamicArray' => null,
 			'arrayExpr' => ['expr' => null],
 			'arrayExpr2' => ['expr' => null],
-			'arrayDynamic' => ['dynamic' => null],
+			'arrayDynamic' => ['dynamic' => null, 'inner' => null],
 			'arrayMix' => ['expr' => null, 'dynamic' => null],
 			'refStatic' => 123,
 			'refDynamic' => null,
@@ -21,8 +21,9 @@ class Container extends Nette\DI\Container
 			'refExpr' => null,
 			'refArrayE1' => ['expr' => null],
 			'refArrayE2' => null,
-			'refArrayD1' => ['dynamic' => null],
+			'refArrayD1' => ['dynamic' => null, 'inner' => null],
 			'refArrayD2' => null,
+			'refArrayD3' => null,
 		];
 	}
 
@@ -36,8 +37,9 @@ class Container extends Nette\DI\Container
 			($this->parameters['dynamic'] ?? 123)['foo'],
 			['expr' => trim(' a ')],
 			trim(' a '),
-			['dynamic' => ($this->parameters['dynamic'] ?? 123)],
-			($this->parameters['dynamic'] ?? 123)%a?%
+			['dynamic' => ($this->parameters['dynamic'] ?? 123), 'inner' => ($this->parameters['dynamic'] ?? 123)['foo']],
+			($this->parameters['dynamic'] ?? 123),
+			($this->parameters['dynamic'] ?? 123)['foo']%a?%
 		);
 	}
 

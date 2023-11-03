@@ -65,7 +65,7 @@ final class Helpers
 	 * Expands %placeholders% in string
 	 * @throws Nette\InvalidArgumentException
 	 */
-	private static function expandString(string $string, array $params, ?array $recursive)
+	private static function expandString(string $string, array $params, ?array $recursive, bool $onlyString = false)
 	{
 		$parts = preg_split('#%([\w.-]*)%#i', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
 		$res = [];
@@ -73,15 +73,10 @@ final class Helpers
 		foreach ($parts as $n => $part) {
 			if ($n % 2 === 0) {
 				$res[] = $part;
-
 			} elseif ($part === '') {
 				$res[] = '%';
-
-			} elseif (isset($recursive[$part])) {
-				throw new Nette\InvalidArgumentException('Circular reference detected for parameters: %' . implode('%, %', array_keys($recursive)) . '%');
-
 			} else {
-				$res[] = $val = self::expandParameter($part, $params, $recursive);
+				$res[] = $val = self::expandParameter($part, $params, $recursive, $onlyString);
 				if (strlen($part) + 2 === strlen($string)) {
 					return $val;
 				} elseif ($val instanceof DynamicParameter) {
@@ -106,21 +101,29 @@ final class Helpers
 	}
 
 
-	private static function expandParameter(string $parameter, array $params, ?array $recursive)
+	private static function expandParameter(string $parameter, array $params, ?array $recursive, bool $onlyString)
 	{
 		$val = $params;
-		foreach (explode('.', $parameter) as $key) {
+		$path = [];
+		$keys = explode('.', $parameter);
+		while (($key = $path[] = array_shift($keys)) !== null) {
 			if (is_array($val) && array_key_exists($key, $val)) {
 				$val = $val[$key];
+				$fullExpand = !$onlyString && !$keys; // last
+				if (is_array($recursive) && ($fullExpand || is_string($val))) {
+					$pathStr = implode('.', $path);
+					if (isset($recursive[$pathStr])) {
+						throw new Nette\InvalidArgumentException('Circular reference detected for parameters: %' . implode('%, %', array_keys($recursive)) . '%');
+					}
+					$val = $fullExpand
+						? self::expand($val, $params, $recursive + [$pathStr => 1])
+						: self::expandString($val, $params, $recursive + [$pathStr => 1], true);
+				}
 			} elseif ($val instanceof DynamicParameter) {
 				$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
 			} else {
 				throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $parameter));
 			}
-		}
-
-		if (is_array($recursive)) {
-			$val = self::expand($val, $params, $recursive + [$parameter => 1]);
 		}
 		return $val;
 	}

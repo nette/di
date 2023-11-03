@@ -37,6 +37,13 @@ Assert::same( // no double expand
 	'%foo%',
 	Helpers::expand('%string%', ['string' => '%%foo%'], true)
 );
+Assert::same( // no double expand
+	'%foo%',
+	Helpers::expand('%ref.a%', [
+		'ref' => '%array%',
+		'array' => ['a' => '%%foo%'],
+	], true)
+);
 
 Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
 
