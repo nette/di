@@ -44,6 +44,7 @@ final class Helpers
 			);
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
+			trigger_error('%parameters% is deprecated, use @container::getParameters()', E_USER_DEPRECATED);
 			return $recursive
 				? self::expand($params, $params, $recursive)
 				: $params;

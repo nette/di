@@ -91,13 +91,13 @@ Assert::exception(
 
 Assert::same(
 	['key1' => 'hello', 'key2' => '*%key1%*'],
-	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']),
+	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']), // deprecated
 );
 Assert::same(
 	['key1' => 'hello', 'key2' => '*hello*'],
-	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true),
+	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true), // deprecated
 );
 Assert::same(
 	'own',
-	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']),
+	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']), // deprecated
 );
