@@ -73,7 +73,6 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			->addBody('return ?;', [array_diff_key($builder->parameters, $dynamicParams)]);
 		$class->addMember($method);
 
-		$dynamicParams = array_keys($dynamicParams, true, true);
 		if (!$dynamicParams) {
 			return;
 		}
@@ -83,17 +82,23 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		$method = Method::from([Container::class, 'getDynamicParameter']);
 		$class->addMember($method);
 		$method->addBody('switch (true) {');
-		foreach ($dynamicParams as $key) {
+		foreach ($dynamicParams as $key => $foo) {
 			$value = Helpers::expand($this->config[$key] ?? null, $builder->parameters);
-			$value = $generator->convertArguments($resolver->completeArguments(Helpers::filterArguments([$value])))[0];
-			$method->addBody("\tcase \$key === ?: return ?;", [$key, $value]);
+			try {
+				$value = $generator->convertArguments($resolver->completeArguments(Helpers::filterArguments([$value])))[0];
+				$method->addBody("\tcase \$key === ?: return ?;", [$key, $value]);
+			} catch (Nette\DI\ServiceCreationException $e) {
+				$method->addBody("\tcase \$key === ?: throw new Nette\\DI\\ServiceCreationException(?);", [$key, $e->getMessage()]);
+			}
 		}
 		$method->addBody("\tdefault: return parent::getDynamicParameter(\$key);\n};");
 
-		$method = Method::from([Container::class, 'getParameters']);
-		$class->addMember($method);
-		$method->addBody('array_map([$this, \'getParameter\'], ?);', [$dynamicParams]);
-		$method->addBody('return parent::getParameters();');
+		if ($preload = array_keys($dynamicParams, true, true)) {
+			$method = Method::from([Container::class, 'getParameters']);
+			$class->addMember($method);
+			$method->addBody('array_map([$this, \'getParameter\'], ?);', [$preload]);
+			$method->addBody('return parent::getParameters();');
+		}
 
 		foreach ($this->dynamicValidators as [$param, $expected, $path]) {
 			if ($param instanceof DynamicParameter) {

@@ -41,9 +41,7 @@ test('Statement as parameter', function () {
 
 	Assert::same([], $container->parameters);
 	Assert::same([], $container->getParameters());
-	Assert::exception(function () use ($container) {
-		$container->getParameter('bar');
-	}, Nette\InvalidStateException::class, "Parameter 'bar' not found. Check if 'di › export › parameters' is enabled.");
+	Assert::same('a', $container->getParameter('bar'));
 	Assert::same('a', $container->getService('one')->arg);
 });
 
@@ -155,5 +153,37 @@ test('Not circular reference', function () {
 	Assert::same(
 		['array' => ['foo' => 'foo', 'bar' => 'foo']],
 		$container->getParameters()
+	);
+});
+
+
+test('Invalid statement as parameter', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: unknown()
+	');
+
+	Assert::same([], $container->getParameters());
+	Assert::exception(
+		function () use ($container) { $container->getParameter('bar'); },
+		Nette\DI\ServiceCreationException::class,
+		"Class 'unknown' not found."
+	);
+});
+
+
+test('Invalid statement as parameter', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: Service::unknown()
+	');
+
+	Assert::same([], $container->getParameters());
+	Assert::exception(
+		function () use ($container) { $container->getParameter('bar'); },
+		Error::class,
+		'Call to undefined method Service::unknown()'
 	);
 });

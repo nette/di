@@ -41,12 +41,19 @@ class Container extends Nette\DI\Container
 			'inner' => $this->getParameter('dynamic')['foo'],
 			'expr' => trim(' a '),
 		];
+			case $key === 'expr': return trim(' a ');
+			case $key === 'arrayExpr': return ['expr' => trim(' a ')];
+			case $key === 'arrayExpr2': return ['expr' => trim(' a ')];
 			case $key === 'arrayDynamic': return [
 			'dynamic' => $this->getParameter('dynamic'),
 			'inner' => $this->getParameter('dynamic')['foo'],
 		];
+			case $key === 'arrayMix': return ['expr' => trim(' a '), 'dynamic' => $this->getParameter('dynamic')];
 			case $key === 'refDynamic': return $this->getParameter('dynamic');
 			case $key === 'refDynamic2': return $this->getParameter('dynamic')['foo'];
+			case $key === 'refExpr': return trim(' a ');
+			case $key === 'refArrayE1': return ['expr' => trim(' a ')];
+			case $key === 'refArrayE2': return trim(' a ');
 			case $key === 'refArrayD1': return [
 			'dynamic' => $this->getParameter('dynamic'),
 			'inner' => $this->getParameter('dynamic')['foo'],
