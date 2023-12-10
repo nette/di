@@ -41,6 +41,7 @@ class Autowiring
 	/**
 	 * Resolves service name by type.
 	 * @param  bool  $throw exception if service not found?
+	 * @return ($throw is true ? string : ?string)
 	 * @throws MissingServiceException when not found
 	 * @throws ServiceCreationException when multiple found
 	 */

@@ -247,7 +247,7 @@ class Container
 	 * Resolves service by type.
 	 * @template T of object
 	 * @param  class-string<T>  $type
-	 * @return ?T
+	 * @return ($throw is true ? T : ?T)
 	 * @throws MissingServiceException
 	 */
 	public function getByType(string $type, bool $throw = true): ?object
