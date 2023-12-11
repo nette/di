@@ -34,7 +34,7 @@ $compiler = new DI\Compiler;
 $container = @createContainer($compiler, '
 services:
 	article:
-		factory: Article(%title%)
+		create: Article(%title%)
 		implement: IArticleFactory
 		parameters: [string title]
 

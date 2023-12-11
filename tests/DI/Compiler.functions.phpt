@@ -44,7 +44,7 @@ parameters:
 
 services:
 	ok:
-		factory: Service
+		create: Service
 		setup:
 		  	- not( not(%f%), not(%t%), not(%fn%), not(%dynamic%), %not% )
 		  	- string( string(%f%), string(%t%), string(%fn%), string(%dynamic%), %string% )
@@ -54,7 +54,7 @@ services:
 
 	bad1: Service(bool(123))
 	bad2:
-		factory: Service
+		create: Service
 		setup:
 			- method(bool(123))
 ', ['dynamic' => 123]);

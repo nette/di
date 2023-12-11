@@ -5,7 +5,7 @@ services:
 	referencedService: @one
 
 	referencedServiceWithSetup:
-		factory: @one
+		create: @one
 		setup:
 			- $arg(10)
 
@@ -20,18 +20,18 @@ services:
 		arguments: [1]
 
 	two:
-		factory: %class%(1)
+		create: %class%(1)
 
 	three:
 		class: Lorem
-		factory: Factory::createLorem
+		create: Factory::createLorem
 		arguments: [1, 2]
 
 	four:
-		factory: Factory::createLorem(1)
+		create: Factory::createLorem(1)
 
 	five:
-		factory: [Factory, createLorem](1)
+		create: [Factory, createLorem](1)
 
 	six: Factory::createLorem(1)
 
@@ -48,7 +48,7 @@ services:
 	rich1: Lorem(1)::foo
 
 	rich2:
-		factory: Lorem(Ipsum(@one))::foo(1)
+		create: Lorem(Ipsum(@one))::foo(1)
 
 	rich3: Factory::createLorem(1)::foo
 

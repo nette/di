@@ -33,7 +33,7 @@ $container = createContainer($compiler, '
 services:
 	one:
 		type: IService
-		factory: Service
+		create: Service
 		inject: true
 ');
 

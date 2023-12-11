@@ -3,7 +3,7 @@ parameters:
 
 services:
 	lorem:
-		factory: Lorem
+		create: Lorem
 		setup:
 			# local methods
 			- test(2)
@@ -41,4 +41,4 @@ services:
 			- \Ipsum(@self)
 
 	ipsum:
-		factory: Ipsum
+		create: Ipsum

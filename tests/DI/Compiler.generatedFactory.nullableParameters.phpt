@@ -45,7 +45,7 @@ $container = @createContainer($compiler, '
 services:
 
 	article:
-		factory: Article(%title%, %foo%, %lorem%)
+		create: Article(%title%, %foo%, %lorem%)
 		implement: IArticleFactory
 		parameters: [?string title, ?Foo foo, ?int lorem: null]
 

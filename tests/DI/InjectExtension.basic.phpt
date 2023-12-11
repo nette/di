@@ -95,7 +95,7 @@ services:
 	a: ConcreteDependencyA
 	b: ConcreteDependencyB
 	two:
-		factory: Service
+		create: Service
 		inject: true
 		setup:
 		- injectB(1)

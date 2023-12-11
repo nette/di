@@ -26,6 +26,6 @@ require __DIR__ . '/../bootstrap.php';
 Assert::exception(function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')
-		->setFactory([new Statement([Factory::class, 'createUnion']), 'next']);
+		->setCreator([new Statement([Factory::class, 'createUnion']), 'next']);
 	$container = createContainer($builder);
 }, Nette\DI\ServiceCreationException::class, "Service 'a': Return type of Factory::createUnion() is expected to not be built-in/complex, 'stdClass|array' given.");

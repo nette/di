@@ -28,7 +28,7 @@ services:
 	lorem: Lorem
 
 	lorem2:
-		factory: Lorem
+		create: Lorem
 		autowired: no
 
 	one: ILoremAccessor

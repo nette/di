@@ -25,7 +25,7 @@ $compiler = new DI\Compiler;
 $container = createContainer($compiler, '
 services:
 	lorem:
-		factory: stdClass
+		create: stdClass
 		tags:
 			- a
 			b: c

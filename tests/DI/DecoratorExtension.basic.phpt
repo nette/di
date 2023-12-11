@@ -67,7 +67,7 @@ decorator:
 
 services:
 	one:
-		factory: Service
+		create: Service
 		tags: [a, tag: 2]
 		setup:
 			- setup(Service)
