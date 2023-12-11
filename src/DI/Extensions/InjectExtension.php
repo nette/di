@@ -103,8 +103,8 @@ final class InjectExtension extends DI\CompilerExtension
 
 		$methods = array_keys($classes);
 		uksort($classes, fn(string $a, string $b): int => $classes[$a] === $classes[$b]
-				? array_search($a, $methods, true) <=> array_search($b, $methods, true)
-				: (is_a($classes[$a], $classes[$b], true) ? 1 : -1));
+				? array_search($a, $methods, strict: true) <=> array_search($b, $methods, strict: true)
+				: (is_a($classes[$a], $classes[$b], allow_string: true) ? 1 : -1));
 		return array_keys($classes);
 	}
 
@@ -166,7 +166,7 @@ final class InjectExtension extends DI\CompilerExtension
 		DI\Container|DI\ContainerBuilder $container,
 	): void
 	{
-		if (!$container->getByType($type, false)) {
+		if (!$container->getByType($type, throw: false)) {
 			throw new Nette\DI\MissingServiceException(sprintf(
 				'Service of type %s required by %s not found. Did you add it to configuration file?',
 				$type,

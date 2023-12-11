@@ -123,12 +123,16 @@ class Resolver
 			$this->addDependency($reflection);
 
 			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = Helpers::getReturnTypeAnnotation($reflection));
-			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], true)) {
+			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)) {
 				if (isset($annotation)) {
 					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
 				}
 
-				return Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)), true);
+				return Helpers::ensureClassType(
+					$type,
+					sprintf('return type of %s()', Callback::toString($entity)),
+					allowNullable: true,
+				);
 			}
 
 			return null;
@@ -155,7 +159,7 @@ class Resolver
 
 	public function completeDefinition(Definition $def): void
 	{
-		$this->currentService = in_array($def, $this->builder->getDefinitions(), true)
+		$this->currentService = in_array($def, $this->builder->getDefinitions(), strict: true)
 			? $def
 			: null;
 		$this->currentServiceType = $def->getType();
@@ -343,7 +347,7 @@ class Resolver
 		}
 
 		if ($item instanceof Definition) {
-			$name = current(array_keys($this->builder->getDefinitions(), $item, true));
+			$name = current(array_keys($this->builder->getDefinitions(), $item, strict: true));
 			if ($name === false) {
 				throw new ServiceCreationException(sprintf("Service '%s' not found in definitions.", $item->getName()));
 			}
@@ -403,12 +407,12 @@ class Resolver
 		if (
 			$this->currentService
 			&& $this->currentServiceAllowed
-			&& is_a($this->currentServiceType, $type, true)
+			&& is_a($this->currentServiceType, $type, allow_string: true)
 		) {
 			return new Reference(Reference::Self);
 		}
 
-		$name = $this->builder->getByType($type, true);
+		$name = $this->builder->getByType($type, throw: true);
 		if (
 			!$this->currentServiceAllowed
 			&& $this->currentService === $this->builder->getDefinition($name)

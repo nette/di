@@ -229,7 +229,7 @@ class ContainerBuilder
 	 */
 	public function getDefinitionByType(string $type): Definition
 	{
-		return $this->getDefinition($this->getByType($type, true));
+		return $this->getDefinition($this->getByType($type, throw: true));
 	}
 
 
@@ -254,7 +254,7 @@ class ContainerBuilder
 		$this->needResolved();
 		$found = [];
 		foreach ($this->definitions as $name => $def) {
-			if (is_a($def->getType(), $type, true)) {
+			if (is_a($def->getType(), $type, allow_string: true)) {
 				$found[$name] = $def;
 			}
 		}

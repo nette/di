@@ -115,7 +115,7 @@ class Compiler
 	{
 		$sources = $this->sources . "// source: $file\n";
 		$loader = $loader ?: new Config\Loader;
-		foreach ($loader->load($file, false) as $data) {
+		foreach ($loader->load($file, merge: false) as $data) {
 			$this->addConfig($data);
 		}
 

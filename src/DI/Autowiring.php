@@ -128,7 +128,7 @@ class Autowiring
 				foreach ($autowired as $k => $autowiredType) {
 					if ($autowiredType === ContainerBuilder::ThisService) {
 						$autowired[$k] = $type;
-					} elseif (!is_a($type, $autowiredType, true)) {
+					} elseif (!is_a($type, $autowiredType, allow_string: true)) {
 						throw new ServiceCreationException(sprintf(
 							"Incompatible class %s in autowiring definition of service '%s'.",
 							$autowiredType,
@@ -144,7 +144,7 @@ class Autowiring
 				} elseif (is_array($autowired)) {
 					$priority = false;
 					foreach ($autowired as $autowiredType) {
-						if (is_a($parent, $autowiredType, true)) {
+						if (is_a($parent, $autowiredType, allow_string: true)) {
 							if (empty($preferred[$parent]) && isset($this->highPriority[$parent])) {
 								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent] ?? [], $this->highPriority[$parent]);
 								$this->highPriority[$parent] = [];

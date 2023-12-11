@@ -35,7 +35,7 @@ class ExtensionsExtension extends Nette\DI\CompilerExtension
 				[$class, $args] = [$class->getEntity(), $class->arguments];
 			}
 
-			if (!is_a($class, Nette\DI\CompilerExtension::class, true)) {
+			if (!is_a($class, Nette\DI\CompilerExtension::class, allow_string: true)) {
 				throw new Nette\DI\InvalidConfigurationException(sprintf(
 					"Extension '%s' not found or is not Nette\\DI\\CompilerExtension descendant.",
 					$class,

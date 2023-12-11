@@ -105,7 +105,7 @@ class Container
 		if (!isset($this->methods[self::getMethodName($name)])) {
 			$this->types[$name] = $type;
 
-		} elseif (($expectedType = $this->getServiceType($name)) && !is_a($type, $expectedType, true)) {
+		} elseif (($expectedType = $this->getServiceType($name)) && !is_a($type, $expectedType, allow_string: true)) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s' must be instance of %s, %s.",
 				$name,
@@ -262,7 +262,7 @@ class Container
 
 			foreach ($this->methods as $method => $foo) {
 				$methodType = (new \ReflectionMethod(static::class, $method))->getReturnType()->getName();
-				if (is_a($methodType, $type, true)) {
+				if (is_a($methodType, $type, allow_string: true)) {
 					throw new MissingServiceException(sprintf(
 						"Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.",
 						$type,

@@ -32,7 +32,7 @@ Assert::same(
 	Helpers::expand('%keyA%', [
 		'keyA' => ['key1' => 123, 'key2' => '%keyB%'],
 		'keyB' => 'abc',
-	], true),
+	], recursive: true),
 );
 Assert::same( // no double expand
 	'%foo%',
@@ -95,7 +95,7 @@ Assert::same(
 );
 Assert::same(
 	['key1' => 'hello', 'key2' => '*hello*'],
-	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], true),
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true),
 );
 Assert::same(
 	'own',

@@ -49,7 +49,7 @@ use Tracy\Helpers;
 		<tbody>
 		<?php foreach ($services as $name => $type): ?>
 		<?php $name = (string) $name ?>
-		<?php $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), true) ?>
+		<?php $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true) ?>
 		<tr>
 			<td class="<?= isset($instances[$name]) ? 'created' : '' ?>"><?= is_numeric($name) ? "<small>$name</small>" : Helpers::escapeHtml($name) ?></td>
 			<td class="<?= $autowired ? 'yes' : '' ?>"><?= $autowired ? 'yes' : (isset($wiring[$type]) ? 'no' : '?') ?></td>

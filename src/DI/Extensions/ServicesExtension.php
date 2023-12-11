@@ -231,7 +231,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		if (is_int($key)) {
 			return null;
 		} elseif (preg_match('#^@[\w\\\\]+$#D', $key)) {
-			return $this->getContainerBuilder()->getByType(substr($key, 1), true);
+			return $this->getContainerBuilder()->getByType(substr($key, 1), throw: true);
 		}
 
 		return $key;
