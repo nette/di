@@ -28,5 +28,7 @@ $builder->addDefinition(null)
 Assert::exception(
 	fn() => createContainer($builder),
 	Nette\DI\ServiceCreationException::class,
-	'Service of type Foo: Service of type Foo required by $foo in Foo::__construct() not found. Did you add it to configuration file?',
+	'[Service of type Foo]
+Service of type Foo required by $foo in Foo::__construct() not found.
+Did you add it to configuration file?',
 );
