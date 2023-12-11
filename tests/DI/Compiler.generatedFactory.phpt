@@ -266,7 +266,8 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad2::class);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
+}, Nette\InvalidStateException::class, "[Service 'one' of type Bad2]
+Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
 
 
 
@@ -287,7 +288,8 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad4::class);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Cannot implement Bad4::create(): factory method parameters (\$baz) are not matching Bad3::__construct() parameters (\$bar). Did you mean to use '\$bar' in factory method?");
+}, Nette\InvalidStateException::class, "[Service 'one' of type Bad4]
+Cannot implement Bad4::create(): factory method parameters (\$baz) are not matching Bad3::__construct() parameters (\$bar). Did you mean to use '\$bar' in factory method?");
 
 
 
@@ -308,4 +310,5 @@ Assert::exception(function () {
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad6::class);
 	$builder->complete();
-}, Nette\InvalidStateException::class, "Service 'one' (type of Bad6): Cannot implement Bad6::create(): factory method parameters (\$baz) are not matching Bad5::__construct() parameters (\$xxx).");
+}, Nette\InvalidStateException::class, "[Service 'one' of type Bad6]
+Cannot implement Bad6::create(): factory method parameters (\$baz) are not matching Bad5::__construct() parameters (\$xxx).");

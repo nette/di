@@ -48,43 +48,50 @@ interface Good1
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement('Foo');
-}, Nette\InvalidArgumentException::class, "Service '': Interface 'Foo' not found.");
+}, Nette\InvalidArgumentException::class, "[Service ?]
+Interface 'Foo' not found.");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(stdClass::class);
-}, Nette\InvalidArgumentException::class, "Service '': Interface 'stdClass' not found.");
+}, Nette\InvalidArgumentException::class, "[Service ?]
+Interface 'stdClass' not found.");
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Bad1::class);
-}, Nette\InvalidArgumentException::class, "Service '': Interface Bad1 must have just one non-static method create().");
+}, Nette\InvalidArgumentException::class, '[Service ?]
+Interface Bad1 must have just one non-static method create().');
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Bad2::class);
-}, Nette\InvalidArgumentException::class, "Service '': Interface Bad2 must have just one non-static method create().");
+}, Nette\InvalidArgumentException::class, '[Service ?]
+Interface Bad2 must have just one non-static method create().');
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Bad3::class);
-}, Nette\InvalidArgumentException::class, "Service '': Interface Bad3 must have just one non-static method create().");
+}, Nette\InvalidArgumentException::class, '[Service ?]
+Interface Bad3 must have just one non-static method create().');
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Bad4::class);
-}, Nette\InvalidArgumentException::class, "Service '': Interface Bad4 must have just one non-static method create().");
+}, Nette\InvalidArgumentException::class, '[Service ?]
+Interface Bad4 must have just one non-static method create().');
 
 
 Assert::exception(function () {
 	$def = new FactoryDefinition;
 	$def->setImplement(Bad5::class);
-}, Nette\DI\ServiceCreationException::class, 'Return type of Bad5::create() is not declared.');
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
+Return type of Bad5::create() is not declared.');
 
 
 Assert::noError(function () {

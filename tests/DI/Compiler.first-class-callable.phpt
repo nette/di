@@ -50,7 +50,8 @@ Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addConfig($loader->load(Tester\FileMock::create($config, 'neon')));
 	$compiler->compile();
-}, Nette\DI\ServiceCreationException::class, 'Service of type Closure: Cannot create closure for Service(...)');
+}, Nette\DI\ServiceCreationException::class, '[Service of type Service]
+Cannot create closure for Service(...)');
 
 
 // Invalid callable 2
@@ -63,4 +64,6 @@ Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addConfig($loader->load(Tester\FileMock::create($config, 'neon')));
 	$compiler->compile();
-}, Nette\DI\ServiceCreationException::class, 'Service of type Service: Cannot create closure for Service(...) (used in Service::__construct())');
+}, Nette\DI\ServiceCreationException::class, '[Service of type Service]
+Cannot create closure for Service(...)
+Related to Service::__construct().');
