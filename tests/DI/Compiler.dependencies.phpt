@@ -62,23 +62,34 @@ $res[1]['file4'] = 123;
 Assert::true(DependencyChecker::isExpired(...$res));
 
 
-if (PHP_VERSION_ID >= 80100) {
-	// test serialization of parameters
-
-	require $file = realpath(__DIR__ . '/fixtures/dependency.php81.php');
-
-	$compiler->addDependencies([new ReflectionClass(Dep1::class)]);
-	Assert::same(
-		[
-			DependencyChecker::Version,
-			['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
-			[$file => filemtime($file)],
-			['Dep1'],
-			[],
-			'ff31f9bba26681aa5b228503003778cc',
-		],
-		$compiler->exportDependencies(),
-	);
-
-	Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
+// test serialization of parameters
+class NotSerializable
+{
+	public function __sleep()
+	{
+		throw new Exception;
+	}
 }
+
+
+class Dep1
+{
+	public function f($a = new NotSerializable)
+	{
+	}
+}
+
+$compiler->addDependencies([new ReflectionClass(Dep1::class)]);
+Assert::same(
+	[
+		DependencyChecker::Version,
+		['file1' => false, __FILE__ => filemtime(__FILE__), 'file3' => false],
+		[__FILE__ => filemtime(__FILE__)],
+		['Dep1'],
+		[],
+		'1cde52df4926c96b79eaea6570f591d6',
+	],
+	$compiler->exportDependencies(),
+);
+
+Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));

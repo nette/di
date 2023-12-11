@@ -178,8 +178,7 @@ class Container
 			return $this->types[$name];
 
 		} elseif (isset($this->methods[$method])) {
-			$type = (new \ReflectionMethod($this, $method))->getReturnType();
-			return $type ? $type->getName() : '';
+			return (string) (new \ReflectionMethod($this, $method))->getReturnType();
 
 		} else {
 			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));

@@ -153,8 +153,7 @@ final class Helpers
 	{
 		foreach ($args as $k => $v) {
 			if (
-				PHP_VERSION_ID >= 80100
-				&& is_string($v)
+				is_string($v)
 				&& preg_match('#^([\w\\\\]+)::\w+$#D', $v, $m)
 				&& enum_exists($m[1])
 			) {

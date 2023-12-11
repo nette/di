@@ -525,7 +525,6 @@ class Resolver
 		callable $getter,
 	): array
 	{
-		$optCount = 0;
 		$useName = false;
 		$num = -1;
 		$res = [];
@@ -557,9 +556,6 @@ class Resolver
 					$arguments = [];
 				}
 
-				$optCount = 0;
-				break;
-
 			} elseif (array_key_exists($key = $paramName, $arguments) || array_key_exists($key = $num, $arguments)) {
 				$res[$useName ? $paramName : $num] = $arguments[$key];
 				unset($arguments[$key], $arguments[$num]); // unset $num to enable overwriting in configuration
@@ -567,39 +563,21 @@ class Resolver
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
 				$res[$useName ? $paramName : $num] = $aw;
 
-			} elseif (PHP_VERSION_ID >= 80000) {
-				if ($param->isOptional()) {
-					$useName = true;
-				} else {
-					$res[$num] = null;
-					trigger_error(sprintf(
-						'The parameter %s should have a declared value in the configuration.',
-						Reflection::toString($param),
-					), E_USER_DEPRECATED);
-				}
+			} elseif ($param->isOptional()) {
+				$useName = true;
 
 			} else {
-				$res[$num] = $param->isDefaultValueAvailable()
-					? Reflection::getParameterDefaultValue($param)
-					: null;
+				$res[$num] = null;
 
-				if (!$param->isOptional()) {
-					trigger_error(sprintf(
-						'The parameter %s should have a declared value in the configuration.',
-						Reflection::toString($param),
-					), E_USER_DEPRECATED);
-				}
-			}
-
-			if (PHP_VERSION_ID < 80000) {
-				$optCount = $param->isOptional() && $res[$num] === ($param->isDefaultValueAvailable() ? Reflection::getParameterDefaultValue($param) : null)
-					? $optCount + 1
-					: 0;
+				trigger_error(sprintf(
+					'The parameter %s should have a declared value in the configuration.',
+					Reflection::toString($param),
+				), E_USER_DEPRECATED);
 			}
 		}
 
 		// extra parameters
-		while (!$useName && !$optCount && array_key_exists(++$num, $arguments)) {
+		while (!$useName && array_key_exists(++$num, $arguments)) {
 			$res[$num] = $arguments[$num];
 			unset($arguments[$num]);
 		}
@@ -609,8 +587,6 @@ class Resolver
 				'Unable to pass specified arguments to %s.',
 				Reflection::toString($method),
 			));
-		} elseif ($optCount) {
-			$res = array_slice($res, 0, -$optCount);
 		}
 
 		return $res;

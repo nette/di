@@ -109,15 +109,37 @@ Assert::exception(
 );
 
 
+// union
+Assert::exception(
+	fn() => Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass|Test $x) {}),
+		[],
+		function () {},
+	),
+	Nette\InvalidStateException::class,
+	'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.',
+);
+
+
+// nullable union
+Assert::error(
+	fn() => Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass|Test|null $x) {}),
+		[],
+		function () {},
+	),
+	E_USER_DEPRECATED,
+	'The parameter $x in {closure}() should have a declared value in the configuration.',
+);
+
+
 // bad variadics
-if (PHP_VERSION_ID >= 80000) {
-	Assert::exception(
-		fn() => Resolver::autowireArguments(
-			new ReflectionFunction(function ($a = 1, ...$args) {}),
-			[1 => 'new1', 2 => 'new2'],
-			function () {},
-		),
-		Nette\DI\ServiceCreationException::class,
-		'Cannot use positional argument after named or omitted argument in $args in {closure}%a?%.',
-	);
-}
+Assert::exception(
+	fn() => Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = 1, ...$args) {}),
+		[1 => 'new1', 2 => 'new2'],
+		function () {},
+	),
+	Nette\DI\ServiceCreationException::class,
+	'Cannot use positional argument after named or omitted argument in $args in {closure}%a?%.',
+);
