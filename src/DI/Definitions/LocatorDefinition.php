@@ -119,7 +119,7 @@ final class LocatorDefinition extends Definition
 						$this->getName(),
 						$this->tagged,
 						$tag
-					), E_USER_NOTICE);
+					));
 				}
 
 				$this->references[$tag] = new Reference($name);
