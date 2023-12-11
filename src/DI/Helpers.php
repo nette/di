@@ -232,17 +232,23 @@ final class Helpers
 	}
 
 
-	public static function ensureClassType(?Type $type, string $hint, bool $allowNullable = false): string
+	public static function ensureClassType(
+		?Type $type,
+		string $hint,
+		string $descriptor = '',
+		bool $allowNullable = false,
+	): string
 	{
+		$descriptor = $descriptor ? "[$descriptor]\n" : '';
 		if (!$type) {
-			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
+			throw new ServiceCreationException(sprintf('%s%s is not declared.', $descriptor, ucfirst($hint)));
 		} elseif (!$type->isClass() || (!$allowNullable && $type->allows('null'))) {
-			throw new ServiceCreationException(sprintf("%s is expected to not be %sbuilt-in/complex, '%s' given.", ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
+			throw new ServiceCreationException(sprintf("%s%s is expected to not be %sbuilt-in/complex, '%s' given.", $descriptor, ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
 		}
 
 		$class = $type->getSingleName();
 		if (!class_exists($class) && !interface_exists($class)) {
-			throw new ServiceCreationException(sprintf("Class '%s' not found.\nCheck the %s.", $class, $hint));
+			throw new ServiceCreationException(sprintf("%sClass '%s' not found.\nCheck the %s.", $descriptor, $class, $hint));
 		}
 
 		return $class;
@@ -281,5 +287,23 @@ final class Helpers
 			is_scalar($value) ? "'$value'" : get_debug_type($value),
 			$type,
 		));
+	}
+
+
+	public static function entityToString(string|array|Reference $entity, bool $inner = false): string
+	{
+		if (is_string($entity)) {
+			return $entity . ($inner ? '()' : '');
+
+		} elseif ($entity instanceof Reference) {
+			return '@' . $entity->getValue();
+
+		} else {
+			[$a, $b] = $entity;
+			return self::entityToString($a instanceof Statement ? $a->getEntity() : $a, inner: true)
+				. '::'
+				. $b
+				. (str_contains($b, '$') ? '' : '()');
+		}
 	}
 }

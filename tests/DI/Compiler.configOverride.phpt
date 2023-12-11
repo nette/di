@@ -59,5 +59,6 @@ $compiler->addConfig([
 Assert::exception(
 	fn() => $compiler->setClassName($class)->compile(),
 	DI\InvalidConfigurationException::class,
-	"Service 's3': missing original definition for alteration.",
+	"[Service 's3']
+Missing original definition for alteration.",
 );
