@@ -58,7 +58,7 @@ services:
 		factory: ServiceA
 		inject: yes
 ');
-}, InvalidStateException::class, "Service 'service' (type of ServiceA): Service of type DateTimeImmutable not found. Did you add it to configuration file?");
+}, InvalidStateException::class, 'Service of type DateTimeImmutable required by ServiceA::$a not found. Did you add it to configuration file?');
 
 
 Assert::exception(function () {
