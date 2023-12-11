@@ -55,7 +55,7 @@ Assert::exception(function () {
 	createContainer($compiler, '
 services:
 	service:
-		factory: ServiceA
+		create: ServiceA
 		inject: yes
 ');
 }, InvalidStateException::class, 'Service of type DateTimeImmutable required by ServiceA::$a not found. Did you add it to configuration file?');
@@ -67,7 +67,7 @@ Assert::exception(function () {
 	createContainer($compiler, '
 services:
 	service:
-		factory: ServiceB
+		create: ServiceB
 		inject: yes
 ');
 }, InvalidStateException::class, "Class 'Unknown' not found.
@@ -80,7 +80,7 @@ Assert::exception(function () {
 	createContainer($compiler, '
 services:
 	service:
-		factory: ServiceC
+		create: ServiceC
 		inject: yes
 ');
 }, InvalidStateException::class, 'Type of property ServiceC::$a is not declared.');
@@ -92,7 +92,7 @@ Assert::error(function () {
 	createContainer($compiler, '
 services:
 	service:
-		factory: ServiceD
+		create: ServiceD
 		inject: yes
 ');
 }, E_USER_WARNING, 'Property ServiceD::$a for injection must be public and non-static.');
@@ -104,7 +104,7 @@ Assert::error(function () {
 	createContainer($compiler, '
 services:
 	service:
-		factory: ServiceE
+		create: ServiceE
 		inject: yes
 ');
 }, E_USER_WARNING, 'Property ServiceE::$a for injection must be public and non-static.');

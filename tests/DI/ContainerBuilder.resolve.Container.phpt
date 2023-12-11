@@ -26,7 +26,7 @@ services:
 	lorem: Lorem
 
 	next:
-		factory: @container::getByType(Lorem)::next()
+		create: @container::getByType(Lorem)::next()
 		type: stdClass
 ');
 

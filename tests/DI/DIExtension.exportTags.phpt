@@ -24,7 +24,7 @@ test('Tag are exported when setting is true', function () {
 
 	services:
 		-
-			factory: stdClass
+			create: stdClass
 			tags:
 				first: a
 				second: b
@@ -46,7 +46,7 @@ test('Tags are not exported when setting is false', function () {
 
 	services:
 		-
-			factory: stdClass
+			create: stdClass
 			tags:
 				first: a
 				second: b
@@ -68,7 +68,7 @@ test('Default tag export behavior without explicit setting', function () {
 
 	services:
 		-
-			factory: stdClass
+			create: stdClass
 			tags:
 				first: a
 				second: b
@@ -91,7 +91,7 @@ test('Specific tag export when listed', function () {
 
 	services:
 		-
-			factory: stdClass
+			create: stdClass
 			tags:
 				first: a
 				second: b

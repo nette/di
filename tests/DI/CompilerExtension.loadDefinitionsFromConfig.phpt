@@ -19,7 +19,7 @@ class CompilerExtension extends DI\CompilerExtension
 
 
 $config = (new DI\Config\Adapters\NeonAdapter)->load(__DIR__ . '/files/compiler.parseServices.namespace.neon');
-$config['services']['articlesList']['factory']->arguments[0] = new Reference('extension.articles');
+$config['services']['articlesList']['create']->arguments[0] = new Reference('extension.articles');
 
 $builder = new DI\ContainerBuilder;
 $compiler = new DI\Compiler($builder);

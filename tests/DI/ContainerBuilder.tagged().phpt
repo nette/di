@@ -35,22 +35,22 @@ services:
 	f1: Foo(tagged(first))
 	f2: Foo(tagged(second, third))
 	s1:
-		factory: Service
+		create: Service
 		tags: [first]
 	s2:
-		factory: Service
+		create: Service
 		tags: [first]
 	s3:
-		factory: Service
+		create: Service
 		tags: [first: false]
 	s4:
-		factory: Service
+		create: Service
 		tags: [first: null]
 	s5:
-		factory: Service
+		create: Service
 		tags: [second]
 	s6:
-		factory: Service
+		create: Service
 		tags: [third]
 ');
 

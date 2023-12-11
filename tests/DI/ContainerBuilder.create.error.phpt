@@ -295,7 +295,7 @@ services:
 	a: stdClass
 	b: stdClass
 	bad:
-		factory: Good
+		create: Good
 		setup:
 			- $a = @\stdClass
 ');
@@ -309,7 +309,7 @@ services:
 	a: stdClass
 	b: stdClass
 	bad:
-		factory: Good
+		create: Good
 		setup:
 			- $a = MethodParam()::foo(@\stdClass)
 ');
@@ -323,7 +323,7 @@ services:
 	a: stdClass
 	b: stdClass
 	bad:
-		factory: MethodParam
+		create: MethodParam
 		setup:
 			- foo
 ');
@@ -337,7 +337,7 @@ services:
 	a: stdClass
 	b: stdClass
 	bad:
-		factory: Good
+		create: Good
 		setup:
 			- bar(@\stdClass)
 ');
@@ -351,7 +351,7 @@ services:
 	a: stdClass
 	b: stdClass
 	bad:
-		factory: Good
+		create: Good
 		setup:
 			- bar(MethodParam()::foo(@\stdClass))
 ');

@@ -46,7 +46,7 @@ define('MyConstantTest', 'one');
 $container = createContainer(new DI\Compiler, "
 services:
 	lorem:
-		factory: Lorem(::MyConstantTest, Lorem::DolorSit, NOT_CONSTANT_TEST)
+		create: Lorem(::MyConstantTest, Lorem::DolorSit, NOT_CONSTANT_TEST)
 		setup:
 			- method( @lorem, @self, @container )
 			- method( @lorem::add(1, 2), [x: ::strtoupper('hello')] )

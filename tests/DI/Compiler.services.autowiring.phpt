@@ -49,7 +49,7 @@ class Ipsum
 $container = createContainer(new DI\Compiler, '
 services:
 	model:
-		factory: Factory()::createModel
+		create: Factory()::createModel
 		setup:
 			# local methods
 			- test(_)
@@ -63,12 +63,12 @@ services:
 			- @lorem::test
 
 	lorem:
-		factory: Lorem
+		create: Lorem
 
 	alias: @lorem
 
 	ipsum:
-		factory: Ipsum
+		create: Ipsum
 ');
 
 

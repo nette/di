@@ -40,7 +40,7 @@ $container = createContainer($compiler, '
 services:
 	one:
 		type: Service
-		factory: ServiceFactory::create
+		create: ServiceFactory::create
 		inject: true
 ');
 

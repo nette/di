@@ -29,7 +29,7 @@ test('Types are exported when setting is true', function () {
 
 	services:
 		one:
-			factory: stdClass
+			create: stdClass
 			autowired: no
 
 		second: stdClass
@@ -50,7 +50,7 @@ test('Types are not exported when setting is false', function () {
 
 	services:
 		one:
-			factory: stdClass
+			create: stdClass
 			autowired: no
 
 		second: stdClass
@@ -72,7 +72,7 @@ test('Mandatory types are exported when setting is false', function () {
 
 	services:
 		one:
-			factory: stdClass
+			create: stdClass
 			autowired: no
 
 		second: stdClass
@@ -94,7 +94,7 @@ test('Mandatory types are exported without explicit setting', function () {
 
 	services:
 		one:
-			factory: Foo
+			create: Foo
 			autowired: no
 
 		second: stdClass
@@ -119,7 +119,7 @@ test('Mandatory and specified types are exported', function () {
 
 	services:
 		one:
-			factory: Foo
+			create: Foo
 			autowired: no
 
 		second: stdClass

@@ -38,7 +38,7 @@ $compiler = new DI\Compiler;
 $container = @createContainer($compiler, '
 services:
 	article:
-		factory: Article(%title%)
+		create: Article(%title%)
 		implement: IArticleFactory
 		parameters: [title]
 
@@ -49,7 +49,7 @@ services:
 
 	article3:
 		implement: IArticleFactory
-		factory: FooArticle
+		create: FooArticle
 ');
 
 Assert::type(IArticleFactory::class, $container->getService('article'));
