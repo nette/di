@@ -19,7 +19,6 @@ use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
-use ReflectionClass;
 
 
 /**
@@ -221,11 +220,11 @@ class Resolver
 			case is_string($entity): // create class
 				if (!class_exists($entity)) {
 					throw new ServiceCreationException(sprintf("Class '%s' not found.", $entity));
-				} elseif ((new ReflectionClass($entity))->isAbstract()) {
+				} elseif ((new \ReflectionClass($entity))->isAbstract()) {
 					throw new ServiceCreationException(sprintf('Class %s is abstract.', $entity));
-				} elseif (($rm = (new ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
+				} elseif (($rm = (new \ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
 					throw new ServiceCreationException(sprintf('Class %s has %s constructor.', $entity, $rm->isProtected() ? 'protected' : 'private'));
-				} elseif ($constructor = (new ReflectionClass($entity))->getConstructor()) {
+				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
 					$arguments = self::autowireArguments($constructor, $arguments, $getter);
 					$this->addDependency($constructor);
 				} elseif ($arguments) {
@@ -281,7 +280,7 @@ class Resolver
 								? $this->resolveReferenceType($entity[0])
 								: $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
 						) {
-							$rc = new ReflectionClass($type);
+							$rc = new \ReflectionClass($type);
 							if ($rc->hasMethod($entity[1])) {
 								$rm = $rc->getMethod($entity[1]);
 								if (!$rm->isPublic()) {
@@ -506,7 +505,7 @@ class Resolver
 				$pair = explode('::', substr($val, 1), 2);
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
-				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1], $m)) { // @service::CONSTANT
+				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
 					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);

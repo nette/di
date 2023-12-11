@@ -360,7 +360,7 @@ class Container
 
 
 	/**
-	 * Calls all methods starting with with "inject" using autowiring.
+	 * Calls all methods starting with "inject" using autowiring.
 	 */
 	public function callInjects(object $service): void
 	{

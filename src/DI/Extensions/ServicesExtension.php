@@ -16,7 +16,7 @@ use Nette\DI\Helpers;
 
 
 /**
- * Service definitions loader.
+ * Services definitions loader.
  */
 final class ServicesExtension extends Nette\DI\CompilerExtension
 {
@@ -103,7 +103,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 				$definition->setSetup([]);
 			}
 
-			foreach (Helpers::filterArguments($config->setup) as $id => $setup) {
+			foreach (Helpers::filterArguments($config->setup) as $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}
@@ -136,7 +136,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		if (isset($config->implement)) {
 			$definition->setImplement($config->implement);
-			$definition->setAutowired(true);
+			$definition->setAutowired();
 		}
 
 		if ($config->create) {
@@ -161,7 +161,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 				$resultDef->setSetup([]);
 			}
 
-			foreach (Helpers::filterArguments($config->setup) as $id => $setup) {
+			foreach (Helpers::filterArguments($config->setup) as $setup) {
 				if (is_array($setup)) {
 					$setup = new Statement(key($setup), array_values($setup));
 				}

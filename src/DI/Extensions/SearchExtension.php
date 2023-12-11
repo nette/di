@@ -144,7 +144,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	private static function buildNameRegexp(array $masks): ?string
 	{
 		$res = [];
-		foreach ((array) $masks as $mask) {
+		foreach ($masks as $mask) {
 			$mask = (strpos($mask, '\\') === false ? '**\\' : '') . $mask;
 			$mask = preg_quote($mask, '#');
 			$mask = str_replace('\*\*\\\\', '(.*\\\\)?', $mask);

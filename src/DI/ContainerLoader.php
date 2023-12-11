@@ -20,7 +20,7 @@ class ContainerLoader
 	use Nette\SmartObject;
 
 	/** @var bool */
-	private $autoRebuild = false;
+	private $autoRebuild;
 
 	/** @var string */
 	private $tempDirectory;
