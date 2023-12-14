@@ -41,3 +41,13 @@ Assert::same(
 		function () {}
 	),
 );
+
+// object as default with typehint
+Assert::same(
+	['b' => 10],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass $a = new stdClass, $b = null) {}),
+		[1 => 10],
+		function () {}
+	),
+);
