@@ -86,7 +86,7 @@ services:
 }, InvalidStateException::class, 'Type of property ServiceC::$a is not declared.');
 
 
-Assert::error(function () {
+Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
 	createContainer($compiler, '
@@ -95,10 +95,10 @@ services:
 		create: ServiceD
 		inject: yes
 ');
-}, E_USER_WARNING, 'Property ServiceD::$a for injection must be public and non-static.');
+}, InvalidStateException::class, 'Property ServiceD::$a for injection must not be static, readonly and must be public.');
 
 
-Assert::error(function () {
+Assert::exception(function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('inject', new Nette\DI\Extensions\InjectExtension);
 	createContainer($compiler, '
@@ -107,4 +107,4 @@ services:
 		create: ServiceE
 		inject: yes
 ');
-}, E_USER_WARNING, 'Property ServiceE::$a for injection must be public and non-static.');
+}, InvalidStateException::class, 'Property ServiceE::$a for injection must not be static, readonly and must be public.');

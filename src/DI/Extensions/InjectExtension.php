@@ -119,13 +119,8 @@ final class InjectExtension extends DI\CompilerExtension
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
 			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
-				if (!$rp->isPublic() || $rp->isStatic()) {
-					trigger_error(sprintf('Property %s for injection must be public and non-static.', Reflection::toString($rp)), E_USER_WARNING);
-					continue;
-				}
-
-				if ($rp->isReadOnly()) {
-					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be readonly.', Reflection::toString($rp)));
+				if (!$rp->isPublic() || $rp->isStatic() || $rp->isReadOnly()) {
+					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be static, readonly and must be public.', Reflection::toString($rp)));
 				}
 
 				$type = Nette\Utils\Type::fromReflection($rp);
