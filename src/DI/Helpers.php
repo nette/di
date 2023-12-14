@@ -41,9 +41,6 @@ final class Helpers
 		} elseif ($var instanceof Expression) {
 			return $var->transformValues(fn($val) => self::expand($val, $params, $recursive));
 
-		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
-			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters()');
-
 		} elseif (is_string($var)) {
 			$recursive = is_array($recursive) ? $recursive : ($recursive ? [] : null);
 			return self::expandString($var, $params, $recursive);
@@ -197,28 +194,6 @@ final class Helpers
 		}
 
 		return $config;
-	}
-
-
-	/**
-	 * Returns an annotation value.
-	 * @param  \ReflectionClass<object>|\ReflectionFunctionAbstract|\ReflectionProperty  $ref
-	 */
-	public static function parseAnnotation(
-		\ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionClass $ref,
-		string $name,
-	): ?string
-	{
-		if (!Reflection::areCommentsAvailable()) {
-			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
-		}
-
-		$re = '#[\s*]@' . preg_quote($name, '#') . '(?=\s|$)(?:[ \t]+([^@\s]\S*))?#';
-		if ($ref->getDocComment() && preg_match($re, trim($ref->getDocComment(), '/*'), $m)) {
-			return $m[1] ?? '';
-		}
-
-		return null;
 	}
 
 
