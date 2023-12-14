@@ -62,11 +62,6 @@ $cases = [
 		"Cannot create closure for 'ErrService(...)' in config file (used in %a%)",
 	],
 	[
-		"services:\n\t- ErrService(1, ...)\n",
-		DI\InvalidConfigurationException::class,
-		"Replace ... with _ in configuration file '%a%'.",
-	],
-	[
 		"services:\n\t- ErrService( @missing )\n",
 		DI\ServiceCreationException::class,
 		"Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())",

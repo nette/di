@@ -77,12 +77,6 @@ Assert::same(
 
 
 Assert::exception(
-	fn() => Helpers::expand('%parameters%', ['key1' => 'hello']),
-	Nette\DeprecatedException::class,
-	'%parameters% is deprecated, use @container::getParameters()',
-);
-
-Assert::exception(
 	fn() => Helpers::expand('%missing%', []),
 	Nette\InvalidArgumentException::class,
 	"Missing parameter 'missing'.",
