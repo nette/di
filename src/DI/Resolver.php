@@ -642,7 +642,7 @@ class Resolver
 				throw new ServiceCreationException("{$e->getMessage()} (required by $desc)", 0, $e);
 			}
 
-			if ($res !== null || $parameter->allowsNull()) {
+			if ($res !== null || $parameter->allowsNull() || $parameter->isOptional()) {
 				return $res;
 			} elseif (class_exists($class) || interface_exists($class)) {
 				throw new ServiceCreationException(sprintf(
