@@ -10,7 +10,7 @@ namespace Nette\DI;
 use Nette;
 use Nette\DI\Compiler\DynamicParameter;
 use Nette\DI\Expressions\Reference;
-use Nette\Utils\{Reflection, Type};
+use Nette\Utils\Type;
 use function array_key_exists, count, is_array, is_scalar, is_string, sprintf, strlen;
 
 
@@ -54,9 +54,6 @@ final class Helpers
 
 		} elseif ($var instanceof Config\Replacement) {
 			return new Config\Replacement(self::expand($var->value, $params, $recursive, $path));
-
-		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
-			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters()');
 
 		} elseif (is_string($var)) {
 			$recursive = is_array($recursive) ? $recursive : ($recursive ? [] : null);
@@ -235,28 +232,6 @@ final class Helpers
 		}
 
 		return $config;
-	}
-
-
-	/**
-	 * Returns an annotation value.
-	 * @param  \ReflectionClass<object>|\ReflectionFunctionAbstract|\ReflectionProperty  $ref
-	 */
-	public static function parseAnnotation(
-		\ReflectionFunctionAbstract|\ReflectionProperty|\ReflectionClass $ref,
-		string $name,
-	): ?string
-	{
-		if (!Reflection::areCommentsAvailable()) {
-			throw new Nette\InvalidStateException('You have to enable phpDoc comments in opcode cache.');
-		}
-
-		$re = '#[\s*]@' . preg_quote($name, '#') . '(?=\s|$)(?:[ \t]+([^@\s]\S*))?#';
-		if ($ref->getDocComment() && preg_match($re, trim($ref->getDocComment(), '/*'), $m)) {
-			return $m[1] ?? '';
-		}
-
-		return null;
 	}
 
 

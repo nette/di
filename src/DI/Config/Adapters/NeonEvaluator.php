@@ -35,14 +35,11 @@ final class NeonEvaluator extends Neon\Evaluator
 	protected function evaluateLiteral(Nodes\LiteralNode $node, Place $place): mixed
 	{
 		$value = parent::evaluateLiteral($node, $place);
-		if (is_string($value)) {
-			if (str_starts_with($value, '@@')) {
-				trigger_error(
-					"There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$value' (used in $this->file)",
-					E_USER_DEPRECATED,
-				);
-			}
-			$this->checkParameters($value);
+		if (is_string($value) && str_starts_with($value, '@@')) {
+			trigger_error(
+				"There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$value' (used in $this->file)",
+				E_USER_DEPRECATED,
+			);
 		}
 		return $place === Place::Key ? self::removePreventMergingSuffix($value) : $value;
 	}
@@ -56,7 +53,6 @@ final class NeonEvaluator extends Neon\Evaluator
 		} else {
 			$value = preg_replace('#^@#', '$0$0', $value); // escape
 		}
-		$this->checkParameters($value);
 		return $place === Place::Key ? self::removePreventMergingSuffix($value) : $value;
 	}
 
@@ -143,9 +139,7 @@ final class NeonEvaluator extends Neon\Evaluator
 		$attributes = [];
 		$omitted = false;
 		foreach ($items as $i => $item) {
-			if (!$item->key && self::isLiteral($item->value, '...')) {
-				throw new Nette\DI\InvalidConfigurationException("Replace ... with _ in configuration file '$this->file'.");
-			} elseif (!$item->key && self::isLiteral($item->value, '_')) {
+			if (!$item->key && self::isLiteral($item->value, '_')) {
 				$omitted = true;
 			} elseif ($item->key) {
 				$attributes[$this->evaluate($item->key, Place::Key)] = $this->evaluateItem($item);
@@ -166,14 +160,6 @@ final class NeonEvaluator extends Neon\Evaluator
 			}
 		});
 		return [$head, $attributes];
-	}
-
-
-	private function checkParameters(string $value): void
-	{
-		if (str_contains($value, '%parameters%')) {
-			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')');
-		}
 	}
 
 
