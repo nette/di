@@ -31,8 +31,8 @@ class ConcreteDependencyB extends AbstractDependency
 
 class ParentClass
 {
-	/** @var stdClass @inject */
-	public $a;
+	/** @inject */
+	public stdClass $a;
 
 
 	public function injectA()
@@ -47,11 +47,11 @@ class ParentClass
 
 class Service extends ParentClass
 {
-	/** @var stdClass @inject */
-	public $c;
+	/** @inject */
+	public stdClass $c;
 
-	/** @var AbstractDependency @inject */
-	public $e;
+	/** @inject */
+	public AbstractDependency $e;
 
 
 	public function injectC()

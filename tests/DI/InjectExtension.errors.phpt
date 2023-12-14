@@ -16,15 +16,15 @@ require __DIR__ . '/../bootstrap.php';
 
 class ServiceA
 {
-	/** @var DateTimeImmutable @inject */
-	public $a;
+	/** @inject */
+	public DateTimeImmutable $a;
 }
 
 
 class ServiceB
 {
-	/** @var Unknown @inject */
-	public $a;
+	/** @inject */
+	public Unknown $a;
 }
 
 
