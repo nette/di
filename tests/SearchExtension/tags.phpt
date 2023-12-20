@@ -23,6 +23,7 @@ Assert::same([
 	'CountableClass' => ['a' => 1, 'b' => 2],
 	'ExtendsStdClass' => ['a' => 1, 'b' => 2],
 	'InterfaceOk1' => ['a' => 1, 'b' => 2],
+	'InterfaceOk2' => ['a' => 1, 'b' => 2],
 ], $services);
 
 
@@ -41,4 +42,5 @@ Assert::same([
 	'CountableClass' => [],
 	'ExtendsStdClass' => [],
 	'InterfaceOk1' => [],
+	'InterfaceOk2' => [],
 ], $services);
