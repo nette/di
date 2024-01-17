@@ -179,6 +179,11 @@ declare(strict_types=1);
 				} else {
 					$val = ContainerBuilder::literal('$this->getService(?)', [$name]);
 				}
+			} elseif (
+				is_object($val)
+				&& !$val instanceof Php\Literal && !$val instanceof \stdClass && !$val instanceof \UnitEnum
+			) {
+				trigger_error(sprintf('Nette DI: suspicious dumping of objects %s when generating the container', $val::class));
 			}
 		});
 		return $args;
