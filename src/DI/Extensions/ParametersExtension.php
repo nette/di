@@ -74,17 +74,17 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		$resolver = new Nette\DI\Resolver($builder);
 		$generator = new Nette\DI\PhpGenerator($builder);
 		$method = $class->inheritMethod('getDynamicParameter');
-		$method->addBody('switch (true) {');
+		$method->addBody('return match($key) {');
 		foreach ($dynamicParams as $key => $foo) {
 			$value = Helpers::expand($this->config[$key] ?? null, $builder->parameters);
 			try {
 				$value = $generator->convertArguments($resolver->completeArguments(Helpers::filterArguments([$value])))[0];
-				$method->addBody("\tcase \$key === ?: return ?;", [$key, $value]);
+				$method->addBody("\t? => ?,", [$key, $value]);
 			} catch (Nette\DI\ServiceCreationException $e) {
-				$method->addBody("\tcase \$key === ?: throw new Nette\\DI\\ServiceCreationException(?);", [$key, $e->getMessage()]);
+				$method->addBody("\t? => throw new Nette\\DI\\ServiceCreationException(?),", [$key, $e->getMessage()]);
 			}
 		}
-		$method->addBody("\tdefault: return parent::getDynamicParameter(\$key);\n};");
+		$method->addBody("\tdefault => parent::getDynamicParameter(\$key),\n};");
 
 		if ($preload = array_keys($dynamicParams, true, true)) {
 			$method = $class->inheritMethod('getParameters');
