@@ -39,6 +39,7 @@ parameters:
 	refDynamic: %dynamic%
 	refDynamic2: %dynamic.foo%
 	refExpr: %expr%
+	refExpr2: %expr.1%
 	refArrayE1: %arrayExpr%
 	refArrayE2: %arrayExpr.expr%
 	refArrayD1: %arrayDynamic%
@@ -49,6 +50,7 @@ services:
 	- Service(
 		%static%
 		%expr%
+		%expr.1%
 		%dynamic%
 		%dynamic.foo%
 		%arrayExpr%

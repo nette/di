@@ -29,6 +29,12 @@ class Service
 }
 
 
+function getArray()
+{
+	return ['foo' => 123];
+}
+
+
 test('Statement as parameter', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
@@ -59,6 +65,23 @@ test('Statement within string expansion', function () {
 
 	Assert::same([], $container->getParameters());
 	Assert::same('helloa', $container->getService('one')->arg);
+});
+
+
+test('Statement within array expansion', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		bar: ::getArray()
+		expand: %bar.foo%
+
+	services:
+		one: Service(%expand%)
+	');
+
+	Assert::same([], $container->getParameters());
+	Assert::same(123, $container->getParameter('expand'));
+	Assert::same(123, $container->getService('one')->arg);
 });
 
 

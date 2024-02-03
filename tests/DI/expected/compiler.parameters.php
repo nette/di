@@ -14,6 +14,7 @@ class Container extends Nette\DI\Container
 		return new Service(
 			123,
 			trim(' a '),
+			(trim(' a '))['1'],
 			$this->getParameter('dynamic'),
 			$this->getParameter('dynamic')['foo'],
 			['expr' => trim(' a ')],
@@ -52,6 +53,7 @@ class Container extends Nette\DI\Container
 			case $key === 'refDynamic': return $this->getParameter('dynamic');
 			case $key === 'refDynamic2': return $this->getParameter('dynamic')['foo'];
 			case $key === 'refExpr': return trim(' a ');
+			case $key === 'refExpr2': return (trim(' a '))['1'];
 			case $key === 'refArrayE1': return ['expr' => trim(' a ')];
 			case $key === 'refArrayE2': return trim(' a ');
 			case $key === 'refArrayD1': return [
