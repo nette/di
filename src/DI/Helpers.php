@@ -113,6 +113,8 @@ final class Helpers
 				}
 			} elseif ($val instanceof DynamicParameter) {
 				$val = new DynamicParameter($val . '[' . var_export($key, true) . ']');
+			} elseif ($val instanceof Statement) {
+				$val = new Statement('(?)[?]', [$val, $key]);
 			} else {
 				throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $parameter));
 			}
