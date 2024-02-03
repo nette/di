@@ -64,7 +64,7 @@ class Autowiring
 		} else {
 			$list = $types[$type];
 			natsort($list);
-			$hint = count($list) === 2 && ($tmp = strpos($list[0], '.') xor strpos($list[1], '.'))
+			$hint = count($list) === 2 && ($tmp = str_contains($list[0], '.') xor str_contains($list[1], '.'))
 				? '. If you want to overwrite service ' . $list[$tmp ? 0 : 1] . ', give it proper name.'
 				: '';
 			throw new ServiceCreationException(sprintf(

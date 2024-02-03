@@ -96,7 +96,7 @@ final class InjectExtension extends DI\CompilerExtension
 	{
 		$classes = [];
 		foreach (get_class_methods($class) as $name) {
-			if (substr($name, 0, 6) === 'inject') {
+			if (str_starts_with($name, 'inject')) {
 				$classes[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->name;
 			}
 		}

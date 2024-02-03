@@ -69,7 +69,7 @@ class Container extends Nette\DI\Container
 
 	public function getParameters(): array
 	{
-		array_map([$this, 'getParameter'], [
+		array_map($this->getParameter(...), [
 			'dynamic',
 			'dynamicArray',
 			'arrayDynamic',

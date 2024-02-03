@@ -92,7 +92,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 		if ($preload = array_keys($dynamicParams, true, true)) {
 			$method = $class->inheritMethod('getParameters');
-			$method->addBody('array_map([$this, \'getParameter\'], ?);', [$preload]);
+			$method->addBody('array_map($this->getParameter(...), ?);', [$preload]);
 			$method->addBody('return parent::getParameters();');
 		}
 

@@ -41,8 +41,8 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$decoder = new Neon\Decoder;
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
-		$node = $traverser->traverse($node, [$this, 'removeUnderscoreVisitor']);
-		$node = $traverser->traverse($node, [$this, 'convertAtSignVisitor']);
+		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
+		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		return $this->process((array) $node->toValue());
 	}
 
@@ -52,7 +52,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {
-			if (is_string($key) && substr($key, -1) === self::PreventMergingSuffix) {
+			if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
 				if (!is_array($val) && $val !== null) {
 					throw new Nette\DI\InvalidConfigurationException(sprintf(
 						"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
@@ -81,7 +81,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 					$val = $tmp;
 				} else {
 					$tmp = $this->process([$val->value]);
-					if (is_string($tmp[0]) && strpos($tmp[0], '?') !== false) {
+					if (is_string($tmp[0]) && str_contains($tmp[0], '?')) {
 						throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
 					}
 
@@ -149,8 +149,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	/** @internal */
-	public function removeUnderscoreVisitor(Neon\Node $node)
+	private function removeUnderscoreVisitor(Neon\Node $node)
 	{
 		if (!$node instanceof Neon\Node\EntityNode) {
 			return;
@@ -177,11 +176,10 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	/** @internal */
-	public function convertAtSignVisitor(Neon\Node $node)
+	private function convertAtSignVisitor(Neon\Node $node)
 	{
 		if ($node instanceof Neon\Node\StringNode) {
-			if (substr($node->value, 0, 2) === '@@') {
+			if (str_starts_with($node->value, '@@')) {
 				trigger_error("There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
 			} else {
 				$node->value = preg_replace('#^@#', '$0$0', $node->value); // escape
@@ -190,7 +188,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		} elseif (
 			$node instanceof Neon\Node\LiteralNode
 			&& is_string($node->value)
-			&& substr($node->value, 0, 2) === '@@'
+			&& str_starts_with($node->value, '@@')
 		) {
 			trigger_error("There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
 		}

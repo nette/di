@@ -65,7 +65,7 @@ class DependencyChecker
 				$functions[] = rtrim(Reflection::toString($dep), '()');
 
 			} else {
-				throw new Nette\InvalidStateException(sprintf('Unexpected dependency %s', gettype($dep)));
+				throw new Nette\InvalidStateException(sprintf('Unexpected dependency %s', get_debug_type($dep)));
 			}
 		}
 
@@ -144,7 +144,7 @@ class DependencyChecker
 
 		$flip = array_flip($classes);
 		foreach ($functions as $name) {
-			if (strpos($name, '::')) {
+			if (str_contains($name, '::')) {
 				$method = PHP_VERSION_ID < 80300
 					? new ReflectionMethod($name)
 					: ReflectionMethod::createFromMethodName($name);

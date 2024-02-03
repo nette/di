@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\Utils\Strings;
 
 
 /**
@@ -44,13 +43,13 @@ final class Statement implements Nette\Schema\DynamicParameter
 		}
 
 		// normalize Class::method to [Class, method]
-		if (is_string($entity) && Strings::contains($entity, '::') && !Strings::contains($entity, '?')) {
+		if (is_string($entity) && str_contains($entity, '::') && !str_contains($entity, '?')) {
 			$entity = explode('::', $entity, 2);
 		}
 
-		if (is_string($entity) && substr($entity, 0, 1) === '@') { // normalize @service to Reference
+		if (is_string($entity) && str_starts_with($entity, '@')) { // normalize @service to Reference
 			$entity = new Reference(substr($entity, 1));
-		} elseif (is_array($entity) && is_string($entity[0]) && substr($entity[0], 0, 1) === '@') {
+		} elseif (is_array($entity) && is_string($entity[0]) && str_starts_with($entity[0], '@')) {
 			$entity[0] = new Reference(substr($entity[0], 1));
 		}
 

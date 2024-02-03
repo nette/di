@@ -56,7 +56,7 @@ Assert::equal(
 	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')]),
 );
 Assert::equal(
-	new Statement('::implode', ['', ['text', new DynamicParameter('func()'), '']]),
+	new Statement('::implode', [['text', new DynamicParameter('func()'), '']]),
 	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]),
 );
 

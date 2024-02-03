@@ -374,7 +374,7 @@ class Container
 	{
 		return Resolver::autowireArguments($function, $args, fn(string $type, bool $single) => $single
 				? $this->getByType($type)
-				: array_map([$this, 'getService'], $this->findAutowired($type)));
+				: array_map($this->getService(...), $this->findAutowired($type)));
 	}
 
 
