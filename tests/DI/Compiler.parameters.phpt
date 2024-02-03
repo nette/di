@@ -189,9 +189,9 @@ test('Invalid statement as parameter', function () {
 
 	Assert::same([], $container->getParameters());
 	Assert::exception(
-		function () use ($container) { $container->getParameter('bar'); },
+		fn() => $container->getParameter('bar'),
 		Nette\DI\ServiceCreationException::class,
-		"Class 'unknown' not found."
+		"Class 'unknown' not found.",
 	);
 });
 
@@ -205,8 +205,8 @@ test('Invalid statement as parameter', function () {
 
 	Assert::same([], $container->getParameters());
 	Assert::exception(
-		function () use ($container) { $container->getParameter('bar'); },
+		fn() => $container->getParameter('bar'),
 		Error::class,
-		'Call to undefined method Service::unknown()'
+		'Call to undefined method Service::unknown()',
 	);
 });

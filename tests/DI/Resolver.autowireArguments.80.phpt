@@ -19,22 +19,26 @@ class Test
 }
 
 // union
-Assert::exception(function () {
-	Resolver::autowireArguments(
+Assert::exception(
+	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test $x) {}),
 		[],
 		function () {},
-	);
-}, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.');
+	),
+	Nette\InvalidStateException::class,
+	'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.',
+);
 
 // nullable union
-Assert::error(function () {
-	Resolver::autowireArguments(
+Assert::error(
+	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test|null $x) {}),
 		[],
 		function () {},
-	);
-}, E_USER_DEPRECATED, 'The parameter $x in {closure}() should have a declared value in the configuration.');
+	),
+	E_USER_DEPRECATED,
+	'The parameter $x in {closure}() should have a declared value in the configuration.',
+);
 
 // optional union
 Assert::same(

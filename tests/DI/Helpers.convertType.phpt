@@ -14,9 +14,10 @@ function testIt(string $type, $val, $res = null)
 	if (func_num_args() === 3) {
 		Assert::same($res, Helpers::convertType($val, $type));
 	} else {
-		Assert::exception(function () use ($val, $type) {
-			Helpers::convertType($val, $type);
-		}, Nette\InvalidStateException::class);
+		Assert::exception(
+			fn() => Helpers::convertType($val, $type),
+			Nette\InvalidStateException::class,
+		);
 	}
 }
 

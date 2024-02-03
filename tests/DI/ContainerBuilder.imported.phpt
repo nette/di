@@ -36,14 +36,18 @@ $container = createContainer($builder);
 Assert::true($container->hasService('one'));
 Assert::false($container->isCreated('one'));
 
-Assert::exception(function () use ($container) {
-	$container->getService('one');
-}, Nette\DI\ServiceCreationException::class, "Unable to create imported service 'one', it must be added using addService()");
+Assert::exception(
+	fn() => $container->getService('one'),
+	Nette\DI\ServiceCreationException::class,
+	"Unable to create imported service 'one', it must be added using addService()",
+);
 
 
-Assert::exception(function () use ($container) {
-	$container->addService('one', new stdClass);
-}, Nette\InvalidArgumentException::class, "Service 'one' must be instance of ParentClass, stdClass given.");
+Assert::exception(
+	fn() => $container->addService('one', new stdClass),
+	Nette\InvalidArgumentException::class,
+	"Service 'one' must be instance of ParentClass, stdClass given.",
+);
 
 $container->addService('one', $obj = new Service);
 Assert::same($obj, $container->getService('one'));

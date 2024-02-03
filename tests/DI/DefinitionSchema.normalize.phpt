@@ -49,7 +49,9 @@ Assert::with(DefinitionSchema::class, function () {
 	Assert::same(['create' => 'val'], $schema->normalize(['factory' => 'val'], $context));
 	Assert::same(['imported' => 'val'], @$schema->normalize(['dynamic' => 'val'], $context)); // triggers notice
 
-	Assert::exception(function () use ($schema, $context) {
-		$schema->normalize(['class' => 'val', 'type' => 'val'], $context);
-	}, Nette\DI\InvalidConfigurationException::class, "Options 'class' and 'type' are aliases, use only 'type'.");
+	Assert::exception(
+		fn() => $schema->normalize(['class' => 'val', 'type' => 'val'], $context),
+		Nette\DI\InvalidConfigurationException::class,
+		"Options 'class' and 'type' are aliases, use only 'type'.",
+	);
 });

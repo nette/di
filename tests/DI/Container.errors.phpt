@@ -16,13 +16,17 @@ require __DIR__ . '/../bootstrap.php';
 $service = new stdClass;
 $container = new Container;
 
-Assert::exception(function () use ($container, $service) {
-	$container->addService('', $service);
-}, Nette\InvalidArgumentException::class, 'Service name must be a non-empty string.');
+Assert::exception(
+	fn() => $container->addService('', $service),
+	Nette\InvalidArgumentException::class,
+	'Service name must be a non-empty string.',
+);
 
-Assert::exception(function () use ($container) {
-	$container->getService('one');
-}, Nette\DI\MissingServiceException::class, "Service 'one' not found.");
+Assert::exception(
+	fn() => $container->getService('one'),
+	Nette\DI\MissingServiceException::class,
+	"Service 'one' not found.",
+);
 
 Assert::exception(function () use ($container, $service) {
 	$container->addService('one', $service);

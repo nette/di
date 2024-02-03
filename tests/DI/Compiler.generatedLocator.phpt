@@ -77,18 +77,22 @@ Assert::type(Lorem::class, $one->get('a'));
 Assert::type(LoremChild::class, $one->get('b'));
 Assert::same($one->get('a'), $one->get('a'));
 
-Assert::exception(function () use ($one) {
-	$one->get('undefined');
-}, Nette\DI\MissingServiceException::class, "Service 'undefined' is not defined.");
+Assert::exception(
+	fn() => $one->get('undefined'),
+	Nette\DI\MissingServiceException::class,
+	"Service 'undefined' is not defined.",
+);
 
 // tagged accessor
 $two = $container->getService('two');
 Assert::same($container->getService('lorem1'), $two->get('1'));
 Assert::same($container->getService('lorem2'), $two->get('2'));
 
-Assert::exception(function () use ($two) {
-	$two->get('3');
-}, Nette\DI\MissingServiceException::class, "Service '3' is not defined.");
+Assert::exception(
+	fn() => $two->get('3'),
+	Nette\DI\MissingServiceException::class,
+	"Service '3' is not defined.",
+);
 
 // factory
 $three = $container->getService('three');

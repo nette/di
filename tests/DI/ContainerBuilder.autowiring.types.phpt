@@ -207,13 +207,17 @@ test('', function () {
 	Assert::same('bar', $builder->getByType(Bar::class));
 	Assert::null($builder->getByType(IBar::class));
 
-	Assert::exception(function () use ($builder) {
-		$builder->getByType(Foo::class);
-	}, DI\ServiceCreationException::class, 'Multiple services of type Foo found: bar, foo');
+	Assert::exception(
+		fn() => $builder->getByType(Foo::class),
+		DI\ServiceCreationException::class,
+		'Multiple services of type Foo found: bar, foo',
+	);
 
-	Assert::exception(function () use ($builder) {
-		$builder->getByType(IFoo::class);
-	}, DI\ServiceCreationException::class, 'Multiple services of type IFoo found: bar, foo');
+	Assert::exception(
+		fn() => $builder->getByType(IFoo::class),
+		DI\ServiceCreationException::class,
+		'Multiple services of type IFoo found: bar, foo',
+	);
 });
 
 
@@ -223,7 +227,9 @@ test('', function () {
 		->setType(Foo::class)
 		->setAutowired([Bar::class]);
 
-	Assert::exception(function () use ($builder) {
-		$builder->getByType(Foo::class);
-	}, DI\ServiceCreationException::class, "Incompatible class Bar in autowiring definition of service 'bar'.");
+	Assert::exception(
+		fn() => $builder->getByType(Foo::class),
+		DI\ServiceCreationException::class,
+		"Incompatible class Bar in autowiring definition of service 'bar'.",
+	);
 });

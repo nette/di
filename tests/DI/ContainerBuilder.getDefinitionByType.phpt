@@ -26,10 +26,14 @@ $builder->addDefinition('three')
 $definition = $builder->getDefinitionByType(stdClass::class);
 Assert::same($definitionOne, $definition);
 
-Assert::exception(function () use ($builder) {
-	$builder->getDefinitionByType('unknown');
-}, Nette\DI\MissingServiceException::class, "Service of type 'unknown' not found. Check the class name because it cannot be found.");
+Assert::exception(
+	fn() => $builder->getDefinitionByType('unknown'),
+	Nette\DI\MissingServiceException::class,
+	"Service of type 'unknown' not found. Check the class name because it cannot be found.",
+);
 
-Assert::exception(function () use ($builder) {
-	$builder->getDefinitionByType(SplFileInfo::class);
-}, Nette\DI\ServiceCreationException::class, 'Multiple services of type SplFileInfo found: three, two');
+Assert::exception(
+	fn() => $builder->getDefinitionByType(SplFileInfo::class),
+	Nette\DI\ServiceCreationException::class,
+	'Multiple services of type SplFileInfo found: three, two',
+);

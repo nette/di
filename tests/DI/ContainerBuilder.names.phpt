@@ -28,20 +28,24 @@ Assert::type(stdClass::class, $container->getService('03'));
 
 
 
-Assert::exception(function () use ($builder) {
-	$builder->addDefinition('');
-}, Nette\InvalidArgumentException::class);
+Assert::exception(
+	fn() => $builder->addDefinition(''),
+	Nette\InvalidArgumentException::class,
+);
 
-Assert::exception(function () use ($builder) {
-	$builder->addDefinition('0');
-}, Nette\InvalidArgumentException::class);
+Assert::exception(
+	fn() => $builder->addDefinition('0'),
+	Nette\InvalidArgumentException::class,
+);
 
-Assert::exception(function () use ($builder) {
-	$builder->addDefinition('1');
-}, Nette\InvalidArgumentException::class);
+Assert::exception(
+	fn() => $builder->addDefinition('1'),
+	Nette\InvalidArgumentException::class,
+);
 
 
 
-Assert::exception(function () use ($builder) {
-	$builder->addDefinition('aa~');
-}, Nette\InvalidArgumentException::class);
+Assert::exception(
+	fn() => $builder->addDefinition('aa~'),
+	Nette\InvalidArgumentException::class,
+);

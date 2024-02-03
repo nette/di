@@ -46,7 +46,10 @@ Assert::same( // no double expand
 	], true),
 );
 
-Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
+Assert::equal(
+	new PhpLiteral('func()'),
+	Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]),
+);
 
 Assert::equal(
 	new DynamicParameter("func()['foo']"),
@@ -58,26 +61,43 @@ Assert::equal(
 );
 
 
-Assert::exception(function () {
-	Helpers::expand('%missing%', []);
-}, Nette\InvalidArgumentException::class, "Missing parameter 'missing'.");
+Assert::exception(
+	fn() => Helpers::expand('%missing%', []),
+	Nette\InvalidArgumentException::class,
+	"Missing parameter 'missing'.",
+);
 
-Assert::exception(function () {
-	Helpers::expand('%key1%a', ['key1' => ['key2' => 123]]);
-}, Nette\InvalidArgumentException::class, "Unable to concatenate non-scalar parameter 'key1' into '%key1%a'.");
+Assert::exception(
+	fn() => Helpers::expand('%key1%a', ['key1' => ['key2' => 123]]),
+	Nette\InvalidArgumentException::class,
+	"Unable to concatenate non-scalar parameter 'key1' into '%key1%a'.",
+);
 
-Assert::exception(function () {
-	Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], true);
-}, Nette\InvalidArgumentException::class, 'Circular reference detected for parameters: %key1%, %key2%');
+Assert::exception(
+	fn() => Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => '%key1%'], true),
+	Nette\InvalidArgumentException::class,
+	'Circular reference detected for parameters: %key1%, %key2%',
+);
 
-Assert::exception(function () {
-	Helpers::expand('%exp%', [
+Assert::exception(
+	fn() => Helpers::expand('%exp%', [
 		'array' => ['a' => '%array%'],
 		'exp' => '%array.a%',
-	], true);
-}, Nette\InvalidArgumentException::class, 'Circular reference detected for parameters: %exp%, %array.a%, %array%');
+	], true),
+	Nette\InvalidArgumentException::class,
+	'Circular reference detected for parameters: %exp%, %array.a%, %array%',
+);
 
 
-Assert::same(['key1' => 'hello', 'key2' => '*%key1%*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']));
-Assert::same(['key1' => 'hello', 'key2' => '*hello*'], Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], true));
-Assert::same('own', Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']));
+Assert::same(
+	['key1' => 'hello', 'key2' => '*%key1%*'],
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']),
+);
+Assert::same(
+	['key1' => 'hello', 'key2' => '*hello*'],
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], true),
+);
+Assert::same(
+	'own',
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']),
+);

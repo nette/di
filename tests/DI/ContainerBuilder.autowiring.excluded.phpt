@@ -56,17 +56,20 @@ $container = createContainer($builder);
 
 Assert::type(Bar::class, $container->getByType(Bar::class));
 
-Assert::exception(function () use ($container) {
-	$container->getByType(IBar::class);
-}, DI\MissingServiceException::class);
+Assert::exception(
+	fn() => $container->getByType(IBar::class),
+	DI\MissingServiceException::class,
+);
 
-Assert::exception(function () use ($container) {
-	$container->getByType(Foo::class);
-}, DI\MissingServiceException::class);
+Assert::exception(
+	fn() => $container->getByType(Foo::class),
+	DI\MissingServiceException::class,
+);
 
-Assert::exception(function () use ($container) {
-	$container->getByType(IFoo::class);
-}, DI\MissingServiceException::class);
+Assert::exception(
+	fn() => $container->getByType(IFoo::class),
+	DI\MissingServiceException::class,
+);
 
 Assert::same(['bar'], $container->findByType(Bar::class));
 Assert::same(['bar'], $container->findByType(IBar::class));

@@ -27,9 +27,11 @@ class EClass
 }
 
 
-Assert::exception(function () {
-	InjectExtension::getInjectProperties(AClass::class);
-}, Nette\InvalidStateException::class, "Type of property AClass::\$var is expected to not be nullable/built-in/complex, 'AClass|stdClass' given.");
+Assert::exception(
+	fn() => InjectExtension::getInjectProperties(AClass::class),
+	Nette\InvalidStateException::class,
+	"Type of property AClass::\$var is expected to not be nullable/built-in/complex, 'AClass|stdClass' given.",
+);
 
 Assert::same([
 	'varA' => 'stdClass',

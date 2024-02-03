@@ -72,13 +72,15 @@ Assert::same([], $services);
 
 
 
-Assert::exception(function () {
-	check('
+Assert::exception(
+	fn() => check('
 	search:
 		in: fixtures
 		extends: unknown
-	');
-}, ReflectionException::class, 'Class %a?%unknown%a?% does not exist');
+	'),
+	ReflectionException::class,
+	'Class %a?%unknown%a?% does not exist',
+);
 
 
 

@@ -73,19 +73,25 @@ Assert::same(
 	$obj->args,
 );
 
-Assert::exception(function () use ($container) {
-	$container->getByName('bad1');
-}, Nette\InvalidStateException::class, "Cannot convert '123' to bool.");
+Assert::exception(
+	fn() => $container->getByName('bad1'),
+	Nette\InvalidStateException::class,
+	"Cannot convert '123' to bool.",
+);
 
-Assert::exception(function () use ($container) {
-	$container->getByName('bad2');
-}, Nette\InvalidStateException::class, "Cannot convert '123' to bool.");
+Assert::exception(
+	fn() => $container->getByName('bad2'),
+	Nette\InvalidStateException::class,
+	"Cannot convert '123' to bool.",
+);
 
 
 // wrong arguments count
-Assert::exception(function () {
-	createContainer(new DI\Compiler, '
+Assert::exception(
+	fn() => createContainer(new DI\Compiler, '
 	services:
 		- Service(bool(123, 10))
-	');
-}, Nette\InvalidStateException::class, 'Service of type Service: Function bool() expects 1 parameter, 2 given. (used in Service::__construct())');
+	'),
+	Nette\InvalidStateException::class,
+	'Service of type Service: Function bool() expects 1 parameter, 2 given. (used in Service::__construct())',
+);

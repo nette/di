@@ -178,9 +178,11 @@ Assert::same([
 	'Ipsum::__construct ',
 ], Notes::fetch());
 
-Assert::exception(function () use ($container) {
-	$container->getService('one9');
-}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
+Assert::exception(
+	fn() => $container->getService('one9'),
+	TypeError::class,
+	'%a% must be %a% Ipsum,%a?% Lorem returned',
+);
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('one10'));
@@ -239,9 +241,11 @@ Assert::same([
 	'Lorem::__construct 2 new',
 ], Notes::fetch());
 
-Assert::exception(function () use ($container) {
-	$container->getService('two11');
-}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
+Assert::exception(
+	fn() => $container->getService('two11'),
+	TypeError::class,
+	'%a% must be %a% Ipsum,%a?% Lorem returned',
+);
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('two12'));
@@ -286,9 +290,11 @@ Assert::same([
 	'Ipsum::__construct 2',
 ], Notes::fetch());
 
-Assert::exception(function () use ($container) {
-	$container->getService('three8');
-}, TypeError::class, '%a% must be %a% Ipsum,%a?% Lorem returned');
+Assert::exception(
+	fn() => $container->getService('three8'),
+	TypeError::class,
+	'%a% must be %a% Ipsum,%a?% Lorem returned',
+);
 Notes::fetch();
 
 Assert::type(Ipsum::class, $container->getService('three9'));

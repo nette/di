@@ -24,10 +24,12 @@ class Test
 
 
 // disjunctive normal form types
-Assert::exception(function () {
-	Resolver::autowireArguments(
+Assert::exception(
+	fn() => Resolver::autowireArguments(
 		new ReflectionFunction(function ((Foo & Test)|string $x) {}),
 		[],
-		function () {}
-	);
-}, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.');
+		function () {},
+	),
+	Nette\InvalidStateException::class,
+	'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.',
+);
