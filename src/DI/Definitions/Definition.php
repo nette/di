@@ -23,9 +23,7 @@ abstract class Definition
 
 	/** @var bool|string[] */
 	private bool|array $autowired = true;
-
-	/** @var ?callable */
-	private $notifier;
+	private ?\Closure $notifier = null;
 
 
 	/**
@@ -152,7 +150,7 @@ abstract class Definition
 	abstract public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void;
 
 
-	final public function setNotifier(?callable $notifier): void
+	final public function setNotifier(?\Closure $notifier): void
 	{
 		$this->notifier = $notifier;
 	}
