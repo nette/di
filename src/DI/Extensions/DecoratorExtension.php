@@ -50,11 +50,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 
 	public function addSetups(string $type, array $setups): void
 	{
-		foreach ($this->findByType($type) as $def) {
-			if ($def instanceof Definitions\FactoryDefinition) {
-				$def = $def->getResultDefinition();
-			}
-
+		foreach ($this->getContainerBuilder()->findByType($type) as $def) {
 			foreach ($setups as $setup) {
 				if (is_array($setup)) {
 					$setup = new Definitions\Statement(key($setup), array_values($setup));
@@ -69,18 +65,8 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	public function addTags(string $type, array $tags): void
 	{
 		$tags = Nette\Utils\Arrays::normalize($tags, filling: true);
-		foreach ($this->findByType($type) as $def) {
+		foreach ($this->getContainerBuilder()->findByType($type) as $def) {
 			$def->setTags($def->getTags() + $tags);
 		}
-	}
-
-
-	private function findByType(string $type): array
-	{
-		return array_filter(
-			$this->getContainerBuilder()->getDefinitions(),
-			fn(Definitions\Definition $def): bool => is_a($def->getType(), $type, true)
-				|| ($def instanceof Definitions\FactoryDefinition && is_a($def->getResultType(), $type, allow_string: true)),
-		);
 	}
 }

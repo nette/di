@@ -24,6 +24,7 @@ final class FactoryDefinition extends Definition
 	private const MethodCreate = 'create';
 
 	private Definition $resultDefinition;
+	private ?string $reference = null;
 
 
 	public function __construct()
@@ -87,6 +88,10 @@ final class FactoryDefinition extends Definition
 	{
 		if (!$this->getType()) {
 			throw new ServiceCreationException('Type is missing in definition of service.');
+
+		} elseif ($this->reference === null) {
+			$this->resultDefinition->setAutowired(false);
+			$this->reference = $resolver->getContainerBuilder()->addDefinition(null, $this->resultDefinition)->getName();
 		}
 
 		$type = Type::fromReflection(new \ReflectionMethod($this->getType(), self::MethodCreate));
