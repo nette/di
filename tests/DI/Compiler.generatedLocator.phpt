@@ -42,8 +42,7 @@ interface LocatorFactoryN
 }
 
 
-// create($name) is deprecated
-$container = @createContainer(new DI\Compiler, '
+$container = createContainer(new DI\Compiler, '
 services:
 	- LoremChild
 
@@ -64,10 +63,7 @@ services:
 
 	one: Locator(a: @lorem1, b: LoremChild)
 	two: Locator(tagged: a)
-	three: LocatorFactory(a: @lorem1, b: LoremChild)
-	four: LocatorFactory(tagged: b)
 	five: LocatorN(tagged: a)
-	six: LocatorFactoryN(tagged: a)
 	seven: Locator(a: @lorem1)
 	eight: Locator(a: LoremChild())
 ');
@@ -96,28 +92,11 @@ Assert::exception(
 	"Service '3' is not defined.",
 );
 
-// factory
-$three = $container->getService('three');
-Assert::type(Lorem::class, $three->create('a'));
-Assert::type(LoremChild::class, $three->create('b'));
-Assert::notSame($three->create('a'), $three->create('a'));
-
-// tagged factory
-$four = $container->getService('four');
-Assert::type(Lorem::class, $four->create('3'));
-Assert::notSame($container->getService('lorem3'), $four->create('3'));
-
 // nullable accessor
 $five = $container->getService('five');
 Assert::type(Lorem::class, $five->get('1'));
 Assert::type(Lorem::class, $five->get('2'));
 Assert::null($five->get('3'));
-
-// nullable factory
-$six = $container->getService('six');
-Assert::type(Lorem::class, $six->create('1'));
-Assert::type(Lorem::class, $six->create('2'));
-Assert::null($six->create('3'));
 
 // accessor with one service
 $one = $container->getService('seven');
