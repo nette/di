@@ -68,6 +68,7 @@ services:
 	five: LocatorN(tagged: a)
 	six: LocatorFactoryN(tagged: a)
 	seven: Locator(a: @lorem1)
+	eight: Locator(a: LoremChild())
 ');
 
 
@@ -120,3 +121,8 @@ Assert::null($six->create('3'));
 // accessor with one service
 $one = $container->getService('seven');
 Assert::type(Lorem::class, $one->get('a'));
+
+// accessor with custom defined classes
+$one = $container->getService('eight');
+Assert::type(LoremChild::class, $one->get('a'));
+Assert::notSame($container->getByType(LoremChild::class), $one->get('a'));
