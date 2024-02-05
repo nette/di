@@ -21,7 +21,7 @@ class Container extends Nette\DI\Container
 			trim(' a '),
 			['dynamic' => $this->getParameter('dynamic'), 'inner' => $this->getParameter('dynamic')['foo']],
 			$this->getParameter('dynamic'),
-			$this->getParameter('dynamic')['foo']%a?%
+			$this->getParameter('dynamic')['foo'],
 		);
 	}
 

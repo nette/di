@@ -62,7 +62,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			$value = [$value];
 			array_walk_recursive($value, function ($val) use (&$dynamicParams, $key): void {
 				if ($val instanceof DynamicParameter) {
-					$dynamicParams[$key] = $dynamicParams[$key] ?? true;
+					$dynamicParams[$key] ??= true;
 				} elseif ($val instanceof Nette\DI\Definitions\Statement) {
 					$dynamicParams[$key] = false;
 				}
@@ -104,7 +104,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			if ($param instanceof DynamicParameter) {
 				$this->initialization->addBody(
 					'Nette\Utils\Validators::assert(?, ?, ?);',
-					[$param, $expected, "dynamic parameter used in '" . implode("\u{a0}›\u{a0}", $path) . "'"]
+					[$param, $expected, "dynamic parameter used in '" . implode("\u{a0}›\u{a0}", $path) . "'"],
 				);
 			}
 		}

@@ -89,7 +89,7 @@ class ContainerBuilder
 					throw new Nette\InvalidStateException(sprintf(
 						"Service '%s' has the same name as '%s' in a case-insensitive manner.",
 						$name,
-						$nm
+						$nm,
 					));
 				}
 			}
@@ -406,7 +406,7 @@ class ContainerBuilder
 	public static function literal(string $code, ?array $args = null): Nette\PhpGenerator\PhpLiteral
 	{
 		return new Nette\PhpGenerator\PhpLiteral(
-			$args === null ? $code : (new Nette\PhpGenerator\Dumper)->format($code, ...$args)
+			$args === null ? $code : (new Nette\PhpGenerator\Dumper)->format($code, ...$args),
 		);
 	}
 

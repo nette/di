@@ -32,29 +32,29 @@ Assert::same(
 	Helpers::expand('%keyA%', [
 		'keyA' => ['key1' => 123, 'key2' => '%keyB%'],
 		'keyB' => 'abc',
-	], true)
+	], true),
 );
 Assert::same( // no double expand
 	'%foo%',
-	Helpers::expand('%string%', ['string' => '%%foo%'], true)
+	Helpers::expand('%string%', ['string' => '%%foo%'], true),
 );
 Assert::same( // no double expand
 	'%foo%',
 	Helpers::expand('%ref.a%', [
 		'ref' => '%array%',
 		'array' => ['a' => '%%foo%'],
-	], true)
+	], true),
 );
 
 Assert::equal(new PhpLiteral('func()'), Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]));
 
 Assert::equal(
 	new DynamicParameter("func()['foo']"),
-	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')])
+	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')]),
 );
 Assert::equal(
 	new Statement('::implode', ['', ['text', new DynamicParameter('func()'), '']]),
-	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')])
+	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]),
 );
 
 

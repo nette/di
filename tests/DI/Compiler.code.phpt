@@ -20,5 +20,5 @@ $code = $compiler->addConfig($config)
 
 Assert::matchFile(
 	__DIR__ . '/expected/compiler.code.php',
-	$code
+	$code,
 );

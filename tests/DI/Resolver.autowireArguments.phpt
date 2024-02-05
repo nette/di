@@ -24,8 +24,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (Test $arg) {}),
 		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
+		fn($type) => $type === Test::class ? new Test : null,
+	),
 );
 
 // nullable class
@@ -34,8 +34,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (?Test $arg) {}),
 		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
+		fn($type) => $type === Test::class ? new Test : null,
+	),
 );
 
 // nullable optional class
@@ -44,8 +44,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (?Test $arg = null) {}),
 		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
+		fn($type) => $type === Test::class ? new Test : null,
+	),
 );
 
 // nullable optional scalar
@@ -54,8 +54,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (?int $arg = null) {}),
 		[],
-		function ($type) { return $type === Test::class ? new Test : null; }
-	)
+		fn($type) => $type === Test::class ? new Test : null,
+	),
 );
 
 // optional arguments + positional
@@ -64,8 +64,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		[1 => 'new'],
-		function () {}
-	)
+		function () {},
+	),
 );
 
 // optional arguments + named
@@ -74,8 +74,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, $b = 2) {}),
 		['b' => 'new'],
-		function () {}
-	)
+		function () {},
+	),
 );
 
 // optional arguments + named variadics
@@ -84,8 +84,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = 1, ...$args) {}),
 		['k1' => 'new1', 'k2' => 'new2'],
-		function () {}
-	)
+		function () {},
+	),
 );
 
 // positional variadics
@@ -94,8 +94,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		[1, 2, 3],
-		function () {}
-	)
+		function () {},
+	),
 );
 
 // named variadics
@@ -104,8 +104,8 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		['args' => [1, 2, 3]],
-		function () {}
-	)
+		function () {},
+	),
 );
 
 // named parameter intentionally overwrites the indexed one (due to overwriting in the configuration)
@@ -114,6 +114,6 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a) {}),
 		[1, 'a' => 2],
-		function () {}
-	)
+		function () {},
+	),
 );

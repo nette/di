@@ -44,7 +44,7 @@ final class FactoryDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface '%s' not found.",
 				$this->getName(),
-				$interface
+				$interface,
 			));
 		}
 
@@ -54,7 +54,7 @@ final class FactoryDefinition extends Definition
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface %s must have just one non-static method create().",
 				$this->getName(),
-				$interface
+				$interface,
 			));
 		}
 
@@ -74,7 +74,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	final public function getResultType(): ?string
+	public function getResultType(): ?string
 	{
 		return $this->resultDefinition->getType();
 	}
@@ -110,7 +110,7 @@ final class FactoryDefinition extends Definition
 				"Service '%s': Option 'parameters' is deprecated and should be removed. The %s should be replaced with %s in configuration.",
 				$this->getName(),
 				implode(', ', $old),
-				implode(', ', $new)
+				implode(', ', $new),
 			), E_USER_DEPRECATED);
 		}
 
@@ -152,7 +152,7 @@ final class FactoryDefinition extends Definition
 			throw new ServiceCreationException(sprintf(
 				'Factory for %s cannot create incompatible %s type.',
 				$type,
-				$resultDef->getType()
+				$resultDef->getType(),
 			));
 		}
 	}
@@ -209,7 +209,7 @@ final class FactoryDefinition extends Definition
 						"Type of \$%s in %s::create() doesn't match type in %s constructor.",
 						$param->name,
 						$interface,
-						$class
+						$class,
 					));
 				}
 
@@ -217,20 +217,18 @@ final class FactoryDefinition extends Definition
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				// [param1, param2] => '$param1, $param2'
-				$stringifyParams = function (array $params): string {
-					return implode(', ', array_map(
-						function (string $param) { return '$' . $param; },
-						$params
-					));
-				};
+				$stringifyParams = fn(array $params): string => implode(
+					', ',
+					array_map(fn(string $param) => '$' . $param, $params),
+				);
 				$ctorParamsKeys = array_keys($ctorParams);
 				$hint = Nette\Utils\Helpers::getSuggestion($ctorParamsKeys, $param->name);
 				throw new ServiceCreationException(sprintf(
 					'Cannot implement %s::create(): factory method parameters (%s) are not matching %s::__construct() parameters (%s).',
 					$interface,
-					$stringifyParams(array_map(function (\ReflectionParameter $param) { return $param->name; }, $method->getParameters())),
+					$stringifyParams(array_map(fn(\ReflectionParameter $param) => $param->name, $method->getParameters())),
 					$class,
-					$stringifyParams($ctorParamsKeys)
+					$stringifyParams($ctorParamsKeys),
 				) . ($hint ? " Did you mean to use '\${$hint}' in factory method?" : ''));
 			}
 

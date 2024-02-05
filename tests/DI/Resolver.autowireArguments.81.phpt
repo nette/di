@@ -28,7 +28,7 @@ Assert::exception(function () {
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (Foo&Test $x) {}),
 		[],
-		function () {}
+		function () {},
 	);
 }, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.');
 
@@ -38,7 +38,7 @@ Assert::same(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function ($a = new stdClass, $b = null) {}),
 		[1 => 10],
-		function () {}
+		function () {},
 	),
 );
 
@@ -48,6 +48,6 @@ Assert::same(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass $a = new stdClass, $b = null) {}),
 		[1 => 10],
-		function () {}
+		function () {},
 	),
 );

@@ -26,7 +26,7 @@ class Test
 // disjunctive normal form types
 Assert::exception(function () {
 	Resolver::autowireArguments(
-		new ReflectionFunction(function ((Foo&Test)|string $x) {}),
+		new ReflectionFunction(function ((Foo & Test)|string $x) {}),
 		[],
 		function () {}
 	);

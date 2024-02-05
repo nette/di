@@ -74,7 +74,7 @@ class Compiler
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Name of extension '%s' has the same name as '%s' in a case-insensitive manner.",
 					$name,
-					$nm
+					$nm,
 				));
 			}
 		}
@@ -87,7 +87,7 @@ class Compiler
 	public function getExtensions(?string $type = null): array
 	{
 		return $type
-			? array_filter($this->extensions, function ($item) use ($type): bool { return $item instanceof $type; })
+			? array_filter($this->extensions, fn($item): bool => $item instanceof $type)
 			: $this->extensions;
 	}
 
@@ -250,14 +250,14 @@ class Compiler
 		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::Services => 1])) {
 			throw new Nette\DeprecatedException(sprintf(
 				"Extensions '%s' were added while container was being compiled.",
-				implode("', '", array_keys($extra))
+				implode("', '", array_keys($extra)),
 			));
 
 		} elseif ($extra = key(array_diff_key($this->configs, $this->extensions))) {
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				sprintf("Found section '%s' in configuration, but corresponding extension is missing", $extra)
-				. ($hint ? ", did you mean '$hint'?" : '.')
+				. ($hint ? ", did you mean '$hint'?" : '.'),
 			);
 		}
 	}

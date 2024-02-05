@@ -122,7 +122,7 @@ class DefinitionSchema implements Schema
 							"Options '%s' and '%s' are aliases, use only '%s'.",
 							$alias,
 							$original,
-							$original
+							$original,
 						));
 					}
 

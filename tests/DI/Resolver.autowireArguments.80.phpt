@@ -23,7 +23,7 @@ Assert::exception(function () {
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test $x) {}),
 		[],
-		function () {}
+		function () {},
 	);
 }, Nette\InvalidStateException::class, 'Parameter $x in {closure}() has complex type and no default value, so its value must be specified.');
 
@@ -32,7 +32,7 @@ Assert::error(function () {
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|Test|null $x) {}),
 		[],
-		function () {}
+		function () {},
 	);
 }, E_USER_DEPRECATED, 'The parameter $x in {closure}() should have a declared value in the configuration.');
 
@@ -42,7 +42,7 @@ Assert::same(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (stdClass|int $x = 1) {}),
 		[],
-		function () {}
+		function () {},
 	),
 );
 
@@ -52,6 +52,6 @@ Assert::equal(
 	Resolver::autowireArguments(
 		new ReflectionFunction(function (...$args) {}),
 		['a' => 1, 'b' => 2, 'c' => 3],
-		function () {}
-	)
+		function () {},
+	),
 );

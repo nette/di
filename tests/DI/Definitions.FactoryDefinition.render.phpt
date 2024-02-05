@@ -34,24 +34,26 @@ test('', function () {
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(
-		'public function createServiceAbc(): Good2
-{
-	return new class ($this) implements Good2 {
-		private $container;
+		<<<'XX'
+			public function createServiceAbc(): Good2
+			{
+				return new class ($this) implements Good2 {
+					private $container;
 
 
-		public function __construct($container)
-		{
-			$this->container = $container;
-		}
+					public function __construct($container)
+					{
+						$this->container = $container;
+					}
 
 
-		public function create(): stdClass
-		{
-			return new stdClass;
-		}
-	};
-}',
-		$method->__toString()
+					public function create(): stdClass
+					{
+						return new stdClass;
+					}
+				};
+			}
+			XX,
+		$method->__toString(),
 	);
 });

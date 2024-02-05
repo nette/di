@@ -72,7 +72,7 @@ class Autowiring
 			throw new ServiceCreationException(sprintf(
 				"Multiple services of type $type found: %s%s",
 				implode(', ', $list),
-				$hint
+				$hint,
 			));
 		}
 	}
@@ -134,7 +134,7 @@ class Autowiring
 						throw new ServiceCreationException(sprintf(
 							"Incompatible class %s in autowiring definition of service '%s'.",
 							$autowiredType,
-							$name
+							$name,
 						));
 					}
 				}

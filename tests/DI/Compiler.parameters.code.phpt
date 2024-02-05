@@ -68,5 +68,5 @@ $code = $compiler->addConfig($config)
 
 Assert::matchFile(
 	__DIR__ . '/expected/compiler.parameters.php',
-	$code
+	$code,
 );

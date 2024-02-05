@@ -43,7 +43,7 @@ final class Helpers
 		} elseif ($var instanceof Statement) {
 			return new Statement(
 				self::expand($var->getEntity(), $params, $recursive),
-				self::expand($var->arguments, $params, $recursive)
+				self::expand($var->arguments, $params, $recursive),
 			);
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
@@ -193,7 +193,7 @@ final class Helpers
 		} elseif ($config instanceof Statement) {
 			return new Statement(
 				self::prefixServiceName($config->getEntity(), $namespace),
-				self::prefixServiceName($config->arguments, $namespace)
+				self::prefixServiceName($config->arguments, $namespace),
 			);
 		} elseif (is_array($config)) {
 			foreach ($config as &$val) {
@@ -287,7 +287,7 @@ final class Helpers
 		throw new Nette\InvalidStateException(sprintf(
 			'Cannot convert %s to %s.',
 			is_scalar($value) ? "'$value'" : gettype($value),
-			$type
+			$type,
 		));
 	}
 }
