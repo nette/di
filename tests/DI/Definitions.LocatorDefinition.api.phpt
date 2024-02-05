@@ -50,11 +50,6 @@ interface Good1
 	public function get($name);
 }
 
-interface Good2
-{
-	public function create($name);
-}
-
 interface Good3
 {
 	public function createA(): stdClass;
@@ -124,14 +119,6 @@ Assert::noError(function () {
 	$def->setImplement(Good1::class);
 	Assert::same(Good1::class, $def->getImplement());
 	Assert::same(Good1::class, $def->getType());
-});
-
-
-Assert::noError(function () {
-	$def = new LocatorDefinition;
-	@$def->setImplement(Good2::class); // create($name) is deprecated
-	Assert::same(Good2::class, $def->getImplement());
-	Assert::same(Good2::class, $def->getType());
 });
 
 
