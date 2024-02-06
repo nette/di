@@ -63,9 +63,8 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			});
 		}
 
-		$method = Method::from([Container::class, 'getStaticParameters'])
+		$class->inheritMethod('getStaticParameters')
 			->addBody('return ?;', [array_diff_key($builder->parameters, $dynamicParams)]);
-		$class->addMember($method);
 
 		if (!$dynamicParams) {
 			return;
