@@ -301,6 +301,7 @@ class Compiler
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{
+		$configList = Helpers::expand($configList, $this->builder->parameters);
 		$extension = $this->extensions[self::Services];
 		assert($extension instanceof Extensions\ServicesExtension);
 		$extension->loadDefinitions($this->processSchema($extension->getConfigSchema(), [$configList]));
