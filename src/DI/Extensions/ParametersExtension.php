@@ -10,10 +10,8 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\Container;
 use Nette\DI\DynamicParameter;
 use Nette\DI\Helpers;
-use Nette\PhpGenerator\Method;
 
 
 /**
@@ -63,9 +61,8 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			});
 		}
 
-		$method = Method::from([Container::class, 'getStaticParameters'])
+		$class->inheritMethod('getStaticParameters')
 			->addBody('return ?;', [array_diff_key($builder->parameters, $dynamicParams)]);
-		$class->addMember($method);
 
 		if (!$dynamicParams) {
 			return;
