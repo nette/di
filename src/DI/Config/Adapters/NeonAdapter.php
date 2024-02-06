@@ -39,6 +39,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$decoder = new Neon\Decoder;
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
+		$node = $traverser->traverse($node, $this->firstClassCallableVisitor(...));
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
@@ -145,6 +146,19 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		}
 
 		return new Neon\Entity($entity, $val->arguments);
+	}
+
+
+	private function firstClassCallableVisitor(Neon\Node $node)
+	{
+		if ($node instanceof Neon\Node\EntityNode
+			&& count($node->attributes) === 1
+			&& $node->attributes[0]->key === null
+			&& $node->attributes[0]->value instanceof Neon\Node\LiteralNode
+			&& $node->attributes[0]->value->value === '...'
+		) {
+			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
+		}
 	}
 
 

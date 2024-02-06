@@ -93,7 +93,10 @@ class Resolver
 	{
 		$entity = $this->normalizeEntity($statement);
 
-		if (is_array($entity)) {
+		if ($statement->arguments === self::getFirstClassCallable()) {
+			return \Closure::class;
+
+		} elseif (is_array($entity)) {
 			if ($entity[0] instanceof Reference || $entity[0] instanceof Statement) {
 				$entity[0] = $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]));
 				if (!$entity[0]) {
@@ -186,6 +189,15 @@ class Resolver
 				: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
 
 		switch (true) {
+			case $statement->arguments === self::getFirstClassCallable():
+				if (!is_array($entity) || !PhpHelpers::isIdentifier($entity[1])) {
+					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', $entity));
+				}
+				if ($entity[0] instanceof Statement) {
+					$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
+				}
+				break;
+
 			case is_string($entity) && str_contains($entity, '?'): // PHP literal
 				break;
 
@@ -644,5 +656,13 @@ class Resolver
 			&& (class_exists($itemType) || interface_exists($itemType))
 				? $itemType
 				: null;
+	}
+
+
+	/** @internal */
+	public static function getFirstClassCallable(): array
+	{
+		static $x = [new Nette\PhpGenerator\Literal('...')];
+		return $x;
 	}
 }
