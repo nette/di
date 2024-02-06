@@ -157,9 +157,9 @@ final class Helpers
 				&& preg_match('#^([\w\\\\]+)::\w+$#D', $v, $m)
 				&& enum_exists($m[1])
 			) {
-				$args[$k] = new Nette\PhpGenerator\PhpLiteral($v);
+				$args[$k] = new Nette\PhpGenerator\Literal($v);
 			} elseif (is_string($v) && preg_match('#^[\w\\\\]*::[A-Z][a-zA-Z0-9_]*$#D', $v)) {
-				$args[$k] = new Nette\PhpGenerator\PhpLiteral(ltrim($v, ':'));
+				$args[$k] = new Nette\PhpGenerator\Literal(ltrim($v, ':'));
 			} elseif (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
 			} elseif (is_array($v)) {

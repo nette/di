@@ -9,7 +9,7 @@ declare(strict_types=1);
 use Nette\DI\Definitions\Statement;
 use Nette\DI\DynamicParameter;
 use Nette\DI\Helpers;
-use Nette\PhpGenerator\PhpLiteral;
+use Nette\PhpGenerator\Literal;
 use Tester\Assert;
 
 
@@ -47,8 +47,8 @@ Assert::same( // no double expand
 );
 
 Assert::equal(
-	new PhpLiteral('func()'),
-	Helpers::expand('%key%', ['key' => new PhpLiteral('func()')]),
+	new Literal('func()'),
+	Helpers::expand('%key%', ['key' => new Literal('func()')]),
 );
 
 Assert::equal(

@@ -44,15 +44,11 @@ class PhpGenerator
 		$this->className = $className;
 		$class = new Php\ClassType($this->className);
 		$class->setExtends(Container::class);
-		$class->addMethod('__construct')
-			->addBody('parent::__construct($params);')
-			->addParameter('params', [])
-				->setType('array');
+		$class->inheritMethod('__construct')
+			->addBody('parent::__construct($params);');
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
-			$class->addProperty($key)
-				->setProtected()
-				->setValue($value);
+			$class->inheritProperty($key)->setValue($value);
 		}
 
 		$definitions = $this->builder->getDefinitions();
@@ -66,8 +62,7 @@ class PhpGenerator
 			->setReturnType($className)
 			->setBody('return $this;');
 
-		$class->addMethod('initialize')
-			->setReturnType('void');
+		$class->inheritMethod('initialize');
 
 		return $class;
 	}

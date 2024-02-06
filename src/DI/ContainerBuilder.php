@@ -403,9 +403,9 @@ class ContainerBuilder
 	}
 
 
-	public static function literal(string $code, ?array $args = null): Nette\PhpGenerator\PhpLiteral
+	public static function literal(string $code, ?array $args = null): Nette\PhpGenerator\Literal
 	{
-		return new Nette\PhpGenerator\PhpLiteral(
+		return new Nette\PhpGenerator\Literal(
 			$args === null ? $code : (new Nette\PhpGenerator\Dumper)->format($code, ...$args),
 		);
 	}

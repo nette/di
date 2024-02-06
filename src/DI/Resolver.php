@@ -239,7 +239,7 @@ class Resolver
 				break;
 
 			case is_array($entity):
-				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::PHP_IDENT . ')+(\[\])?$#D', $entity[1])) {
+				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
 					throw new ServiceCreationException(sprintf(
 						"Expected function, method or property name, '%s' given.",
 						$entity[1],
