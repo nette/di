@@ -211,7 +211,8 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	private function deprecatedParametersVisitor(Neon\Node $node)
 	{
 		if (($node instanceof Neon\Node\StringNode || $node instanceof Neon\Node\LiteralNode)
-			&& str_contains((string) $node->value, '%parameters%')
+			&& is_string($node->value)
+			&& str_contains($node->value, '%parameters%')
 		) {
 			trigger_error('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')', E_USER_DEPRECATED);
 		}
