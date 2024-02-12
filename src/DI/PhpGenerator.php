@@ -181,7 +181,8 @@ declare(strict_types=1);
 				}
 			} elseif (
 				is_object($val)
-				&& !$val instanceof Php\Literal && !$val instanceof \stdClass && !$val instanceof \UnitEnum
+				&& !$val instanceof Php\Literal && !$val instanceof \DateTimeInterface
+				&& (new \ReflectionObject($val))->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED)
 			) {
 				trigger_error(sprintf('Nette DI: suspicious dumping of objects %s when generating the container', $val::class));
 			}

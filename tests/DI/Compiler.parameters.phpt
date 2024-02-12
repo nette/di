@@ -68,6 +68,19 @@ test('Statement within string expansion', function () {
 });
 
 
+test('Statement with datetime', function () {
+	$compiler = new DI\Compiler;
+	$container = createContainer($compiler, '
+	parameters:
+		datetime: 2000-01-01 00:00:00 +0000
+
+	services:
+		one: Service(%datetime%)
+	');
+
+	Assert::same('2000-01-01', $container->getService('one')->arg->format('Y-m-d'));
+});
+
 test('Statement within array expansion', function () {
 	$compiler = new DI\Compiler;
 	$container = createContainer($compiler, '
