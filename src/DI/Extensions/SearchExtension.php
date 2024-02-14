@@ -124,7 +124,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		foreach ($this->classes as $class => $foo) {
-			if ($builder->findByType($class)) {
+			if ($builder->findAutowired($class)) {
 				unset($this->classes[$class]);
 			}
 		}
