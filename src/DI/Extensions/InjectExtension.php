@@ -17,7 +17,7 @@ use function array_keys, array_reverse, array_search, array_unshift, get_class_m
 
 
 /**
- * Calls inject methods and fills @inject properties.
+ * Calls inject methods and fills #[Inject] properties.
  */
 final class InjectExtension extends DI\CompilerExtension
 {
@@ -112,7 +112,7 @@ final class InjectExtension extends DI\CompilerExtension
 
 
 	/**
-	 * Generates list of properties with annotation @inject.
+	 * Generates list of properties with attribute #[Inject].
 	 * @return array<string, string>
 	 * @internal
 	 */
@@ -122,6 +122,9 @@ final class InjectExtension extends DI\CompilerExtension
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
 			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
+				if (!$hasAttr) {
+					trigger_error('Annotation @inject is deprecated, use #[Nette\DI\Attributes\Inject] and native typehint (used in ' . Reflection::toString($rp) . ')', E_USER_DEPRECATED);
+				}
 				if (!$rp->isPublic() || $rp->isStatic() || $rp->isReadOnly()) {
 					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be static, readonly and must be public.', Reflection::toString($rp)));
 				}
