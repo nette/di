@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Attributes\Inject;
 use Tester\Assert;
 
 
@@ -21,20 +22,17 @@ class Foo implements IFoo
 
 class Test1
 {
-	/** @inject @var stdClass */
-	public $varA;
-
-	/** @var stdClass @inject */
-	public $varB;
+	#[Inject]
+	public stdClass $varA;
 }
 
 class Test2 extends Test1
 {
-	/** @var stdClass @inject */
-	public $varC;
+	#[Inject]
+	public stdClass $varC;
 
-	/** @var IFoo @inject */
-	public $varD;
+	#[Inject]
+	public IFoo $varD;
 }
 
 
@@ -50,6 +48,5 @@ $container = createContainer($builder);
 $test = new Test2;
 $container->callInjects($test);
 Assert::type(stdClass::class, $test->varA);
-Assert::type(stdClass::class, $test->varB);
 Assert::type(stdClass::class, $test->varC);
 Assert::type(Foo::class, $test->varD);
