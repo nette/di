@@ -7,6 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI;
+use Nette\DI\Attributes\Inject;
 use Tester\Assert;
 
 
@@ -23,16 +24,16 @@ class Foo implements IFoo
 
 class Test1
 {
-	/** @inject */
+	#[Inject]
 	public stdClass $varA;
 }
 
 class Test2 extends Test1
 {
-	/** @inject */
+	#[Inject]
 	public stdClass $varC;
 
-	/** @inject */
+	#[Inject]
 	public IFoo $varD;
 }
 

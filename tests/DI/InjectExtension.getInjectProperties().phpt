@@ -13,10 +13,10 @@ use Tester\Assert;
 
 class AClass
 {
-	/** @inject */
+	#[Inject]
 	public AInjected $varA;
 
-	/** @inject */
+	#[Inject]
 	public BInjected $varB;
 
 	public $varD;
@@ -27,7 +27,7 @@ class AClass
 
 class BadClass
 {
-	/** @inject */
+	#[Inject]
 	public AClass|stdClass $var;
 }
 
