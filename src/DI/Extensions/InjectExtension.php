@@ -122,6 +122,9 @@ final class InjectExtension extends DI\CompilerExtension
 				$rp->getAttributes(DI\Attributes\Inject::class)
 				|| DI\Helpers::parseAnnotation($rp, 'inject') !== null
 			) {
+				if (!$rp->getAttributes(DI\Attributes\Inject::class)) {
+					trigger_error('Annotation @inject is deprecated, use #[Nette\\DI\\Attributes\\Inject] (used in ' . Reflection::toString($rp) . ')', E_USER_DEPRECATED);
+				}
 				if (!$rp->isPublic() || $rp->isStatic() || $rp->isReadOnly()) {
 					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be static, readonly and must be public.', Reflection::toString($rp)));
 				}
