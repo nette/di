@@ -202,6 +202,7 @@ final class Helpers
 
 	/**
 	 * Returns an annotation value.
+	 * @deprecated
 	 */
 	public static function parseAnnotation(\Reflector $ref, string $name): ?string
 	{
@@ -211,6 +212,8 @@ final class Helpers
 
 		$re = '#[\s*]@' . preg_quote($name, '#') . '(?=\s|$)(?:[ \t]+([^@\s]\S*))?#';
 		if ($ref->getDocComment() && preg_match($re, trim($ref->getDocComment(), '/*'), $m)) {
+			$alt = $name === 'inject' ? '#[Nette\DI\Attributes\Inject]' : 'alternative';
+			trigger_error("Annotation @$name is deprecated, use $alt (used in " . Reflection::toString($ref) . ')', E_USER_DEPRECATED);
 			return $m[1] ?? '';
 		}
 
