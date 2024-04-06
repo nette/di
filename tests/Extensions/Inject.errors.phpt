@@ -5,6 +5,7 @@
  */
 
 use Nette\{DI, InvalidStateException};
+use Nette\DI\Attributes\Inject;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -12,35 +13,35 @@ require __DIR__ . '/../bootstrap.php';
 
 class ServiceA
 {
-	/** @var DateTimeImmutable @inject */
-	public $a;
+	#[Inject]
+	public DateTimeImmutable $a;
 }
 
 
 class ServiceB
 {
-	/** @var Unknown @inject */
-	public $a;
+	#[Inject]
+	public Unknown $a;
 }
 
 
 class ServiceC
 {
-	/** @inject */
+	#[Inject]
 	public $a;
 }
 
 
 class ServiceD
 {
-	/** @inject */
+	#[Inject]
 	protected $a;
 }
 
 
 class ServiceE
 {
-	/** @inject */
+	#[Inject]
 	public static $a;
 }
 
