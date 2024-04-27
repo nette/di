@@ -353,10 +353,6 @@ class ContainerBuilder
 		$defs = $this->definitions;
 		ksort($defs);
 		foreach ($defs as $name => $def) {
-			if ($def instanceof Definitions\ImportedDefinition) {
-				$meta['types'][$name] = $def->getType();
-			}
-
 			foreach ($def->getTags() as $tag => $value) {
 				$meta['tags'][$tag][$name] = $value;
 			}

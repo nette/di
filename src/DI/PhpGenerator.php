@@ -55,7 +55,6 @@ class PhpGenerator
 		}
 
 		$class->getMethod(Container::getMethodName(ContainerBuilder::ThisContainer))
-			->setReturnType($className)
 			->setBody('return $this;');
 
 		$class->inheritMethod('initialize');

@@ -23,9 +23,6 @@ class Container
 	 */
 	public $parameters = [];
 
-	/** @var string[]  service name => type */
-	protected array $types = [];
-
 	/** @var string[]  alias => service name */
 	protected array $aliases = [];
 
@@ -170,9 +167,6 @@ class Container
 		$method = self::getMethodName($name);
 		if (isset($this->aliases[$name])) {
 			return $this->getServiceType($this->aliases[$name]);
-
-		} elseif (isset($this->types[$name])) {
-			return $this->types[$name];
 
 		} elseif (isset($this->methods[$method])) {
 			return (string) (new \ReflectionMethod($this, $method))->getReturnType();

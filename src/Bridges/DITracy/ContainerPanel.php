@@ -55,7 +55,7 @@ class ContainerPanel implements Tracy\IBarPanel
 		foreach ($rc->getMethods() as $method) {
 			if (preg_match('#^createService.#', $method->getName())) {
 				$name = lcfirst(str_replace('__', '.', substr($method->getName(), 13)));
-				$services[$name] = $this->container->getServiceType($name);
+				$services[$name] = (string) $method->getReturnType();
 			}
 		}
 		ksort($services, SORT_NATURAL);

@@ -42,7 +42,7 @@ test('', function () {
 
 	Assert::match(
 		<<<'XX'
-			public function createServiceAbc(): void
+			public function createServiceAbc(): stdClass
 			{
 				throw new Nette\DI\ServiceCreationException('Unable to create imported service \'abc\', it must be added using addService()');
 			}

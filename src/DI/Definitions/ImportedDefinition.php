@@ -36,10 +36,9 @@ final class ImportedDefinition extends Definition
 
 	public function generateMethod(Nette\PhpGenerator\Method $method, PhpGenerator $generator): void
 	{
-		$method->setReturnType('void')
-			->setBody(
-				'throw new Nette\\DI\\ServiceCreationException(?);',
-				["Unable to create imported service '{$this->getName()}', it must be added using addService()"],
-			);
+		$method->setBody(
+			'throw new Nette\\DI\\ServiceCreationException(?);',
+			["Unable to create imported service '{$this->getName()}', it must be added using addService()"],
+		);
 	}
 }
