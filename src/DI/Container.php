@@ -100,10 +100,10 @@ class Container
 			$type = $service::class;
 		}
 
-		if (!isset($this->methods[self::getMethodName($name)])) {
-			$this->types[$name] = $type;
-
-		} elseif (($expectedType = $this->getServiceType($name)) && !is_a($type, $expectedType, allow_string: true)) {
+		if (isset($this->methods[self::getMethodName($name)])
+			&& ($expectedType = $this->getServiceType($name))
+			&& !is_a($type, $expectedType, allow_string: true)
+		) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s' must be instance of %s, %s.",
 				$name,
@@ -114,7 +114,6 @@ class Container
 
 		if ($service instanceof \Closure) {
 			$this->factories[$name] = $service;
-			$this->types[$name] = $type;
 		} else {
 			$this->instances[$name] = $service;
 		}
@@ -182,7 +181,7 @@ class Container
 			return (string) (new \ReflectionFunction($cb))->getReturnType();
 
 		} else {
-			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));
+			throw new MissingServiceException(sprintf("Type of service '%s' not known.", $name));
 		}
 	}
 

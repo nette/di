@@ -32,10 +32,14 @@ test('basic', function () {
 
 	Assert::same($one, $container->getService('one'));
 	Assert::same($two, $container->getService('two'));
-
-	Assert::same(Service::class, $container->getServiceType('one'));
-	Assert::same(Service::class, $container->getServiceType('two'));
 });
+
+
+testException('type not known', function () {
+	$container = new Container;
+	$container->addService('one', new Service);
+	$container->getServiceType('one');
+}, Nette\DI\MissingServiceException::class, "Type of service 'one' not known.");
 
 
 test('closure', function () {

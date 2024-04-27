@@ -60,7 +60,7 @@ test('closure & typehint', function () {
 
 	$container->addService('one', fn(): stdClass => new stdClass);
 
-	Assert::same(stdClass::class, $container->getServiceType('one'));
+	Assert::same('', $container->getServiceType('one'));
 	Assert::true($container->hasService('one'));
 	Assert::type(stdClass::class, $container->getService('one'));
 });
@@ -75,7 +75,7 @@ test('closure & matching typehint', function () {
 
 	$container->addService('typehint', fn(): MyClass => new MyClass);
 
-	Assert::same(MyClass::class, $container->getServiceType('typehint'));
+	Assert::same(stdClass::class, $container->getServiceType('typehint'));
 	Assert::true($container->hasService('typehint'));
 	Assert::type(MyClass::class, $container->getService('typehint'));
 });
