@@ -25,7 +25,7 @@ class Container
 	 */
 	public $parameters = [];
 
-	/** @var string[]  services name => type (complete list of available services) */
+	/** @var string[]  service name => type */
 	protected $types = [];
 
 	/** @var string[]  alias => service name */
@@ -34,16 +34,16 @@ class Container
 	/** @var array[]  tag name => service name => tag value */
 	protected $tags = [];
 
-	/** @var array[]  type => level => services */
+	/** @var array[]  type => (high, low, no) => services */
 	protected $wiring = [];
 
 	/** @var object[]  service name => instance */
 	private $instances = [];
 
-	/** @var array<string, true> circular reference detector */
+	/** @var array<string, true>  circular reference detector */
 	private $creating;
 
-	/** @var array<string, string|\Closure> */
+	/** @var array<string, int|\Closure> */
 	private $methods;
 
 
@@ -87,7 +87,7 @@ class Container
 
 
 	/**
-	 * Adds the service to the container.
+	 * Adds the service or its factory to the container.
 	 * @param  object  $service  service or its factory
 	 * @return static
 	 */
@@ -129,7 +129,7 @@ class Container
 
 
 	/**
-	 * Removes the service from the container.
+	 * Removes a service instance from the container.
 	 */
 	public function removeService(string $name): void
 	{
@@ -139,7 +139,7 @@ class Container
 
 
 	/**
-	 * Gets the service object by name.
+	 * Returns the service instance. If it has not been created yet, it creates it.
 	 * @throws MissingServiceException
 	 */
 	public function getService(string $name): object
@@ -157,7 +157,8 @@ class Container
 
 
 	/**
-	 * Gets the service object by name.
+	 * Returns the service instance. If it has not been created yet, it creates it.
+	 * Alias for getService().
 	 * @throws MissingServiceException
 	 */
 	public function getByName(string $name): object
@@ -167,7 +168,7 @@ class Container
 
 
 	/**
-	 * Gets the service type by name.
+	 * Returns type of the service.
 	 * @throws MissingServiceException
 	 */
 	public function getServiceType(string $name): string
@@ -200,7 +201,7 @@ class Container
 
 
 	/**
-	 * Is the service created?
+	 * Has a service instance been created?
 	 */
 	public function isCreated(string $name): bool
 	{
@@ -244,7 +245,7 @@ class Container
 
 
 	/**
-	 * Resolves service by type.
+	 * Returns an instance of the autowired service of the given type. If it has not been created yet, it creates it.
 	 * @template T of object
 	 * @param  class-string<T>  $type
 	 * @return ($throw is true ? T : ?T)
@@ -287,7 +288,7 @@ class Container
 
 
 	/**
-	 * Gets the autowired service names of the specified type.
+	 * Returns the names of autowired services of the given type.
 	 * @return string[]
 	 * @internal
 	 */
@@ -299,7 +300,7 @@ class Container
 
 
 	/**
-	 * Gets the service names of the specified type.
+	 * Returns the names of all services of the given type.
 	 * @return string[]
 	 */
 	public function findByType(string $type): array
@@ -312,7 +313,7 @@ class Container
 
 
 	/**
-	 * Gets the service names of the specified tag.
+	 * Returns the names of services with the given tag.
 	 * @return array of [service name => tag attributes]
 	 */
 	public function findByTag(string $tag): array
@@ -321,6 +322,9 @@ class Container
 	}
 
 
+	/**
+	 * Prevents circular references during service creation by checking if the service is already being created.
+	 */
 	private function preventDeadLock(string $key, \Closure $callback)
 	{
 		if (isset($this->creating[$key])) {
@@ -339,7 +343,7 @@ class Container
 
 
 	/**
-	 * Creates new instance using autowiring.
+	 * Creates an instance of the class and passes dependencies to the constructor using autowiring.
 	 * @throws Nette\InvalidArgumentException
 	 */
 	public function createInstance(string $class, array $args = []): object
@@ -360,7 +364,7 @@ class Container
 
 
 	/**
-	 * Calls all methods starting with "inject" using autowiring.
+	 * Calls all methods starting with 'inject' and passes dependencies to them via autowiring.
 	 */
 	public function callInjects(object $service): void
 	{
@@ -369,7 +373,7 @@ class Container
 
 
 	/**
-	 * Calls method using autowiring.
+	 * Calls the method and passes dependencies to it via autowiring.
 	 * @return mixed
 	 */
 	public function callMethod(callable $function, array $args = [])
@@ -388,6 +392,9 @@ class Container
 	}
 
 
+	/**
+	 * Returns the method name for creating a service.
+	 */
 	public static function getMethodName(string $name): string
 	{
 		if ($name === '') {
