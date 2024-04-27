@@ -257,22 +257,11 @@ class Container
 		} elseif ($throw) {
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
+			} elseif ($this->findByType($type)) {
+				throw new MissingServiceException(sprintf("Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.", $type));
+			} else {
+				throw new MissingServiceException(sprintf('Service of type %s not found. Did you add it to configuration file?', $type));
 			}
-
-			foreach ($this->methods as $method => $foo) {
-				$methodType = (new \ReflectionMethod(static::class, $method))->getReturnType()->getName();
-				if (is_a($methodType, $type, allow_string: true)) {
-					throw new MissingServiceException(sprintf(
-						"Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.",
-						$type,
-					));
-				}
-			}
-
-			throw new MissingServiceException(sprintf(
-				'Service of type %s not found. Did you add it to configuration file?',
-				$type,
-			));
 		}
 
 		return null;
