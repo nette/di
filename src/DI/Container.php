@@ -41,8 +41,11 @@ class Container
 	/** @var array<string, true>  circular reference detector */
 	private array $creating;
 
-	/** @var array<string, int|\Closure> */
+	/** @var array<string, int> */
 	private array $methods;
+
+	/** @var array<string, \Closure>  service name => \Closure */
+	private array $factories = [];
 
 
 	public function __construct(array $params = [])
@@ -110,7 +113,7 @@ class Container
 		}
 
 		if ($service instanceof \Closure) {
-			$this->methods[self::getMethodName($name)] = $service;
+			$this->factories[$name] = $service;
 			$this->types[$name] = $type;
 		} else {
 			$this->instances[$name] = $service;
@@ -175,6 +178,9 @@ class Container
 		} elseif (isset($this->methods[$method])) {
 			return (string) (new \ReflectionMethod($this, $method))->getReturnType();
 
+		} elseif ($cb = $this->factories[$name] ?? null) {
+			return (string) (new \ReflectionFunction($cb))->getReturnType();
+
 		} else {
 			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));
 		}
@@ -187,7 +193,7 @@ class Container
 	public function hasService(string $name): bool
 	{
 		$name = $this->aliases[$name] ?? $name;
-		return isset($this->methods[self::getMethodName($name)]) || isset($this->instances[$name]);
+		return isset($this->methods[self::getMethodName($name)]) || isset($this->instances[$name]) || isset($this->factories[$name]);
 	}
 
 
@@ -213,14 +219,13 @@ class Container
 	{
 		$name = $this->aliases[$name] ?? $name;
 		$method = self::getMethodName($name);
-		$callback = $this->methods[$method] ?? null;
-		if ($callback === null) {
+		if ($callback = ($this->factories[$name] ?? null)) {
+			$service = $this->preventDeadLock($name, fn() => $callback());
+		} elseif (isset($this->methods[$method])) {
+			$service = $this->preventDeadLock($name, fn() => $this->$method());
+		} else {
 			throw new MissingServiceException(sprintf("Service '%s' not found.", $name));
 		}
-
-		$service = $this->preventDeadLock($name, fn() => $callback instanceof \Closure
-			? $callback()
-			: $this->$method());
 
 		if (!is_object($service)) {
 			throw new Nette\UnexpectedValueException(sprintf(
