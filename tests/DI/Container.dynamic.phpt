@@ -64,6 +64,25 @@ test('closure with typehint', function () {
 });
 
 
+// getByType()
+Assert::exception(function () {
+	$container = new Container;
+	$container->addService('one', function () {
+		return new Service;
+	});
+	$container->getByType(Service::class);
+}, Nette\DI\MissingServiceException::class, 'Service of type Service not found. Did you add it to configuration file?');
+
+
+Assert::exception(function () {
+	$container = new Container;
+	$container->addService('one', function (): Service {
+		return new Service;
+	});
+	$container->getByType(Service::class);
+}, Nette\DI\MissingServiceException::class, 'Service of type Service not found. Did you add it to configuration file?');
+
+
 // bad closure
 Assert::exception(function () {
 	$container = new Container;
