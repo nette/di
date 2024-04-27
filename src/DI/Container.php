@@ -48,10 +48,7 @@ class Container
 	public function __construct(array $params = [])
 	{
 		$this->parameters = $params + $this->getStaticParameters();
-		$this->methods = array_flip(array_filter(
-			get_class_methods($this),
-			fn($s) => preg_match('#^createService.#', $s),
-		));
+		$this->methods = array_flip(get_class_methods($this));
 	}
 
 
@@ -372,7 +369,7 @@ class Container
 	/**
 	 * Returns the method name for creating a service.
 	 */
-	public static function getMethodName(string $name): string
+	final public static function getMethodName(string $name): string
 	{
 		if ($name === '') {
 			throw new Nette\InvalidArgumentException('Service name must be a non-empty string.');
