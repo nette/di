@@ -42,7 +42,9 @@ class PhpGenerator
 			->addBody('parent::__construct($params);');
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
-			$class->inheritProperty($key)->setValue($value);
+			$class->inheritProperty($key)
+				->setComment(null)
+				->setValue($value);
 		}
 
 		$definitions = $this->builder->getDefinitions();
