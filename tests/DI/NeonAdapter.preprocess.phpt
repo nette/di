@@ -98,3 +98,24 @@ Assert::equal(
 	],
 	$data,
 );
+
+
+// constants
+$data = @$adapter->load(Tester\FileMock::create('
+- Foo::Bar
+- ArrayIterator::STD_PROP_LIST
+- "ArrayIterator::STD_PROP_LIST"
+- ::PHP_INT_MAX
+- ArrayIterator::STD_PROP_LIST()
+', 'neon'));
+
+Assert::equal(
+	[
+		'Foo::Bar',
+		ArrayIterator::STD_PROP_LIST,
+		'ArrayIterator::STD_PROP_LIST',
+		PHP_INT_MAX,
+		new Statement('ArrayIterator::STD_PROP_LIST'),
+	],
+	$data,
+);

@@ -108,7 +108,7 @@ test('NOT class constant as parameter', function () {
 		one: Service(%bar%)
 	');
 
-	Assert::same(['bar' => 'Service::Name'], $container->getParameters()); // not resolved
+	Assert::same(['bar' => 'hello'], $container->getParameters());
 	Assert::same('hello', $container->getService('one')->arg);
 });
 
