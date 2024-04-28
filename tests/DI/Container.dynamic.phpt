@@ -18,9 +18,8 @@ class Service
 }
 
 
-$container = new Container;
-
-test('basic', function () use ($container) {
+test('basic', function () {
+	$container = new Container;
 	$one = new Service;
 	$two = new Service;
 	$container->addService('one', $one);
@@ -39,8 +38,9 @@ test('basic', function () use ($container) {
 });
 
 
-test('closure', function () use ($container) {
-	@$container->addService('four', function () { // @ triggers service should be defined as "imported"
+test('closure', function () {
+	$container = new Container;
+	$container->addService('four', function () {
 		return new Service;
 	});
 
@@ -54,8 +54,9 @@ test('closure', function () use ($container) {
 });
 
 
-test('closure with typehint', function () use ($container) {
-	@$container->addService('five', function (): Service { // @ triggers service should be defined as "imported"
+test('closure with typehint', function () {
+	$container = new Container;
+	$container->addService('five', function (): Service {
 		return new Service;
 	});
 
@@ -64,7 +65,8 @@ test('closure with typehint', function () use ($container) {
 
 
 // bad closure
-Assert::exception(function () use ($container) {
-	@$container->addService('six', function () {}); // @ triggers service should be defined as "imported"
+Assert::exception(function () {
+	$container = new Container;
+	$container->addService('six', function () {});
 	$container->getService('six');
 }, Nette\UnexpectedValueException::class, "Unable to create service 'six', value returned by closure is not object.");
