@@ -30,7 +30,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		$this->getContainerBuilder()->resolve();
 		foreach ($this->config as $type => $info) {

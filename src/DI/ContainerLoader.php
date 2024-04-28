@@ -18,8 +18,8 @@ use Nette;
 class ContainerLoader
 {
 	public function __construct(
-		private string $tempDirectory,
-		private bool $autoRebuild = false,
+		private readonly string $tempDirectory,
+		private readonly bool $autoRebuild = false,
 	) {
 	}
 

@@ -28,8 +28,7 @@ class ContainerBuilder
 	/** @deprecated use ContainerBuilder::ThisContainer */
 	public const THIS_CONTAINER = self::ThisContainer;
 
-	/** @var array */
-	public $parameters = [];
+	public array $parameters = [];
 
 	/** @var Definition[] */
 	private array $definitions = [];

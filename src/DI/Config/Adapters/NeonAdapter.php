@@ -149,7 +149,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function firstClassCallableVisitor(Neon\Node $node)
+	private function firstClassCallableVisitor(Neon\Node $node): void
 	{
 		if ($node instanceof Neon\Node\EntityNode
 			&& count($node->attributes) === 1
@@ -162,7 +162,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function removeUnderscoreVisitor(Neon\Node $node)
+	private function removeUnderscoreVisitor(Neon\Node $node): void
 	{
 		if (!$node instanceof Neon\Node\EntityNode) {
 			return;
@@ -189,7 +189,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function convertAtSignVisitor(Neon\Node $node)
+	private function convertAtSignVisitor(Neon\Node $node): void
 	{
 		if ($node instanceof Neon\Node\StringNode) {
 			if (str_starts_with($node->value, '@@')) {
@@ -208,7 +208,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function deprecatedParametersVisitor(Neon\Node $node)
+	private function deprecatedParametersVisitor(Neon\Node $node): void
 	{
 		if (($node instanceof Neon\Node\StringNode || $node instanceof Neon\Node\LiteralNode)
 			&& is_string($node->value)

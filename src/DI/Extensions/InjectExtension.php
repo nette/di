@@ -32,7 +32,7 @@ final class InjectExtension extends DI\CompilerExtension
 	}
 
 
-	public function beforeCompile()
+	public function beforeCompile(): void
 	{
 		foreach ($this->getContainerBuilder()->getDefinitions() as $def) {
 			if ($def->getTag(self::TagInject)) {
