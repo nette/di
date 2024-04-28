@@ -43,6 +43,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
+		$node = $traverser->traverse($node, $this->resolveConstants(...));
 		return $this->process((array) $node->toValue());
 	}
 
@@ -215,6 +216,27 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			&& str_contains($node->value, '%parameters%')
 		) {
 			trigger_error('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')', E_USER_DEPRECATED);
+		}
+	}
+
+
+	private function resolveConstants(Neon\Node $node): void
+	{
+		$items = match (true) {
+			$node instanceof Neon\Node\ArrayNode => $node->items,
+			$node instanceof Neon\Node\EntityNode => $node->attributes,
+			default => null,
+		};
+		if ($items) {
+			foreach ($items as $item) {
+				if ($item->value instanceof Neon\Node\LiteralNode
+					&& is_string($item->value->value)
+					&& preg_match('#^([\w\\\\]*)::[A-Z]\w+$#D', $item->value->value)
+					&& defined(ltrim($item->value->value, ':'))
+				) {
+					$item->value->value = constant(ltrim($item->value->value, ':'));
+				}
+			}
 		}
 	}
 }
