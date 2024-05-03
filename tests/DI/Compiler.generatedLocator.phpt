@@ -42,8 +42,7 @@ interface LocatorFactoryN
 }
 
 
-// create($name) is deprecated
-$container = @createContainer(new DI\Compiler, '
+$container = createContainer(new DI\Compiler, '
 services:
 	- LoremChild
 
