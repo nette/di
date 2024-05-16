@@ -141,7 +141,6 @@ class Compiler
 
 	/**
 	 * Returns configuration.
-	 * @deprecated
 	 */
 	public function getConfig(): array
 	{
