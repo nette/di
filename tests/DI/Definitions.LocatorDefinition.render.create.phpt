@@ -22,7 +22,7 @@ interface Good
 test('', function () {
 	$def = new LocatorDefinition;
 	$def->setName('abc');
-	$def->setImplement(Good::class);
+	@$def->setImplement(Good::class); // create($name) is deprecated
 	$def->setReferences(['first' => '@a', 'second' => 'stdClass']);
 
 	$builder = new Nette\DI\ContainerBuilder;
