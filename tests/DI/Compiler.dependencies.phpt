@@ -22,7 +22,7 @@ Assert::same(
 		[],
 		[],
 		[],
-		'40cd750bba9870f18aada2478b24840a',
+		'91a436edb651f369cac5551729145e16',
 	],
 	$compiler->exportDependencies(),
 );
@@ -37,7 +37,7 @@ Assert::same(
 		[],
 		[],
 		[],
-		'40cd750bba9870f18aada2478b24840a',
+		'91a436edb651f369cac5551729145e16',
 	],
 	$compiler->exportDependencies(),
 );
@@ -52,7 +52,7 @@ Assert::same(
 		[],
 		[],
 		[],
-		'40cd750bba9870f18aada2478b24840a',
+		'91a436edb651f369cac5551729145e16',
 	],
 	$compiler->exportDependencies(),
 );
@@ -87,7 +87,7 @@ Assert::same(
 		[__FILE__ => filemtime(__FILE__)],
 		['Dep1'],
 		[],
-		'1cde52df4926c96b79eaea6570f591d6',
+		'54d3c04c0d3d52db5d38d1f0f63b9f5d',
 	],
 	$compiler->exportDependencies(),
 );

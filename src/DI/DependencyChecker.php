@@ -166,7 +166,7 @@ class DependencyChecker
 			];
 		}
 
-		return md5(serialize($hash));
+		return hash('xxh128', serialize($hash));
 	}
 
 
