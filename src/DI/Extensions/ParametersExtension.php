@@ -61,7 +61,8 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			});
 		}
 
-		$class->inheritMethod('getStaticParameters')
+		$manipulator = new Nette\PhpGenerator\ClassManipulator($class);
+		$manipulator->inheritMethod('getStaticParameters')
 			->addBody('return ?;', [array_diff_key($builder->parameters, $dynamicParams)]);
 
 		if (!$dynamicParams) {
@@ -70,7 +71,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 		$resolver = new Nette\DI\Resolver($builder);
 		$generator = new Nette\DI\PhpGenerator($builder);
-		$method = $class->inheritMethod('getDynamicParameter');
+		$method = $manipulator->inheritMethod('getDynamicParameter');
 		$method->addBody('return match($key) {');
 		foreach ($dynamicParams as $key => $foo) {
 			$value = Helpers::expand($this->config[$key] ?? null, $builder->parameters);
@@ -84,7 +85,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		$method->addBody("\tdefault => parent::getDynamicParameter(\$key),\n};");
 
 		if ($preload = array_keys($dynamicParams, true, true)) {
-			$method = $class->inheritMethod('getParameters');
+			$method = $manipulator->inheritMethod('getParameters');
 			$method->addBody('array_map($this->getParameter(...), ?);', [$preload]);
 			$method->addBody('return parent::getParameters();');
 		}

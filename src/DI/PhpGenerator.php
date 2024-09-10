@@ -38,11 +38,12 @@ class PhpGenerator
 		$this->className = $className;
 		$class = new Php\ClassType($this->className);
 		$class->setExtends(Container::class);
-		$class->inheritMethod('__construct')
+		$manipulator = new Php\ClassManipulator($class);
+		$manipulator->inheritMethod('__construct')
 			->addBody('parent::__construct($params);');
 
 		foreach ($this->builder->exportMeta() as $key => $value) {
-			$class->inheritProperty($key)
+			$manipulator->inheritProperty($key)
 				->setComment(null)
 				->setValue($value);
 		}
@@ -57,7 +58,7 @@ class PhpGenerator
 		$class->getMethod(Container::getMethodName(ContainerBuilder::ThisContainer))
 			->setBody('return $this;');
 
-		$class->inheritMethod('initialize');
+		$manipulator->inheritMethod('initialize');
 
 		return $class;
 	}
