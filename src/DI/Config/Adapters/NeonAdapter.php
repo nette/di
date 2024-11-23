@@ -226,10 +226,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			foreach ($items as $item) {
 				if ($item->value instanceof Neon\Node\LiteralNode
 					&& is_string($item->value->value)
-					&& preg_match('#^([\w\\\\]*)::[A-Z]\w+$#D', $item->value->value)
-					&& defined(ltrim($item->value->value, ':'))
-				) {
-					$item->value->value = constant(ltrim($item->value->value, ':'));
+                    && preg_match('#^([\w\\\\]*)::(\$[a-z_]|[A-Z])\w+$#D', $item->value->value)    //  constant/stat property
+                ) {
+                    $item->value->value = new Nette\PhpGenerator\Literal(ltrim($item->value->value, ':'));
 				}
 			}
 		}
