@@ -18,6 +18,7 @@ use Nette\Utils\Arrays;
 use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
 use Nette\Utils\Validators;
+use ReflectionProperty;
 
 
 /**
@@ -105,7 +106,24 @@ class Resolver
 			}
 
 			try {
-				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+                if(str_starts_with($entity[1], '$')){
+                    $property = substr($entity[1], 1);
+                    $isStatic = false;
+                    if(str_starts_with($property, '$')){
+                        $isStatic = true;
+                        $property = substr($property, 1);
+                    }
+                    $reflection = new ReflectionProperty($entity[0], $property);
+                    if(!$reflection->isPublic() || $isStatic !== $reflection->isStatic()){
+                        throw new ServiceCreationException($isStatic ? 'Static property' : 'Property'." $property is not accessible.", 0);
+                    }
+                    return null;
+
+                }else{
+                    $reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+                }
+
+
 				assert($reflection instanceof \ReflectionMethod || $reflection instanceof \ReflectionFunction);
 				$refClass = $reflection instanceof \ReflectionMethod
 					? $reflection->getDeclaringClass()
