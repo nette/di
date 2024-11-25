@@ -173,6 +173,7 @@ class DefinitionSchema implements Schema
 			'tags' => Expect::array(),
 			'reset' => Expect::array(),
 			'alteration' => Expect::bool(),
+			'lazy' => Expect::bool(),
 		]);
 	}
 

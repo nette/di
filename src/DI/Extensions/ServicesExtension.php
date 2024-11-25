@@ -113,6 +113,10 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		if (isset($config->inject)) {
 			$definition->addTag(InjectExtension::TagInject, $config->inject);
 		}
+
+		if (isset($config->lazy)) {
+			$definition->lazy = $config->lazy;
+		}
 	}
 
 
