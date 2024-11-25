@@ -49,6 +49,7 @@ Assert::equal([
 			'tags' => [],
 			'reset' => [],
 			'alteration' => null,
+			'lazy' => null,
 			'defType' => Nette\DI\Definitions\ServiceDefinition::class,
 		],
 	],

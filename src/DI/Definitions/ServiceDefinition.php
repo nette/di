@@ -11,6 +11,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\ServiceCreationException;
+use Nette\Utils\Strings;
 
 
 /**
@@ -23,6 +24,8 @@ use Nette\DI\ServiceCreationException;
 final class ServiceDefinition extends Definition
 {
 	use Nette\SmartObject;
+
+	public ?bool $lazy = null;
 
 	private Statement $creator;
 
@@ -181,18 +184,33 @@ final class ServiceDefinition extends Definition
 
 	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
-		$code = $this->creator->generateCode($generator) . ";\n";
-		if (!$this->setup) {
-			return 'return ' . $code;
+		$lines = [];
+		foreach ([$this->creator, ...$this->setup] as $stmt) {
+			$lines[] = $stmt->generateCode($generator) . ";\n";
 		}
 
-		$code = '$service = ' . $code;
-		foreach ($this->setup as $setup) {
-			$code .= $setup->generateCode($generator) . ";\n";
-		}
+		$class = $this->creator->getEntity();
+		$lazy = PHP_VERSION_ID >= 80400
+			&& $this->lazy
+			&& is_string($class)
+			&& ($ancestor = ($tmp = class_parents($class)) ? array_pop($tmp) : $class)
+			&& !(new \ReflectionClass($ancestor))->isInternal()
+			&& !preg_grep('#(?:func_get_arg|func_num_args)#i', $lines); // latteFactory workaround
 
-		$code .= 'return $service;';
-		return $code;
+		if ($lazy) {
+			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')
+				? $generator->formatPhp("\$service->__construct(...?:);\n", [$this->creator->arguments])
+				: '';
+			return "return new ReflectionClass($class::class)->newLazyGhost(function (\$service) {\n"
+				. Strings::indent(implode('', $lines))
+				. '});';
+
+		} elseif (count($lines) === 1) {
+			return 'return ' . $lines[0];
+
+		} else {
+			return '$service = ' . implode('', $lines) . 'return $service;';
+		}
 	}
 
 
