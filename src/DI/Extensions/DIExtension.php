@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Definitions\ServiceDefinition;
 use Tracy;
 
 
@@ -36,6 +37,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 			public array $excluded = [];
 			public ?string $parentClass = null;
 			public object $export;
+			public bool $lazy = false;
 		};
 		$this->config->export = new class {
 			public bool $parameters = true;
@@ -53,6 +55,19 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses($this->config->excluded);
+	}
+
+
+	public function beforeCompile(): void
+	{
+		if ($this->config->lazy && PHP_VERSION_ID >= 80400) {
+			$builder = $this->getContainerBuilder();
+			foreach ($builder->getDefinitions() as $def) {
+				if ($def instanceof ServiceDefinition) {
+					$def->lazy ??= true;
+				}
+			}
+		}
 	}
 
 
