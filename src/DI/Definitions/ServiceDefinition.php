@@ -169,7 +169,16 @@ final class ServiceDefinition extends Definition
 	public function complete(Nette\DI\Resolver $resolver): void
 	{
 		$entity = $this->creator->getEntity();
-		if ($entity instanceof Reference && !$this->creator->arguments && !$this->setup) {
+        foreach($this->creator->arguments as &$statement){
+            if(is_string($statement)){
+                if(str_starts_with($statement, '@') && count(explode('::', $statement)) >= 3){   // omit @service::member
+                    $statement = $this->parseChain($statement);
+                }
+            }elseif($statement instanceof Statement){
+                $this->normalizeStatement($statement);
+            }
+        }
+        if ($entity instanceof Reference && !$this->creator->arguments && !$this->setup) {
 			$ref = $resolver->normalizeReference($entity);
 			$this->setCreator([new Reference(Nette\DI\ContainerBuilder::ThisContainer), 'getService'], [$ref->getValue()]);
 		}
@@ -177,9 +186,110 @@ final class ServiceDefinition extends Definition
 		$this->creator = $resolver->completeStatement($this->creator);
 
 		foreach ($this->setup as &$setup) {
+            foreach($setup->arguments as &$statement){
+                if(is_string($statement)){
+                    if(str_starts_with($statement, '@') && count(explode('::', $statement)) >= 3){
+                        $statement = $this->parseChain($statement);
+                    }
+                }elseif($statement instanceof Statement){
+                    $this->normalizeStatement($statement);
+                }
+            }
 			$setup = $resolver->completeStatement($setup, true);
 		}
 	}
+
+
+    private function parseChain(string $statement): Statement
+    {
+        $members = explode('::', $statement);
+        $entity = [];
+        $entity[0] = new Reference(substr(array_shift($members), 1));
+        while($property = array_shift($members)){
+            $entity[1] = '$'.$property;      // in chain all members are properties
+            $statement = new Statement($entity);
+            $entity = [];
+            $entity[0] = $statement;
+        }
+        return $statement;
+    }
+
+
+    private function parseSubChain(Statement $statement): Statement
+    {
+        $entity = $statement->entity;
+        if($entity[0] instanceof Reference && !str_ends_with($entity[1], '()')){
+            $entity[1] .= '()';     // fix different syntax
+        }
+        $members = explode('::', $entity[1]);
+        while($member = array_shift($members)){
+            if(count($members) >= 1){
+                $member = '$'.$member;
+
+            }elseif(str_ends_with($member, '()')){
+                $member = substr($member, 0, -2);
+
+            }elseif($entity[0] instanceof Statement){
+                $member = '$'.$member;
+            }
+
+            $entity[1] = $member;
+            $statement = new Statement($entity);
+            $entity = [];
+            $entity[0] = $statement;
+        }
+
+        return $statement;
+    }
+
+
+    private function normalizeStatement(Statement &$input, bool $recursive = false): void  // & needed
+    {
+        if($recursive){
+            $statement = $input->entity[0];
+
+        }else{
+            $statement = $input;
+        }
+        if(is_array($statement->entity)){
+            $entity = $statement->entity;
+            if($entity[0] instanceof Statement){
+                if(is_string($entity[1])){
+                    if(str_contains($entity[1], '::')){
+                        $statement = $this->parseSubChain($statement);
+                        if($recursive){
+                            $input->setEntityStatement($statement);
+
+                        }else{
+                            $input = $statement;
+                        }
+
+                    }else{
+                        $this->normalizeMember($statement);
+                        $this->normalizeStatement($statement, recursive: true);
+                    }
+                }
+
+            }elseif($entity[0] instanceof Reference){
+                $statement = $this->parseSubChain($statement);
+                if($recursive){
+                    $input->setEntityStatement($statement);
+
+                }else{
+                    $input = $statement;
+                }
+
+            }
+        }
+    }
+
+
+    private function normalizeMember(Statement $statement): void
+    {
+        $entity = $statement->entity;
+        $normalizedValue = str_ends_with($entity[1], '()') ? substr($entity[1], 0, -2) : '$'.$entity[1];
+        $statement->setEntityMember($normalizedValue);
+    }
 
 
 	private function prependSelf(Statement $setup): Statement

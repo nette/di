@@ -129,15 +129,17 @@ declare(strict_types=1);
 
 			case is_array($entity):
 				switch (true) {
-					case $entity[1][0] === '$': // property getter, setter or appender
+					case $entity[1][0] === '$': // property getter, setter, appender or constant
 						$name = substr($entity[1], 1);
 						if ($append = (str_ends_with($name, '[]'))) {
 							$name = substr($name, 0, -2);
 						}
 
-						$prop = $entity[0] instanceof Reference
-							? $this->formatPhp('?->?', [$entity[0], $name])
-							: $this->formatPhp('?::$?', [$entity[0], $name]);
+                        $prop = match(true){
+                            $name[0] === '$' => $this->formatPhp('?::$?', [$entity[0], substr($name, 1)]),  // static property
+                            (bool)preg_match('#^[A-Z][A-Za-z_]*$#',$name) => $this->formatPhp('?::?', [$entity[0], $name]),  // Constant
+                            default => $this->formatPhp('?->?', [$entity[0], $name]), // property
+                        };
 						return $arguments
 							? $this->formatPhp(($append ? '?[]' : '?') . ' = ?', [new Php\Literal($prop), $arguments[0]])
 							: $prop;

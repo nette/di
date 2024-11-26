@@ -18,6 +18,8 @@ use Nette\Utils\Arrays;
 use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
 use Nette\Utils\Validators;
+use ReflectionProperty;
+use Nette\Utils\ReflectionMethod;
 
 
 /**
@@ -105,7 +107,24 @@ class Resolver
 			}
 
 			try {
-				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+                if(str_starts_with($entity[1], '$')){
+                    $property = substr($entity[1], 1);
+                    $isStatic = false;
+                    if(str_starts_with($property, '$')){
+                        $isStatic = true;
+                        $property = substr($property, 1);
+                    }
+                    $reflection = new ReflectionProperty($entity[0], $property);
+                    if(!$reflection->isPublic() || $isStatic !== $reflection->isStatic()){
+                        throw new ServiceCreationException($isStatic ? 'Static property' : 'Property'." $property is not accessible.", 0);
+                    }
+                    return null;
+
+                }else{
+                    $reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+                }
+
+
 				assert($reflection instanceof \ReflectionMethod || $reflection instanceof \ReflectionFunction);
 				$refClass = $reflection instanceof \ReflectionMethod
 					? $reflection->getDeclaringClass()
@@ -225,7 +244,7 @@ class Resolver
 				break;
 
 			case is_array($entity):
-				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
+                if (!preg_match('#^\$?\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+((\[\])|(\(\)))?$#D', $entity[1])) {  // extend syntax to $$member/member()
 					throw new ServiceCreationException(sprintf(
 						"Expected function, method or property name, '%s' given.",
 						$entity[1],
@@ -458,7 +477,7 @@ class Resolver
 				$pair = explode('::', substr($val, 1), 2);
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
-				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
+                } elseif (preg_match('#^(([A-Z][a-zA-Z0-9_]*)|(\$[a-zA-Z0-9_]+))$#D', $pair[1])) { // @service::Constant/$staticProperty
 					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);

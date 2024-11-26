@@ -62,4 +62,27 @@ final class Statement implements Nette\Schema\DynamicParameter
 	{
 		return $this->entity;
 	}
+
+
+    public function setEntityMember(string $value): void
+    {
+        if(!is_array($this->entity) || !isset($this->entity[1])){
+            throw new Nette\InvalidStateException("Statement entity is not array, or entity member not exists.");
+
+        }else{
+            $this->entity[1] = $value;
+        }
+    }
+
+
+    public function setEntityStatement(Statement $value): void
+    {
+        if(!is_array($this->entity) || !isset($this->entity[0])){
+            throw new Nette\InvalidStateException("Statement entity is not array, or entity statement not exists.");
+
+        }else{
+            $this->entity[0] = $value;
+        }
+    }
+
 }
