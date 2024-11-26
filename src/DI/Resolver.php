@@ -477,7 +477,7 @@ class Resolver
 				$pair = explode('::', substr($val, 1), 2);
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
-                } elseif (preg_match('#^([A-Z][a-zA-Z0-9_]*)|(\$[a-zA-Z0-9_]+$)$#D', $pair[1])) { // @service::Constant/$staticProperty
+                } elseif (preg_match('#^(([A-Z][a-zA-Z0-9_]*)|(\$[a-zA-Z0-9_]+))$#D', $pair[1])) { // @service::Constant/$staticProperty
 					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
