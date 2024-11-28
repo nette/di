@@ -110,6 +110,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))
 				&& (!$acceptParent || Arrays::some($acceptParent, fn($nm) => $rc->isSubclassOf($nm)))
 				&& (!$rejectParent || Arrays::every($rejectParent, fn($nm) => !$rc->isSubclassOf($nm)))
+				&& (self::hasAutowireArguments($rc->getConstructor()))
 			) {
 				$found[] = $rc->name;
 			}
@@ -155,5 +156,19 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		}
 
 		return $res ? '#^(' . implode('|', $res) . ')$#i' : null;
+	}
+
+
+	private static function hasAutowireArguments(?\ReflectionMethod $constructor): bool
+	{
+		if ($constructor !== null) {
+			try {
+				Nette\DI\Resolver::autowireArguments($constructor, [], static fn() => new \stdClass());
+			} catch (Nette\DI\ServiceCreationException) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
