@@ -166,7 +166,7 @@ class DependencyChecker
 			];
 		}
 
-		return md5(serialize($hash));
+		return hash('xxh128', serialize($hash));
 	}
 
 
@@ -179,7 +179,7 @@ class DependencyChecker
 				(string) $param->getType(),
 				$param->isVariadic(),
 				$param->isDefaultValueAvailable()
-					? is_object($tmp = $param->getDefaultValue()) ? ['object' => $tmp::class] : ['value' => $tmp]
+					? is_object($tmp = Reflection::getParameterDefaultValue($param)) ? ['object' => $tmp::class] : ['value' => $tmp]
 					: null,
 			];
 		}

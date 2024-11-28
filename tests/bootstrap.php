@@ -59,7 +59,7 @@ class Notes
 
 function createContainer($source, $config = null, array $params = []): ?Nette\DI\Container
 {
-	$class = 'Container' . md5((string) lcg_value());
+	$class = 'Container' . @++$GLOBALS['counter'];
 	if ($source instanceof Nette\DI\ContainerBuilder) {
 		$source->complete();
 		$code = (new Nette\DI\PhpGenerator($source))->generate($class);

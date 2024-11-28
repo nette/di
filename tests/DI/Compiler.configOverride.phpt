@@ -21,7 +21,7 @@ class Ipsum
 	}
 }
 
-$class = 'Container' . md5((string) lcg_value());
+$class = 'Container';
 $compiler = new DI\Compiler;
 $compiler->addConfig([
 	'services' => [
