@@ -22,7 +22,7 @@ class DependencyChecker
 {
 	public const Version = 1;
 
-	/** @deprecated use DependencyChecker::Version */
+	#[\Deprecated('use DependencyChecker::Version')]
 	public const VERSION = self::Version;
 
 	/** @var array<ReflectionClass|\ReflectionFunctionAbstract|string> */
