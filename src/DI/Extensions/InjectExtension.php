@@ -21,7 +21,7 @@ final class InjectExtension extends DI\CompilerExtension
 {
 	public const TagInject = 'nette.inject';
 
-	/** @deprecated use InjectExtension::TagInject */
+	#[\Deprecated('use InjectExtension::TagInject', since: '3.1')]
 	public const TAG_INJECT = self::TagInject;
 
 

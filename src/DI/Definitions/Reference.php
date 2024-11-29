@@ -15,7 +15,7 @@ final readonly class Reference
 {
 	public const Self = 'self';
 
-	/** @deprecated use Reference::Self */
+	#[\Deprecated('use Reference::Self', since: '3.1')]
 	public const SELF = self::Self;
 
 
