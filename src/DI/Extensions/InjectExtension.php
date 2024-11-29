@@ -120,7 +120,7 @@ final class InjectExtension extends DI\CompilerExtension
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
 			if (
 				$rp->getAttributes(DI\Attributes\Inject::class)
-				|| DI\Helpers::parseAnnotation($rp, 'inject') !== null
+				|| @DI\Helpers::parseAnnotation($rp, 'inject') !== null // @deprecated
 			) {
 				if (!$rp->getAttributes(DI\Attributes\Inject::class)) {
 					trigger_error('Annotation @inject is deprecated, use #[Nette\\DI\\Attributes\\Inject] (used in ' . Reflection::toString($rp) . ')', E_USER_DEPRECATED);

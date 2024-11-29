@@ -202,9 +202,7 @@ final class Helpers
 	}
 
 
-	/**
-	 * Returns an annotation value.
-	 */
+	#[\Deprecated]
 	public static function parseAnnotation(\Reflector $ref, string $name): ?string
 	{
 		if (!Reflection::areCommentsAvailable()) {
