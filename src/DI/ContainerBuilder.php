@@ -23,10 +23,10 @@ class ContainerBuilder
 		ThisService = 'self',
 		ThisContainer = 'container';
 
-	/** @deprecated use ContainerBuilder::ThisService */
+	#[\Deprecated('use ContainerBuilder::ThisService')]
 	public const THIS_SERVICE = self::ThisService;
 
-	/** @deprecated use ContainerBuilder::ThisContainer */
+	#[\Deprecated('use ContainerBuilder::ThisContainer')]
 	public const THIS_CONTAINER = self::ThisContainer;
 
 	public array $parameters = [];
