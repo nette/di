@@ -17,7 +17,7 @@ final class Reference
 {
 	public const Self = 'self';
 
-	/** @deprecated use Reference::Self */
+	#[\Deprecated('use Reference::Self')]
 	public const SELF = self::Self;
 
 	private string $value;
