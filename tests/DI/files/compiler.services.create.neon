@@ -11,9 +11,7 @@ services:
 
 	serviceAsParam: Ipsum(@one)
 	calledService: @one()
-	calledServiceWithArgs: @one(1)
 	calledServiceAsParam: Ipsum(@one())
-	calledServiceWithArgsAsParam: Ipsum(@one(1))
 
 	one:
 		type: %class%
