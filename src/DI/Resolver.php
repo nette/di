@@ -258,12 +258,7 @@ class Resolver
 
 				switch (true) {
 					case $entity[0] === '': // function call
-						if (!Arrays::isList($arguments)) {
-							throw new ServiceCreationException(sprintf(
-								'Unable to pass specified arguments to %s.',
-								$entity[0],
-							));
-						} elseif (!function_exists($entity[1])) {
+						if (!function_exists($entity[1])) {
 							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
 						}
 
@@ -297,9 +292,6 @@ class Resolver
 
 								$arguments = self::autowireArguments($rm, $arguments, $getter);
 								$this->addDependency($rm);
-
-							} elseif (!Arrays::isList($arguments)) {
-								throw new ServiceCreationException(sprintf('Unable to pass specified arguments to %s::%s().', $type, $entity[1]));
 							}
 						}
 				}
