@@ -169,7 +169,7 @@ final class ServiceDefinition extends Definition
 		$this->creator = $resolver->completeStatement($this->creator);
 
 		foreach ($this->setup as &$setup) {
-			$setup = $resolver->completeStatement($setup, true);
+			$setup = $resolver->withCurrentServiceAvailable()->completeStatement($setup);
 		}
 	}
 

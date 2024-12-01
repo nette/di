@@ -43,6 +43,26 @@ class Resolver
 	}
 
 
+	private function withCurrentService(Definition $definition): self
+	{
+		$dolly = clone $this;
+		$dolly->currentService = in_array($definition, $this->builder->getDefinitions(), strict: true)
+			? $definition
+			: null;
+		$dolly->currentServiceType = $definition->getType();
+		$dolly->currentServiceAllowed = false;
+		return $dolly;
+	}
+
+
+	public function withCurrentServiceAvailable(): self
+	{
+		$dolly = clone $this;
+		$dolly->currentServiceAllowed = true;
+		return $dolly;
+	}
+
+
 	public function getContainerBuilder(): ContainerBuilder
 	{
 		return $this->builder;
@@ -60,7 +80,6 @@ class Resolver
 			$this->recursive->attach($def);
 
 			$def->resolveType($this);
-
 			if (!$def->getType()) {
 				throw new ServiceCreationException('Type of service is unknown.');
 			}
@@ -160,29 +179,18 @@ class Resolver
 
 	public function completeDefinition(Definition $def): void
 	{
-		$this->currentService = in_array($def, $this->builder->getDefinitions(), strict: true)
-			? $def
-			: null;
-		$this->currentServiceType = $def->getType();
-		$this->currentServiceAllowed = false;
-
 		try {
-			$def->complete($this);
-
+			$def->complete($this->withCurrentService($def));
 			$this->addDependency(new \ReflectionClass($def->getType()));
 
 		} catch (\Throwable $e) {
 			throw $this->completeException($e, $def);
-
-		} finally {
-			$this->currentService = $this->currentServiceType = null;
 		}
 	}
 
 
-	public function completeStatement(Statement $statement, bool $currentServiceAllowed = false): Statement
+	public function completeStatement(Statement $statement): Statement
 	{
-		$this->currentServiceAllowed = $currentServiceAllowed;
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
 		$getter = fn(string $type, bool $single) => $single
@@ -195,7 +203,7 @@ class Resolver
 					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', $entity));
 				}
 				if ($entity[0] instanceof Statement) {
-					$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
+					$entity[0] = $this->completeStatement($entity[0]);
 				}
 				break;
 
@@ -269,7 +277,7 @@ class Resolver
 						break;
 
 					case $entity[0] instanceof Statement:
-						$entity[0] = $this->completeStatement($entity[0], $this->currentServiceAllowed);
+						$entity[0] = $this->completeStatement($entity[0]);
 						// break omitted
 
 					case is_string($entity[0]): // static method call
@@ -330,7 +338,7 @@ class Resolver
 
 					$val = $this->completeArguments($services);
 				} else {
-					$val = $this->completeStatement($val, $this->currentServiceAllowed);
+					$val = $this->completeStatement($val);
 				}
 			} elseif ($val instanceof Definition || $val instanceof Reference) {
 				$val = $this->normalizeEntity(new Statement($val));
