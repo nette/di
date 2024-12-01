@@ -181,14 +181,14 @@ final class ServiceDefinition extends Definition
 
 	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
-		$code = $generator->formatStatement($this->creator) . ";\n";
+		$code = $this->creator->generateCode($generator) . ";\n";
 		if (!$this->setup) {
 			return 'return ' . $code;
 		}
 
 		$code = '$service = ' . $code;
 		foreach ($this->setup as $setup) {
-			$code .= $generator->formatStatement($setup) . ";\n";
+			$code .= $setup->generateCode($generator) . ";\n";
 		}
 
 		$code .= 'return $service;';
