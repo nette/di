@@ -100,20 +100,10 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 
 			$resolver->addDependency($reflection);
 
-			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = DI\Helpers::getReturnTypeAnnotation($reflection));
-			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)) {
-				if (isset($annotation)) {
-					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
-				}
-
-				return DI\Helpers::ensureClassType(
-					$type,
-					sprintf('return type of %s()', Callback::toString($entity)),
-					allowNullable: true,
-				);
-			}
-
-			return null;
+			$type = Nette\Utils\Type::fromReflection($reflection);
+			return $type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)
+				? DI\Helpers::ensureClassType($type, sprintf('return type of %s()', Callback::toString($entity)), allowNullable: true)
+				: null;
 
 		} elseif ($entity instanceof Expression) {
 			return $entity->resolveType($resolver);
