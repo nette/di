@@ -232,23 +232,6 @@ final class Helpers
 
 
 	/**
-	 * Returns return type from @return annotation, or null if not found or not a class type.
-	 */
-	public static function getReturnTypeAnnotation(\ReflectionFunctionAbstract $func): ?Type
-	{
-		$type = preg_replace('#[|\s].*#', '', (string) self::parseAnnotation($func, 'return'));
-		if (!$type || $type === 'object' || $type === 'mixed') {
-			return null;
-		} elseif ($func instanceof \ReflectionMethod) {
-			$type = $type === '$this' ? 'static' : $type;
-			$type = Reflection::expandClassName($type, $func->getDeclaringClass());
-		}
-
-		return Type::fromString($type);
-	}
-
-
-	/**
 	 * Validates that the type is a non-nullable class type and returns the class name.
 	 * @return class-string
 	 * @throws ServiceCreationException
