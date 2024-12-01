@@ -179,12 +179,11 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
 		$code = $generator->formatStatement($this->creator) . ";\n";
 		if (!$this->setup) {
-			$method->setBody('return ' . $code);
-			return;
+			return 'return ' . $code;
 		}
 
 		$code = '$service = ' . $code;
@@ -193,7 +192,7 @@ final class ServiceDefinition extends Definition
 		}
 
 		$code .= 'return $service;';
-		$method->setBody($code);
+		return $code;
 	}
 
 
