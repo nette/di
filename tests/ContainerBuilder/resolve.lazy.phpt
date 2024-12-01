@@ -30,6 +30,12 @@ class CountingDefinition extends Nette\DI\Definition
 	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 	}
+
+
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
+	{
+		return '';
+	}
 }
 
 
