@@ -35,8 +35,10 @@ overrides:
 			- src/DI/Config/Adapters/NeonEvaluator.php
 			- src/DI/Config/Replacement.php
 			- src/DI/Container.php
+			- src/DI/Definitions/FactoryDefinition.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
+			- src/DI/PhpGenerator.php
 		upgrading: {api: keep, declarations: {deprecatedClass: keep, deprecatedMember: keep}}
 
 	- # the tests exercise the deprecated API, or read what only it exposes
