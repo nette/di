@@ -197,7 +197,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	public function generateMethod(Php\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
 		$class = (new Php\ClassType)
 			->addImplement($this->getType());
@@ -219,7 +219,7 @@ final class FactoryDefinition extends Definition
 			->setReturnType((string) Type::fromReflection($rm))
 			->setBody($body);
 
-		$method->setBody('return new class ($this) ' . $class . ';');
+		return 'return new class ($this) ' . $class . ';';
 	}
 
 

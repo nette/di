@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\DI\PhpGenerator;
 
 
 /**
@@ -34,9 +33,9 @@ final class ImportedDefinition extends Definition
 	}
 
 
-	public function generateMethod(Nette\PhpGenerator\Method $method, PhpGenerator $generator): void
+	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
-		$method->setBody(
+		return $generator->formatPhp(
 			'throw new Nette\DI\ServiceCreationException(?);',
 			["Unable to create imported service '{$this->getName()}', it must be added using addService()"],
 		);
