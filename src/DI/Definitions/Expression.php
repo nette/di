@@ -14,4 +14,5 @@ use Nette;
 
 abstract class Expression
 {
+	abstract public function generateCode(Nette\DI\PhpGenerator $generator): string;
 }
