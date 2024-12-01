@@ -186,7 +186,7 @@ final class ServiceDefinition extends Definition
 	{
 		$lines = [];
 		foreach ([$this->creator, ...$this->setup] as $stmt) {
-			$lines[] = $generator->formatStatement($stmt) . ";\n";
+			$lines[] = $stmt->generateCode($generator) . ";\n";
 		}
 
 		if ($this->canBeLazy() && !preg_grep('#(?:func_get_arg|func_num_args)#i', $lines)) { // latteFactory workaround
