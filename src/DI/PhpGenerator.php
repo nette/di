@@ -92,7 +92,7 @@ class PhpGenerator
 			$method = new Php\Method(Container::getMethodName($name));
 			$method->setPublic();
 			$method->setReturnType($def->getType());
-			$def->generateMethod($method, $this);
+			$method->setBody($def->generateCode($this));
 			return $method;
 
 		} catch (\Throwable $e) {

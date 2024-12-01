@@ -208,8 +208,7 @@ final class FactoryDefinition extends Definition
 				->setType($generator->getClassName());
 
 		$methodCreate = $class->addMethod(self::MethodCreate);
-		$this->resultDefinition->generateMethod($methodCreate, $generator);
-		$body = $methodCreate->getBody();
+		$body = $this->resultDefinition->generateCode($generator);
 		$body = str_replace('$this', '$this->container', $body);
 		$body = str_replace('$this->container->container', '$this->container', $body);
 
