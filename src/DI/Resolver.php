@@ -11,6 +11,7 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\DI\Definitions\Definition;
+use Nette\DI\Definitions\Expression;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
@@ -63,6 +64,12 @@ class Resolver
 	}
 
 
+	public function getCurrentService(bool $type = false): Definition|string|null
+	{
+		return $type ? $this->currentServiceType : $this->currentService;
+	}
+
+
 	public function getContainerBuilder(): ContainerBuilder
 	{
 		return $this->builder;
@@ -89,91 +96,6 @@ class Resolver
 		} finally {
 			unset($this->recursive[$def]);
 		}
-	}
-
-
-	public function resolveReferenceType(Reference $ref): ?string
-	{
-		if ($ref->isSelf()) {
-			return $this->currentServiceType;
-		} elseif ($ref->isType()) {
-			return ltrim($ref->getValue(), '\\');
-		}
-
-		$def = $this->resolveReference($ref);
-		if (!$def->getType()) {
-			$this->resolveDefinition($def);
-		}
-
-		return $def->getType();
-	}
-
-
-	public function resolveEntityType(Statement $statement): ?string
-	{
-		$entity = $this->normalizeEntity($statement);
-
-		if ($statement->arguments === self::getFirstClassCallable()) {
-			return \Closure::class;
-
-		} elseif (is_array($entity)) {
-			if ($entity[0] instanceof Reference || $entity[0] instanceof Statement) {
-				$entity[0] = $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]));
-				if (!$entity[0]) {
-					return null;
-				}
-			}
-
-			try {
-				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
-				assert($reflection instanceof \ReflectionMethod || $reflection instanceof \ReflectionFunction);
-				$refClass = $reflection instanceof \ReflectionMethod
-					? $reflection->getDeclaringClass()
-					: null;
-			} catch (\ReflectionException $e) {
-				$refClass = $reflection = null;
-			}
-
-			if (isset($e) || ($refClass && (!$reflection->isPublic()
-				|| ($refClass->isTrait() && !$reflection->isStatic())
-			))) {
-				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)), 0, $e ?? null);
-			}
-
-			$this->addDependency($reflection);
-
-			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = Helpers::getReturnTypeAnnotation($reflection));
-			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)) {
-				if (isset($annotation)) {
-					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
-				}
-
-				return Helpers::ensureClassType(
-					$type,
-					sprintf('return type of %s()', Callback::toString($entity)),
-					allowNullable: true,
-				);
-			}
-
-			return null;
-
-		} elseif ($entity instanceof Reference) { // alias or factory
-			return $this->resolveReferenceType($entity);
-
-		} elseif (is_string($entity)) { // class
-			if (!class_exists($entity)) {
-				throw new ServiceCreationException(sprintf(
-					interface_exists($entity)
-						? "Interface %s can not be used as 'create' or 'factory', did you mean 'implement'?"
-						: "Class '%s' not found.",
-					$entity,
-				));
-			}
-
-			return $entity;
-		}
-
-		return null;
 	}
 
 
@@ -288,9 +210,7 @@ class Resolver
 								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
 							}
 						} elseif (
-							$type = $entity[0] instanceof Reference
-								? $this->resolveReferenceType($entity[0])
-								: $this->resolveEntityType($entity[0] instanceof Statement ? $entity[0] : new Statement($entity[0]))
+							$type = ($entity[0] instanceof Expression ? $entity[0] : new Statement($entity[0]))->resolveType($this)
 						) {
 							$rc = new \ReflectionClass($type);
 							if ($rc->hasMethod($entity[1])) {
@@ -349,7 +269,7 @@ class Resolver
 
 
 	/** Returns literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member] */
-	private function normalizeEntity(Statement $statement): string|array|Reference|null
+	public function normalizeEntity(Statement $statement): string|array|Reference|null
 	{
 		$entity = $statement->getEntity();
 		if (is_array($entity)) {
@@ -400,14 +320,6 @@ class Resolver
 	}
 
 
-	public function resolveReference(Reference $ref): Definition
-	{
-		return $ref->isSelf()
-			? $this->currentService
-			: $this->builder->getDefinition($ref->getValue());
-	}
-
-
 	/**
 	 * Returns named reference to service resolved by type (or 'self' reference for local-autowiring).
 	 * @throws ServiceCreationException when multiple found
@@ -445,7 +357,8 @@ class Resolver
 	}
 
 
-	private function completeException(\Throwable $e, Definition $def): ServiceCreationException
+	/** @internal */
+	public function completeException(\Throwable $e, Definition $def): ServiceCreationException
 	{
 		if ($e instanceof ServiceCreationException && str_starts_with($e->getMessage(), "Service '")) {
 			return $e;
@@ -508,7 +421,7 @@ class Resolver
 				if (!isset($pair[1])) { // @service
 					$val = new Reference($pair[0]);
 				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
-					$val = ContainerBuilder::literal($this->resolveReferenceType(new Reference($pair[0])) . '::' . $pair[1]);
+					$val = ContainerBuilder::literal((new Reference($pair[0]))->resolveType($this) . '::' . $pair[1]);
 				} else { // @service::property
 					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
 				}
@@ -668,5 +581,28 @@ class Resolver
 	{
 		static $x = [new Nette\PhpGenerator\Literal('...')];
 		return $x;
+	}
+
+
+	/** @deprecated */
+	public function resolveReferenceType(Reference $ref): ?string
+	{
+		return $ref->resolveType($this);
+	}
+
+
+	/** @deprecated */
+	public function resolveEntityType(Statement $statement): ?string
+	{
+		return $statement->resolveType($this);
+	}
+
+
+	/** @deprecated */
+	public function resolveReference(Reference $ref): Definition
+	{
+		return $ref->isSelf()
+			? $this->currentService
+			: $this->builder->getDefinition($ref->getValue());
 	}
 }
