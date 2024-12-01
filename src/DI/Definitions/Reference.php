@@ -66,6 +66,24 @@ final class Reference extends Expression
 	}
 
 
+	public function resolveType(DI\Resolver $resolver): ?string
+	{
+		if ($this->isSelf()) {
+			return $resolver->getCurrentService(type: true);
+
+		} elseif ($this->isType()) {
+			return ltrim($this->value, '\\');
+		}
+
+		$def = $resolver->getContainerBuilder()->getDefinition($this->value);
+		if (!$def->getType()) {
+			$resolver->resolveDefinition($def);
+		}
+
+		return $def->getType();
+	}
+
+
 	public function generateCode(DI\PhpGenerator $generator): string
 	{
 		return match (true) {

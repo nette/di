@@ -11,7 +11,10 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI;
+use Nette\DI\Resolver;
+use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
+use Nette\Utils\Callback;
 
 
 /**
@@ -63,6 +66,74 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->entity;
+	}
+
+
+	public function resolveType(Resolver $resolver): ?string
+	{
+		$entity = $resolver->normalizeEntity($this);
+
+		if ($this->arguments === Resolver::getFirstClassCallable()) {
+			return \Closure::class;
+
+		} elseif (is_array($entity)) {
+			if ($entity[0] instanceof Expression) {
+				$entity[0] = $entity[0]->resolveType($resolver);
+				if (!$entity[0]) {
+					return null;
+				}
+			}
+
+			try {
+				$reflection = Callback::toReflection($entity[0] === '' ? $entity[1] : $entity);
+				assert($reflection instanceof \ReflectionMethod || $reflection instanceof \ReflectionFunction);
+				$refClass = $reflection instanceof \ReflectionMethod
+					? $reflection->getDeclaringClass()
+					: null;
+			} catch (\ReflectionException $e) {
+				$refClass = $reflection = null;
+			}
+
+			if (isset($e) || ($refClass && (!$reflection->isPublic()
+				|| ($refClass->isTrait() && !$reflection->isStatic())
+			))) {
+				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)), 0, $e ?? null);
+			}
+
+			$resolver->addDependency($reflection);
+
+			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = DI\Helpers::getReturnTypeAnnotation($reflection));
+			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], strict: true)) {
+				if (isset($annotation)) {
+					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
+				}
+
+				return DI\Helpers::ensureClassType(
+					$type,
+					sprintf('return type of %s()', Callback::toString($entity)),
+					allowNullable: true,
+				);
+			}
+
+			return null;
+
+		} elseif ($entity instanceof Expression) {
+			return $entity->resolveType($resolver);
+
+		} elseif (is_string($entity)) { // class
+			if (!class_exists($entity)) {
+				throw new ServiceCreationException(sprintf(
+					interface_exists($entity)
+						? "Interface %s can not be used as 'create' or 'factory', did you mean 'implement'?"
+						: "Class '%s' not found.",
+					$entity,
+				));
+			}
+
+			return $entity;
+		}
+
+		return null;
 	}
 
 
