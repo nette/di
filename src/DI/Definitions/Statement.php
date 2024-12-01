@@ -15,6 +15,7 @@ use Nette\DI\Resolver;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Callback;
+use Nette\Utils\Validators;
 use function array_keys, class_exists, explode, is_array, is_string, str_contains, str_starts_with, substr;
 
 
@@ -72,7 +73,7 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 
 	public function resolveType(Resolver $resolver): ?string
 	{
-		$entity = $resolver->normalizeEntity($this);
+		$entity = $this->normalizeEntity($resolver);
 
 		if ($this->arguments === Resolver::getFirstClassCallable()) {
 			return \Closure::class;
@@ -135,6 +136,202 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 		}
 
 		return null;
+	}
+
+
+	public function complete(Resolver $resolver): void
+	{
+		$entity = $this->normalizeEntity($resolver);
+		$this->convertReferences($resolver);
+		$arguments = $this->arguments;
+
+		switch (true) {
+			case $this->arguments === Resolver::getFirstClassCallable():
+				if (!is_array($entity) || !Php\Helpers::isIdentifier($entity[1])) {
+					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', $entity));
+				}
+				if ($entity[0] instanceof self) {
+					$entity[0]->complete($resolver);
+				}
+				break;
+
+			case is_string($entity) && str_contains($entity, '?'): // PHP literal
+				break;
+
+			case $entity === 'not':
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
+				}
+
+				$this->entity = ['', '!'];
+				break;
+
+			case $entity === 'bool':
+			case $entity === 'int':
+			case $entity === 'float':
+			case $entity === 'string':
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
+				}
+
+				$arguments = [$arguments[0], $entity];
+				$this->entity = [DI\Helpers::class, 'convertType'];
+				break;
+
+			case is_string($entity): // create class
+				if (!class_exists($entity)) {
+					throw new ServiceCreationException(sprintf("Class '%s' not found.", $entity));
+				} elseif ((new \ReflectionClass($entity))->isAbstract()) {
+					throw new ServiceCreationException(sprintf('Class %s is abstract.', $entity));
+				} elseif (($rm = (new \ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
+					throw new ServiceCreationException(sprintf('Class %s has %s constructor.', $entity, $rm->isProtected() ? 'protected' : 'private'));
+				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
+					$arguments = $resolver->autowireServices($constructor, $arguments);
+					$resolver->addDependency($constructor);
+				} elseif ($arguments) {
+					throw new ServiceCreationException(sprintf(
+						'Unable to pass arguments, class %s has no constructor.',
+						$entity,
+					));
+				}
+
+				break;
+
+			case $entity instanceof Reference:
+				if ($arguments) {
+					$e = $resolver->completeException(new ServiceCreationException(sprintf('Parameters were passed to reference @%s, although references cannot have any parameters.', $entity->getValue())), $resolver->getCurrentService());
+					trigger_error($e->getMessage(), E_USER_DEPRECATED);
+				}
+				$this->entity = [new Reference(DI\ContainerBuilder::ThisContainer), DI\Container::getMethodName($entity->getValue())];
+				break;
+
+			case is_array($entity):
+				if (!preg_match('#^\$?(\\\?' . Php\Helpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
+					throw new ServiceCreationException(sprintf(
+						"Expected function, method or property name, '%s' given.",
+						$entity[1],
+					));
+				}
+
+				switch (true) {
+					case $entity[0] === '': // function call
+						if (!function_exists($entity[1])) {
+							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
+						}
+
+						$rf = new \ReflectionFunction($entity[1]);
+						$arguments = $resolver->autowireServices($rf, $arguments);
+						$resolver->addDependency($rf);
+						break;
+
+					case $entity[0] instanceof self:
+						$entity[0]->complete($resolver);
+						// break omitted
+
+					case is_string($entity[0]): // static method call
+					case $entity[0] instanceof Reference:
+						if ($entity[1][0] === '$') { // property getter, setter or appender
+							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Callback::toString($entity) . "'");
+							if (!$arguments && str_ends_with($entity[1], '[]')) {
+								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
+							}
+						} elseif (
+							$type = ($entity[0] instanceof Expression ? $entity[0] : new self($entity[0]))->resolveType($resolver)
+						) {
+							$rc = new \ReflectionClass($type);
+							if ($rc->hasMethod($entity[1])) {
+								$rm = $rc->getMethod($entity[1]);
+								if (!$rm->isPublic()) {
+									throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $type, $entity[1]));
+								}
+
+								$arguments = $resolver->autowireServices($rm, $arguments);
+								$resolver->addDependency($rm);
+							}
+						}
+				}
+		}
+
+		try {
+			$this->arguments = $this->completeArguments($resolver, $arguments);
+		} catch (ServiceCreationException $e) {
+			if (!str_contains($e->getMessage(), ' (used in')) {
+				$e->setMessage($e->getMessage() . " (used in {$resolver->entityToString($entity)})");
+			}
+
+			throw $e;
+		}
+	}
+
+
+	public function completeArguments(Resolver $resolver, array $arguments): array
+	{
+		array_walk_recursive($arguments, function (&$val) use ($resolver): void {
+			if ($val instanceof self) {
+				if ($val->entity === 'typed' || $val->entity === 'tagged') {
+					$services = [];
+					$current = $resolver->getCurrentService()?->getName();
+					foreach ($val->arguments as $argument) {
+						foreach ($val->entity === 'tagged' ? $resolver->getContainerBuilder()->findByTag($argument) : $resolver->getContainerBuilder()->findAutowired($argument) as $name => $foo) {
+							if ($name !== $current) {
+								$services[] = new Reference($name);
+							}
+						}
+					}
+
+					$val = $this->completeArguments($resolver, $services);
+				} else {
+					$val->complete($resolver);
+				}
+			} elseif ($val instanceof Definition || $val instanceof Reference) {
+				$val = (new self($val))->normalizeEntity($resolver);
+			}
+		});
+		return $arguments;
+	}
+
+
+	/** Returns literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member] */
+	private function normalizeEntity(Resolver $resolver): string|array|Reference|null
+	{
+		if (is_array($this->entity)) {
+			$item = &$this->entity[0];
+		} else {
+			$item = &$this->entity;
+		}
+
+		if ($item instanceof Definition) {
+			if ($resolver->getContainerBuilder()->getDefinition($item->getName()) !== $item) {
+				throw new ServiceCreationException(sprintf("Service '%s' does not match the expected service.", $item->getName()));
+
+			}
+			$item = new Reference($item->getName());
+		}
+
+		if ($item instanceof Reference) {
+			$item->complete($resolver);
+		}
+
+		return $this->entity;
+	}
+
+
+	private function convertReferences(Resolver $resolver): void
+	{
+		array_walk_recursive($this->arguments, function (&$val) use ($resolver): void {
+			if (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
+				$pair = explode('::', substr($val, 1), 2);
+				if (!isset($pair[1])) { // @service
+					$val = new Reference($pair[0]);
+				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
+					$val = DI\ContainerBuilder::literal((new Reference($pair[0]))->resolveType($resolver) . '::' . $pair[1]);
+				} else { // @service::property
+					$val = new self([new Reference($pair[0]), '$' . $pair[1]]);
+				}
+			} elseif (is_string($val) && str_starts_with($val, '@@')) { // escaped text @@
+				$val = substr($val, 1);
+			}
+		});
 	}
 
 
