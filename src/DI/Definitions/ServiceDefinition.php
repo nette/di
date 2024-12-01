@@ -182,7 +182,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
 		$lines = [];
 		foreach ([$this->creator, ...$this->setup] as $stmt) {
@@ -194,15 +194,15 @@ final class ServiceDefinition extends Definition
 			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')
 				? $generator->formatPhp("\$service->__construct(...?:);\n", [$this->creator->arguments])
 				: '';
-			$method->setBody("return new ReflectionClass($class::class)->newLazyGhost(function (\$service) {\n"
+			return "return new ReflectionClass($class::class)->newLazyGhost(function (\$service) {\n"
 				. Strings::indent(implode('', $lines))
-				. '});');
+				. '});';
 
 		} elseif (count($lines) === 1) {
-			$method->setBody('return ' . $lines[0]);
+			return 'return ' . $lines[0];
 
 		} else {
-			$method->setBody('$service = ' . implode('', $lines) . 'return $service;');
+			return '$service = ' . implode('', $lines) . 'return $service;';
 		}
 	}
 
