@@ -394,8 +394,8 @@ class ContainerBuilder
 	public function formatPhp(string $statement, array $args): string
 	{
 		array_walk_recursive($args, function (&$val): void {
-			if ($val instanceof Nette\DI\Definitions\Statement) {
-				$val = (new Resolver($this))->completeStatement($val);
+			if ($val instanceof Nette\DI\Definitions\Expression) {
+				$val->complete(new Resolver($this));
 
 			} elseif ($val instanceof Definition) {
 				$val = new Definitions\Reference($val->getName());

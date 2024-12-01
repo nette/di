@@ -17,5 +17,8 @@ abstract class Expression
 	abstract public function resolveType(Nette\DI\Resolver $resolver): ?string;
 
 
+	abstract public function complete(Nette\DI\Resolver $resolver): void;
+
+
 	abstract public function generateCode(Nette\DI\PhpGenerator $generator): string;
 }

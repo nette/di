@@ -11,14 +11,10 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\DI\Definitions\Definition;
-use Nette\DI\Definitions\Expression;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
-use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\Arrays;
-use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
-use Nette\Utils\Validators;
 
 
 /**
@@ -43,7 +39,7 @@ class Resolver
 	}
 
 
-	private function withCurrentService(Definition $definition): self
+	public function withCurrentService(Definition $definition): self
 	{
 		$dolly = clone $this;
 		$dolly->currentService = in_array($definition, $this->builder->getDefinitions(), strict: true)
@@ -107,215 +103,6 @@ class Resolver
 
 		} catch (\Throwable $e) {
 			throw $this->completeException($e, $def);
-		}
-	}
-
-
-	public function completeStatement(Statement $statement): Statement
-	{
-		$entity = $this->normalizeEntity($statement);
-		$arguments = $this->convertReferences($statement->arguments);
-		$getter = fn(string $type, bool $single) => $single
-				? $this->getByType($type)
-				: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
-
-		switch (true) {
-			case $statement->arguments === self::getFirstClassCallable():
-				if (!is_array($entity) || !PhpHelpers::isIdentifier($entity[1])) {
-					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', $entity));
-				}
-				if ($entity[0] instanceof Statement) {
-					$entity[0] = $this->completeStatement($entity[0]);
-				}
-				break;
-
-			case is_string($entity) && str_contains($entity, '?'): // PHP literal
-				break;
-
-			case $entity === 'not':
-				if (count($arguments) !== 1) {
-					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
-				}
-
-				$entity = ['', '!'];
-				break;
-
-			case $entity === 'bool':
-			case $entity === 'int':
-			case $entity === 'float':
-			case $entity === 'string':
-				if (count($arguments) !== 1) {
-					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
-				}
-
-				$arguments = [$arguments[0], $entity];
-				$entity = [Helpers::class, 'convertType'];
-				break;
-
-			case is_string($entity): // create class
-				if (!class_exists($entity)) {
-					throw new ServiceCreationException(sprintf("Class '%s' not found.", $entity));
-				} elseif ((new \ReflectionClass($entity))->isAbstract()) {
-					throw new ServiceCreationException(sprintf('Class %s is abstract.', $entity));
-				} elseif (($rm = (new \ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
-					throw new ServiceCreationException(sprintf('Class %s has %s constructor.', $entity, $rm->isProtected() ? 'protected' : 'private'));
-				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
-					$arguments = self::autowireArguments($constructor, $arguments, $getter);
-					$this->addDependency($constructor);
-				} elseif ($arguments) {
-					throw new ServiceCreationException(sprintf(
-						'Unable to pass arguments, class %s has no constructor.',
-						$entity,
-					));
-				}
-
-				break;
-
-			case $entity instanceof Reference:
-				if ($arguments) {
-					$e = $this->completeException(new ServiceCreationException(sprintf('Parameters were passed to reference @%s, although references cannot have any parameters.', $entity->getValue())), $this->currentService);
-					trigger_error($e->getMessage(), E_USER_DEPRECATED);
-				}
-				$entity = [new Reference(ContainerBuilder::ThisContainer), Container::getMethodName($entity->getValue())];
-				break;
-
-			case is_array($entity):
-				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
-					throw new ServiceCreationException(sprintf(
-						"Expected function, method or property name, '%s' given.",
-						$entity[1],
-					));
-				}
-
-				switch (true) {
-					case $entity[0] === '': // function call
-						if (!function_exists($entity[1])) {
-							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
-						}
-
-						$rf = new \ReflectionFunction($entity[1]);
-						$arguments = self::autowireArguments($rf, $arguments, $getter);
-						$this->addDependency($rf);
-						break;
-
-					case $entity[0] instanceof Statement:
-						$entity[0] = $this->completeStatement($entity[0]);
-						// break omitted
-
-					case is_string($entity[0]): // static method call
-					case $entity[0] instanceof Reference:
-						if ($entity[1][0] === '$') { // property getter, setter or appender
-							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Callback::toString($entity) . "'");
-							if (!$arguments && str_ends_with($entity[1], '[]')) {
-								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
-							}
-						} elseif (
-							$type = ($entity[0] instanceof Expression ? $entity[0] : new Statement($entity[0]))->resolveType($this)
-						) {
-							$rc = new \ReflectionClass($type);
-							if ($rc->hasMethod($entity[1])) {
-								$rm = $rc->getMethod($entity[1]);
-								if (!$rm->isPublic()) {
-									throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $type, $entity[1]));
-								}
-
-								$arguments = self::autowireArguments($rm, $arguments, $getter);
-								$this->addDependency($rm);
-							}
-						}
-				}
-		}
-
-		try {
-			$arguments = $this->completeArguments($arguments);
-		} catch (ServiceCreationException $e) {
-			if (!str_contains($e->getMessage(), ' (used in')) {
-				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
-			}
-
-			throw $e;
-		}
-
-		return new Statement($entity, $arguments);
-	}
-
-
-	public function completeArguments(array $arguments): array
-	{
-		array_walk_recursive($arguments, function (&$val): void {
-			if ($val instanceof Statement) {
-				$entity = $val->getEntity();
-				if ($entity === 'typed' || $entity === 'tagged') {
-					$services = [];
-					$current = $this->currentService?->getName();
-					foreach ($val->arguments as $argument) {
-						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findAutowired($argument) as $name => $foo) {
-							if ($name !== $current) {
-								$services[] = new Reference($name);
-							}
-						}
-					}
-
-					$val = $this->completeArguments($services);
-				} else {
-					$val = $this->completeStatement($val);
-				}
-			} elseif ($val instanceof Definition || $val instanceof Reference) {
-				$val = $this->normalizeEntity(new Statement($val));
-			}
-		});
-		return $arguments;
-	}
-
-
-	/** Returns literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member] */
-	public function normalizeEntity(Statement $statement): string|array|Reference|null
-	{
-		$entity = $statement->getEntity();
-		if (is_array($entity)) {
-			$item = &$entity[0];
-		} else {
-			$item = &$entity;
-		}
-
-		if ($item instanceof Definition) {
-			if ($this->builder->getDefinition($item->getName()) !== $item) {
-				throw new ServiceCreationException(sprintf("Service '%s' does not match the expected service.", $item->getName()));
-
-			}
-			$item = new Reference($item->getName());
-		}
-
-		if ($item instanceof Reference) {
-			$item = $this->normalizeReference($item);
-		}
-
-		return $entity;
-	}
-
-
-	/**
-	 * Normalizes reference to 'self' or named reference (or leaves it typed if it is not possible during resolving) and checks existence of service.
-	 */
-	public function normalizeReference(Reference $ref): Reference
-	{
-		$service = $ref->getValue();
-		if ($ref->isSelf()) {
-			return $ref;
-		} elseif ($ref->isName()) {
-			if (!$this->builder->hasDefinition($service)) {
-				throw new ServiceCreationException(sprintf("Reference to missing service '%s'.", $service));
-			}
-
-			return $this->currentService && $service === $this->currentService->getName()
-				? new Reference(Reference::Self)
-				: $ref;
-		}
-
-		try {
-			return $this->getByType($service);
-		} catch (NotAllowedDuringResolvingException) {
-			return new Reference($service);
 		}
 	}
 
@@ -386,7 +173,8 @@ class Resolver
 	}
 
 
-	private function entityToString($entity): string
+	/** @internal */
+	public function entityToString($entity): string
 	{
 		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService
 				? '@' . $this->currentService->getName()
@@ -413,23 +201,12 @@ class Resolver
 	}
 
 
-	private function convertReferences(array $arguments): array
+	public function autowireServices(\ReflectionFunctionAbstract $method, array $arguments): array
 	{
-		array_walk_recursive($arguments, function (&$val): void {
-			if (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
-				$pair = explode('::', substr($val, 1), 2);
-				if (!isset($pair[1])) { // @service
-					$val = new Reference($pair[0]);
-				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
-					$val = ContainerBuilder::literal((new Reference($pair[0]))->resolveType($this) . '::' . $pair[1]);
-				} else { // @service::property
-					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
-				}
-			} elseif (is_string($val) && str_starts_with($val, '@@')) { // escaped text @@
-				$val = substr($val, 1);
-			}
-		});
-		return $arguments;
+		$getter = fn(string $type, bool $single) => $single
+			? $this->getByType($type)
+			: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
+		return self::autowireArguments($method, $arguments, $getter);
 	}
 
 
@@ -604,5 +381,30 @@ class Resolver
 		return $ref->isSelf()
 			? $this->currentService
 			: $this->builder->getDefinition($ref->getValue());
+	}
+
+
+	/** @deprecated */
+	public function normalizeReference(Reference $ref): Reference
+	{
+		$ref->complete($this);
+		return $ref;
+	}
+
+
+	/** @deprecated */
+	public function completeStatement(Statement $statement, bool $currentServiceAllowed = false): Statement
+	{
+		$resolver = $this->withCurrentService($this->currentService);
+		$resolver->currentServiceAllowed = $currentServiceAllowed;
+		$statement->complete($resolver);
+		return $statement;
+	}
+
+
+	/** @deprecated */
+	public function completeArguments(array $arguments): array
+	{
+		return (new Statement(null, $arguments))->completeArguments($this, $arguments);
 	}
 }

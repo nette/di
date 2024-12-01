@@ -84,6 +84,32 @@ final class Reference extends Expression
 	}
 
 
+	/**
+	 * Normalizes reference to 'self' or named reference (or leaves it typed if it is not possible during resolving) and checks existence of service.
+	 */
+	public function complete(DI\Resolver $resolver): void
+	{
+		if ($this->isSelf()) {
+			return;
+
+		} elseif ($this->isType()) {
+			try {
+				$this->value = $resolver->getByType($this->value)->value;
+			} catch (DI\NotAllowedDuringResolvingException) {
+			}
+			return;
+		}
+
+		if (!$resolver->getContainerBuilder()->hasDefinition($this->value)) {
+			throw new DI\ServiceCreationException(sprintf("Reference to missing service '%s'.", $this->value));
+		}
+
+		if ($this->value === $resolver->getCurrentService()?->getName()) {
+			$this->value = self::Self;
+		}
+	}
+
+
 	public function generateCode(DI\PhpGenerator $generator): string
 	{
 		return match (true) {
