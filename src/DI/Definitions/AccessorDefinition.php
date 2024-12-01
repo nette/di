@@ -104,7 +104,7 @@ final class AccessorDefinition extends Definition
 			$this->setReference(Type::fromReflection($method)->getSingleName());
 		}
 
-		$this->reference = $resolver->normalizeReference($this->reference);
+		$this->reference->complete($resolver);
 	}
 
 
