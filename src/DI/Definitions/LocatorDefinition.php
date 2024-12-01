@@ -191,7 +191,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function generateCode(Nette\DI\PhpGenerator $generator): string
 	{
 		$type = $this->getType();
 		assert($type !== null);
@@ -241,7 +241,7 @@ final class LocatorDefinition extends Definition
 			}
 		}
 
-		$method->setBody('return new class ($this) ' . $class . ';');
+		return 'return new class ($this) ' . $class . ';';
 	}
 
 
