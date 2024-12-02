@@ -18,7 +18,7 @@ use function array_keys, class_exists, explode, is_array, is_string, str_contain
  *
  * @property string|array|Definition|Reference|null $entity
  */
-final class Statement implements Nette\Schema\DynamicParameter
+final class Statement extends Expression implements Nette\Schema\DynamicParameter
 {
 	use Nette\SmartObject;
 
