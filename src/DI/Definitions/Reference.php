@@ -10,10 +10,11 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 
+
 /**
  * Reference to service. Either by name or by type or reference to the 'self' service.
  */
-final class Reference
+final class Reference extends Expression
 {
 	public const Self = 'self';
 
