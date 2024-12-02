@@ -46,6 +46,29 @@ abstract class Definition
 	}
 
 
+	final public function isAnonymous(): bool
+	{
+		return !$this->name || ctype_digit($this->name);
+	}
+
+
+	public function getDescriptor(): string
+	{
+		if (!$this->isAnonymous()) {
+			return "Service '$this->name'" . ($this->type ? " of type $this->type" : '');
+
+		} elseif ($this->type) {
+			return "Service of type $this->type";
+
+		} elseif ($this->name) {
+			return "Service '$this->name'";
+
+		} else {
+			return 'Service ?';
+		}
+	}
+
+
 	protected function setType(?string $type): static
 	{
 		if ($this->autowired && $this->notifier && $this->type !== $type) {
@@ -56,8 +79,8 @@ abstract class Definition
 			$this->type = null;
 		} elseif (!class_exists($type) && !interface_exists($type)) {
 			throw new Nette\InvalidArgumentException(sprintf(
-				"Service '%s': Class or interface '%s' not found.",
-				$this->name,
+				"[%s]\nClass or interface '%s' not found.",
+				$this->getDescriptor(),
 				$type,
 			));
 		} else {

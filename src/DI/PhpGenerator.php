@@ -96,7 +96,7 @@ class PhpGenerator
 			return $method;
 
 		} catch (\Throwable $e) {
-			throw new ServiceCreationException("Service '$name': " . $e->getMessage(), 0, $e);
+			throw new ServiceCreationException(sprintf("[%s]\n%s", $def->getDescriptor(), $e->getMessage()), 0, $e);
 		}
 	}
 

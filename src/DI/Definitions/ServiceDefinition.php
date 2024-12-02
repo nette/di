@@ -39,6 +39,17 @@ final class ServiceDefinition extends Definition
 	}
 
 
+	public function getDescriptor(): string
+	{
+		$entity = $this->getEntity();
+		if ($entity && $this->isAnonymous()) {
+			return 'Service ' . (is_string($entity) ? "of type $entity" : Nette\DI\Helpers::describeExpression($entity));
+		}
+
+		return parent::getDescriptor();
+	}
+
+
 	public function setType(?string $type): static
 	{
 		return parent::setType($type);
@@ -169,7 +180,11 @@ final class ServiceDefinition extends Definition
 		$this->creator->complete($resolver);
 
 		foreach ($this->setup as $setup) {
-			$setup->complete($resolver->withCurrentServiceAvailable());
+			try {
+				$setup->complete($resolver->withCurrentServiceAvailable());
+			} catch (ServiceCreationException $e) {
+				throw $e->setMessage($e->getMessage() . ' (in setup)');
+			}
 		}
 	}
 

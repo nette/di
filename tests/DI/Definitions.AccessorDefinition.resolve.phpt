@@ -28,13 +28,15 @@ Assert::exception(function () {
 	$def = new AccessorDefinition;
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Type of service is unknown.');
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
+Type of service is unknown.');
 
 
 Assert::exception(function () {
 	$def = new AccessorDefinition;
 	$def->setImplement(Bad1::class);
-}, Nette\DI\ServiceCreationException::class, 'Return type of Bad1::get() is not declared.');
+}, Nette\DI\ServiceCreationException::class, '[Service ?]
+Return type of Bad1::get() is not declared.');
 
 
 Assert::noError(function () {
@@ -63,4 +65,5 @@ Assert::exception(function () {
 	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
-}, Nette\DI\ServiceCreationException::class, 'Service of type Good1: Service of type stdClass not found. Did you add it to configuration file?');
+}, Nette\DI\ServiceCreationException::class, '[Service of type Good1]
+Service of type stdClass not found. Did you add it to configuration file?');

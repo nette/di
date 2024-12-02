@@ -242,8 +242,14 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 		try {
 			$this->arguments = $this->completeArguments($resolver, $arguments);
 		} catch (ServiceCreationException $e) {
-			if (!str_contains($e->getMessage(), ' (used in')) {
-				$e->setMessage($e->getMessage() . " (used in {$resolver->entityToString($entity)})");
+			if (!str_contains($e->getMessage(), "\nRelated to")) {
+				if (is_string($entity)) {
+					$desc = $entity . '::__construct()';
+				} else {
+					$desc = DI\Helpers::describeExpression($entity);
+					$desc = preg_replace('~@self::~A', '', $desc);
+				}
+				$e->setMessage($e->getMessage() . "\nRelated to $desc.");
 			}
 
 			throw $e;

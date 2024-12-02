@@ -67,7 +67,7 @@ final class InjectExtension extends DI\CompilerExtension
 			}
 
 			if ($builder) {
-				self::checkType($class, $property, $type, $builder);
+				self::checkType($class, $property, $type, $builder, $def);
 			}
 			array_unshift($setups, $inject);
 		}
@@ -148,7 +148,7 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		foreach (self::getInjectProperties($service::class) as $property => $type) {
-			self::checkType($service, $property, $type, $container);
+			self::checkType($service, $property, $type, $container, null);
 			$service->$property = $container->getByType($type);
 		}
 	}
@@ -159,11 +159,13 @@ final class InjectExtension extends DI\CompilerExtension
 		string $name,
 		?string $type,
 		DI\Container|DI\ContainerBuilder $container,
+		?Definitions\Definition $def,
 	): void
 	{
 		if (!$container->getByType($type, throw: false)) {
 			throw new Nette\DI\MissingServiceException(sprintf(
-				'Service of type %s required by %s not found. Did you add it to configuration file?',
+				"%sService of type %s required by %s not found.\nDid you add it to configuration file?",
+				$def ? '[' . $def->getDescriptor() . "]\n" : '',
 				$type,
 				Reflection::toString(new \ReflectionProperty($class, $name)),
 			));
