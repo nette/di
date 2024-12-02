@@ -149,10 +149,14 @@ final class LocatorDefinition extends Definition
 				$class->addProperty('mapping', array_map(fn($item) => $item->getValue(), $this->references))
 					->setPrivate();
 
-				$methodInner->setBody('if (!isset($this->mapping[$name])) {
-	' . ($nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service \'$name\' is not defined.");') . '
-}
-return $this->container->' . $m[1] . 'Service($this->mapping[$name]);')
+				$methodInner->setBody(<<<'XX'
+					if (!isset($this->mapping[$name])) {
+
+					XX . "\t" . ($nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service \'$name\' is not defined.");') . <<<'XX'
+
+					}
+					return $this->container->
+					XX . $m[1] . 'Service($this->mapping[$name]);')
 					->addParameter('name');
 
 			} elseif (isset($this->references[$name])) {

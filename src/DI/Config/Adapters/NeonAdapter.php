@@ -10,10 +10,11 @@ declare(strict_types=1);
 namespace Nette\DI\Config\Adapters;
 
 use Nette;
-use Nette\DI\Config\Helpers;
+use Nette\DI;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Neon;
+use Nette\Neon\Node;
 
 
 /**
@@ -43,7 +44,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
-		$node = $traverser->traverse($node, $this->resolveConstants(...));
+		$node = $traverser->traverse($node, $this->resolveConstantsVisitor(...));
 		return $this->process((array) $node->toValue());
 	}
 
@@ -63,7 +64,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				}
 
 				$key = substr($key, 0, -1);
-				$val[Helpers::PREVENT_MERGING] = true;
+				$val[DI\Config\Helpers::PREVENT_MERGING] = true;
 			}
 
 			if (is_array($val)) {
@@ -150,12 +151,12 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function firstClassCallableVisitor(Neon\Node $node): void
+	private function firstClassCallableVisitor(Node $node): void
 	{
-		if ($node instanceof Neon\Node\EntityNode
+		if ($node instanceof Node\EntityNode
 			&& count($node->attributes) === 1
 			&& $node->attributes[0]->key === null
-			&& $node->attributes[0]->value instanceof Neon\Node\LiteralNode
+			&& $node->attributes[0]->value instanceof Node\LiteralNode
 			&& $node->attributes[0]->value->value === '...'
 		) {
 			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
@@ -163,9 +164,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function removeUnderscoreVisitor(Neon\Node $node): void
+	private function removeUnderscoreVisitor(Node $node): void
 	{
-		if (!$node instanceof Neon\Node\EntityNode) {
+		if (!$node instanceof Node\EntityNode) {
 			return;
 		}
 
@@ -175,13 +176,13 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				continue;
 			}
 
-			$attr->key = $index ? new Neon\Node\LiteralNode((string) $i) : null;
+			$attr->key = $index ? new Node\LiteralNode((string) $i) : null;
 
-			if ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '_') {
+			if ($attr->value instanceof Node\LiteralNode && $attr->value->value === '_') {
 				unset($node->attributes[$i]);
 				$index = true;
 
-			} elseif ($attr->value instanceof Neon\Node\LiteralNode && $attr->value->value === '...') {
+			} elseif ($attr->value instanceof Node\LiteralNode && $attr->value->value === '...') {
 				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
 				unset($node->attributes[$i]);
 				$index = true;
@@ -190,9 +191,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function convertAtSignVisitor(Neon\Node $node): void
+	private function convertAtSignVisitor(Node $node): void
 	{
-		if ($node instanceof Neon\Node\StringNode) {
+		if ($node instanceof Node\StringNode) {
 			if (str_starts_with($node->value, '@@')) {
 				trigger_error("There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
 			} else {
@@ -200,7 +201,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			}
 
 		} elseif (
-			$node instanceof Neon\Node\LiteralNode
+			$node instanceof Node\LiteralNode
 			&& is_string($node->value)
 			&& str_starts_with($node->value, '@@')
 		) {
@@ -209,9 +210,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function deprecatedParametersVisitor(Neon\Node $node): void
+	private function deprecatedParametersVisitor(Node $node): void
 	{
-		if (($node instanceof Neon\Node\StringNode || $node instanceof Neon\Node\LiteralNode)
+		if (($node instanceof Node\StringNode || $node instanceof Node\LiteralNode)
 			&& is_string($node->value)
 			&& str_contains($node->value, '%parameters%')
 		) {
@@ -220,16 +221,16 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function resolveConstants(Neon\Node $node): void
+	private function resolveConstantsVisitor(Node $node): void
 	{
 		$items = match (true) {
-			$node instanceof Neon\Node\ArrayNode => $node->items,
-			$node instanceof Neon\Node\EntityNode => $node->attributes,
+			$node instanceof Node\ArrayNode => $node->items,
+			$node instanceof Node\EntityNode => $node->attributes,
 			default => null,
 		};
 		if ($items) {
 			foreach ($items as $item) {
-				if ($item->value instanceof Neon\Node\LiteralNode
+				if ($item->value instanceof Node\LiteralNode
 					&& is_string($item->value->value)
 					&& preg_match('#^([\w\\\\]*)::[A-Z]\w+$#D', $item->value->value)
 					&& defined(ltrim($item->value->value, ':'))

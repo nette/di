@@ -66,11 +66,13 @@ class PhpGenerator
 
 	public function toString(Php\ClassType $class): string
 	{
-		return '/** @noinspection PhpParamsInspection,PhpMethodMayBeStaticInspection */
+		return <<<'XX'
+			/** @noinspection PhpParamsInspection,PhpMethodMayBeStaticInspection */
 
-declare(strict_types=1);
+			declare(strict_types=1);
 
-' . $class->__toString();
+
+			XX . $class->__toString();
 	}
 
 
