@@ -74,10 +74,7 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 	{
 		$entity = $this->normalizeEntity($resolver);
 
-		if ($this->arguments === Resolver::getFirstClassCallable()) {
-			return \Closure::class;
-
-		} elseif (is_array($entity)) {
+		if (is_array($entity)) {
 			if ($entity[0] instanceof Expression) {
 				$entity[0] = $entity[0]->resolveType($resolver);
 				if (!$entity[0]) {
@@ -145,15 +142,6 @@ final class Statement extends Expression implements Nette\Schema\DynamicParamete
 		$arguments = $this->arguments;
 
 		switch (true) {
-			case $this->arguments === Resolver::getFirstClassCallable():
-				if (!is_array($entity) || !Php\Helpers::isIdentifier($entity[1])) {
-					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', $entity));
-				}
-				if ($entity[0] instanceof self) {
-					$entity[0]->complete($resolver);
-				}
-				break;
-
 			case is_string($entity) && str_contains($entity, '?'): // PHP literal
 				break;
 

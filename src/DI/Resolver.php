@@ -353,14 +353,6 @@ class Resolver
 	}
 
 
-	/** @internal */
-	public static function getFirstClassCallable(): array
-	{
-		static $x = [new Nette\PhpGenerator\Literal('...')];
-		return $x;
-	}
-
-
 	/** @deprecated */
 	public function resolveReferenceType(Reference $ref): ?string
 	{
