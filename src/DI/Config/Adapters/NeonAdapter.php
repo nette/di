@@ -11,6 +11,7 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\DI;
+use Nette\DI\Definitions;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Neon;
@@ -43,7 +44,6 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
 		$node = $traverser->traverse($node, $this->deprecatedQuestionMarkVisitor(...));
-		$node = $traverser->traverse($node, $this->firstClassCallableVisitor(...));
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
@@ -115,19 +115,6 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function firstClassCallableVisitor(Node $node): void
-	{
-		if ($node instanceof Node\EntityNode
-			&& count($node->attributes) === 1
-			&& $node->attributes[0]->key === null
-			&& $node->attributes[0]->value instanceof Node\LiteralNode
-			&& $node->attributes[0]->value->value === '...'
-		) {
-			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
-		}
-	}
-
-
 	private function preventMergingVisitor(Node $node): void
 	{
 		if ($node instanceof Node\ArrayItemNode
@@ -182,14 +169,37 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private function buildExpression(array $chain): Statement
+	private function buildExpression(array $chain): Definitions\Expression
 	{
 		$node = array_pop($chain);
 		$entity = $node->toValue();
-		return new Statement(
+		$stmt = new Statement(
 			$chain ? [$this->buildExpression($chain), ltrim($entity->value, ':')] : $entity->value,
 			$entity->attributes,
 		);
+
+		if ($this->isFirstClassCallable($node)) {
+			$entity = $stmt->getEntity();
+			if (is_array($entity)) {
+				if ($entity[0] === '') {
+					return new Definitions\FunctionCallable($entity[1]);
+				}
+				return new Definitions\MethodCallable(...$entity);
+			} else {
+				throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$entity' in config file (used in '$this->file')");
+			}
+		}
+
+		return $stmt;
+	}
+
+
+	private function isFirstClassCallable(Node\EntityNode $node): bool
+	{
+		return array_keys($node->attributes) === [0]
+			&& $node->attributes[0]->key === null
+			&& $node->attributes[0]->value instanceof Node\LiteralNode
+			&& $node->attributes[0]->value->value === '...';
 	}
 
 
@@ -211,7 +221,11 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				unset($node->attributes[$i]);
 				$index = true;
 
-			} elseif ($attr->value instanceof Node\LiteralNode && $attr->value->value === '...') {
+			} elseif (
+				$attr->value instanceof Node\LiteralNode
+				&& $attr->value->value === '...'
+				&& !$this->isFirstClassCallable($node)
+			) {
 				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
 				unset($node->attributes[$i]);
 				$index = true;
