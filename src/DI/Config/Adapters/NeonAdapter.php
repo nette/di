@@ -25,6 +25,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 {
 	private const PreventMergingSuffix = '!';
 	private string $file;
+	private \WeakMap $parents;
 
 
 	/**
@@ -41,61 +42,23 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$decoder = new Neon\Decoder;
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
+		$node = $traverser->traverse($node, $this->deprecatedQuestionMarkVisitor(...));
 		$node = $traverser->traverse($node, $this->firstClassCallableVisitor(...));
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
 		$node = $traverser->traverse($node, $this->resolveConstantsVisitor(...));
-		return $this->process((array) $node->toValue());
+		$node = $traverser->traverse($node, $this->preventMergingVisitor(...));
+		$this->connectParentsVisitor($traverser, $node);
+		$node = $traverser->traverse($node, leave: $this->entityToExpressionVisitor(...));
+		return (array) $node->toValue();
 	}
 
 
-	/** @throws Nette\InvalidStateException */
+	/** @deprecated */
 	public function process(array $arr): array
 	{
-		$res = [];
-		foreach ($arr as $key => $val) {
-			if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
-				if (!is_array($val) && $val !== null) {
-					throw new Nette\DI\InvalidConfigurationException(sprintf(
-						"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
-						$key,
-						$this->file,
-					));
-				}
-
-				$key = substr($key, 0, -1);
-				$val[DI\Config\Helpers::PREVENT_MERGING] = true;
-			}
-
-			if (is_array($val)) {
-				$val = $this->process($val);
-
-			} elseif ($val instanceof Neon\Entity) {
-				if ($val->value === Neon\Neon::Chain) {
-					$tmp = null;
-					foreach ($this->process($val->attributes) as $st) {
-						$tmp = new Statement(
-							$tmp === null ? $st->getEntity() : [$tmp, ltrim(implode('::', (array) $st->getEntity()), ':')],
-							$st->arguments,
-						);
-					}
-
-					$val = $tmp;
-				} else {
-					$tmp = $this->process([$val->value]);
-					if (is_string($tmp[0]) && str_contains($tmp[0], '?')) {
-						throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
-					}
-
-					$val = new Statement($tmp[0], $this->process($val->attributes));
-				}
-			}
-
-			$res[$key] = $val;
-		}
-
-		return $res;
+		return $arr;
 	}
 
 
@@ -162,6 +125,71 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		) {
 			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
 		}
+	}
+
+
+	private function preventMergingVisitor(Node $node): void
+	{
+		if ($node instanceof Node\ArrayItemNode
+			&& $node->key instanceof Node\LiteralNode
+			&& is_string($node->key->value)
+			&& str_ends_with($node->key->value, self::PreventMergingSuffix)
+		) {
+			if ($node->value instanceof Node\LiteralNode && $node->value->value === null) {
+				$node->value = new Node\InlineArrayNode('[');
+			} elseif (!$node->value instanceof Node\ArrayNode) {
+				throw new Nette\DI\InvalidConfigurationException(sprintf(
+					"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
+					$node->key->value,
+					$this->file,
+				));
+			}
+
+			$node->key->value = substr($node->key->value, 0, -1);
+			$node->value->items[] = $item = new Node\ArrayItemNode;
+			$item->key = new Node\LiteralNode(DI\Config\Helpers::PREVENT_MERGING);
+			$item->value = new Node\LiteralNode(true);
+		}
+	}
+
+
+	private function deprecatedQuestionMarkVisitor(Node $node): void
+	{
+		if ($node instanceof Node\EntityNode
+			&& ($node->value instanceof Node\LiteralNode || $node->value instanceof Node\StringNode)
+			&& is_string($node->value->value)
+			&& str_contains($node->value->value, '?')
+		) {
+			throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
+		}
+	}
+
+
+	private function entityToExpressionVisitor(Node $node): Node
+	{
+		if ($node instanceof Node\EntityChainNode) {
+			return new Node\LiteralNode($this->buildExpression($node->chain));
+
+		} elseif (
+			$node instanceof Node\EntityNode
+			&& !$this->parents[$node] instanceof Node\EntityChainNode
+		) {
+			return new Node\LiteralNode($this->buildExpression([$node]));
+
+		} else {
+			return $node;
+		}
+	}
+
+
+	private function buildExpression(array $chain): Statement
+	{
+		$node = array_pop($chain);
+		$entity = $node->toValue();
+		return new Statement(
+			$chain ? [$this->buildExpression($chain), ltrim($entity->value, ':')] : $entity->value,
+			$entity->attributes,
+		);
 	}
 
 
@@ -240,5 +268,22 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				}
 			}
 		}
+	}
+
+
+	private function connectParentsVisitor(Neon\Traverser $traverser, Node $node): void
+	{
+		$this->parents = new \WeakMap;
+		$stack = [];
+		$traverser->traverse(
+			$node,
+			enter: function (Node $node) use (&$stack) {
+				$this->parents[$node] = end($stack);
+				$stack[] = $node;
+			},
+			leave: function () use (&$stack) {
+				array_pop($stack);
+			},
+		);
 	}
 }
