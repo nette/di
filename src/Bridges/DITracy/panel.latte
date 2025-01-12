@@ -1,0 +1,84 @@
+{use Tracy\Dumper}
+
+<style class="tracy-debug">
+	#tracy-debug .nette-ContainerPanel table {
+		width: 100%;
+		white-space: nowrap;
+	}
+
+	#tracy-debug .nette-ContainerPanel .created {
+		font-weight: bold;
+	}
+
+	#tracy-debug .nette-ContainerPanel .yes {
+		color: green;
+		font-weight: bold;
+	}
+
+	#tracy-debug .nette-ContainerPanel table pre {
+		display: inline;
+		background: transparent;
+		padding: 0;
+		word-break: normal;
+	}
+</style>
+
+<h1>Nette DI Container</h1>
+
+<div class="tracy-inner nette-ContainerPanel">
+<div class="tracy-inner-container">
+	<p>Source: {Tracy\Helpers::editorLink($file)}</p>
+
+	<table class="tracy-sortable">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Autowired</th>
+				<th>Service</th>
+				<th>Tags</th>
+			</tr>
+		</thead>
+		<tbody>
+			{foreach $services as $name => $type}
+				{do $name = (string) $name}
+				{do $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true)}
+				<tr>
+					<td class="{isset($instances[$name]) ? created : ''}">
+						{if is_numeric($name)}<small>{$name}</small>{else}{$name}{/if}
+					</td>
+					<td class="{$autowired ? yes : ''}">
+						{$autowired ? yes : (isset($wiring[$type]) ? no : '?')}
+					</td>
+					<td>
+						{if isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container}
+							{Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5])}
+						{elseif isset($instances[$name])}
+							<code>{get_class($instances[$name])}</code>
+						{elseif is_string($type)}
+							<code>{$type}</code>
+						{/if}
+					</td>
+					<td>
+						{if !isset($tags[$name])}
+						{elseif count($tags[$name]) === 1}
+							{key($tags[$name])} = {Dumper::toHtml(current($tags[$name]), [Dumper::COLLAPSE => true])}
+						{else}
+							{Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => true])}
+						{/if}
+					</td>
+				</tr>
+			{/foreach}
+		</tbody>
+	</table>
+
+	<h2>Parameters</h2>
+
+	<div class="nette-ContainerPanel-parameters">
+		{if $parameters === null}
+			<i>disabled via 'di › export › parameters'</i>
+		{else}
+			{Dumper::toHtml($parameters)}
+		{/if}
+	</div>
+</div>
+</div>

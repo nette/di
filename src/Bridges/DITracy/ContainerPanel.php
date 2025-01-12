@@ -40,7 +40,7 @@ class ContainerPanel implements Tracy\IBarPanel
 	{
 		return Nette\Utils\Helpers::capture(function () {
 			$elapsedTime = $this->elapsedTime;
-			require __DIR__ . '/templates/ContainerPanel.tab.phtml';
+			require __DIR__ . '/dist/tab.phtml';
 		});
 	}
 
@@ -76,7 +76,7 @@ class ContainerPanel implements Tracy\IBarPanel
 			$parameters = $rc->getMethod('getStaticParameters')->getDeclaringClass()->getName() === Container::class
 				? null
 				: $container->getParameters();
-			require __DIR__ . '/templates/ContainerPanel.panel.phtml';
+			require __DIR__ . '/dist/panel.phtml';
 		});
 	}
 }
