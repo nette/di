@@ -249,7 +249,7 @@ class Resolver
 				break;
 
 			case is_array($entity):
-				if (!preg_match('#^\$?(\\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
+				if (!preg_match('#^\$?(\\\?' . PhpHelpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
 					throw new ServiceCreationException(sprintf(
 						"Expected function, method or property name, '%s' given.",
 						$entity[1],
@@ -455,7 +455,7 @@ class Resolver
 		}
 
 		$message .= $type
-			? str_replace("$type::", preg_replace('~.*\\\\~', '', $type) . '::', $e->getMessage())
+			? str_replace("$type::", preg_replace('~.*\\\~', '', $type) . '::', $e->getMessage())
 			: $e->getMessage();
 
 		return $e instanceof ServiceCreationException
@@ -643,7 +643,7 @@ class Resolver
 		return $method instanceof \ReflectionMethod
 			&& $type?->getSingleName() === 'array'
 			&& preg_match(
-				'#@param[ \t]+(?|([\w\\\\]+)\[\]|list<([\w\\\\]+)>|array<int,\s*([\w\\\\]+)>)[ \t]+\$' . $parameter->name . '#',
+				'#@param[ \t]+(?|([\w\\\]+)\[\]|list<([\w\\\]+)>|array<int,\s*([\w\\\]+)>)[ \t]+\$' . $parameter->name . '#',
 				(string) $method->getDocComment(),
 				$m,
 			)

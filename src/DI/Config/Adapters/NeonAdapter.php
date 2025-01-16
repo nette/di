@@ -71,7 +71,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$val = $this->process($val);
 
 			} elseif ($val instanceof Neon\Entity) {
-				if ($val->value === Neon\Neon::CHAIN) {
+				if ($val->value === Neon\Neon::Chain) {
 					$tmp = null;
 					foreach ($this->process($val->attributes) as $st) {
 						$tmp = new Statement(
@@ -134,7 +134,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		} elseif (is_array($entity)) {
 			if ($entity[0] instanceof Statement) {
 				return new Neon\Entity(
-					Neon\Neon::CHAIN,
+					Neon\Neon::Chain,
 					[
 						self::statementToEntity($entity[0]),
 						new Neon\Entity('::' . $entity[1], $val->arguments),
@@ -232,7 +232,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			foreach ($items as $item) {
 				if ($item->value instanceof Node\LiteralNode
 					&& is_string($item->value->value)
-					&& preg_match('#^([\w\\\\]*)::[A-Z]\w+$#D', $item->value->value)
+					&& preg_match('#^([\w\\\]*)::[A-Z]\w+$#D', $item->value->value)
 					&& defined(ltrim($item->value->value, ':'))
 				) {
 					$item->value->value = constant(ltrim($item->value->value, ':'));

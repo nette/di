@@ -148,8 +148,8 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		foreach ($masks as $mask) {
 			$mask = (str_contains($mask, '\\') ? '' : '**\\') . $mask;
 			$mask = preg_quote($mask, '#');
-			$mask = str_replace('\*\*\\\\', '(.*\\\\)?', $mask);
-			$mask = str_replace('\\\\\*\*', '(\\\\.*)?', $mask);
+			$mask = str_replace('\*\*\\\\', '(.*\\\)?', $mask);
+			$mask = str_replace('\\\\\*\*', '(\\\.*)?', $mask);
 			$mask = str_replace('\*', '\w*', $mask);
 			$res[] = $mask;
 		}

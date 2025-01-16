@@ -83,7 +83,7 @@ class Loader
 	 */
 	public function expandIncludedFile(string $includedFile, string $mainFile): string
 	{
-		return preg_match('#([a-z]+:)?[/\\\\]#Ai', $includedFile) // is absolute
+		return preg_match('#([a-z]+:)?[/\\\]#Ai', $includedFile) // is absolute
 			? $includedFile
 			: dirname($mainFile) . '/' . $includedFile;
 	}

@@ -158,7 +158,7 @@ final class Helpers
 	public static function filterArguments(array $args): array
 	{
 		foreach ($args as $k => $v) {
-			if (is_string($v) && preg_match('#^@[\w\\\\]+$#D', $v)) {
+			if (is_string($v) && preg_match('#^@[\w\\\]+$#D', $v)) {
 				$args[$k] = new Reference(substr($v, 1));
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);

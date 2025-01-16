@@ -24,8 +24,8 @@ Assert::same([
 	'ClassOk3',
 	'CountableClass',
 	'ExtendsStdClass',
-	'Foo\\Bar\\ClassBar',
-	'Foo\\ClassBar',
+	'Foo\Bar\ClassBar',
+	'Foo\ClassBar',
 	'InterfaceOk1',
 	'InterfaceOk2',
 ], array_keys($services));

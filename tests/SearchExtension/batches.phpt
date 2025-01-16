@@ -33,8 +33,8 @@ Assert::same([
 	'ClassOk3' => ['ok' => true, 'subdir' => true],
 	'CountableClass' => ['ok' => true],
 	'ExtendsStdClass' => ['ok' => true],
-	'Foo\\Bar\\ClassBar' => ['foo' => true],
-	'Foo\\ClassBar' => ['foo' => true],
+	'Foo\Bar\ClassBar' => ['foo' => true],
+	'Foo\ClassBar' => ['foo' => true],
 	'InterfaceOk1' => ['ok' => true],
 	'InterfaceOk2' => ['ok' => true],
 ], $services);
