@@ -14,20 +14,20 @@ use Nette\DI\Definitions\Statement;
 require __DIR__ . '/../bootstrap.php';
 
 
-testException('', function () {
+testException('non-existent class in type causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType('X')->setCreator('Unknown');
 }, Nette\InvalidArgumentException::class, "Service 'one': Class or interface 'X' not found.");
 
 
-testException('', function () {
+testException('missing class in creator triggers service creation error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition(null)->setCreator('Unknown');
 	$builder->complete();
 }, Nette\DI\ServiceCreationException::class, "Service (Unknown::__construct()): Class 'Unknown' not found.");
 
 
-testException('', function () {
+testException('undefined class in dependency throws error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('@two');
 	$builder->addDefinition('two')->setCreator('Unknown');
@@ -35,7 +35,7 @@ testException('', function () {
 }, Nette\InvalidStateException::class, "Service 'two': Class 'Unknown' not found.");
 
 
-testException('', function () {
+testException('reference to undefined class in dependency causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator(new Reference('two'));
 	$builder->addDefinition('two')->setCreator('Unknown');
@@ -43,21 +43,21 @@ testException('', function () {
 }, Nette\InvalidStateException::class, "Service 'two': Class 'Unknown' not found.");
 
 
-testException('', function () {
+testException('non-callable method in creator causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('stdClass::foo');
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method stdClass::foo() is not callable.");
 
 
-testException('', function () {
+testException('uncallable magic method in creator triggers error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('Nette\DI\Container::foo'); // has __magic
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one': Method Nette\\DI\\Container::foo() is not callable.");
 
 
-testException('', function () {
+testException('non-existent interface in factory definition causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
 		->setImplement('Unknown');
@@ -70,7 +70,7 @@ interface Bad4
 	public function create();
 }
 
-testException('', function () {
+testException('undeclared return type in factory interface triggers error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addFactoryDefinition('one')
 		->setImplement(Bad4::class);
@@ -82,7 +82,7 @@ interface Bad5
 	public function get($arg);
 }
 
-testException('', function () {
+testException('method with parameters in accessor interface causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addAccessorDefinition('one')
 		->setImplement(Bad5::class);
@@ -97,7 +97,7 @@ class Bad6
 	}
 }
 
-testException('', function () {
+testException('non-callable factory method due to protection level', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('Bad6::create');
 	$builder->complete();
@@ -111,7 +111,7 @@ class Bad7
 	}
 }
 
-testException('', function () {
+testException('factory method without return type causes unknown service type error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('Bad7::create');
 	$builder->complete();
@@ -125,7 +125,7 @@ class Bad8
 	}
 }
 
-testException('', function () {
+testException('private constructor in service type causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setType(Bad8::class);
 	$builder->complete();
@@ -139,13 +139,13 @@ class Good
 	}
 }
 
-testException('fail in argument', function () {
+testException('unknown class in constructor argument triggers error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator(Good::class, [new Statement('Unknown')]);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Good): Class 'Unknown' not found. (used in Good::__construct())");
 
-testException('fail in argument', function () {
+testException('private constructor in argument service causes error', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator(Good::class, [new Statement(Bad8::class)]);
 	$builder->complete();
@@ -173,7 +173,7 @@ trait Bad10
 	}
 }
 
-testException('trait cannot be instantiated', function () {
+testException('trait method is not callable as service creator', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')->setCreator('Bad10::method');
 	$builder->complete();
@@ -194,7 +194,7 @@ class MethodParam
 	}
 }
 
-testException('autowiring fail', function () {
+testException('ambiguous constructor dependency triggers multiple services error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -204,7 +204,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b (required by \$x in ConstructorParam::__construct())");
 
 
-testException('forced autowiring fail', function () {
+testException('ambiguous constructor dependency via argument reference', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -214,7 +214,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of ConstructorParam): Multiple services of type stdClass found: a, b (used in ConstructorParam::__construct())");
 
 
-testException('autowiring fail in chain', function () {
+testException('ambiguous method parameter dependency triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -224,7 +224,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (required by \$x in MethodParam::foo())");
 
 
-testException('forced autowiring fail in chain', function () {
+testException('ambiguous dependency in method call triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -234,7 +234,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (used in foo())");
 
 
-testException('autowiring fail in argument', function () {
+testException('multiple services in constructor dependency cause ambiguity', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -244,7 +244,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (required by \$x in ConstructorParam::__construct()) (used in Good::__construct())");
 
 
-testException('forced autowiring fail in argument', function () {
+testException('ambiguous dependency in constructor argument triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -254,7 +254,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in ConstructorParam::__construct())");
 
 
-testException('autowiring fail in chain in argument', function () {
+testException('ambiguous dependency in method parameter causes error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -264,7 +264,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (required by \$x in MethodParam::foo()) (used in Good::__construct())");
 
 
-testException('forced autowiring fail in chain in argument', function () {
+testException('ambiguous dependency in method call triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -274,7 +274,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in foo())");
 
 
-testException('forced autowiring fail in property passing', function () {
+testException('ambiguous dependency in property setup triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -287,7 +287,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in @bad::\$a)");
 
 
-testException('autowiring fail in rich property passing', function () {
+testException('ambiguous dependency in method setup triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -300,7 +300,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in foo())");
 
 
-testException('autowiring fail in method calling', function () {
+testException('ambiguous dependency in method call during setup triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -313,7 +313,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of MethodParam): Multiple services of type stdClass found: a, b (required by \$x in MethodParam::foo())");
 
 
-testException('forced autowiring fail in method calling', function () {
+testException('ambiguous dependency in method call on service triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass
@@ -326,7 +326,7 @@ services:
 }, Nette\DI\ServiceCreationException::class, "Service 'bad' (type of Good): Multiple services of type stdClass found: a, b (used in @bad::bar())");
 
 
-testException('autowiring fail in rich method calling', function () {
+testException('ambiguous dependency in method call setup triggers error', function () {
 	createContainer(new DI\Compiler, '
 services:
 	a: stdClass

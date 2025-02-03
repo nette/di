@@ -30,7 +30,7 @@ class Bar extends Foo implements IBar
 }
 
 
-test('Autowiring limited to Bar class and its subclasses', function () {
+test('autowire using self type only', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -43,7 +43,7 @@ test('Autowiring limited to Bar class and its subclasses', function () {
 });
 
 
-test('Autowiring limited to Bar class via self', function () {
+test('autowire with "self" keyword works correctly', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -56,7 +56,7 @@ test('Autowiring limited to Bar class via self', function () {
 });
 
 
-test('Autowiring limited to IBar interface and its implementations', function () {
+test('autowire via interface returns service', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -69,7 +69,7 @@ test('Autowiring limited to IBar interface and its implementations', function ()
 });
 
 
-test('Autowiring limited to Foo class and its subclasses', function () {
+test('autowire via parent class returns service', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -82,7 +82,7 @@ test('Autowiring limited to Foo class and its subclasses', function () {
 });
 
 
-test('Autowiring limited to IFoo interface and its implementations', function () {
+test('autowire using implemented interface returns service', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -95,7 +95,7 @@ test('Autowiring limited to IFoo interface and its implementations', function ()
 });
 
 
-test('Autowiring limited to two interfaces', function () {
+test('autowire with multiple types registers for all', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -108,7 +108,7 @@ test('Autowiring limited to two interfaces', function () {
 });
 
 
-test('Autowiring limited to two classes', function () {
+test('autowire with redundant types excludes mismatches', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -121,7 +121,7 @@ test('Autowiring limited to two classes', function () {
 });
 
 
-test('Autowiring limited to class and interface', function () {
+test('autowire with parent and interface returns service', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -134,7 +134,7 @@ test('Autowiring limited to class and interface', function () {
 });
 
 
-test('Autowiring limited to class and interface', function () {
+test('autowire with self and interface returns service', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -147,7 +147,7 @@ test('Autowiring limited to class and interface', function () {
 });
 
 
-test('Distribution between two services with parent-child relation', function () {
+test('separate definitions for parent and self types', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -164,7 +164,7 @@ test('Distribution between two services with parent-child relation', function ()
 });
 
 
-test('Distribution between two services of same type', function () {
+test('prefer autowired service when multiple exist', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('one')
 		->setType(stdClass::class);
@@ -177,7 +177,7 @@ test('Distribution between two services of same type', function () {
 });
 
 
-test('', function () {
+test('autowire with override of secondary definition', function () {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -194,7 +194,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('ambiguous autowiring throws exception for multiple services', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setType(Bar::class)
@@ -221,7 +221,7 @@ test('', function () {
 });
 
 
-test('', function () {
+test('incompatible autowired type triggers exception', function () {
 	$builder = new DI\ContainerBuilder;
 	$bar = $builder->addDefinition('bar')
 		->setType(Foo::class)

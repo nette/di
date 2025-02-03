@@ -21,21 +21,21 @@ class FooExtension extends DI\CompilerExtension
 }
 
 
-testException('', function () {
+testException('adding extension during loadConfiguration triggers deprecation', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$container = createContainer($compiler);
 }, Nette\DeprecatedException::class, "Extensions 'bar' were added while container was being compiled.");
 
 
-testException('', function () {
+testException('duplicate extension name throws error', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->addExtension('foo', new FooExtension);
 }, Nette\InvalidArgumentException::class, "Name 'foo' is already used or reserved.");
 
 
-testException('', function () {
+testException('extension name conflict due to case-insensitivity', function () {
 	$compiler = new DI\Compiler;
 	$compiler->addExtension('foo', new FooExtension);
 	$compiler->addExtension('Foo', new FooExtension);
