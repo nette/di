@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Nette\DI;
 
+use Nette\DI\Attributes\IgnoreDumping;
 use Nette\DI\Definitions\Expression;
 use Nette\PhpGenerator as Php;
 
@@ -126,6 +127,7 @@ class PhpGenerator
 			} elseif (
 				is_object($val)
 				&& !$val instanceof Php\Literal && !$val instanceof \DateTimeInterface
+				&& !(new \ReflectionObject($val))->getAttributes(IgnoreDumping::class)
 				&& (new \ReflectionObject($val))->getProperties(\ReflectionProperty::IS_PRIVATE | \ReflectionProperty::IS_PROTECTED)
 			) {
 				trigger_error(sprintf('Nette DI: suspicious dumping of objects %s when generating the container', $val::class));
