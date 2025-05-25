@@ -25,20 +25,23 @@ final class Reference extends Expression
 
 	private string $value;
 
+	private ?string $tag;
 
-	public static function fromType(string $value): static
+
+	public static function fromType(string $value, ?string $tag = null): static
 	{
 		if (!str_contains($value, '\\')) {
 			$value = '\\' . $value;
 		}
 
-		return new static($value);
+		return new static($value, $tag);
 	}
 
 
-	public function __construct(string $value)
+	public function __construct(string $value, ?string $tag = null)
 	{
 		$this->value = $value;
+		$this->tag = $tag;
 	}
 
 
@@ -94,7 +97,8 @@ final class Reference extends Expression
 
 		} elseif ($this->isType()) {
 			try {
-				$this->value = $resolver->getByType($this->value)->value;
+				$reference = $resolver->getByType($this->value, $this->tag);
+				$this->value = $reference->value;
 			} catch (DI\NotAllowedDuringResolvingException) {
 			}
 			return;

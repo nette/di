@@ -236,24 +236,76 @@ class Container
 	 * Returns an instance of the autowired service of the given type. If it has not been created yet, it creates it.
 	 * @template T of object
 	 * @param  class-string<T>  $type
+	 * @param  bool  $throw  throw exception if service doesn't exist?
 	 * @return ($throw is true ? T : ?T)
 	 * @throws MissingServiceException
 	 */
 	public function getByType(string $type, bool $throw = true): ?object
 	{
+		return $this->getByTypeAndTag($type, null, $throw);
+	}
+
+
+	/**
+	 * Returns an instance of the autowired service of the given type and tag. If it has not been created yet, it creates it.
+	 * @template T of object
+	 * @param  class-string<T>  $type
+	 * @param  bool  $throw  throw exception if service doesn't exist?
+	 * @return ($throw is true ? T : ?T)
+	 * @throws MissingServiceException
+	 */
+	public function getByTypeAndTag(string $type, ?string $tag = null, bool $throw = true): ?object
+	{
 		$type = Helpers::normalizeClass($type);
 		if (!empty($this->wiring[$type][0])) {
-			if (count($names = $this->wiring[$type][0]) === 1) {
-				return $this->getService($names[0]);
+			$names = $this->wiring[$type][0];
+
+			// Filter by tag if specified
+			if ($tag !== null) {
+				$taggedNames = [];
+				foreach ($names as $name) {
+					$serviceTags = $this->findByTag($tag);
+					if (isset($serviceTags[$name])) {
+						$taggedNames[] = $name;
+					}
+				}
+				$names = $taggedNames;
 			}
 
-			natsort($names);
-			throw new MissingServiceException(sprintf("Multiple services of type $type found: %s.", implode(', ', $names)));
+			// Try to find service with tag default
+			if ($tag === null && count($names) > 1) {
+				$defaultTagNames = [];
+				foreach ($names as $name) {
+					if (isset($this->findByTag('default')[$name])) {
+						$defaultTagNames[] = $name;
+					}
+				}
 
-		} elseif ($throw) {
+				if ($defaultTagNames !== []) {
+					$names = $defaultTagNames;
+				}
+			}
+
+			if (count($names) === 1) {
+				return $this->getService($names[0]);
+			} elseif (count($names) > 1) {
+				natsort($names);
+
+				throw new MissingServiceException(sprintf(
+					'Multiple services of type %s%s found: %s.',
+					$type,
+					$tag !== null ? " with tag '$tag'" : '',
+					implode(', ', $names),
+				));
+			}
+		}
+
+		if ($throw) {
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
-			} elseif ($this->findByType($type)) {
+			} elseif ($tag !== null) {
+				throw new MissingServiceException(sprintf("Service of type %s with tag '%s' not found.", $type, $tag));
+			} elseif ($this->findByType($type) !== []) {
 				throw new MissingServiceException(sprintf("Service of type %s is not autowired or is missing in di\u{a0}›\u{a0}export\u{a0}›\u{a0}types.", $type));
 			} else {
 				throw new MissingServiceException(sprintf('Service of type %s not found. Did you add it to configuration file?', $type));
@@ -363,7 +415,7 @@ class Container
 	private function autowireArguments(\ReflectionFunctionAbstract $function, array $args = []): array
 	{
 		return Resolver::autowireArguments($function, $args, fn(string $type, bool $single) => $single
-				? $this->getByType($type)
+				? $this->getByType($type, throw: true)
 				: array_map($this->getService(...), $this->findAutowired($type)));
 	}
 
