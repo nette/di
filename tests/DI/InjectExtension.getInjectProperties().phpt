@@ -10,14 +10,14 @@ namespace A
 {
 	class AClass
 	{
-		/** @var AInjected @inject */
-		public $varA;
+		/** @var Different @inject */
+		public AInjected $varA;
 
 		/** @var B\BInjected @inject */
 		public $varB;
 
-		/** @var AInjected @inject */
-		public $varC;
+		/** @inject */
+		public AInjected $varC;
 
 		/** @var AInjected */
 		public $varD;
@@ -26,16 +26,23 @@ namespace A
 	class AInjected
 	{
 	}
+
+	class BadClass
+	{
+		/** @inject */
+		public AClass|\stdClass $var;
+	}
 }
 
 namespace A\B
 {
 	use A;
+	use Nette\DI\Attributes\Inject;
 
 	class BClass extends A\AClass
 	{
-		/** @var BInjected @inject */
-		public $varF;
+		#[Inject]
+		public BInjected $varF;
 	}
 
 	class BInjected
@@ -95,4 +102,10 @@ namespace {
 		'var3' => C\CInjected::class,
 		'var4' => C\CInjected::class,
 	], InjectExtension::getInjectProperties(C\CClass::class));
+
+	Assert::exception(
+		fn() => InjectExtension::getInjectProperties(A\BadClass::class),
+		Nette\InvalidStateException::class,
+		"Type of property A\\BadClass::\$var is expected to not be nullable/built-in/complex, 'A\\AClass|stdClass' given.",
+	);
 }
