@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use function class_exists, interface_exists, is_array, is_string, sprintf;
 
 
 /**

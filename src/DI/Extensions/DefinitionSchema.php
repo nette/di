@@ -16,6 +16,7 @@ use Nette\DI\Definitions\Statement;
 use Nette\Schema\Context;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
+use function array_keys, end, get_class, interface_exists, is_array, is_string, method_exists, preg_match, substr;
 
 
 /**

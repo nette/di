@@ -12,6 +12,7 @@ namespace Nette\Bridges\DITracy;
 use Nette;
 use Nette\DI\Container;
 use Tracy;
+use const SORT_NATURAL;
 
 
 /**

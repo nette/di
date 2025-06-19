@@ -14,6 +14,7 @@ use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Type;
+use function array_keys, array_map, count, implode, interface_exists, is_string, serialize, sprintf, str_replace, unserialize;
 
 
 /**

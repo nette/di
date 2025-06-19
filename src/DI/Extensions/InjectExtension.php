@@ -13,6 +13,7 @@ use Nette;
 use Nette\DI;
 use Nette\DI\Definitions;
 use Nette\Utils\Reflection;
+use function array_keys, array_reverse, array_search, array_unshift, get_class_methods, is_a, is_subclass_of, ksort, sprintf, str_starts_with, uksort;
 
 
 /**

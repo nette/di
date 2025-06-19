@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Definitions;
 
 use Nette;
+use function array_keys, class_exists, explode, is_array, is_string, str_contains, str_starts_with, substr;
 
 
 /**

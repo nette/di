@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI;
 
 use Nette;
+use function array_flip, array_key_exists, array_keys, array_map, array_merge, array_values, class_exists, count, get_class_methods, implode, interface_exists, is_a, is_object, natsort, sprintf, str_replace, ucfirst;
 
 
 /**
