@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Nette\DI\Extensions;
 
 use Nette;
+use function is_a, is_int, sprintf;
 
 
 /**

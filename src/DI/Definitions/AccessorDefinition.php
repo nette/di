@@ -12,6 +12,7 @@ namespace Nette\DI\Definitions;
 use Nette;
 use Nette\DI\Helpers;
 use Nette\Utils\Type;
+use function count, interface_exists, sprintf, str_starts_with, substr;
 
 
 /**

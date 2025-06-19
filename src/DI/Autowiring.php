@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace Nette\DI;
 
+use function array_merge, class_exists, class_implements, class_parents, count, implode, interface_exists, is_a, is_array, natsort, sprintf, str_contains;
+
 
 /**
  * Autowiring.

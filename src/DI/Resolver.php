@@ -18,6 +18,7 @@ use Nette\Utils\Arrays;
 use Nette\Utils\Callback;
 use Nette\Utils\Reflection;
 use Nette\Utils\Validators;
+use function array_filter, array_key_exists, array_map, array_merge, array_values, array_walk_recursive, assert, class_exists, count, ctype_digit, explode, function_exists, gettype, implode, in_array, interface_exists, is_a, is_array, is_int, is_scalar, is_string, iterator_to_array, ltrim, preg_match, preg_replace, sprintf, str_contains, str_ends_with, str_replace, str_starts_with, strlen, substr;
 
 
 /**

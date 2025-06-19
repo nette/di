@@ -11,6 +11,8 @@ namespace Nette\DI\Config;
 
 use Nette;
 use Nette\Utils\Validators;
+use function array_unique, dirname, is_file, is_object, is_readable, pathinfo, preg_match, sprintf, strtolower;
+use const PATHINFO_EXTENSION;
 
 
 /**

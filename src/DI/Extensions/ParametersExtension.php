@@ -12,6 +12,7 @@ namespace Nette\DI\Extensions;
 use Nette;
 use Nette\DI\DynamicParameter;
 use Nette\DI\Helpers;
+use function array_diff_key, array_fill_keys, array_keys, array_walk_recursive, implode, var_export;
 
 
 /**

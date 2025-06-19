@@ -12,6 +12,7 @@ namespace Nette\DI\Extensions;
 use Nette;
 use Nette\DI\Definitions;
 use Nette\Schema\Expect;
+use function array_filter, array_values, class_exists, interface_exists, is_a, is_array, key, sprintf;
 
 
 /**
