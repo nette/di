@@ -56,9 +56,51 @@ final class InjectExtension extends DI\CompilerExtension
 			: $def->getType();
 		$setups = $def->getSetup();
 
-		foreach (self::getInjectProperties($class) as $property => $type) {
+		// Inject attributes in constructor parameters
+		$constructor = (new \ReflectionClass($class))->getConstructor();
+		if ($constructor !== null) {
+			foreach ($constructor->getParameters() as $param) {
+				$attributes = $param->getAttributes(DI\Attributes\Inject::class);
+				if ($attributes !== []) {
+					$injectAttribute = $attributes[0]->newInstance();
+					$tag = $injectAttribute->tag;
+					if ($tag === null) {
+						throw new Nette\InvalidStateException(sprintf(
+							'Attribute #[Inject] on parameter $%s in %s is redundant.',
+							$param->getName(),
+							Reflection::toString($constructor),
+						));
+					}
+
+					$type = Nette\Utils\Type::fromReflection($param);
+					if ($type === null) {
+						throw new Nette\InvalidStateException(sprintf(
+							'Parameter $%s in %s has no type hint.',
+							$param->getName(),
+							Reflection::toString($constructor),
+						));
+					}
+
+					// Update the creator arguments to use the tagged service
+					$creator = $def->getCreator();
+					$arguments = $creator->arguments;
+					$arguments[$param->getName()] = Definitions\Reference::fromType((string) $type, $tag);
+					$def->setCreator($creator->getEntity(), $arguments);
+				}
+			}
+		}
+
+		// Inject attributes in properties
+		foreach (self::getInjectProperties($class) as $property => $typeAndTag) {
+			$type = $typeAndTag['type'];
+			$tag = $typeAndTag['tag'];
+
 			$builder = $this->getContainerBuilder();
-			$inject = new Definitions\Statement(['@self', '$' . $property], [Definitions\Reference::fromType((string) $type)]);
+			$inject = new Definitions\Statement(
+				['@self', '$' . $property],
+				[Definitions\Reference::fromType($type, $tag)],
+			);
+
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;
@@ -67,14 +109,46 @@ final class InjectExtension extends DI\CompilerExtension
 				}
 			}
 
-			if ($builder) {
-				self::checkType($class, $property, $type, $builder);
+			if ($builder !== null) {
+				self::checkType($class, $property, $type, $builder, $tag);
 			}
 			array_unshift($setups, $inject);
 		}
 
 		foreach (array_reverse(self::getInjectMethods($class)) as $method) {
 			$inject = new Definitions\Statement(['@self', $method]);
+			$methodReflection = new \ReflectionMethod($class, $method);
+			$arguments = [];
+
+			// Inject attributes in inject methods
+			foreach ($methodReflection->getParameters() as $param) {
+				$attributes = $param->getAttributes(DI\Attributes\Inject::class);
+				if ($attributes !== []) {
+					$injectAttribute = $attributes[0]->newInstance();
+					$tag = $injectAttribute->tag;
+					if ($tag === null) {
+						throw new Nette\InvalidStateException(sprintf(
+							'Parameter %s has #[Inject] attribute, but no tag specified.',
+							Reflection::toString($param),
+						));
+					}
+
+					$type = Nette\Utils\Type::fromReflection($param);
+					if ($type === null) {
+						throw new Nette\InvalidStateException(sprintf(
+							'Parameter $%s in %s has no type hint.',
+							$param->getName(),
+							Reflection::toString($methodReflection),
+						));
+					}
+					$arguments[$param->getName()] = Definitions\Reference::fromType((string) $type, $tag);
+				}
+			}
+
+			if ($arguments !== []) {
+				$inject = new Definitions\Statement(['@self', $method], $arguments);
+			}
+
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;
@@ -113,11 +187,16 @@ final class InjectExtension extends DI\CompilerExtension
 	/**
 	 * Generates list of properties with annotation @inject.
 	 * @internal
+	 * @return array<string, array{type: string, tag: string|null}>
 	 */
 	public static function getInjectProperties(string $class): array
 	{
 		$res = [];
 		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
+			if ($rp->isPromoted()) {
+				continue; // Setup is in constructor
+			}
+
 			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if (!$rp->isPublic() || $rp->isStatic() || $rp->isReadOnly()) {
@@ -130,7 +209,12 @@ final class InjectExtension extends DI\CompilerExtension
 					$type = Nette\Utils\Type::fromString($annotation);
 				}
 
-				$res[$rp->getName()] = DI\Helpers::ensureClassType($type, 'type of property ' . Reflection::toString($rp));
+				$tag = null;
+				if ($hasAttr !== []) {
+					$tag = $hasAttr[0]->newInstance()->tag;
+				}
+
+				$res[$rp->getName()] = ['type' => DI\Helpers::ensureClassType($type, 'type of property ' . Reflection::toString($rp)), 'tag' => $tag];
 			}
 		}
 
@@ -148,9 +232,11 @@ final class InjectExtension extends DI\CompilerExtension
 			$container->callMethod([$service, $method]);
 		}
 
-		foreach (self::getInjectProperties($service::class) as $property => $type) {
-			self::checkType($service, $property, $type, $container);
-			$service->$property = $container->getByType($type);
+		foreach (self::getInjectProperties($service::class) as $property => $propertyInfo) {
+			$type = $propertyInfo['type'];
+			$tag = $propertyInfo['tag'];
+			self::checkType($service, $property, $type, $container, $tag);
+			$service->$property = $container->getByTypeAndTag($type, $tag, throw: true);
 		}
 	}
 
@@ -160,12 +246,14 @@ final class InjectExtension extends DI\CompilerExtension
 		string $name,
 		?string $type,
 		DI\Container|DI\ContainerBuilder $container,
+		?string $tag = null,
 	): void
 	{
-		if (!$container->getByType($type, throw: false)) {
+		if (!$container->getByTypeAndTag($type, $tag, throw: false)) {
 			throw new Nette\DI\MissingServiceException(sprintf(
-				'Service of type %s required by %s not found. Did you add it to configuration file?',
+				'Service of type %s%s required by %s not found. Did you add it to configuration file?',
 				$type,
+				$tag !== null ? " with tag '$tag'" : '',
 				Reflection::toString(new \ReflectionProperty($class, $name)),
 			));
 		}

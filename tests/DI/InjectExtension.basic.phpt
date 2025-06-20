@@ -7,6 +7,7 @@
 declare(strict_types=1);
 
 use Nette\DI;
+use Nette\DI\Attributes\Inject;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Tester\Assert;
@@ -33,6 +34,9 @@ class ParentClass
 {
 	/** @var stdClass @inject */
 	public $a;
+
+	#[Inject(tag: 'tag')]
+	public stdClass $aTag;
 
 
 	public function injectA()
@@ -91,7 +95,14 @@ extensions:
 	ext: LastExtension
 
 services:
-	std: stdClass
+	std:
+		create: stdClass
+		tags:
+			- default
+	stdTag:
+		create: stdClass
+		tags:
+			- tag
 	a: ConcreteDependencyA
 	b: ConcreteDependencyB
 	two:
@@ -113,6 +124,7 @@ Assert::equal([
 	new Statement([new Reference('self'), 'injectD']),
 	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$aTag'], [new Reference('stdTag', 'tag')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('last.one')->getSetup());
 
@@ -123,6 +135,7 @@ Assert::equal([
 	new Statement([new Reference('self'), 'injectD']),
 	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$aTag'], [new Reference('stdTag', 'tag')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('ext.one')->getSetup());
 
@@ -133,5 +146,6 @@ Assert::equal([
 	new Statement([new Reference('self'), 'injectD']),
 	new Statement([new Reference('self'), '$e'], [new Reference('b')]),
 	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
+	new Statement([new Reference('self'), '$aTag'], [new Reference('stdTag', 'tag')]),
 	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
 ], $builder->getDefinition('two')->getSetup());

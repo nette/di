@@ -84,23 +84,56 @@ namespace {
 
 
 	Assert::same([
-		'varA' => A\AInjected::class,
-		'varB' => A\B\BInjected::class,
-		'varC' => A\AInjected::class,
+		'varA' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
+		'varB' => [
+			'type' => A\B\BInjected::class,
+			'tag' => null,
+		],
+		'varC' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
 	], InjectExtension::getInjectProperties(A\AClass::class));
 
 	Assert::same([
-		'varA' => A\AInjected::class,
-		'varB' => A\B\BInjected::class,
-		'varC' => A\AInjected::class,
-		'varF' => A\B\BInjected::class,
+		'varA' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
+		'varB' => [
+			'type' => A\B\BInjected::class,
+			'tag' => null,
+		],
+		'varC' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
+		'varF' => [
+			'type' => A\B\BInjected::class,
+			'tag' => null,
+		],
 	], InjectExtension::getInjectProperties(A\B\BClass::class));
 
 	Assert::same([
-		'var1' => A\AInjected::class,
-		'var2' => A\B\BInjected::class,
-		'var3' => C\CInjected::class,
-		'var4' => C\CInjected::class,
+		'var1' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
+		'var2' => [
+			'type' => A\B\BInjected::class,
+			'tag' => null,
+		],
+		'var3' => [
+			'type' => C\CInjected::class,
+			'tag' => null,
+		],
+		'var4' => [
+			'type' => C\CInjected::class,
+			'tag' => null,
+		],
 	], InjectExtension::getInjectProperties(C\CClass::class));
 
 	Assert::exception(

@@ -216,8 +216,19 @@ class ContainerBuilder
 	 */
 	public function getByType(string $type, bool $throw = false): ?string
 	{
+		return $this->getByTypeAndTag($type, null, $throw);
+	}
+
+
+	/**
+	 * Resolves autowired service name by type and tag.
+	 * @return ($throw is true ? string : ?string)
+	 * @throws MissingServiceException
+	 */
+	public function getByTypeAndTag(string $type, ?string $tag = null, bool $throw = false): ?string
+	{
 		$this->needResolved();
-		return $this->autowiring->getByType($type, $throw);
+		return $this->autowiring->getByTypeAndTag($type, $tag, $throw);
 	}
 
 

@@ -16,11 +16,15 @@ namespace A
 namespace B
 {
 	use A\AInjected;
+	use Nette\DI\Attributes\Inject;
 
 	trait BTrait
 	{
-		/** @var AInjected @inject */
-		public $varA;
+		#[Inject]
+		public AInjected $varA;
+
+		#[Inject(tag: 'tagB')]
+		public AInjected $varB;
 	}
 }
 
@@ -42,6 +46,13 @@ namespace {
 
 
 	Assert::same([
-		'varA' => A\AInjected::class,
+		'varA' => [
+			'type' => A\AInjected::class,
+			'tag' => null,
+		],
+		'varB' => [
+			'type' => A\AInjected::class,
+			'tag' => 'tagB',
+		],
 	], InjectExtension::getInjectProperties(C\CClass::class));
 }
