@@ -65,7 +65,7 @@ Assert::true(DependencyChecker::isExpired(...$res));
 // test serialization of parameters
 class NotSerializable
 {
-	public function __sleep()
+	public function __serialize()
 	{
 		throw new Exception;
 	}

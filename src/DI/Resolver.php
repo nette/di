@@ -51,13 +51,13 @@ class Resolver
 
 	public function resolveDefinition(Definition $def): void
 	{
-		if ($this->recursive->contains($def)) {
+		if (isset($this->recursive[$def])) {
 			$names = array_map(fn($item) => $item->getName(), iterator_to_array($this->recursive));
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', $names)));
 		}
 
 		try {
-			$this->recursive->attach($def);
+			$this->recursive[$def] = true;
 
 			$def->resolveType($this);
 
@@ -68,7 +68,7 @@ class Resolver
 			throw $this->completeException($e, $def);
 
 		} finally {
-			$this->recursive->detach($def);
+			unset($this->recursive[$def]);
 		}
 	}
 
