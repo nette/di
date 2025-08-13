@@ -16,7 +16,6 @@ require __DIR__ . '/../bootstrap.php';
 function getPropertyValue($obj, string $name)
 {
 	$prop = (new ReflectionObject($obj))->getProperty($name);
-	$prop->setAccessible(true);
 	return $prop->getValue($obj);
 }
 
