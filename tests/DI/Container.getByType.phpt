@@ -72,3 +72,9 @@ Assert::same(['one', 'child'], $container->findByType(Service::class));
 Assert::same(['child'], $container->findByType(Child::class));
 Assert::same(['two', 'three'], $container->findByType(Service2::class));
 Assert::same([], $container->findByType('unknown'));
+
+
+Assert::same(['Service', 'Child'], array_map(get_class(...), $container->findServicesByType(Service::class)));
+Assert::same(['Child'], array_map(get_class(...), $container->findServicesByType(Child::class)));
+Assert::same(['Service2', 'Service2'], array_map(get_class(...), $container->findServicesByType(Service2::class)));
+Assert::same([], $container->findServicesByType('unknown'));
