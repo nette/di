@@ -18,6 +18,8 @@ fileExtensions:
 
 imports: {grouping: {class: grouped}}
 
+upgrading: {phpdoc: {deprecated: keep}} # a deprecation stays soft, the attribute would report every call
+
 overrides:
 	-
 		paths: [src]
