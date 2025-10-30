@@ -18,10 +18,10 @@ use function count, is_string;
  * and first-class callables. The entities stay entities.
  * @internal
  */
-final class NeonVisitors
+final readonly class NeonVisitors
 {
 	public function __construct(
-		private readonly string $file,
+		private string $file,
 	) {
 	}
 

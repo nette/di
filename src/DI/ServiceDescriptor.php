@@ -11,18 +11,18 @@ namespace Nette\DI;
 /**
  * Read-only snapshot of a single service in a compiled container, from Container::getServiceDescriptors().
  */
-final class ServiceDescriptor
+final readonly class ServiceDescriptor
 {
 	public function __construct(
-		public readonly string $name,
-		public readonly ?string $type,
+		public string $name,
+		public ?string $type,
 		/** true = yes, false = no, null = unknown (no autowiring metadata) */
-		public readonly ?bool $autowired,
+		public ?bool $autowired,
 		/** @var array<string, mixed> tag name => tag value */
-		public readonly array $tags,
+		public array $tags,
 		/** @var list<string> alias names pointing to this service */
-		public readonly array $aliases,
-		public readonly ?object $instance,
+		public array $aliases,
+		public ?object $instance,
 	) {
 	}
 }

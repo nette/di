@@ -16,10 +16,10 @@ use function count, sprintf;
 /**
  * Exposes a Nette DI container through the PSR-11 ContainerInterface.
  */
-final class PsrContainer implements ContainerInterface
+final readonly class PsrContainer implements ContainerInterface
 {
 	public function __construct(
-		private readonly Container $container,
+		private Container $container,
 	) {
 	}
 

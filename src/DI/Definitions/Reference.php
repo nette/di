@@ -11,7 +11,7 @@ namespace Nette\DI\Definitions;
 /**
  * Reference to service. Either by name or by type or reference to the 'self' service.
  */
-final class Reference
+final readonly class Reference
 {
 	public const Self = 'self';
 
@@ -33,7 +33,7 @@ final class Reference
 
 
 	public function __construct(
-		private readonly string $value,
+		private string $value,
 	) {
 	}
 
