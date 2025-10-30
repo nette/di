@@ -75,6 +75,26 @@ Assert::equal(
 	),
 );
 
+// object as default
+Assert::same(
+	['b' => 10],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function ($a = new stdClass, $b = null) {}),
+		[1 => 10],
+		function () {},
+	),
+);
+
+// object as default with typehint
+Assert::same(
+	['b' => 10],
+	Resolver::autowireArguments(
+		new ReflectionFunction(function (stdClass $a = new stdClass, $b = null) {}),
+		[1 => 10],
+		function () {},
+	),
+);
+
 // optional arguments + named variadics
 Assert::equal(
 	['k1' => 'new1', 'k2' => 'new2'],

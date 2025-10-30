@@ -1,9 +1,5 @@
 <?php declare(strict_types=1);
 
-/**
- * @phpVersion 8.1
- */
-
 use Nette\DI;
 use Tester\Assert;
 

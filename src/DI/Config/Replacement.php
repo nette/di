@@ -15,10 +15,10 @@ use function is_array;
  * the PREVENT_MERGING marker. It replaces the value of earlier layers instead of merging with it.
  * @internal
  */
-final class Replacement
+final readonly class Replacement
 {
 	public function __construct(
-		public readonly mixed $value,
+		public mixed $value,
 	) {
 	}
 
