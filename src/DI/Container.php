@@ -290,6 +290,18 @@ class Container
 
 
 	/**
+	 * Returns all services of the given type.
+	 * @template T
+	 * @param  class-string<T>  $type
+	 * @return T[]
+	 */
+	public function findServicesByType(string $type): array
+	{
+		return array_map($this->getService(...), $this->findByType($type));
+	}
+
+
+	/**
 	 * Returns the names of services with the given tag.
 	 * @return array of [service name => tag attributes]
 	 */
