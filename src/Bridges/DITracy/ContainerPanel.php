@@ -22,12 +22,14 @@ class ContainerPanel implements Tracy\IBarPanel
 {
 	public static ?float $compilationTime = null;
 	private Nette\DI\Container $container;
+	private Tracy\BlueScreen $blueScreen;
 	private ?float $elapsedTime;
 
 
-	public function __construct(Container $container)
+	public function __construct(Container $container, Tracy\BlueScreen $blueScreen)
 	{
 		$this->container = $container;
+		$this->blueScreen = $blueScreen;
 		$this->elapsedTime = self::$compilationTime
 			? microtime(as_float: true) - self::$compilationTime
 			: null;
@@ -77,6 +79,7 @@ class ContainerPanel implements Tracy\IBarPanel
 			$parameters = $rc->getMethod('getStaticParameters')->getDeclaringClass()->getName() === Container::class
 				? null
 				: $container->getParameters();
+			$keysToHide = $this->blueScreen->keysToHide;
 			require __DIR__ . '/dist/panel.phtml';
 		});
 	}

@@ -58,7 +58,7 @@ declare(strict_types=1);
 
 					</td>
 					<td>
-<?php if (isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container): ?>							<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5]) ?>
+<?php if (isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container): ?>							<?= Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5, Dumper::KEYS_TO_HIDE => $keysToHide]) ?>
 
 <?php elseif (isset($instances[$name])): ?>							<code><?= Tracy\Helpers::escapeHtml(get_class($instances[$name])) ?>
 </code>

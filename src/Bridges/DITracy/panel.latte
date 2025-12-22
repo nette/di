@@ -51,7 +51,7 @@
 					</td>
 					<td>
 						{if isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container}
-							{Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5])}
+							{Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5, Dumper::KEYS_TO_HIDE => $keysToHide])}
 						{elseif isset($instances[$name])}
 							<code>{get_class($instances[$name])}</code>
 						{elseif is_string($type)}
