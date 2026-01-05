@@ -58,6 +58,7 @@ $cases = [
 	// [config, exception, message]
 	["services:\n\t- ErrService(...)\n", DI\ServiceCreationException::class, 'Service of type Closure: Cannot create closure for ErrService(...)'],
 	["services:\n\t- ErrService( @missing )\n", DI\ServiceCreationException::class, "Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())"],
+	["services:\n\ta: ErrService\n\tb: @a(1, 2)\n", DI\ServiceCreationException::class, "Service 'b' (type of ErrService): Parameters were passed to reference @a, although references cannot have any parameters."],
 	["services:\n\t- UnknownClass\n", DI\ServiceCreationException::class, "Service (UnknownClass::__construct()): Class 'UnknownClass' not found."],
 	["services:\n\t- ErrAbstract\n", DI\ServiceCreationException::class, 'Service of type ErrAbstract: Class ErrAbstract is abstract.'],
 	["services:\n\t- ErrPrivateCtor\n", DI\ServiceCreationException::class, 'Service of type ErrPrivateCtor: Class ErrPrivateCtor has private constructor.'],
