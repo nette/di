@@ -41,6 +41,12 @@ parameters:
 		- # NeonAdapter: argument types vary by Neon node kind; runtime branching keeps them safe
 			identifier: argument.type
 			path: src/DI/Config/Adapters/NeonAdapter.php
+		- # arbitrary user callback loaded from a required PHP config file; its signature can't be expressed at this boundary
+			identifier: missingType.callable
+			message: '#parameter \$callback with no signature specified for Closure#'
+			path: src/DI/Config/Adapters/PhpAdapter.php
+			count: 1
+		-
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
