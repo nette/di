@@ -46,10 +46,7 @@ final class Helpers
 			return new Config\Replacement(self::expand($var->value, $params, $recursive));
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
-			trigger_error('%parameters% is deprecated, use @container::getParameters()', E_USER_DEPRECATED);
-			return $recursive
-				? self::expand($params, $params, $recursive)
-				: $params;
+			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters()');
 
 		} elseif (is_string($var)) {
 			$recursive = is_array($recursive) ? $recursive : ($recursive ? [] : null);

@@ -250,14 +250,13 @@ class Resolver
 
 			case $entity instanceof Reference:
 				if ($arguments) {
-					$e = $this->completeException(
+					throw $this->completeException(
 						new ServiceCreationException(sprintf(
 							'Parameters were passed to reference @%s, although references cannot have any parameters.',
 							$entity->getValue(),
 						)),
 						$this->currentService,
 					);
-					trigger_error($e->getMessage(), E_USER_DEPRECATED);
 				}
 				$entity = [new Reference(ContainerBuilder::ThisContainer), Container::getMethodName($entity->getValue())];
 				break;
