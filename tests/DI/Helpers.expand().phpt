@@ -87,17 +87,3 @@ Assert::exception(
 	Nette\InvalidArgumentException::class,
 	'Circular reference detected for parameters: %exp%, %array.a%, %array%',
 );
-
-
-Assert::same(
-	['key1' => 'hello', 'key2' => '*%key1%*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']), // deprecated
-);
-Assert::same(
-	['key1' => 'hello', 'key2' => '*hello*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true), // deprecated
-);
-Assert::same(
-	'own',
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']), // deprecated
-);

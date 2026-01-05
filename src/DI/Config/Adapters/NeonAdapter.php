@@ -184,9 +184,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$index = true;
 
 			} elseif ($attr->value instanceof Node\LiteralNode && $attr->value->value === '...') {
-				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
-				unset($node->attributes[$i]);
-				$index = true;
+				throw new Nette\DI\InvalidConfigurationException("Replace ... with _ in configuration file '$this->file'.");
 			}
 		}
 	}
@@ -217,7 +215,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			&& is_string($node->value)
 			&& str_contains($node->value, '%parameters%')
 		) {
-			trigger_error('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')', E_USER_DEPRECATED);
+			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')');
 		}
 	}
 
