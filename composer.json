@@ -43,6 +43,21 @@
 	"extra": {
 		"branch-alias": {
 			"dev-master": "3.3-dev"
+		},
+		"nette": {
+			"di-extensions": {
+				"decorator": "Nette\\DI\\Extensions\\DecoratorExtension",
+				"di": {
+					"class": "Nette\\DI\\Extensions\\DIExtension",
+					"args": ["%debugMode%"]
+				},
+				"extensions": "Nette\\DI\\Extensions\\ExtensionsExtension",
+				"inject": "Nette\\DI\\Extensions\\InjectExtension",
+				"search": {
+					"class": "Nette\\DI\\Extensions\\SearchExtension",
+					"args": ["%tempDir%/cache/nette.search"]
+				}
+			}
 		}
 	}
 }
