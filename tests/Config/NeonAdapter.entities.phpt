@@ -67,17 +67,6 @@ Assert::equal(
 );
 
 
-// @ ... is deprecated
-$data = @$adapter->load(Tester\FileMock::create('
-- Class(arg1, ..., [...])
-', 'neon'));
-
-Assert::equal(
-	[new Statement('Class', ['arg1', 2 => ['...']])],
-	$data,
-);
-
-
 // @ escaping with @@ is deprecated
 $data = @$adapter->load(Tester\FileMock::create('
 - @@double

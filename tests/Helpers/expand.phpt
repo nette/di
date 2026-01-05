@@ -62,6 +62,17 @@ Assert::equal(
 	Helpers::expand(new Statement('%cls%', ['%arg%', 2]), ['cls' => 'Foo', 'arg' => 'hello']),
 );
 
+Assert::same(
+	'own',
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'parameters' => 'own']),
+);
+
+
+Assert::exception(
+	fn() => Helpers::expand('%parameters%', ['key1' => 'hello']),
+	Nette\DeprecatedException::class,
+	'%parameters% is deprecated, use @container::getParameters()',
+);
 
 Assert::exception(
 	fn() => Helpers::expand('%missing%', []),
@@ -88,18 +99,4 @@ Assert::exception(
 	], true),
 	Nette\InvalidArgumentException::class,
 	'Circular reference detected for parameters: %exp%, %array.a%, %array%',
-);
-
-
-Assert::same(
-	['key1' => 'hello', 'key2' => '*%key1%*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']), // @ %parameters% is deprecated
-);
-Assert::same(
-	['key1' => 'hello', 'key2' => '*hello*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true), // @ %parameters% is deprecated
-);
-Assert::same(
-	'own',
-	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']),
 );

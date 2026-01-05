@@ -67,6 +67,11 @@ $cases = [
 		"Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())",
 	],
 	[
+		"services:\n\ta: ErrService\n\tb: @a(1, 2)\n",
+		DI\ServiceCreationException::class,
+		"Service 'b' (type of ErrService): Parameters were passed to reference @a, although references cannot have any parameters.",
+	],
+	[
 		"services:\n\t- UnknownClass\n",
 		DI\ServiceCreationException::class,
 		"Service (UnknownClass::__construct()): Class 'UnknownClass' not found.",

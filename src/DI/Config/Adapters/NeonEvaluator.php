@@ -124,10 +124,9 @@ final class NeonEvaluator extends Neon\Evaluator
 		$attributes = [];
 		$omitted = false;
 		foreach ($items as $i => $item) {
-			if (!$item->key && (self::isLiteral($item->value, '_') || self::isLiteral($item->value, '...'))) {
-				if (self::isLiteral($item->value, '...')) {
-					trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
-				}
+			if (!$item->key && self::isLiteral($item->value, '...')) {
+				throw new Nette\DI\InvalidConfigurationException("Replace ... with _ in configuration file '$this->file'.");
+			} elseif (!$item->key && self::isLiteral($item->value, '_')) {
 				$omitted = true;
 			} elseif ($item->key) {
 				$attributes[$this->evaluate($item->key, Place::Key)] = $this->evaluateItem($item);
@@ -154,7 +153,7 @@ final class NeonEvaluator extends Neon\Evaluator
 	private function checkParameters(string $value): void
 	{
 		if (str_contains($value, '%parameters%')) {
-			trigger_error('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')', E_USER_DEPRECATED);
+			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')');
 		}
 	}
 
