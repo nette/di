@@ -116,7 +116,7 @@ class Compiler
 	public function loadConfig(string $file, ?Config\Loader $loader = null): static
 	{
 		$sources = $this->sources . "// source: $file\n";
-		$loader ??= new Config\Loader;
+		$loader ??= $this->createLoader();
 		foreach ($loader->load($file, merge: false) as $data) {
 			$this->addConfig($data);
 		}
@@ -319,5 +319,14 @@ class Compiler
 	protected function createPhpGenerator(): PhpGenerator
 	{
 		return new PhpGenerator($this->builder);
+	}
+
+
+	/** @internal */
+	public function createLoader(array $params = []): Config\Loader
+	{
+		return (new Config\Loader)
+			->addAdapter('php', new Config\Adapters\PhpAdapter($this->builder))
+			->setParameters($params);
 	}
 }

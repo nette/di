@@ -17,12 +17,39 @@ use Nette;
  */
 final class PhpAdapter implements Nette\DI\Config\Adapter
 {
+	public function __construct(
+		private ?Nette\DI\ContainerBuilder $builder = null,
+	) {
+	}
+
+
 	/**
 	 * Reads configuration from PHP file.
 	 */
 	public function load(string $file): array
 	{
-		return require $file;
+		$data = require $file;
+		return $data instanceof \Closure
+			? $this->processClosure($data, $file)
+			: $data;
+	}
+
+
+	private function processClosure(\Closure $callback, string $file): array
+	{
+		$params = (new \ReflectionFunction($callback))->getParameters();
+		if (count($params) !== 1) {
+			throw new Nette\InvalidStateException(sprintf("Callback in configuration file '%s' must have exactly one parameter.", $file));
+		}
+		$type = $params[0]->getType();
+		if (!$type instanceof \ReflectionNamedType || $type->getName() !== Nette\DI\ContainerBuilder::class) {
+			throw new Nette\InvalidStateException(sprintf("Callback in configuration file '%s' must have parameter of type %s.", $file, Nette\DI\ContainerBuilder::class));
+		}
+		if (!$this->builder) {
+			throw new Nette\InvalidStateException(sprintf("Configuration file '%s' requires ContainerBuilder to be set.", $file));
+		}
+		$callback($this->builder);
+		return [];
 	}
 
 
