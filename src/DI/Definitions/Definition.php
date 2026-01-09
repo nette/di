@@ -20,6 +20,8 @@ abstract class Definition
 {
 	private ?string $name = null;
 	private ?string $type = null;
+
+	/** @var array<string, mixed> */
 	private array $tags = [];
 
 	/** @var bool|string[] */
@@ -75,6 +77,7 @@ abstract class Definition
 	}
 
 
+	/** @param  array<string, mixed>  $tags */
 	final public function setTags(array $tags): static
 	{
 		$this->tags = $tags;
@@ -82,6 +85,7 @@ abstract class Definition
 	}
 
 
+	/** @return array<string, mixed> */
 	final public function getTags(): array
 	{
 		return $this->tags;

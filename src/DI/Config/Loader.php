@@ -22,12 +22,19 @@ class Loader
 {
 	private const IncludesKey = 'includes';
 
+	/** @var array<string, string|Adapter> */
 	private array $adapters = [
 		'php' => Adapters\PhpAdapter::class,
 		'neon' => Adapters\NeonAdapter::class,
 	];
+
+	/** @var string[] */
 	private array $dependencies = [];
+
+	/** @var array<string, true> */
 	private array $loadedFiles = [];
+
+	/** @var array<string, mixed> */
 	private array $parameters = [];
 
 
@@ -73,6 +80,7 @@ class Loader
 
 	/**
 	 * Returns configuration files.
+	 * @return string[]
 	 */
 	public function getDependencies(): array
 	{

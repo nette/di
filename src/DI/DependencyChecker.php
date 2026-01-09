@@ -33,6 +33,7 @@ class DependencyChecker
 
 	/**
 	 * Adds dependencies to the list.
+	 * @param  array<ReflectionClass|\ReflectionFunctionAbstract|string>  $deps
 	 */
 	public function add(array $deps): static
 	{
@@ -43,6 +44,7 @@ class DependencyChecker
 
 	/**
 	 * Exports dependencies.
+	 * @return array{int, array<string, int|false>, array<string, int|false>, string[], string[], string}
 	 */
 	public function export(): array
 	{
@@ -103,6 +105,10 @@ class DependencyChecker
 	}
 
 
+	/**
+	 * @param  string[]  $classes
+	 * @param  string[]  $functions
+	 */
 	private static function calculateHash(array $classes, array $functions): string
 	{
 		$hash = [];
@@ -172,6 +178,7 @@ class DependencyChecker
 	}
 
 
+	/** @return array<int, array{string, string, bool, mixed}> */
 	private static function hashParameters(\ReflectionFunctionAbstract $method): array
 	{
 		$res = [];

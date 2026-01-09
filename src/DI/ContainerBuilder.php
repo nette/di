@@ -29,14 +29,19 @@ class ContainerBuilder
 	/** @deprecated use ContainerBuilder::ThisContainer */
 	public const THIS_CONTAINER = self::ThisContainer;
 
+	/** @var array<string, mixed> */
 	public array $parameters = [];
 
 	/** @var Definition[] */
 	private array $definitions = [];
+
+	/** @var array<string, string> alias => service name */
 	private array $aliases = [];
 	private Autowiring $autowiring;
 	private bool $needsResolve = true;
 	private bool $resolving = false;
+
+	/** @var array<\ReflectionClass|\ReflectionFunctionAbstract|string> */
 	private array $dependencies = [];
 
 
@@ -191,6 +196,7 @@ class ContainerBuilder
 
 	/**
 	 * Gets all service aliases.
+	 * @return array<string, string>
 	 */
 	public function getAliases(): array
 	{
@@ -340,6 +346,7 @@ class ContainerBuilder
 
 	/**
 	 * Returns the list of dependencies.
+	 * @return array<\ReflectionClass|\ReflectionFunctionAbstract|string>
 	 */
 	public function getDependencies(): array
 	{
@@ -347,7 +354,10 @@ class ContainerBuilder
 	}
 
 
-	/** @internal */
+	/**
+	 * @return array{tags?: array<string, array<string, mixed>>, aliases: array<string, string>, wiring: array<string, list<string[]>>}
+	 * @internal
+	 */
 	public function exportMeta(): array
 	{
 		$defs = $this->definitions;

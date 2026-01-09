@@ -26,9 +26,11 @@ class Compiler
 
 	/** @var CompilerExtension[] */
 	private array $extensions = [];
+
+	/** @var array<string, mixed> */
 	private array $config = [];
 
-	/** @var array [section => array[]] */
+	/** @var array<string, array<mixed[]>> [section => array[]] */
 	private array $configs = [];
 	private string $sources = '';
 	private DependencyChecker $dependencies;
@@ -71,6 +73,7 @@ class Compiler
 	}
 
 
+	/** @return CompilerExtension[] */
 	public function getExtensions(?string $type = null): array
 	{
 		return $type
@@ -94,6 +97,7 @@ class Compiler
 
 	/**
 	 * Adds new configuration.
+	 * @param  array<string, mixed>  $config
 	 */
 	public function addConfig(array $config): static
 	{
@@ -135,6 +139,7 @@ class Compiler
 
 	/**
 	 * Sets the names of dynamic parameters.
+	 * @param  string[]  $names
 	 */
 	public function setDynamicParameterNames(array $names): static
 	{
@@ -157,6 +162,7 @@ class Compiler
 
 	/**
 	 * Exports dependencies.
+	 * @return array{int, array<string, int|false>, array<string, int|false>, string[], string[], string}
 	 */
 	public function exportDependencies(): array
 	{
@@ -258,6 +264,7 @@ class Compiler
 
 	/**
 	 * Merges and validates configurations against scheme.
+	 * @param  array<mixed[]>  $configs
 	 */
 	private function processSchema(Schema\Schema $schema, array $configs, $name = null): array|object
 	{
@@ -298,6 +305,7 @@ class Compiler
 
 	/**
 	 * Loads list of service definitions from configuration.
+	 * @param  array<string|int, mixed>  $configList
 	 */
 	public function loadDefinitionsFromConfig(array $configList): void
 	{

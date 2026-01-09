@@ -66,6 +66,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
+	/** @param  array<string, Reference|string>  $references */
 	public function setReferences(array $references): static
 	{
 		$this->references = [];

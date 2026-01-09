@@ -84,6 +84,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
+	/** @param  array<mixed>  $args */
 	public function setArguments(array $args = []): static
 	{
 		$this->creator->arguments = $args;
@@ -91,7 +92,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function setArgument($key, $value): static
+	public function setArgument(int|string $key, mixed $value): static
 	{
 		$this->creator->arguments[$key] = $value;
 		return $this;

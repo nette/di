@@ -323,6 +323,7 @@ class Container
 	 * Creates an instance of the class and passes dependencies to the constructor using autowiring.
 	 * @template T of object
 	 * @param  class-string<T>  $class
+	 * @param  array<mixed>  $args
 	 * @return T
 	 */
 	public function createInstance(string $class, array $args = []): object

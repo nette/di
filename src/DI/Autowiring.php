@@ -104,6 +104,7 @@ class Autowiring
 	}
 
 
+	/** @return array{array<string, string[]>, array<string, string[]>} */
 	public function getClassList(): array
 	{
 		return [$this->lowPriority, $this->highPriority];
