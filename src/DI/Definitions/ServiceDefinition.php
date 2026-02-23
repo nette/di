@@ -212,7 +212,6 @@ final class ServiceDefinition extends Definition
 	{
 		return $this->lazy
 			&& is_string($class = $this->creator->getEntity())
-			&& ($this->creator->arguments || $this->setup)
 			&& ($ancestor = ($tmp = class_parents($class)) ? array_pop($tmp) : $class)
 			&& !(new \ReflectionClass($ancestor))->isInternal();
 	}
