@@ -27,9 +27,6 @@ parameters:
 		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
-		- # ContainerPanel: phtml template reads dynamic Tracy panel properties
-			identifier: property.notFound
-			path: src/Bridges/DITracy/ContainerPanel.php
 		- # NeonAdapter: argument types vary by Neon node kind; runtime branching keeps them safe
 			identifier: argument.type
 			path: src/DI/Config/Adapters/NeonAdapter.php
@@ -48,9 +45,6 @@ parameters:
 		-
 			identifier: nullCoalesce.offset
 			path: src/DI/Autowiring.php
-		- # template compiled with precise types, is_string always true
-			identifier: function.alreadyNarrowedType
-			path: src/Bridges/DITracy/dist/panel.phtml
 		- # defensive guard against unexpected dependency types in the array union
 			identifier: instanceof.alwaysTrue
 			path: src/DI/DependencyChecker.php

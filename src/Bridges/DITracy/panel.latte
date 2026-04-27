@@ -1,8 +1,5 @@
 {use Tracy\Dumper}
-{varType array<string, string> $services}
-{varType array<string, array<int, list<string>>> $wiring}
-{varType array<string, object> $instances}
-{varType array<string, array<string, mixed>> $tags}
+{varType array<string, Nette\DI\ServiceDescriptor> $services}
 {varType array<string, mixed>|null $parameters}
 {varType string $file}
 
@@ -45,30 +42,29 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr n:foreach="$services as $name => $type">
+			<tr n:foreach="$services as $name => $service">
 				{do $name = (string) $name}
-				{do $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true)}
-				<td class={isset($instances[$name]) ? created}>
+				<td class={$service->instance !== null ? created}>
 					{if is_numeric($name)}<small>{$name}</small>{else}{$name}{/if}
 				</td>
-				<td class={$autowired ? yes}>
-					{$autowired ? yes : (isset($wiring[$type]) ? no : '?')}
+				<td class={$service->autowired === true ? yes}>
+					{$service->autowired === true ? 'yes' : ($service->autowired === false ? 'no' : '?')}
 				</td>
 				<td>
-					{if isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container}
-						{Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5])}
-					{elseif isset($instances[$name])}
-						<code>{get_class($instances[$name])}</code>
-					{elseif is_string($type)}
-						<code>{$type}</code>
+					{if $service->instance !== null && !$service->instance instanceof Nette\DI\Container}
+						{Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5])}
+					{elseif $service->instance !== null}
+						<code>{get_class($service->instance)}</code>
+					{elseif $service->type !== null}
+						<code>{$service->type}</code>
 					{/if}
 				</td>
 				<td>
-					{if !isset($tags[$name])}
-					{elseif count($tags[$name]) === 1}
-						{key($tags[$name])} = {Dumper::toHtml(current($tags[$name]), [Dumper::COLLAPSE => true])}
+					{if !$service->tags}
+					{elseif count($service->tags) === 1}
+						{key($service->tags)} = {Dumper::toHtml(current($service->tags), [Dumper::COLLAPSE => true])}
 					{else}
-						{Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => true])}
+						{Dumper::toHtml($service->tags, [Dumper::COLLAPSE => true])}
 					{/if}
 				</td>
 			</tr>

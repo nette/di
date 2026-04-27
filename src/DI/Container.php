@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use function array_key_exists, count, is_object, sprintf;
+use function array_key_exists, count, in_array, is_object, sprintf, strlen;
 
 
 /**
@@ -303,6 +303,50 @@ class Container
 	public function findByTag(string $tag): array
 	{
 		return $this->tags[$tag] ?? [];
+	}
+
+
+	/**
+	 * Introspection of the container: every registered service keyed by canonical name in definition order.
+	 * Aliases are folded into each descriptor's $aliases, not listed separately. No services are instantiated.
+	 * @return array<string, ServiceDescriptor>
+	 */
+	public function getServiceDescriptors(): array
+	{
+		$aliases = [];
+		foreach ($this->aliases as $alias => $target) {
+			$aliases[$target][] = $alias;
+		}
+
+		$names = [];
+		foreach (array_keys($this->methods) as $method) {
+			if (strlen($method) > 13 && str_starts_with($method, 'createService')) {
+				$names[lcfirst(str_replace('__', '.', substr($method, 13)))] = true;
+			}
+		}
+		$names += $this->factories;
+
+		$descriptors = [];
+		foreach (array_keys($names) as $name) {
+			$type = $this->getServiceType($name) ?: null;
+			$wiring = $type === null ? null : $this->wiring[Helpers::normalizeClass($type)] ?? null;
+			$tags = [];
+			foreach ($this->tags as $tag => $services) {
+				if (array_key_exists($name, $services)) {
+					$tags[$tag] = $services[$name];
+				}
+			}
+
+			$descriptors[$name] = new ServiceDescriptor(
+				name: $name,
+				type: $type,
+				autowired: $wiring ? in_array($name, array_merge($wiring[0] ?? [], $wiring[1] ?? []), strict: true) : null,
+				tags: $tags,
+				aliases: $aliases[$name] ?? [],
+				instance: $this->instances[$name] ?? null,
+			);
+		}
+		return $descriptors;
 	}
 
 

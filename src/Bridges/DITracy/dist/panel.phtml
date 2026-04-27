@@ -1,10 +1,7 @@
 <?php declare(strict_types=1);
 
 use Tracy\Dumper;
-/** @var array<string,string> $services */
-/** @var array<string,array<int,list<string>>> $wiring */
-/** @var array<string,object> $instances */
-/** @var array<string,array<string,mixed>> $tags */
+/** @var array<string,Nette\DI\ServiceDescriptor> $services */
 /** @var array<string,mixed>|null $parameters */
 /** @var string $file */
 echo '
@@ -36,7 +33,7 @@ echo '
 <div class="tracy-inner nette-ContainerPanel">
 <div class="tracy-inner-container">
 	<p>Source: ';
-echo Tracy\Helpers::editorLink($file) /* pos 36:13 */;
+echo Tracy\Helpers::editorLink($file) /* pos 34:13 */;
 echo '</p>
 
 	<table class="tracy-sortable">
@@ -50,45 +47,44 @@ echo '</p>
 		</thead>
 		<tbody>
 ';
-foreach ($services as $name => $type) /* pos 48:8 */ {
+foreach ($services as $name => $service) /* pos 46:8 */ {
 	echo '			<tr>
 ';
-	$name = (string) $name /* pos 49:5 */;
-	$autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true) /* pos 50:5 */;
+	$name = (string) $name /* pos 47:5 */;
 	echo '				<td';
-	echo ($ʟ_tmp = (isset($instances[$name]) ? 'created' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 51:16 */;
+	echo ($ʟ_tmp = ($service->instance !== null ? 'created' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 48:16 */;
 	echo '>
 ';
-	if (is_numeric($name)) /* pos 52:6 */ {
+	if (is_numeric($name)) /* pos 49:6 */ {
 		echo '					<small>';
-		echo Tracy\Helpers::escapeHtml($name) /* pos 52:35 */;
+		echo Tracy\Helpers::escapeHtml($name) /* pos 49:35 */;
 		echo '</small>';
-	} else /* pos 52:50 */ {
-		echo Tracy\Helpers::escapeHtml($name) /* pos 52:56 */;
+	} else /* pos 49:50 */ {
+		echo Tracy\Helpers::escapeHtml($name) /* pos 49:56 */;
 	}
 	echo '
 				</td>
 				<td';
-	echo ($ʟ_tmp = ($autowired ? 'yes' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 54:16 */;
+	echo ($ʟ_tmp = ($service->autowired === true ? 'yes' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 51:16 */;
 	echo '>
 					';
-	echo Tracy\Helpers::escapeHtml($autowired ? 'yes' : (isset($wiring[$type]) ? 'no' : '?')) /* pos 55:6 */;
+	echo Tracy\Helpers::escapeHtml($service->autowired === true ? 'yes' : ($service->autowired === false ? 'no' : '?')) /* pos 52:6 */;
 	echo '
 				</td>
 				<td>
 ';
-	if (isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container) /* pos 58:6 */ {
+	if ($service->instance !== null && !$service->instance instanceof Nette\DI\Container) /* pos 55:6 */ {
 		echo '					';
-		echo Dumper::toHtml($instances[$name], [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5]) /* pos 59:7 */;
+		echo Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5]) /* pos 56:7 */;
 		echo "\n";
-	} elseif (isset($instances[$name])) /* pos 60:6 */ {
+	} elseif ($service->instance !== null) /* pos 57:6 */ {
 		echo '					<code>';
-		echo Tracy\Helpers::escapeHtml(get_class($instances[$name])) /* pos 61:13 */;
+		echo Tracy\Helpers::escapeHtml(get_class($service->instance)) /* pos 58:13 */;
 		echo '</code>
 ';
-	} elseif (is_string($type)) /* pos 62:6 */ {
+	} elseif ($service->type !== null) /* pos 59:6 */ {
 		echo '					<code>';
-		echo Tracy\Helpers::escapeHtml($type) /* pos 63:13 */;
+		echo Tracy\Helpers::escapeHtml($service->type) /* pos 60:13 */;
 		echo '</code>
 ';
 	}
@@ -97,16 +93,16 @@ foreach ($services as $name => $type) /* pos 48:8 */ {
 	echo '				</td>
 				<td>
 ';
-	if (!isset($tags[$name])) /* pos 67:6 */ {
-	} elseif (count($tags[$name]) === 1) /* pos 68:6 */ {
+	if (!$service->tags) /* pos 64:6 */ {
+	} elseif (count($service->tags) === 1) /* pos 65:6 */ {
 		echo '					';
-		echo Tracy\Helpers::escapeHtml(key($tags[$name])) /* pos 69:7 */;
+		echo Tracy\Helpers::escapeHtml(key($service->tags)) /* pos 66:7 */;
 		echo ' = ';
-		echo Dumper::toHtml(current($tags[$name]), [Dumper::COLLAPSE => true]) /* pos 69:29 */;
+		echo Dumper::toHtml(current($service->tags), [Dumper::COLLAPSE => true]) /* pos 66:29 */;
 		echo "\n";
-	} else /* pos 70:6 */ {
+	} else /* pos 67:6 */ {
 		echo '					';
-		echo Dumper::toHtml($tags[$name], [Dumper::COLLAPSE => true]) /* pos 71:7 */;
+		echo Dumper::toHtml($service->tags, [Dumper::COLLAPSE => true]) /* pos 68:7 */;
 		echo "\n";
 	}
 
@@ -123,12 +119,12 @@ echo '		</tbody>
 
 	<div class="nette-ContainerPanel-parameters">
 ';
-if ($parameters === null) /* pos 81:3 */ {
-	echo '		<i>disabled via \'di › export › parameters\'</i>
+if ($parameters === null) /* pos 78:3 */ {
+	echo '		<i>disabled via \'di › export › parameters\'</i>
 ';
-} else /* pos 83:3 */ {
+} else /* pos 80:3 */ {
 	echo '		';
-	echo Dumper::toHtml($parameters) /* pos 84:4 */;
+	echo Dumper::toHtml($parameters) /* pos 81:4 */;
 	echo "\n";
 }
 echo '	</div>
