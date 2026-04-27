@@ -48,29 +48,33 @@ class ContainerPanel implements Tracy\IBarPanel
 	 */
 	public function getPanel(): string
 	{
-		$rc = (new \ReflectionClass($this->container));
-		$services = [];
-		foreach ($rc->getMethods() as $method) {
-			if (preg_match('#^createService.#', $method->getName())) {
-				$name = lcfirst(str_replace('__', '.', substr($method->getName(), 13)));
-				$services[$name] = (string) $method->getReturnType();
-			}
-		}
+		$rc = new \ReflectionClass($this->container);
+
+		$services = $this->container->getServiceTypes();
 		ksort($services, SORT_NATURAL);
 
-		$propertyTags = (fn() => $this->tags)->bindTo($this->container, $this->container)();
 		$tags = [];
-		foreach ($propertyTags as $tag => $tmp) {
-			foreach ($tmp as $service => $val) {
-				$tags[$service][$tag] = $val;
+		foreach ($services as $name => $type) {
+			$serviceTags = $this->container->getServiceTags($name);
+			if ($serviceTags) {
+				$tags[$name] = $serviceTags;
 			}
 		}
 
-		return Nette\Utils\Helpers::capture(function () use ($rc, $tags, $services) {
+		$autowiredCache = $typeKnownCache = [];
+		$autowireStatus = function (string $type, string $name) use (&$autowiredCache, &$typeKnownCache): string {
+			$autowiredCache[$type] ??= array_flip($this->container->findAutowired($type));
+			if (isset($autowiredCache[$type][$name])) {
+				return 'yes';
+			}
+			$typeKnownCache[$type] ??= $this->container->findByType($type) !== [];
+			return $typeKnownCache[$type] ? 'no' : '?';
+		};
+
+		return Nette\Utils\Helpers::capture(function () use ($rc, $tags, $services, $autowireStatus) {
 			$container = $this->container;
 			$file = $rc->getFileName();
-			$instances = (fn() => $this->instances)->bindTo($this->container, Container::class)();
-			$wiring = (fn() => $this->wiring)->bindTo($this->container, $this->container)();
+			$instances = $this->container->getInstantiatedServices();
 			$parameters = $rc->getMethod('getStaticParameters')->getDeclaringClass()->getName() === Container::class
 				? null
 				: $container->getParameters();

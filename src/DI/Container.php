@@ -273,7 +273,6 @@ class Container
 	 * Returns the names of autowired services of the given type.
 	 * @param  class-string  $type
 	 * @return list<string>
-	 * @internal
 	 */
 	public function findAutowired(string $type): array
 	{
@@ -303,6 +302,64 @@ class Container
 	public function findByTag(string $tag): array
 	{
 		return $this->tags[$tag] ?? [];
+	}
+
+
+	/**
+	 * Returns all registered services as a map of service name to type.
+	 * Aliases are not included — use getAliases() separately.
+	 * @return array<string, string>
+	 */
+	public function getServiceTypes(): array
+	{
+		$types = [];
+		foreach (array_keys($this->methods) as $method) {
+			if (strlen($method) > 13 && str_starts_with($method, 'createService')) {
+				$name = lcfirst(str_replace('__', '.', substr($method, 13)));
+				$types[$name] = (string) (new \ReflectionMethod($this, $method))->getReturnType();
+			}
+		}
+		foreach ($this->factories as $name => $cb) {
+			$types[$name] = (string) (new \ReflectionFunction($cb))->getReturnType();
+		}
+		return $types;
+	}
+
+
+	/**
+	 * Returns the alias map: alias name => canonical service name.
+	 * @return array<string, string>
+	 */
+	public function getAliases(): array
+	{
+		return $this->aliases;
+	}
+
+
+	/**
+	 * Returns services that have already been instantiated, indexed by service name.
+	 * @return array<string, object>
+	 */
+	public function getInstantiatedServices(): array
+	{
+		return $this->instances;
+	}
+
+
+	/**
+	 * Returns the tags attached to the given service.
+	 * @return array<string, mixed>  tag name => tag value
+	 */
+	public function getServiceTags(string $name): array
+	{
+		$name = $this->aliases[$name] ?? $name;
+		$result = [];
+		foreach ($this->tags as $tag => $services) {
+			if (array_key_exists($name, $services)) {
+				$result[$tag] = $services[$name];
+			}
+		}
+		return $result;
 	}
 
 

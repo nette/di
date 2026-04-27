@@ -2,7 +2,7 @@
 
 use Tracy\Dumper;
 /** @var array<string,string> $services */
-/** @var array<string,array<int,list<string>>> $wiring */
+/** @var \Closure $autowireStatus */
 /** @var array<string,object> $instances */
 /** @var array<string,array<string,mixed>> $tags */
 /** @var array<string,mixed>|null $parameters */
@@ -54,7 +54,7 @@ foreach ($services as $name => $type) /* pos 48:8 */ {
 	echo '			<tr>
 ';
 	$name = (string) $name /* pos 49:5 */;
-	$autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true) /* pos 50:5 */;
+	$status = $autowireStatus($type, $name) /* pos 50:5 */;
 	echo '				<td';
 	echo ($ʟ_tmp = (isset($instances[$name]) ? 'created' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 51:16 */;
 	echo '>
@@ -69,10 +69,10 @@ foreach ($services as $name => $type) /* pos 48:8 */ {
 	echo '
 				</td>
 				<td';
-	echo ($ʟ_tmp = ($autowired ? 'yes' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 54:16 */;
+	echo ($ʟ_tmp = ($status === 'yes' ? 'yes' : null)) === null ? '' : ' class="' . Tracy\Helpers::escapeHtml($ʟ_tmp) . '"' /* pos 54:16 */;
 	echo '>
 					';
-	echo Tracy\Helpers::escapeHtml($autowired ? 'yes' : (isset($wiring[$type]) ? 'no' : '?')) /* pos 55:6 */;
+	echo Tracy\Helpers::escapeHtml($status) /* pos 55:6 */;
 	echo '
 				</td>
 				<td>

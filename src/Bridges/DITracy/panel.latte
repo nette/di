@@ -1,6 +1,6 @@
 {use Tracy\Dumper}
 {varType array<string, string> $services}
-{varType array<string, array<int, list<string>>> $wiring}
+{varType \Closure $autowireStatus}
 {varType array<string, object> $instances}
 {varType array<string, array<string, mixed>> $tags}
 {varType array<string, mixed>|null $parameters}
@@ -47,12 +47,12 @@
 		<tbody>
 			<tr n:foreach="$services as $name => $type">
 				{do $name = (string) $name}
-				{do $autowired = in_array($name, array_merge($wiring[$type][0] ?? [], $wiring[$type][1] ?? []), strict: true)}
+				{var $status = $autowireStatus($type, $name)}
 				<td class={isset($instances[$name]) ? created}>
 					{if is_numeric($name)}<small>{$name}</small>{else}{$name}{/if}
 				</td>
-				<td class={$autowired ? yes}>
-					{$autowired ? yes : (isset($wiring[$type]) ? no : '?')}
+				<td class={$status === 'yes' ? yes}>
+					{$status}
 				</td>
 				<td>
 					{if isset($instances[$name]) && !$instances[$name] instanceof Nette\DI\Container}

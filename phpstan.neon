@@ -32,10 +32,12 @@ parameters:
 		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
-		- # ContainerPanel: phtml template reads dynamic Tracy panel properties
-			identifier: property.notFound
+		- # runtime service-type strings from getServiceTypes() passed as class-string to findAutowired()/findByType()
+			identifier: argument.type
+			message: '#expects class-string, string given\.$#'
 			path: src/Bridges/DITracy/ContainerPanel.php
-		- # ContainerPanel: variables consumed in required phtml template, not in the closure body
+			count: 2
+		-
 			identifier: closure.unusedUse
 			path: src/Bridges/DITracy/ContainerPanel.php
 		- # NeonAdapter: argument types vary by Neon node kind; runtime branching keeps them safe
@@ -46,7 +48,6 @@ parameters:
 			message: '#parameter \$callback with no signature specified for Closure#'
 			path: src/DI/Config/Adapters/PhpAdapter.php
 			count: 1
-		-
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
