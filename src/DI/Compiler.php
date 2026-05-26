@@ -72,10 +72,10 @@ class Compiler
 
 
 	/**
-	 * Returns all registered extensions, optionally filtered by type.
-	 * @template T of CompilerExtension
+	 * Returns all registered extensions, optionally filtered by class or interface.
+	 * @template T of object
 	 * @param  class-string<T>|null  $type
-	 * @return ($type is null ? array<string, CompilerExtension> : array<string, T>)
+	 * @return ($type is null ? array<string, CompilerExtension> : array<string, CompilerExtension&T>)
 	 */
 	public function getExtensions(?string $type = null): array
 	{
