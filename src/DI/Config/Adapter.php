@@ -21,4 +21,4 @@ interface Adapter
 }
 
 
-class_exists(IAdapter::class);
+interface_exists(IAdapter::class);
