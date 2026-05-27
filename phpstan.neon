@@ -12,34 +12,39 @@ parameters:
 		- phtml
 
 	ignoreErrors:
-		-
+		- # BC alias: class_exists() triggers autoload of excluded compatibility.php which registers the IAdapter alias
+			identifier: function.impossibleType
+			message: '#^Call to function class_exists\(\) with ''Nette\\\\DI\\\\Config\\\\IAdapter'' will always evaluate to false\.$#'
+			path: src/DI/Config/Adapter.php
+			count: 1
+		- # FactoryDefinition::getResultType() narrows from broader Definition contract via runtime checks
 			identifier: return.type
 			path: src/DI/Definitions/FactoryDefinition.php
-		-
+		- # ServiceDefinition: defensive instanceof against runtime substitution by ContainerBuilder
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Definitions/ServiceDefinition.php
-		-
+		- # Statement: runtime validation of dynamically-constructed entity tuple
 			identifier: function.alreadyNarrowedType
 			path: src/DI/Definitions/Statement.php
-		-
+		- # ContainerBuilder: runtime exhaustive type check on union derived from registered services
 			identifier: function.impossibleType
 			path: src/DI/ContainerBuilder.php
-		-
+		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
-		-
+		- # ContainerPanel: phtml template reads dynamic Tracy panel properties
 			identifier: property.notFound
 			path: src/Bridges/DITracy/ContainerPanel.php
-		-
+		- # ContainerPanel: variables consumed in required phtml template, not in the closure body
 			identifier: closure.unusedUse
 			path: src/Bridges/DITracy/ContainerPanel.php
-		-
+		- # NeonAdapter: argument types vary by Neon node kind; runtime branching keeps them safe
 			identifier: argument.type
 			path: src/DI/Config/Adapters/NeonAdapter.php
-		-
+		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
-		-
+		- # Autowiring: by-reference cache lookups and isset() guards on auto-vivified arrays
 			identifier: identical.alwaysFalse
 			path: src/DI/Autowiring.php
 		-
