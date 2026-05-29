@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use function array_diff_key, array_keys, func_num_args, implode, is_object, is_string, key, sprintf, str_replace, str_starts_with, substr_replace;
+use function array_diff_key, array_keys, func_num_args, implode, is_array, is_object, is_string, key, sprintf, str_replace, str_starts_with, substr_replace;
 
 
 /**

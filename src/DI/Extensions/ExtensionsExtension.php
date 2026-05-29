@@ -8,6 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use function is_int, is_string, sprintf;
 
 
 /**
