@@ -201,7 +201,7 @@ final class ServiceDefinition extends Definition
 			$lines[] = $generator->formatStatement($stmt) . ";\n";
 		}
 
-		if ($this->canBeLazy() && !preg_grep('#(?:func_get_arg|func_num_args)#i', $lines)) { // latteFactory workaround
+		if ($this->canBeLazy() && !preg_grep('#func_get_arg|func_num_args#i', $lines)) { // latteFactory workaround
 			$class = $this->creator->getEntity();
 			assert(is_string($class) && class_exists($class)); // canBeLazy() guarantees this
 			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')

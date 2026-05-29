@@ -116,7 +116,7 @@ class DefinitionSchema implements Schema
 	 * @param  string|int  $key
 	 * @param  array<string, mixed>  $def
 	 */
-	private function sniffType($key, array $def): string
+	private function sniffType(string|int $key, array $def): string
 	{
 		if (is_string($key)) {
 			$name = preg_match('#^@[\w\\\]+$#D', $key)
