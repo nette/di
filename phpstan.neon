@@ -75,6 +75,9 @@ parameters:
 		- # closure passes string to class-string params
 			identifier: argument.type
 			path: src/DI/Container.php
+		- # PSR-11 identifiers are arbitrary strings passed to class-string introspection
+			identifier: argument.type
+			path: src/Bridges/DIPsr/PsrContainer.php
 		- # callInjects passes array as callable
 			identifier: argument.type
 			path: src/DI/Extensions/InjectExtension.php
