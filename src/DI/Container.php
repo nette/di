@@ -246,16 +246,16 @@ class Container
 	 */
 	public function getByType(string $type, bool $throw = true): ?object
 	{
-		$type = Helpers::normalizeClass($type);
-		if (!empty($this->wiring[$type][0])) {
-			if (count($names = $this->wiring[$type][0]) === 1) {
-				return $this->getService($names[0]);
-			}
+		$names = $this->findAutowired($type, preferredOnly: true);
+		if (count($names) === 1) {
+			return $this->getService($names[0]);
 
+		} elseif (count($names) > 1) {
 			natsort($names);
-			throw new MissingServiceException(sprintf("Multiple services of type $type found: %s.", implode(', ', $names)));
+			throw new MissingServiceException(sprintf('Multiple services of type %s found: %s.', Helpers::normalizeClass($type), implode(', ', $names)));
 
 		} elseif ($throw) {
+			$type = Helpers::normalizeClass($type);
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
 			} elseif ($this->findByType($type)) {
@@ -270,14 +270,19 @@ class Container
 
 
 	/**
-	 * Returns the names of autowired services of the given type.
+	 * Returns the names of autowired services of the given type. By default it includes services
+	 * demoted to a lower priority by an autowiring preference; pass $preferredOnly to get only the
+	 * highest-priority candidates that getByType() arbitrates over — it resolves to the single one
+	 * of them, failing when there are none or several.
 	 * @param  class-string  $type
 	 * @return list<string>
 	 */
-	public function findAutowired(string $type): array
+	public function findAutowired(string $type, bool $preferredOnly = false): array
 	{
 		$type = Helpers::normalizeClass($type);
-		return array_merge($this->wiring[$type][0] ?? [], $this->wiring[$type][1] ?? []);
+		return $preferredOnly
+			? $this->wiring[$type][0] ?? []
+			: array_merge($this->wiring[$type][0] ?? [], $this->wiring[$type][1] ?? []);
 	}
 
 
