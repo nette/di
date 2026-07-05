@@ -121,12 +121,14 @@ final class FactoryDefinition extends Definition
 
 		if ($resultDef instanceof ServiceDefinition) {
 			$this->completeParameters($resolver);
-			$this->convertArguments($resultDef->getCreator()->arguments);
+			$creator = $resultDef->getCreator();
+			assert($creator instanceof Statement);
+			$this->convertArguments($creator->arguments);
 			foreach ($resultDef->getSetup() as $setup) {
 				$this->convertArguments($setup->arguments);
 			}
 
-			if ($resultDef->getEntity() instanceof Reference && !$resultDef->getCreator()->arguments) {
+			if ($resultDef->getEntity() instanceof Reference && !$creator->arguments) {
 				$resultDef->setCreator([ // render as $container->createMethod()
 					new Reference(Nette\DI\ContainerBuilder::ThisContainer),
 					Nette\DI\Container::getMethodName($resultDef->getEntity()->getValue()),
@@ -166,7 +168,7 @@ final class FactoryDefinition extends Definition
 					));
 				}
 
-				$this->resultDefinition->getCreator()->arguments[$ctorParam->getPosition()] = new Php\Literal('$' . $ctorParam->name);
+				$this->resultDefinition->setArgument($ctorParam->getPosition(), new Php\Literal('$' . $ctorParam->name));
 
 			} elseif (!$this->resultDefinition->getSetup()) {
 				// [param1, param2] => '$param1, $param2'

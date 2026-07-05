@@ -20,7 +20,7 @@ use function count, is_string;
  * Definition of standard service.
  *
  * @property ?string $class
- * @property Statement $factory
+ * @property Expression $factory
  * @property Statement[] $setup
  */
 final class ServiceDefinition extends Definition
@@ -28,7 +28,7 @@ final class ServiceDefinition extends Definition
 	use Nette\SmartObject;
 
 	public ?bool $lazy = null;
-	private Statement $creator;
+	private Expression $creator;
 
 	/** @var Statement[] */
 	private array $setup = [];
@@ -48,10 +48,10 @@ final class ServiceDefinition extends Definition
 
 	/**
 	 * Alias for setCreator()
-	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $factory
+	 * @param  string|array{string|Expression, string}|Definition|Expression  $factory
 	 * @param  array<mixed>  $args
 	 */
-	public function setFactory(string|array|Definition|Reference|Statement $factory, array $args = []): static
+	public function setFactory(string|array|Definition|Expression $factory, array $args = []): static
 	{
 		return $this->setCreator($factory, $args);
 	}
@@ -60,26 +60,26 @@ final class ServiceDefinition extends Definition
 	/**
 	 * Alias for getCreator()
 	 */
-	public function getFactory(): Statement
+	public function getFactory(): Expression
 	{
 		return $this->creator;
 	}
 
 
 	/**
-	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $creator
+	 * @param  string|array{string|Expression, string}|Definition|Expression  $creator
 	 * @param  array<mixed>  $args
 	 */
-	public function setCreator(string|array|Definition|Reference|Statement $creator, array $args = []): static
+	public function setCreator(string|array|Definition|Expression $creator, array $args = []): static
 	{
-		$this->creator = $creator instanceof Statement
+		$this->creator = $creator instanceof Expression && !$creator instanceof Reference
 			? $creator
 			: new Statement($creator, $args);
 		return $this;
 	}
 
 
-	public function getCreator(): Statement
+	public function getCreator(): Expression
 	{
 		return $this->creator;
 	}
@@ -88,13 +88,19 @@ final class ServiceDefinition extends Definition
 	/** @return string|array{string|Expression, string}|Definition|Reference|null */
 	public function getEntity(): string|array|Definition|Reference|null
 	{
-		return $this->creator->getEntity();
+		return $this->creator instanceof Statement
+			? $this->creator->getEntity()
+			: null;
 	}
 
 
 	/** @param  array<mixed>  $args */
 	public function setArguments(array $args = []): static
 	{
+		if (!$this->creator instanceof Statement) {
+			throw new Nette\InvalidStateException('Cannot pass arguments to this creator.');
+		}
+
 		$this->creator->arguments = $args;
 		return $this;
 	}
@@ -102,6 +108,10 @@ final class ServiceDefinition extends Definition
 
 	public function setArgument(int|string $key, mixed $value): static
 	{
+		if (!$this->creator instanceof Statement) {
+			throw new Nette\InvalidStateException('Cannot pass arguments to this creator.');
+		}
+
 		$this->creator->arguments[$key] = $value;
 		return $this;
 	}
@@ -147,7 +157,7 @@ final class ServiceDefinition extends Definition
 
 	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
-		if (!$this->getEntity()) {
+		if ($this->creator instanceof Statement && !$this->creator->getEntity()) {
 			$type = $this->getType();
 			if (!$type) {
 				throw new ServiceCreationException('Factory and type are missing in definition of service.');
@@ -175,8 +185,13 @@ final class ServiceDefinition extends Definition
 
 	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
-		$entity = $this->creator->getEntity();
-		if ($entity instanceof Reference && !$this->creator->arguments && !$this->setup) {
+		$entity = $this->getEntity();
+		if (
+			$entity instanceof Reference
+			&& $this->creator instanceof Statement
+			&& !$this->creator->arguments
+			&& !$this->setup
+		) {
 			$ref = $entity->complete($resolver);
 			$this->setCreator([new Reference(Nette\DI\ContainerBuilder::ThisContainer), 'getService'], [$ref->getValue()]);
 		}
@@ -205,8 +220,8 @@ final class ServiceDefinition extends Definition
 		}
 
 		if ($this->canBeLazy() && !preg_grep('#func_get_arg|func_num_args#i', $lines)) { // latteFactory workaround
-			$class = $this->creator->getEntity();
-			assert(is_string($class) && class_exists($class)); // canBeLazy() guarantees this
+			$class = $this->getEntity();
+			assert($this->creator instanceof Statement && is_string($class) && class_exists($class)); // canBeLazy() guarantees this
 			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')
 				? $generator->formatPhp("\$service->__construct(...?:);\n", [$this->creator->arguments])
 				: '';
@@ -226,6 +241,7 @@ final class ServiceDefinition extends Definition
 	private function canBeLazy(): bool
 	{
 		return $this->lazy
+			&& $this->creator instanceof Statement
 			&& is_string($class = $this->creator->getEntity())
 			&& ($this->creator->arguments || $this->setup)
 			&& ($ancestor = ($tmp = class_parents($class)) ? array_pop($tmp) : $class)

@@ -94,8 +94,9 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		if ($config->arguments) {
 			$arguments = Helpers::filterArguments($config->arguments);
-			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
-				$arguments = array_replace($definition->getCreator()->arguments, $arguments);
+			$creator = $definition->getCreator();
+			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments) && $creator instanceof Statement) {
+				$arguments = array_replace($creator->arguments, $arguments);
 			}
 
 			$definition->setArguments($arguments);
@@ -157,7 +158,9 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		if ($config->arguments) {
 			$arguments = Helpers::filterArguments($config->arguments);
 			if (empty($config->reset['arguments']) && !Nette\Utils\Arrays::isList($arguments)) {
-				$arguments = array_replace($resultDef->getCreator()->arguments, $arguments);
+				$creator = $resultDef->getCreator();
+				assert($creator instanceof Statement);
+				$arguments = array_replace($creator->arguments, $arguments);
 			}
 
 			$resultDef->setArguments($arguments);
