@@ -17,6 +17,16 @@ use Nette;
 abstract class Expression implements Nette\Schema\DynamicParameter
 {
 	/**
+	 * Returns the class name the expression evaluates to, or null when it does not produce
+	 * a resolvable service type (values, statements, casts, ...).
+	 */
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): ?string
+	{
+		return null;
+	}
+
+
+	/**
 	 * Formats PHP code that evaluates the expression.
 	 */
 	abstract public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string;
