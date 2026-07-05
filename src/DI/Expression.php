@@ -27,6 +27,13 @@ abstract class Expression implements Nette\Schema\DynamicParameter
 
 
 	/**
+	 * Returns a completed (resolved, validated and autowired) version of the expression.
+	 * The original expression is left unchanged.
+	 */
+	abstract public function complete(Nette\DI\Compiler\Resolver $resolver): self;
+
+
+	/**
 	 * Formats PHP code that evaluates the expression.
 	 */
 	abstract public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string;
