@@ -109,9 +109,16 @@ parameters:
 		- # normalizeClass: ReflectionClass->name is string not class-string
 			identifier: return.type
 			path: src/DI/Helpers.php
-		- # normalizeEntity: reference tracking defeats type narrowing
-			identifier: return.type
-			path: src/DI/Compiler/Resolver.php
+		- # resolveType() returns a class name typed as plain string; making the whole resolution chain class-string is impractical
+			identifier: argument.type
+			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class-string<T of object>\|T of object, string given\.$#'
+			path: src/DI/Definitions/Statement.php
+			count: 1
+		- # type-based reference holds a class name typed as plain string passed to getByType()
+			identifier: argument.type
+			message: '#^Parameter \#1 \$type of method Nette\\DI\\Compiler\\Resolver::getByType\(\) expects class-string, string given\.$#'
+			path: src/DI/Expressions/Reference.php
+			count: 1
 		- # string as class-string for ReflectionClass in canBeLazy
 			identifier: argument.type
 			path: src/DI/Definitions/ServiceDefinition.php

@@ -107,7 +107,7 @@ final class AccessorDefinition extends Definition
 		}
 
 		assert($this->reference !== null); // setReference() above or pre-existing
-		$this->reference = $resolver->normalizeReference($this->reference);
+		$this->reference = $this->reference->complete($resolver);
 	}
 
 

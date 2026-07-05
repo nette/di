@@ -9,6 +9,7 @@ namespace Nette\DI\Expressions;
 
 use Nette\DI;
 use Nette\DI\Expression;
+use function sprintf;
 
 
 /**
@@ -62,6 +63,33 @@ final class Reference extends Expression
 	public function isSelf(): bool
 	{
 		return $this->value === self::Self;
+	}
+
+
+	/**
+	 * Returns the reference normalized to 'self' or to a named reference (or leaves it type-based
+	 * when it cannot be resolved yet) and checks existence of the service.
+	 */
+	public function complete(DI\Compiler\Resolver $resolver): self
+	{
+		if ($this->isSelf()) {
+			return $this;
+
+		} elseif ($this->isName()) {
+			if (!$resolver->getContainerBuilder()->hasDefinition($this->value)) {
+				throw new DI\ServiceCreationException(sprintf("Reference to missing service '%s'.", $this->value));
+			}
+
+			return $this->value === $resolver->getCurrentService()?->getName()
+				? new self(self::Self)
+				: $this;
+		}
+
+		try {
+			return $resolver->getByType($this->value);
+		} catch (DI\NotAllowedDuringResolvingException) {
+			return $this;
+		}
 	}
 
 

@@ -64,3 +64,35 @@ Assert::same('stdClass', (new Reference('b'))->resolveType($resolver)); // trigg
 Assert::same('Foo\Bar', Reference::fromType('Foo\Bar')->resolveType($resolver));
 Assert::null((new Reference(Reference::Self))->resolveType($resolver)); // no current service
 Assert::same('stdClass', (new Reference(Reference::Self))->resolveType($resolver->withCurrentService($defA)));
+
+
+// complete()
+$self = new Reference(Reference::Self);
+Assert::same($self, $self->complete($resolver)); // self stays untouched
+
+$named = new Reference('a');
+Assert::same($named, $named->complete($resolver)); // existing name stays untouched
+
+$completed = $named->complete($resolver->withCurrentService($defA)); // reference to the very service being completed
+Assert::notSame($named, $completed);
+Assert::true($completed->isSelf());
+Assert::same('a', $named->getValue()); // original untouched
+
+$typed = Reference::fromType('stdClass');
+Assert::exception(
+	fn() => $typed->complete($resolver),
+	Nette\DI\ServiceCreationException::class, // two services of stdClass exist
+);
+
+Assert::exception(
+	fn() => (new Reference('missing'))->complete($resolver),
+	Nette\DI\ServiceCreationException::class,
+	"Reference to missing service 'missing'.",
+);
+
+$builder2 = new Nette\DI\ContainerBuilder;
+$builder2->addDefinition('only')->setType(stdClass::class);
+$resolver2 = new Nette\DI\Resolver($builder2);
+$resolved = Reference::fromType('stdClass')->complete($resolver2);
+Assert::true($resolved->isName());
+Assert::same('only', $resolved->getValue());

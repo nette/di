@@ -16,7 +16,8 @@ use Nette\DI\Expressions\Reference;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Callback;
-use function in_array, is_array, is_string, sprintf;
+use Nette\Utils\Validators;
+use function count, in_array, is_array, is_string, sprintf;
 
 
 /**
@@ -130,7 +131,128 @@ final class Statement extends Expression
 
 
 	/**
+	 * Returns a completed (resolved and autowired) version of the statement. The original statement is left unchanged.
+	 */
+	public function complete(Resolver $resolver): static
+	{
+		$entity = $this->normalizeEntity($resolver);
+		$arguments = $this->arguments;
+
+		switch (true) {
+			case $this->arguments === Resolver::getFirstClassCallable():
+				if (!is_array($entity) || !Php\Helpers::isIdentifier($entity[1])) {
+					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', Callback::toString($entity)));
+				}
+				if ($entity[0] instanceof self) {
+					$entity[0] = $entity[0]->complete($resolver);
+				}
+				break;
+
+			case is_string($entity) && str_contains($entity, '?'): // PHP literal
+				break;
+
+			case $entity === 'not':
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
+				}
+
+				$entity = ['', '!'];
+				break;
+
+			case $entity === 'bool':
+			case $entity === 'int':
+			case $entity === 'float':
+			case $entity === 'string':
+				if (count($arguments) !== 1) {
+					throw new ServiceCreationException(sprintf('Function %s() expects 1 parameter, %s given.', $entity, count($arguments)));
+				}
+
+				$arguments = [$arguments[0], $entity];
+				$entity = [DI\Helpers::class, 'convertType'];
+				break;
+
+			case is_string($entity): // create class
+				if (!class_exists($entity)) {
+					throw new ServiceCreationException(sprintf("Class '%s' not found.", $entity));
+				} elseif ((new \ReflectionClass($entity))->isAbstract()) {
+					throw new ServiceCreationException(sprintf('Class %s is abstract.', $entity));
+				} elseif (($rm = (new \ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
+					throw new ServiceCreationException(sprintf('Class %s has %s constructor.', $entity, $rm->isProtected() ? 'protected' : 'private'));
+				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
+					$arguments = $resolver->autowireArguments($constructor, $arguments, $resolver);
+					$resolver->addDependency($constructor);
+				} elseif ($arguments) {
+					throw new ServiceCreationException(sprintf(
+						'Unable to pass arguments, class %s has no constructor.',
+						$entity,
+					));
+				}
+
+				break;
+
+			case $entity instanceof Reference:
+				if ($arguments) {
+					throw $resolver->completeException(new ServiceCreationException(sprintf('Parameters were passed to reference @%s, although references cannot have any parameters.', $entity->getValue())), $resolver->getCurrentService());
+				}
+
+				$entity = [new Reference(DI\ContainerBuilder::ThisContainer), DI\Container::getMethodName($entity->getValue())];
+				break;
+
+			case is_array($entity):
+				if (!preg_match('#^\$?(\\\?' . Php\Helpers::ReIdentifier . ')+(\[\])?$#D', $entity[1])) {
+					throw new ServiceCreationException(sprintf(
+						"Expected function, method or property name, '%s' given.",
+						$entity[1],
+					));
+				}
+
+				switch (true) {
+					case $entity[0] === '': // function call
+						if (!function_exists($entity[1])) {
+							throw new ServiceCreationException(sprintf("Function %s doesn't exist.", $entity[1]));
+						}
+
+						$rf = new \ReflectionFunction($entity[1]);
+						$arguments = $resolver->autowireArguments($rf, $arguments, $resolver);
+						$resolver->addDependency($rf);
+						break;
+
+					case $entity[0] instanceof self:
+						$entity[0] = $entity[0]->complete($resolver);
+						// break omitted
+
+					case is_string($entity[0]): // static method call
+					case $entity[0] instanceof Reference:
+						if ($entity[1][0] === '$') { // property getter, setter or appender
+							Validators::assert($arguments, 'list:0..1', "setup arguments for '" . Callback::toString($entity) . "'");
+							if (!$arguments && str_ends_with($entity[1], '[]')) {
+								throw new ServiceCreationException(sprintf('Missing argument for %s.', $entity[1]));
+							}
+						} elseif (
+							$type = ($entity[0] instanceof Expression ? $entity[0] : new self($entity[0]))->resolveType($resolver)
+						) {
+							$rc = new \ReflectionClass($type);
+							if ($rc->hasMethod($entity[1])) {
+								$rm = $rc->getMethod($entity[1]);
+								if (!$rm->isPublic()) {
+									throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $type, $entity[1]));
+								}
+
+								$arguments = $resolver->autowireArguments($rm, $arguments, $resolver);
+								$resolver->addDependency($rm);
+							}
+						}
+				}
+		}
+
+		$arguments = $resolver->resolveArguments($arguments, $entity);
+		return new self($entity, $arguments);
+	}
+
+
+	/**
 	 * Returns normalized entity: literal, Class, Reference, [Class, member], [, globalFunc], [Reference, member], [Statement, member]
+	 * @return string|array{string|Expression, string}|Reference|null
 	 */
 	private function normalizeEntity(Resolver $resolver): string|array|Reference|null
 	{
@@ -150,7 +272,7 @@ final class Statement extends Expression
 		}
 
 		if ($item instanceof Reference) {
-			$item = $resolver->normalizeReference($item);
+			$item = $item->complete($resolver);
 		}
 
 		return $entity;

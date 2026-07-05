@@ -126,7 +126,7 @@ final class LocatorDefinition extends Definition
 		}
 
 		foreach ($this->references as $name => $ref) {
-			$this->references[$name] = $resolver->normalizeReference($ref);
+			$this->references[$name] = $ref->complete($resolver);
 		}
 	}
 
