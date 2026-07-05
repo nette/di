@@ -7,11 +7,13 @@
 
 namespace Nette\DI\Definitions;
 
+use Nette\DI\Expression;
+
 
 /**
  * Reference to service. Either by name or by type or reference to the 'self' service.
  */
-final class Reference
+final class Reference extends Expression
 {
 	public const Self = 'self';
 

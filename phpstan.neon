@@ -100,9 +100,6 @@ parameters:
 		- # promoted property stores broad array, getEntity() declares precise tuple
 			identifier: return.type
 			path: src/DI/Definitions/Statement.php
-		- # exhaustive type check after precise getEntity() return type
-			identifier: elseif.alwaysTrue
-			path: src/DI/Config/Adapters/NeonAdapter.php
 		- # array_values after unset not recognized as list
 			identifier: assign.propertyType
 			path: src/DI/Config/Adapters/NeonAdapter.php

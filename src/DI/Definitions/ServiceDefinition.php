@@ -9,6 +9,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\Definition;
+use Nette\DI\Expression;
 use Nette\DI\ServiceCreationException;
 use Nette\Utils\Strings;
 use function count, is_string;
@@ -83,7 +84,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/** @return string|array{string|Reference|Statement, string}|Definition|Reference|null */
+	/** @return string|array{string|Expression, string}|Definition|Reference|null */
 	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->creator->getEntity();
