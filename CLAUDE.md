@@ -822,7 +822,7 @@ interface MultiFactory
 ```neon
 services:
 	- MultiFactory(
-		article: Article
+		article: Article()
 		db: PDO(%dsn%, %user%, %password%)
 	)
 ```
