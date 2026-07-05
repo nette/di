@@ -7,11 +7,13 @@
 
 namespace Nette\DI\Definitions;
 
+use Nette\DI\Expression;
+
 
 /**
  * Reference to service. Either by name or by type or reference to the 'self' service.
  */
-final readonly class Reference
+final class Reference extends Expression
 {
 	public const Self = 'self';
 
@@ -33,7 +35,7 @@ final readonly class Reference
 
 
 	public function __construct(
-		private string $value,
+		private readonly string $value,
 	) {
 	}
 
