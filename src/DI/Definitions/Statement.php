@@ -8,16 +8,16 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\DI\Definition;
+use Nette\DI\{Definition, Expression};
 use function is_array, is_string;
 
 
 /**
  * Assignment or calling statement.
- *
- * @property string|array{string|Definition|Reference|Statement,string}|Definition|Reference|null $entity
+ * It also serves as the base class of the specialized Nette\DI\Expressions\* nodes for backward compatibility.
+ * @property string|array{string|Definition|Expression,string}|Definition|Reference|null $entity
  */
-final class Statement implements Nette\Schema\DynamicParameter
+final class Statement extends Expression
 {
 	use Nette\SmartObject;
 
@@ -34,8 +34,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 			&& !(is_array($entity)
 				&& array_keys($entity) === [0, 1]
 				&& (is_string($entity[0])
-					|| $entity[0] instanceof self
-					|| $entity[0] instanceof Reference
+					|| $entity[0] instanceof Expression
 					|| $entity[0] instanceof Definition)
 			)
 		) {
@@ -57,7 +56,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 	}
 
 
-	/** @return string|array{string|Definition|Reference|Statement, string}|Definition|Reference|null */
+	/** @return string|array{string|Definition|Expression, string}|Definition|Reference|null */
 	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->entity;
