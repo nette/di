@@ -156,7 +156,7 @@ final class ServiceDefinition extends Definition
 			$this->setCreator($type, $this->creator->arguments);
 
 		} elseif (!$this->getType()) {
-			$type = $resolver->resolveEntityType($this->creator);
+			$type = $this->creator->resolveType($resolver);
 			if (!$type) {
 				throw new ServiceCreationException('Unknown service type, specify it or declare return type of factory method.');
 			}

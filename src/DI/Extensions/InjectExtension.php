@@ -52,7 +52,7 @@ final class InjectExtension extends DI\CompilerExtension
 
 	private function updateDefinition(Definitions\ServiceDefinition $def): void
 	{
-		$resolvedType = (new DI\Compiler\Resolver($this->getContainerBuilder()))->resolveEntityType($def->getCreator());
+		$resolvedType = $def->getCreator()->resolveType(new DI\Compiler\Resolver($this->getContainerBuilder()));
 		$class = $resolvedType && $def->getType() && is_subclass_of($resolvedType, $def->getType())
 			? $resolvedType
 			: $def->getType();
