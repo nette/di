@@ -39,11 +39,8 @@ final class Helpers
 			}
 			return $res;
 
-		} elseif ($var instanceof Statement) {
-			return new Statement(
-				self::expand($var->getEntity(), $params, $recursive),
-				self::expand($var->arguments, $params, $recursive),
-			);
+		} elseif ($var instanceof Expression) {
+			return $var->transformValues(fn($val) => self::expand($val, $params, $recursive));
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
 			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters()');
@@ -169,9 +166,8 @@ final class Helpers
 				$args[$k] = new Reference(substr($v, 1));
 			} elseif (is_array($v)) {
 				$args[$k] = self::filterArguments($v);
-			} elseif ($v instanceof Statement) {
-				[$tmp] = self::filterArguments([$v->getEntity()]);
-				$args[$k] = new Statement($tmp, self::filterArguments($v->arguments));
+			} elseif ($v instanceof Expression) {
+				$args[$k] = $v->transformValues(fn($x) => self::filterArguments([$x])[0]);
 			}
 		}
 
@@ -192,11 +188,9 @@ final class Helpers
 			if (strncmp($config->getValue(), 'extension.', 9) === 0) {
 				$config = new Reference($namespace . '.' . substr($config->getValue(), 10));
 			}
-		} elseif ($config instanceof Statement) {
-			return new Statement(
-				self::prefixServiceName($config->getEntity(), $namespace),
-				self::prefixServiceName($config->arguments, $namespace),
-			);
+		} elseif ($config instanceof Expression) {
+			return $config->transformValues(fn($val) => self::prefixServiceName($val, $namespace));
+
 		} elseif (is_array($config)) {
 			foreach ($config as &$val) {
 				$val = self::prefixServiceName($val, $namespace);

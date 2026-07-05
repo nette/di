@@ -37,4 +37,11 @@ abstract class Expression implements Nette\Schema\DynamicParameter
 	 * Formats PHP code that evaluates the expression.
 	 */
 	abstract public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string;
+
+
+	/**
+	 * Returns a clone of the expression with all child values transformed by the callback.
+	 * It is used for recursive processing of values in configuration (parameter expansion etc.).
+	 */
+	abstract public function transformValues(callable $cb): static;
 }

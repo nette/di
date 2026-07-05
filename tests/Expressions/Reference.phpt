@@ -96,3 +96,8 @@ $resolver2 = new Nette\DI\Resolver($builder2);
 $resolved = Reference::fromType('stdClass')->complete($resolver2);
 Assert::true($resolved->isName());
 Assert::same('only', $resolved->getValue());
+
+
+// transformValues()
+$ref = new Reference('a');
+Assert::same($ref, $ref->transformValues(fn($v) => 'changed'));

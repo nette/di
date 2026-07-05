@@ -109,6 +109,11 @@ parameters:
 		- # normalizeClass: ReflectionClass->name is string not class-string
 			identifier: return.type
 			path: src/DI/Helpers.php
+		- # transformValues() applies an arbitrary user callback to polymorphic config values; bare callable is intentional
+			identifier: missingType.callable
+			message: '#Method Nette\\DI\\\w+(\\\w+)*::transformValues\(\) has parameter \$cb with no signature specified for callable\.#'
+			paths:
+				- src/DI/*
 		- # resolveType() returns a class name typed as plain string; making the whole resolution chain class-string is impractical
 			identifier: argument.type
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionClass constructor expects class-string<T of object>\|T of object, string given\.$#'

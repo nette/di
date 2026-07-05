@@ -279,6 +279,12 @@ final class Statement extends Expression
 	}
 
 
+	public function transformValues(callable $cb): static
+	{
+		return new self($cb($this->entity), $cb($this->arguments));
+	}
+
+
 	/**
 	 * Formats PHP code for class instantiating, function calling or property setting.
 	 */

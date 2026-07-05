@@ -119,4 +119,10 @@ final class Reference extends Expression
 			default => $generator->formatPhp('$this->getService(?)', [$this->value]),
 		};
 	}
+
+
+	public function transformValues(callable $cb): static
+	{
+		return $this;
+	}
 }
