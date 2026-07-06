@@ -17,3 +17,13 @@ enum PropertyMode
 	case Assign;   // $obj->prop = value
 	case Append;   // $obj->prop[] = value
 }
+
+
+/**
+ * Placeholder for an unbound argument in a partial function application (PHP 8.6+).
+ */
+enum ArgumentPlaceholder
+{
+	case Single;     // ?   a single deferred argument
+	case Variadic;   // ... the remaining arguments
+}

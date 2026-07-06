@@ -8,10 +8,9 @@
 namespace Nette\DI\Config\Adapters;
 
 use Nette;
-use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expression;
-use Nette\DI\Expressions\PartialCall;
+use Nette\DI\Expressions\{ArgumentPlaceholder, PartialCall};
 use Nette\Neon;
 use Nette\Neon\{Nodes, Place};
 use function count, is_array, is_string, sprintf;
@@ -65,7 +64,7 @@ final class NeonEvaluator extends Neon\Evaluator
 	protected function evaluateEntity(Nodes\EntityNode $node, Place $place): Expression
 	{
 		[$head, $attributes] = $this->evaluateParts($node);
-		if ($attributes !== Resolver::getFirstClassCallable()) {
+		if ($attributes !== [ArgumentPlaceholder::Variadic]) {
 			return new Statement($head, $attributes);
 		}
 
@@ -89,7 +88,7 @@ final class NeonEvaluator extends Neon\Evaluator
 			}
 
 			[$head, $attributes] = $this->evaluateParts($link);
-			$expression = $attributes === Resolver::getFirstClassCallable()
+			$expression = $attributes === [ArgumentPlaceholder::Variadic]
 				? new PartialCall($expression, ltrim($head, ':'))
 				: new Statement([$expression, ltrim($head, ':')], $attributes);
 		}
@@ -138,7 +137,7 @@ final class NeonEvaluator extends Neon\Evaluator
 
 		$items = $node->attributes->items ?? [];
 		if (count($items) === 1 && !$items[0]->key && self::isLiteral($items[0]->value, '...')) {
-			return [$head, Resolver::getFirstClassCallable()];
+			return [$head, [ArgumentPlaceholder::Variadic]];
 		}
 
 		$attributes = [];
