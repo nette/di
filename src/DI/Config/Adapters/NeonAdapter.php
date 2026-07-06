@@ -9,10 +9,9 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\{DI, Neon};
-use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expression;
-use Nette\DI\Expressions\Reference;
+use Nette\DI\Expressions\{ArgumentPlaceholder, Reference};
 use function is_array, is_string, sprintf;
 
 
@@ -85,7 +84,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
 		}
 
-		if ($entity->attributes === Resolver::getFirstClassCallable()) {
+		if ($entity->attributes === [ArgumentPlaceholder::Variadic]) {
 			if ($chain) {
 				return new DI\Expressions\PartialCall($this->buildExpression($chain), ltrim($value, ':'));
 			}
