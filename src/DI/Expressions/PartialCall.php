@@ -12,17 +12,19 @@ use Nette\DI\Compiler\Resolver;
 use Nette\DI\Expression;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
-use function class_exists, is_string, method_exists, sprintf, str_starts_with;
+use function array_keys, array_map, class_exists, implode, is_string, method_exists, sprintf, str_starts_with;
 
 
 /**
- * Partial function application, i.e. func(...), Class::method(...) or $object->method(...).
+ * Partial function application, i.e. func(...), Class::method(?, $bound) or $object->method(...).
  */
 final class PartialCall extends Expression
 {
 	public function __construct(
 		public readonly Expression|string|null $target,
 		public readonly string $name,
+		/** @var array<mixed>  bound values (may be @references / expressions) interleaved with ArgumentPlaceholder markers */
+		public readonly array $arguments = [ArgumentPlaceholder::Variadic],
 	) {
 	}
 
@@ -35,7 +37,10 @@ final class PartialCall extends Expression
 
 	public function complete(Resolver $resolver): self
 	{
-		if (is_string($this->target) && !Php\Helpers::isNamespaceIdentifier($this->target)) {
+		if (!array_filter($this->arguments, fn($arg): bool => $arg instanceof ArgumentPlaceholder)) {
+			throw new ServiceCreationException(sprintf('First-class callable %s must contain at least one placeholder (? or ...).', $this->usedIn($this->target)));
+
+		} elseif (is_string($this->target) && !Php\Helpers::isNamespaceIdentifier($this->target)) {
 			throw new ServiceCreationException(sprintf("Expected a valid class name, '%s' given.", $this->target));
 
 		} elseif ($this->target === null
@@ -62,32 +67,56 @@ final class PartialCall extends Expression
 			}
 		}
 
-		return $this->target instanceof Expression
-			? new self($this->target->complete($resolver), $this->name)
-			: $this;
+		$target = $this->target instanceof Expression
+			? $this->target->complete($resolver)
+			: $this->target;
+
+		$arguments = $resolver->resolveArguments($this->arguments, $this->usedIn($target));
+		return new self($target, $this->name, $arguments);
 	}
 
 
 	public function generateCode(PhpGenerator $generator): string
 	{
+		$args = implode(', ', array_map(
+			fn($key, $arg): string => (is_string($key) ? "$key: " : '') . match ($arg) {
+				ArgumentPlaceholder::Single => '?',
+				ArgumentPlaceholder::Variadic => '...',
+				default => $generator->formatPhp('?', [$arg]),
+			},
+			array_keys($this->arguments),
+			$this->arguments,
+		));
+
 		if ($this->target instanceof Expression) {
 			$inner = $this->target->generateCode($generator);
 			if (str_starts_with($inner, 'new ')) {
 				$inner = "($inner)";
 			}
 
-			return "$inner->$this->name(...)";
+			return "$inner->$this->name($args)";
 		}
 
 		return $this->target === null
-			? "$this->name(...)"
-			: "$this->target::$this->name(...)";
+			? "$this->name($args)"
+			: "$this->target::$this->name($args)";
 	}
 
 
 	public function transformValues(callable $cb): static
 	{
 		$name = $cb($this->name);
-		return new self($cb($this->target), is_string($name) ? $name : $this->name);
+		return new self($cb($this->target), is_string($name) ? $name : $this->name, $cb($this->arguments));
+	}
+
+
+	/** Human-readable callee for error messages, e.g. Foo::bar(), @svc::bar() or bar(). */
+	private function usedIn(Expression|string|null $target): string
+	{
+		return match (true) {
+			$target instanceof Reference => '@' . $target->getValue() . '::',
+			is_string($target) => $target,
+			default => '',
+		} . $this->name . '()';
 	}
 }
