@@ -37,7 +37,7 @@ final class InjectExtension extends DI\CompilerExtension
 	#[Hook(Phase::Modify, after: '*')]
 	public function doProcessInjectAttributes(ContainerBuilder $builder): void
 	{
-		foreach ($builder->getDefinitions() as $def) {
+		foreach ($builder->getAll() as $def) {
 			if ($def->getTag(self::TagInject)) {
 				$def = $def instanceof Definitions\FactoryDefinition
 					? $def->getResultDefinition()
@@ -64,7 +64,12 @@ final class InjectExtension extends DI\CompilerExtension
 
 		foreach (self::getInjectProperties($class) as $property => $type) {
 			$builder = $this->getContainerBuilder();
-			$inject = new Definitions\Statement(['@self', '$' . $property], [DI\Expressions\Reference::fromType((string) $type)]);
+			$inject = new DI\Expressions\PropertyAccess(
+				di\self(),
+				$property,
+				DI\Expressions\PropertyMode::Assign,
+				di\wire((string) $type),
+			);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;
@@ -80,7 +85,7 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		foreach (array_reverse(self::getInjectMethods($class)) as $method) {
-			$inject = new Definitions\Statement(['@self', $method]);
+			$inject = di\self()->method($method);
 			foreach ($setups as $key => $setup) {
 				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
 					$inject = $setup;

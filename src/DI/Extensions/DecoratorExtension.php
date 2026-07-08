@@ -76,7 +76,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 					$setup = new Definitions\Statement((string) key($setup), array_values($setup));
 				}
 
-				$def->addSetup($setup);
+				$def->setup($setup);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	private function findByType(string $type): array
 	{
 		return array_filter(
-			$this->getContainerBuilder()->getDefinitions(),
+			$this->getContainerBuilder()->getAll(),
 			fn(Definition $def): bool => ($def->getType() !== null && is_a($def->getType(), $type, allow_string: true))
 				|| ($def instanceof Definitions\FactoryDefinition && $def->getResultType() !== null && is_a($def->getResultType(), $type, allow_string: true)),
 		);
