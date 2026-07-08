@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder.
+ * Test: Nette\DI: global function as a creator.
  */
 
 use Nette\DI;

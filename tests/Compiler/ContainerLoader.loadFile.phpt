@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerLoader expiration test.
+ * Test: Nette\DI\ContainerLoader: file caching and reuse.
  */
 
 use Nette\DI;

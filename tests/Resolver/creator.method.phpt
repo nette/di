@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder code generator.
+ * Test: Nette\DI: method call on a service or class as a creator.
  */
 
 use Nette\DI;

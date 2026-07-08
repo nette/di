@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder.
+ * Test: Nette\DI: static factory method with a private constructor.
  */
 
 use Nette\DI;

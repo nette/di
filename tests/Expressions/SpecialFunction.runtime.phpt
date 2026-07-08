@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\Compiler: internal functions.
+ * Test: Nette\DI\Expressions\SpecialFunction: not()/int() casts at runtime.
  */
 
 use Nette\DI;

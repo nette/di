@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Overriding/modifying service definition in another config
+ * Test: Nette\DI\Compiler::addConfig: overriding and altering definitions across configs
  */
 
 use Nette\DI;
