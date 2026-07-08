@@ -156,6 +156,41 @@ final class ServiceDefinition extends Definition
 	}
 
 
+	/**
+	 * Adds a setup step (fluent DSL alias of addSetup()). The target is a method call on the
+	 * service ('method'), a property assignment/append ('$prop' / '$prop[]'), a static call
+	 * ([Class::class, 'method'] or 'Class::method'), or a statement expression carrying its own
+	 * arguments (e.g. service('x')->method('m')). Arguments are passed as an array (use args()
+	 * for the name: syntax), consistent with create()/call().
+	 * @param  string|array{string, string}|Statement  $target
+	 * @param  array<mixed>  $args
+	 */
+	public function setup(string|array|Statement $target, array $args = []): static
+	{
+		return $this->addSetup($target, $args);
+	}
+
+
+	/**
+	 * Removes all setup steps.
+	 */
+	public function clearSetup(): static
+	{
+		$this->setup = [];
+		return $this;
+	}
+
+
+	/**
+	 * Enables or disables lazy instantiation (fluent alias of the $lazy property).
+	 */
+	public function lazy(bool $state = true): static
+	{
+		$this->lazy = $state;
+		return $this;
+	}
+
+
 	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		if ($this->creator instanceof Statement && !$this->creator->getEntity()) {

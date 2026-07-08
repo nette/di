@@ -111,6 +111,35 @@ abstract class Definition
 
 
 	/**
+	 * Adds a tag (fluent alias of addTag()).
+	 */
+	final public function tag(string $tag, mixed $value = true): static
+	{
+		return $this->addTag($tag, $value);
+	}
+
+
+	/**
+	 * Removes a tag.
+	 */
+	final public function removeTag(string $tag): static
+	{
+		unset($this->tags[$tag]);
+		return $this;
+	}
+
+
+	/**
+	 * Sets the autowiring mode (fluent alias of setAutowired()).
+	 * @param  bool|class-string|class-string[]  $state
+	 */
+	final public function autowired(bool|string|array $state = true): static
+	{
+		return $this->setAutowired($state);
+	}
+
+
+	/**
 	 * Sets the autowiring mode. Pass false to disable, true to enable for all types, or one or more class names to restrict autowiring to specific types.
 	 * @param  bool|class-string|class-string[]  $state
 	 */
