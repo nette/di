@@ -28,7 +28,7 @@ abstract class Definition
 	/** @var bool|class-string[] */
 	private bool|array $autowired = true;
 
-	/** @var ?(\Closure(): void) */
+	/** @var ?(\Closure(Definition, string, mixed): void) */
 	private ?\Closure $notifier = null;
 
 
@@ -55,10 +55,7 @@ abstract class Definition
 	/** @param  class-string|null  $type */
 	protected function setType(?string $type): static
 	{
-		if ($this->autowired && $this->notifier && $this->type !== $type) {
-			($this->notifier)();
-		}
-
+		$changed = $this->type !== $type;
 		if ($type === null) {
 			$this->type = null;
 		} elseif (!class_exists($type) && !interface_exists($type)) {
@@ -69,6 +66,10 @@ abstract class Definition
 			));
 		} else {
 			$this->type = Nette\DI\Helpers::normalizeClass($type);
+		}
+
+		if ($changed) {
+			$this->notify('type', $this->type);
 		}
 
 		return $this;
@@ -86,6 +87,7 @@ abstract class Definition
 	final public function setTags(array $tags): static
 	{
 		$this->tags = $tags;
+		$this->notify('tags', $tags);
 		return $this;
 	}
 
@@ -100,6 +102,7 @@ abstract class Definition
 	final public function addTag(string $tag, mixed $attr = true): static
 	{
 		$this->tags[$tag] = $attr;
+		$this->notify('tag', [$tag, $attr]);
 		return $this;
 	}
 
@@ -125,6 +128,7 @@ abstract class Definition
 	final public function removeTag(string $tag): static
 	{
 		unset($this->tags[$tag]);
+		$this->notify('removeTag', $tag);
 		return $this;
 	}
 
@@ -145,13 +149,14 @@ abstract class Definition
 	 */
 	final public function setAutowired(bool|string|array $state = true): static
 	{
-		if ($this->notifier && $this->autowired !== $state) {
-			($this->notifier)();
-		}
-
+		$changed = $this->autowired !== $state;
 		$this->autowired = is_string($state) || is_array($state)
 			? (array) $state
 			: $state;
+		if ($changed) {
+			$this->notify('autowired', $this->autowired);
+		}
+
 		return $this;
 	}
 
@@ -193,10 +198,23 @@ abstract class Definition
 	//abstract public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string;
 
 
-	/** @param (\Closure(): void)|null $notifier */
+	/** @param (\Closure(Definition, string, mixed): void)|null $notifier */
 	final public function setNotifier(?\Closure $notifier): void
 	{
 		$this->notifier = $notifier;
+	}
+
+
+	/**
+	 * Reports a mutation to the notifier (set by ContainerBuilder): the resolution lock reacts to
+	 * type/autowired changes, the journal records everything. A single hook, fanned out by the builder.
+	 * @internal
+	 */
+	protected function notify(string $action, mixed $value = null): void
+	{
+		if ($this->notifier) {
+			($this->notifier)($this, $action, $value);
+		}
 	}
 
 

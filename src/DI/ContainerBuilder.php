@@ -47,12 +47,23 @@ class ContainerBuilder implements Definitions
 
 	/** @var list<\ReflectionClass<object>|\ReflectionFunctionAbstract|string> */
 	private array $dependencies = [];
+	private readonly Compiler\Journal $journal;
 
 
 	public function __construct()
 	{
+		$this->journal = new Compiler\Journal;
 		$this->autowiring = new Autowiring($this);
 		$this->addImportedDefinition(self::ThisContainer)->setType(Container::class);
+	}
+
+
+	/**
+	 * Returns the mutation journal - the biography of every service (who changed what during compilation).
+	 */
+	public function getJournal(): Compiler\Journal
+	{
+		return $this->journal;
 	}
 
 
@@ -102,9 +113,17 @@ class ContainerBuilder implements Definitions
 
 		$definition ??= new Definitions\ServiceDefinition;
 		$definition->setName($name);
-		$definition->setNotifier(function (): void {
-			$this->needsResolve = true;
+		$definition->setNotifier(function (Definition $def, string $action, mixed $value): void {
+			// the resolution lock reacts only to type/autowired changes; the journal records everything
+			if ($action === 'autowired' || ($action === 'type' && $def->getAutowired())) {
+				$this->needsResolve = true;
+			}
+
+			if (!$this->resolving) { // internal mutations during resolve are not "what an extension did"
+				$this->journal->record($def, $action, $value);
+			}
 		});
+		$this->journal->record($definition, 'added');
 		$this->lowerNames[strtolower($name)] = $name;
 		return $this->definitions[$name] = $definition;
 	}
@@ -147,9 +166,10 @@ class ContainerBuilder implements Definitions
 			return $this->addDefinition($name, $creator);
 		}
 
-		$def = new Definitions\ServiceDefinition;
+		// register first so the notifier is attached, then set the creator - so it is journaled
+		$def = $this->addDefinition($name);
 		$def->setCreator($creator instanceof Expression ? $creator : create($creator));
-		return $this->addDefinition($name, $def);
+		return $def;
 	}
 
 
