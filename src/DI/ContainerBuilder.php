@@ -428,7 +428,7 @@ class ContainerBuilder
 
 			} elseif ($val instanceof Definition) {
 				assert($val->getName() !== null);
-				$val = new Definitions\Reference($val->getName());
+				$val = new Expressions\Reference($val->getName());
 			}
 		});
 		return (new PhpGenerator($this))->formatPhp($statement, $args);

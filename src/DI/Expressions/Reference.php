@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI\Definitions;
+namespace Nette\DI\Expressions;
 
 use Nette\DI\Expression;
 

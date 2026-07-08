@@ -15,11 +15,11 @@ require __DIR__ . '/../bootstrap.php';
 Assert::same([], Helpers::filterArguments([]));
 
 Assert::equal(
-	['a', 'b', new Nette\DI\Definitions\Reference('service')],
+	['a', 'b', new Nette\DI\Expressions\Reference('service')],
 	Helpers::filterArguments(['a', 'b', '@service']),
 );
 
 Assert::equal(
-	[new Statement('class', ['a', new Nette\DI\Definitions\Reference('service')])],
+	[new Statement('class', ['a', new Nette\DI\Expressions\Reference('service')])],
 	Helpers::filterArguments([new Statement('class', ['a', '@service'])]),
 );

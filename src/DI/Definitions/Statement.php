@@ -10,6 +10,7 @@ namespace Nette\DI\Definitions;
 use Nette;
 use Nette\DI\Definition;
 use Nette\DI\Expression;
+use Nette\DI\Expressions\Reference;
 use function is_array, is_string;
 
 

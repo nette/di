@@ -170,7 +170,7 @@ class DefinitionSchema implements Schema
 	{
 		return Expect::structure([
 			'type' => Expect::type('string'),
-			'create' => Expect::type('callable|Nette\DI\Definitions\Statement|Nette\DI\Definitions\Reference'),
+			'create' => Expect::type('callable|Nette\DI\Definitions\Statement|Nette\DI\Expressions\Reference'),
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
 			'inject' => Expect::bool(),

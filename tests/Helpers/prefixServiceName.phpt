@@ -5,8 +5,8 @@
  * This is the third traversal walker (besides expand() and filterArguments()) and had no coverage.
  */
 
-use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\DI\Helpers;
 use Tester\Assert;
 

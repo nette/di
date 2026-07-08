@@ -5,7 +5,7 @@ parameters:
 		- src
 
 	excludePaths:
-		- src/compatibility.php
+		- src/compatibility.php (?)
 
 	fileExtensions:
 		- php

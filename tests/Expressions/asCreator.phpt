@@ -8,8 +8,8 @@
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerBuilder;
-use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\DI\PhpGenerator;
 use Nette\DI\Resolver;
 use Nette\DI\ServiceCreationException;

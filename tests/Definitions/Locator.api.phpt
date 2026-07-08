@@ -5,7 +5,7 @@
  */
 
 use Nette\DI\Definitions\LocatorDefinition;
-use Nette\DI\Definitions\Reference;
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 

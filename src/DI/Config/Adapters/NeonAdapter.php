@@ -9,8 +9,8 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\DI;
-use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\Neon;
 use Nette\Neon\Node;
 use function count, defined, is_array, is_string, sprintf;

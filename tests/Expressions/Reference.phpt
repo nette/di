@@ -1,10 +1,10 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\Definitions\Reference usage.
+ * Test: Nette\DI\Expressions\Reference usage.
  */
 
-use Nette\DI\Definitions\Reference;
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 
@@ -37,3 +37,8 @@ Assert::false($ref->isName());
 Assert::false($ref->isType());
 Assert::true($ref->isSelf());
 Assert::same(Reference::Self, $ref->getValue());
+
+
+// deprecated alias Nette\DI\Expressions\Reference
+Assert::type(Reference::class, new Nette\DI\Expressions\Reference('a'));
+Assert::type(Nette\DI\Expressions\Reference::class, new Reference('a'));
