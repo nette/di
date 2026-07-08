@@ -48,6 +48,7 @@ overrides:
 
 	- # test classes are named after the kind they stand for
 		paths:
+			- tests/Expressions/Instantiation.phpt
 			- tests/Expressions/validation.errors.phpt
 			- tests/Extensions/Inject.basic.phpt
 			- tests/Extensions/Inject.methods.phpt

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder and collection via tagged().
+ * Test: Nette\DI\Expressions\ServiceCollection: tagged() collects services at runtime.
  */
 
 use Nette\DI;
