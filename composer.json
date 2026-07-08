@@ -32,7 +32,8 @@
 		"classmap": ["src/"],
 		"psr-4": {
 			"Nette\\": "src"
-		}
+		},
+		"files": ["src/DI/functions.php"]
 	},
 	"minimum-stability": "dev",
 	"scripts": {

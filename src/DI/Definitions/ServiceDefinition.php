@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI;
 use Nette\DI\{Definition, Expression, ServiceCreationException};
 use Nette\DI\Expressions\{Instantiation, Reference};
 use Nette\Utils\Strings;
@@ -191,7 +192,7 @@ final class ServiceDefinition extends Definition
 			&& !$this->setup
 		) {
 			$ref = $entity->complete($resolver);
-			$this->setCreator([new Reference(Nette\DI\ContainerBuilder::ThisContainer), 'getService'], [$ref->getValue()]);
+			$this->setCreator([di\service(Nette\DI\ContainerBuilder::ThisContainer), 'getService'], [$ref->getValue()]);
 		}
 
 		$this->creator = $this->creator->complete($resolver);
@@ -205,7 +206,7 @@ final class ServiceDefinition extends Definition
 	private function prependSelf(Statement $setup): Statement
 	{
 		return is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false
-			? new Statement([new Reference(Reference::Self), $setup->getEntity()], $setup->arguments)
+			? new Statement([di\self(), $setup->getEntity()], $setup->arguments)
 			: $setup;
 	}
 

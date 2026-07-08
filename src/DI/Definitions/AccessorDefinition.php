@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI;
 use Nette\DI\{Definition, Helpers};
 use Nette\DI\Expressions\Reference;
 use Nette\Utils\Type;
@@ -69,14 +70,9 @@ final class AccessorDefinition extends Definition
 
 	public function setReference(string|Reference $reference): static
 	{
-		if ($reference instanceof Reference) {
-			$this->reference = $reference;
-		} else {
-			$this->reference = str_starts_with($reference, '@')
-				? new Reference(substr($reference, 1))
-				: Reference::fromType($reference);
-		}
-
+		$this->reference = $reference instanceof Reference
+			? $reference
+			: di\serviceFrom($reference) ?? di\wire($reference);
 		return $this;
 	}
 

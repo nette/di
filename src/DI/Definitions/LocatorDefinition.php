@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI;
 use Nette\DI\Definition;
 use Nette\DI\Expressions\Reference;
 use function sprintf;
@@ -76,11 +77,9 @@ final class LocatorDefinition extends Definition
 	{
 		$this->references = [];
 		foreach ($references as $name => $ref) {
-			$this->references[$name] = match (true) {
-				$ref instanceof Reference => $ref,
-				str_starts_with($ref, '@') => new Reference(substr($ref, 1)),
-				default => Reference::fromType($ref),
-			};
+			$this->references[$name] = $ref instanceof Reference
+				? $ref
+				: di\serviceFrom($ref) ?? di\wire($ref);
 		}
 
 		return $this;
@@ -126,7 +125,7 @@ final class LocatorDefinition extends Definition
 					));
 				}
 
-				$this->references[$tag] = new Reference($name);
+				$this->references[$tag] = di\service($name);
 			}
 		} elseif ($type = $this->getType()) {
 			$this->validateReferences($type);

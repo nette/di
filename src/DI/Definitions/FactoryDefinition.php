@@ -8,9 +8,9 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\{DI, PhpGenerator as Php};
 use Nette\DI\{Definition, Helpers, ServiceCreationException};
 use Nette\DI\Expressions\Reference;
-use Nette\PhpGenerator as Php;
 use Nette\Utils\Type;
 use function count, is_string, sprintf;
 
@@ -128,7 +128,7 @@ final class FactoryDefinition extends Definition
 
 			if ($resultDef->getEntity() instanceof Reference && !$creator->arguments) {
 				$resultDef->setCreator([ // render as $container->createMethod()
-					new Reference(Nette\DI\ContainerBuilder::ThisContainer),
+					di\service(Nette\DI\ContainerBuilder::ThisContainer),
 					Nette\DI\Container::getMethodName($resultDef->getEntity()->getValue()),
 				]);
 			}
