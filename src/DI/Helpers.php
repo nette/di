@@ -9,7 +9,6 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\DI\Compiler\DynamicParameter;
-use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Nette\Utils\{Reflection, Type};
 use function array_key_exists, count, is_array, is_scalar, is_string, sprintf, strlen;
@@ -82,7 +81,7 @@ final class Helpers
 				$res[] = $val = self::expandParameter($part, $params, $recursive, $onlyString);
 				if (strlen($part) + 2 === strlen($string)) {
 					return $val;
-				} elseif ($val instanceof DynamicParameter || $val instanceof Statement) {
+				} elseif ($val instanceof DynamicParameter || $val instanceof Definitions\Statement) {
 					$dynamic = true;
 				} elseif (!is_scalar($val)) {
 					throw new Nette\InvalidArgumentException(sprintf(
@@ -95,7 +94,7 @@ final class Helpers
 		}
 
 		return $dynamic
-			? new Statement('::implode', [$res])
+			? new Expressions\Call(null, 'implode', [$res])
 			: implode('', $res);
 	}
 
@@ -129,8 +128,8 @@ final class Helpers
 				}
 			} elseif ($val instanceof DynamicParameter) {
 				$val = new DynamicParameter($val . '[' . var_export($key, return: true) . ']');
-			} elseif ($val instanceof Statement) {
-				$val = new Statement('(?)[?]', [$val, $key]);
+			} elseif ($val instanceof Definitions\Statement) {
+				$val = new Expressions\PhpCode('(?)[?]', [$val, $key]);
 			} else {
 				throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $parameter));
 			}

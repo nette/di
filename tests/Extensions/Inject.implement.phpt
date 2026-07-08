@@ -5,8 +5,7 @@
  */
 
 use Nette\DI;
-use Nette\DI\Definitions\Statement;
-use Nette\DI\Expressions\Reference;
+use Nette\DI\Expressions\{Call, Reference};
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -43,5 +42,5 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
-	new Statement([new Reference('self'), 'injectFoo'], [new Reference('01')]),
+	new Call(new Reference('self'), 'injectFoo', [new Reference('01')]),
 ], $builder->getDefinition('sf')->getResultDefinition()->getSetup());

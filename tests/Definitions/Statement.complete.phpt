@@ -33,18 +33,21 @@ function resolver(): DI\Resolver
 }
 
 
-test('not() is rewritten to a negation call, original untouched', function () {
+test('not() completes to a SpecialFunction node, original untouched', function () {
 	$statement = new Statement('not', [true]);
 	$completed = $statement->complete(resolver());
 	Assert::same('not', $statement->getEntity());       // original untouched
-	Assert::same(['', '!'], $completed->getEntity());
+	Assert::type(DI\Expressions\SpecialFunction::class, $completed);
+	Assert::same('not', $completed->function);
+	Assert::same([true], $completed->arguments);
 });
 
 
-test('type casts are rewritten to Helpers::convertType()', function () {
+test('type casts complete to SpecialFunction nodes', function () {
 	$completed = (new Statement('int', ['42']))->complete(resolver());
-	Assert::same([DI\Helpers::class, 'convertType'], $completed->getEntity());
-	Assert::same(['42', 'int'], $completed->arguments);
+	Assert::type(DI\Expressions\SpecialFunction::class, $completed);
+	Assert::same('int', $completed->function);
+	Assert::same(['42'], $completed->arguments);
 });
 
 
