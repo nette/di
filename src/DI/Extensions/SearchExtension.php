@@ -8,6 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI;
 use Nette\DI\Attributes\Hook;
 use Nette\DI\{ContainerBuilder, Phase};
 use Nette\Loaders\RobotLoader;
@@ -81,19 +82,15 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	public function doDiscoverServices(ContainerBuilder $builder): void
 	{
 		foreach ($this->classes as $class => $foo) {
-			if ($builder->findByType($class)) {
+			if ($builder->has(type: $class)) {
 				unset($this->classes[$class]);
 			}
 		}
 
 		foreach ($this->classes as $class => $tags) {
-			if (class_exists($class)) {
-				$def = $builder->addDefinition(null)->setType($class);
-			} elseif (method_exists($class, 'create')) {
-				$def = $builder->addFactoryDefinition(null)->setImplement($class);
-			} else {
-				$def = $builder->addAccessorDefinition(null)->setImplement($class);
-			}
+			$def = class_exists($class)
+				? $builder->add(null, $class)
+				: $builder->add(null, method_exists($class, 'create') ? di\factory($class) : di\accessor($class));
 			$def->setTags(Arrays::normalize($tags, filling: true));
 		}
 	}
