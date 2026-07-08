@@ -169,6 +169,22 @@ Assert::exception(
 );
 
 
+// handler typed against the Definitions interface (implemented by the builder) is fine
+class DefinitionsSignature extends DI\CompilerExtension
+{
+	#[Hook(Phase::Modify)]
+	public function doModify(Nette\DI\Definitions $di): void
+	{
+	}
+}
+
+Assert::noError(function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('x', new DefinitionsSignature);
+	$compiler->compile();
+});
+
+
 // (f) an extension registered during Setup with a 'before' constraint that already ran throws;
 // an 'after' constraint pointing at an already-run extension is naturally satisfied
 class LateFirstBird extends DI\CompilerExtension

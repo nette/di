@@ -17,7 +17,7 @@ use function in_array, is_int, sprintf;
 /**
  * Container builder.
  */
-class ContainerBuilder
+class ContainerBuilder implements Definitions
 {
 	public const
 		ThisService = 'self',

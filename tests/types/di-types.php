@@ -104,3 +104,13 @@ function testContainerBuilderGetOf(ContainerBuilder $builder): void
 	assertType('array<string, Nette\DI\Definition>', $builder->find(tag: 't'));
 	assertType('array<string, Nette\DI\Definitions\ServiceDefinition>', $builder->find(tag: 't', of: Definitions\ServiceDefinition::class));
 }
+
+
+function testDefinitionsInterfaceTyping(Nette\DI\Definitions $di): void
+{
+	// of: generics work the same through the interface as on the builder
+	assertType('Nette\DI\Definitions\ServiceDefinition', $di->get('foo'));
+	assertType('Nette\DI\Definitions\FactoryDefinition', $di->get('foo', of: Definitions\FactoryDefinition::class));
+	assertType('array<string, Nette\DI\Definition>', $di->find(tag: 't'));
+	assertType('array<string, Nette\DI\Definitions\ServiceDefinition>', $di->find(tag: 't', of: Definitions\ServiceDefinition::class));
+}
