@@ -7,9 +7,7 @@
 
 namespace Nette\DI\Expressions;
 
-use Nette\DI\Compiler\PhpGenerator;
-use Nette\DI\Compiler\Resolver;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
 use Nette\DI\ServiceCreationException;
 use function class_exists, interface_exists, is_string, sprintf;
 
@@ -17,14 +15,14 @@ use function class_exists, interface_exists, is_string, sprintf;
 /**
  * Class instantiation, i.e. new Class(...arguments) with constructor autowiring.
  */
-final class Instantiation extends Statement
+final class Instantiation extends Expression
 {
 	use Chaining;
 
 	public function __construct(
 		public readonly string $class,
 		/** @var array<mixed> */
-		public array $arguments = [],
+		public readonly array $arguments = [],
 	) {
 	}
 
@@ -86,11 +84,5 @@ final class Instantiation extends Statement
 	{
 		$class = $cb($this->class);
 		return new self(is_string($class) ? $class : $this->class, $cb($this->arguments));
-	}
-
-
-	public function getEntity(): string
-	{
-		return $this->class;
 	}
 }

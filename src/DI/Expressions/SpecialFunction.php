@@ -7,9 +7,7 @@
 
 namespace Nette\DI\Expressions;
 
-use Nette\DI\Compiler\PhpGenerator;
-use Nette\DI\Compiler\Resolver;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
 use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
 use function count, sprintf;
@@ -20,7 +18,7 @@ use function count, sprintf;
  * casts bool()/int()/float()/string(). A shared home so that rarely-used special
  * functions do not each need their own expression class.
  */
-final class SpecialFunction extends Statement
+final class SpecialFunction extends Expression
 {
 	public const Functions = ['not', 'bool', 'int', 'float', 'string'];
 
@@ -29,7 +27,7 @@ final class SpecialFunction extends Statement
 		/** one of self::Functions */
 		public readonly string $function,
 		/** @var array<mixed> */
-		public array $arguments,
+		public readonly array $arguments,
 	) {
 	}
 
@@ -55,11 +53,5 @@ final class SpecialFunction extends Statement
 	public function transformValues(callable $cb): static
 	{
 		return new self($this->function, $cb($this->arguments));
-	}
-
-
-	public function getEntity(): string
-	{
-		return $this->function;
 	}
 }

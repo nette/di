@@ -158,7 +158,7 @@ class Resolver
 				$node = $val->getEntity() === 'typed'
 					? new Expressions\ServiceCollection(types: $val->arguments)
 					: new Expressions\ServiceCollection(tags: $val->arguments);
-				$val = $node->complete($this)->references ?? []; // node is replaced with array for back compatibility
+				$val = $node->complete($this);
 
 			} elseif ($val instanceof Expression) {
 				$val = $val->complete($this);

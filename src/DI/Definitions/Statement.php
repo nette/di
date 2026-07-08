@@ -20,18 +20,15 @@ use function in_array, is_array, is_string, sprintf;
 
 /**
  * Assignment or calling statement.
- * It also serves as the base class of the specialized Nette\DI\Expressions\* nodes for backward compatibility.
+ *
  * @property string|array{string|Expression,string}|Definition|Reference|null $entity
  */
-class Statement extends Expression
+final class Statement extends Expression
 {
 	use Nette\SmartObject;
 
-	private string|array|Definition|Reference|null $entity = null;
-
-
 	public function __construct(
-		string|array|Definition|Reference|null $entity,
+		private string|array|Definition|Reference|null $entity,
 		/** @var array<mixed> */
 		public array $arguments = [],
 	) {
@@ -74,9 +71,7 @@ class Statement extends Expression
 	public function resolveType(Resolver $resolver): ?string
 	{
 		$entity = $this->normalizeEntity($resolver);
-		return $entity === null
-			? null
-			: $this->specialize($entity)->resolveType($resolver);
+		return $this->specialize($entity)->resolveType($resolver);
 	}
 
 
@@ -86,9 +81,7 @@ class Statement extends Expression
 	public function complete(Resolver $resolver): DI\Expression
 	{
 		$entity = $this->normalizeEntity($resolver);
-		if ($entity === null) {
-			throw new Nette\InvalidStateException('Statement has no entity.');
-		} elseif ($entity instanceof Reference && $this->arguments) {
+		if ($entity instanceof Reference && $this->arguments) {
 			throw new ServiceCreationException(sprintf('Parameters were passed to reference @%s, although references cannot have any parameters.', $entity->getValue()));
 		}
 		return $this->specialize($entity)->complete($resolver);

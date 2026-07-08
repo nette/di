@@ -7,9 +7,7 @@
 
 namespace Nette\DI\Expressions;
 
-use Nette\DI\Compiler\PhpGenerator;
-use Nette\DI\Compiler\Resolver;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
 use function is_string;
 
 
@@ -17,14 +15,14 @@ use function is_string;
  * Piece of PHP code with ? placeholders substituted by arguments. Chainable, so a raw expression
  * (e.g. a generated local variable, code('$baseUrl')) can be continued with ->method()/->property().
  */
-final class PhpCode extends Statement
+final class PhpCode extends Expression
 {
 	use Chaining;
 
 	public function __construct(
 		public readonly string $code,
 		/** @var array<mixed> */
-		public array $arguments = [],
+		public readonly array $arguments = [],
 	) {
 	}
 
@@ -46,11 +44,5 @@ final class PhpCode extends Statement
 	{
 		$code = $cb($this->code);
 		return new self(is_string($code) ? $code : $this->code, $cb($this->arguments));
-	}
-
-
-	public function getEntity(): string
-	{
-		return $this->code;
 	}
 }
