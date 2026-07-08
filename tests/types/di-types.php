@@ -65,3 +65,18 @@ function testContainerBuilderAddDefinition(ContainerBuilder $builder): void
 	$factoryDef = $builder->addDefinition('baz', new Definitions\FactoryDefinition);
 	assertType('Nette\DI\Definitions\FactoryDefinition', $factoryDef);
 }
+
+
+function testContainerBuilderGetOf(ContainerBuilder $builder): void
+{
+	// default: ServiceDefinition
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->get('foo'));
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->get(type: TestService::class));
+
+	// of: addresses another definition class
+	assertType('Nette\DI\Definitions\FactoryDefinition', $builder->get('foo', of: Definitions\FactoryDefinition::class));
+
+	// find: default Definition, of: narrows
+	assertType('array<string, Nette\DI\Definition>', $builder->find(tag: 't'));
+	assertType('array<string, Nette\DI\Definitions\ServiceDefinition>', $builder->find(tag: 't', of: Definitions\ServiceDefinition::class));
+}

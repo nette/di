@@ -291,6 +291,102 @@ class ContainerBuilder
 	}
 
 
+	/********************* retrieval (config-facing) ****************d*g**/
+
+
+	/**
+	 * Gets a single service definition by name or by type, asserting it is of the given definition
+	 * class (ServiceDefinition by default - the common case). Pass exactly one of name/type;
+	 * addressing by type throws when zero or several services match.
+	 * @template T of Definition
+	 * @param  class-string|null  $type
+	 * @param  class-string<T>|null  $of
+	 * @return ($of is null ? Definitions\ServiceDefinition : T)
+	 */
+	public function get(?string $name = null, ?string $type = null, ?string $of = null): Definition
+	{
+		$def = match (true) {
+			$type !== null && $name === null => $this->getDefinitionByType($type),
+			$name !== null && $type === null => $this->getDefinition($name),
+			default => throw new Nette\InvalidArgumentException('Pass exactly one of name or type to get().'),
+		};
+
+		$of ??= Definitions\ServiceDefinition::class;
+		if (!$def instanceof $of) {
+			throw new MissingServiceException(sprintf(
+				"Service '%s' is a %s, not the expected %s; pass of: to get() to address it.",
+				$def->getName(),
+				$def::class,
+				$of,
+			));
+		}
+
+		return $def;
+	}
+
+
+	/**
+	 * Gets all service definitions matching a type or a tag, optionally filtered to a definition
+	 * class via of:. Unlike findByTag(), find(tag:) returns the definitions, not the tag values.
+	 * @template T of Definition
+	 * @param  class-string|null  $type
+	 * @param  class-string<T>|null  $of
+	 * @return ($of is null ? array<string, Definition> : array<string, T>)
+	 */
+	public function find(?string $type = null, ?string $tag = null, ?string $of = null): array
+	{
+		$found = match (true) {
+			$type !== null && $tag === null => $this->findByType($type),
+			$tag !== null && $type === null => $this->getDefinitionsByTag($tag),
+			default => throw new Nette\InvalidArgumentException('Pass exactly one of type or tag to find().'),
+		};
+
+		return $of === null
+			? $found
+			: array_filter($found, fn(Definition $def): bool => $def instanceof $of);
+	}
+
+
+	/**
+	 * @return array<string, Definition>
+	 */
+	private function getDefinitionsByTag(string $tag): array
+	{
+		$found = [];
+		foreach (array_keys($this->findByTag($tag)) as $name) {
+			$found[$name] = $this->getDefinition($name);
+		}
+
+		return $found;
+	}
+
+
+	/**
+	 * Does a service of the given name or type exist? Pass exactly one.
+	 * @param  class-string|null  $type
+	 */
+	public function has(?string $name = null, ?string $type = null): bool
+	{
+		if ($type !== null && $name === null) {
+			return (bool) $this->findByType($type);
+		} elseif ($name !== null && $type === null) {
+			return $this->hasDefinition($name);
+		}
+
+		throw new Nette\InvalidArgumentException('Pass exactly one of name or type to has().');
+	}
+
+
+	/**
+	 * Gets all service definitions (alias of getDefinitions()).
+	 * @return array<string, Definition>
+	 */
+	public function getAll(): array
+	{
+		return $this->definitions;
+	}
+
+
 	/********************* building ****************d*g**/
 
 
