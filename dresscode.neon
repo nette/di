@@ -18,6 +18,10 @@ fileExtensions:
 
 imports: {grouping: {class: grouped}}
 
+namespaces:
+	functions: ['Nette\DI\{service, wire, args, self, param, expand, create, call, services, cast, not, code, serviceFrom, classFrom, imported, factory, accessor, classifyCallable}']
+	constants: [Nette\DI\__]
+
 overrides:
 	-
 		paths: [src]
@@ -42,6 +46,10 @@ overrides:
 		paths: [src/DI/Extensions/DefinitionSchema.php]
 		classes: {overridingMethod: {parameterName: keep}}
 
+	- # the DSL placeholder __ echoes the _ of NEON
+		paths: [src/DI/functions.php]
+		naming: {constant: keep}
+
 	- # renaming the public constant of a deprecated class would break code still using it
 		paths: [src/DI/Config/Helpers.php]
 		naming: {constant: keep}
@@ -58,3 +66,13 @@ overrides:
 	- # the test function shadows a native one
 		paths: [tests/Compiler/ContainerLoader.opcache.phpt]
 		naming: {function: keep}
+
+	- # the class name with a leading backslash is the tested data
+		paths:
+			- tests/Bridges/DIPsr.phpt
+			- tests/Config/functions.phpt
+			- tests/ContainerBuilder/getByType.phpt
+			- tests/Definitions/Accessor.api.phpt
+			- tests/Definitions/Locator.api.phpt
+			- tests/Extensions/Services.create.phpt
+		literals: {classNameInString: keep}
