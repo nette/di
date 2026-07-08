@@ -138,8 +138,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	private function enableTracyIntegration(): void
 	{
 		Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
-		$this->initialization->addBody($this->getContainerBuilder()->formatPhp('?;', [
+		$this->onStartup(
 			di\wire(Tracy\Bar::class)->call('addPanel', [di\create(Nette\Bridges\DITracy\ContainerPanel::class)]),
-		]));
+		);
 	}
 }
