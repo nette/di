@@ -74,6 +74,7 @@ final class ServiceDefinition extends Definition
 		$this->creator = $creator instanceof Expression && !$creator instanceof Reference
 			? $creator
 			: new Statement($creator, $args);
+		$this->notify('creator', $this->creator);
 		return $this;
 	}
 
@@ -101,6 +102,7 @@ final class ServiceDefinition extends Definition
 		}
 
 		$this->creator->arguments = $args;
+		$this->notify('arguments', $args);
 		return $this;
 	}
 
@@ -112,6 +114,7 @@ final class ServiceDefinition extends Definition
 		}
 
 		$this->creator->arguments[$key] = $value;
+		$this->notify('argument', [$key, $value]);
 		return $this;
 	}
 
@@ -129,6 +132,7 @@ final class ServiceDefinition extends Definition
 		}
 
 		$this->setup = $setup;
+		$this->notify('setup', $setup);
 		return $this;
 	}
 
@@ -149,7 +153,8 @@ final class ServiceDefinition extends Definition
 		$entity = $entity instanceof Statement
 			? $entity
 			: new Statement($entity, $args);
-		$this->setup[] = $this->prependSelf($entity);
+		$this->setup[] = $step = $this->prependSelf($entity);
+		$this->notify('setup', $step);
 		return $this;
 	}
 
@@ -175,6 +180,7 @@ final class ServiceDefinition extends Definition
 	public function clearSetup(): static
 	{
 		$this->setup = [];
+		$this->notify('clearSetup');
 		return $this;
 	}
 
@@ -185,6 +191,7 @@ final class ServiceDefinition extends Definition
 	public function lazy(bool $state = true): static
 	{
 		$this->lazy = $state;
+		$this->notify('lazy', $state);
 		return $this;
 	}
 
