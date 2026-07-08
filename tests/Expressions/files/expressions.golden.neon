@@ -1,0 +1,75 @@
+parameters:
+	klass: GoldSvc
+	method: chain
+	text: hello
+
+services:
+	# F1xK1 bare class
+	dep: GoldDep
+
+	# F1xK2 positional + named + skipped argument
+	f1args: GoldConsumer(1, c: %text%)
+	f1skip: GoldConsumer(_, 2)
+
+	# F2xK1 static method creator
+	f2: {create: GoldFactory::create(1), autowired: false}
+
+	# F3xK2 global function in arguments
+	f3: GoldConsumer( ::strtoupper(%text%) )
+
+	# F4xK1 alias by reference
+	f4: @dep
+
+	# F4xK2 reference by name and by type
+	f4b: GoldConsumer( @dep, @\GoldDep )
+
+	# F5xK1+K2 method call on reference
+	svc: GoldSvc
+	f5: GoldConsumer( @svc::identity(1) )
+
+	# F6xK2 property and constant on reference
+	f6: GoldConsumer( @svc::prop, @svc::VERSION )
+
+	# F7xK1 chaining from new instance and from reference
+	f7: {create: GoldSvc()::chain()::makeDep(), autowired: false}
+	f7b: {create: @svc::chain()::makeDep(), autowired: false}
+
+	# F7xK2 chain with autowiring and %param% inside (regression R1)
+	f7c: GoldConsumer( @svc::withDep(text: %text%)::makeDep() )
+
+	# F8xK3 setup: method, property set, appender, static, method on other service
+	f8:
+		create: GoldSvc
+		setup:
+			- identity(%text%)
+			- $prop = 123
+			- '$items[]' = first
+			- GoldSvc::init(@self)
+			- @svc::identity(@self)
+
+	# F10xK2 special functions
+	f10: GoldConsumer( not(true), int('42'), string(1) )
+	f10b: GoldConsumer( typed(GoldDep), tagged(gold) )
+
+	# F11xK2 first-class callables (all forms, regressions R3, R4)
+	f11: GoldConsumer( ::trim(...), GoldSvc::init(...), @svc::identity(...) )
+	f11b: GoldConsumer( GoldSvc()::identity(...), @svc::identity(...)::bindTo(null) )
+
+	# F11xK1 first-class callable as creator (regression R5)
+	f11c: {create: ::trim(...), autowired: false}
+
+	# K4 %param% in class and method slot
+	k4: %klass%()
+	k4b: GoldConsumer( @svc::%method%() )
+
+	# tag for tagged()
+	tagged:
+		create: GoldDep
+		tags: [gold]
+		autowired: false
+
+decorator:
+	# K6 decorator applies setup with expression to all GoldSvc services
+	GoldSvc:
+		setup:
+			- $decorated = ::strrev(%text%)

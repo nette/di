@@ -58,6 +58,12 @@ Assert::equal(
 	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]),
 );
 
+// %param% is expanded in every slot of a Statement (entity + arguments)
+Assert::equal(
+	new Statement('Foo', ['hello', 2]),
+	Helpers::expand(new Statement('%cls%', ['%arg%', 2]), ['cls' => 'Foo', 'arg' => 'hello']),
+);
+
 
 Assert::exception(
 	fn() => Helpers::expand('%missing%', []),

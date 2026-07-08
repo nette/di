@@ -1,0 +1,112 @@
+== api1
+$service = new GoldSvc;
+$service->identity(1, 2);
+$service->decorated = strrev('hello');
+return $service;
+
+== api2
+return new GoldConsumer($this->getService('apiDep'), $this->getService('svc')->identity(1), trim(...));
+
+
+== apiDep
+return new GoldDep;
+
+
+== apiLiteral
+return GoldFactory::create(7);
+
+
+== dep
+return new GoldDep;
+
+
+== f10
+return new GoldConsumer(!(true), Nette\DI\Helpers::convertType('42', 'int'), Nette\DI\Helpers::convertType(1, 'string'));
+
+
+== f10b
+return new GoldConsumer([$this->getService('dep')], [$this->getService('tagged')]);
+
+
+== f11
+return new GoldConsumer(trim(...), GoldSvc::init(...), $this->getService('svc')->identity(...));
+
+
+== f11b
+return new GoldConsumer((new GoldSvc)->identity(...), $this->getService('svc')->identity(...)->bindTo(null));
+
+
+== f11c
+return trim(...);
+
+
+== f1args
+return new GoldConsumer(1, c: 'hello');
+
+
+== f1skip
+return new GoldConsumer(b: 2);
+
+
+== f2
+return GoldFactory::create(1);
+
+
+== f3
+return new GoldConsumer(strtoupper('hello'));
+
+
+== f4
+return $this->getService('dep');
+
+
+== f4b
+return new GoldConsumer($this->getService('dep'), $this->getService('dep'));
+
+
+== f5
+return new GoldConsumer($this->getService('svc')->identity(1));
+
+
+== f6
+return new GoldConsumer($this->getService('svc')->prop, GoldSvc::VERSION);
+
+
+== f7
+return (new GoldSvc)->chain()->makeDep();
+
+
+== f7b
+return $this->getService('svc')->chain()->makeDep();
+
+
+== f7c
+return new GoldConsumer($this->getService('svc')->withDep($this->getService('dep'), 'hello')->makeDep());
+
+
+== f8
+$service = new GoldSvc;
+$service->identity('hello');
+$service->prop = 123;
+$service->items[] = 'first';
+GoldSvc::init($service);
+$this->getService('svc')->identity($service);
+$service->decorated = strrev('hello');
+return $service;
+
+== k4
+$service = new GoldSvc;
+$service->decorated = strrev('hello');
+return $service;
+
+== k4b
+return new GoldConsumer($this->getService('svc')->chain());
+
+
+== svc
+$service = new GoldSvc;
+$service->decorated = strrev('hello');
+return $service;
+
+== tagged
+return new GoldDep;
