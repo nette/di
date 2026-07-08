@@ -33,10 +33,12 @@ parameters:
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
-		- # Compiler hooks store polymorphic closures: the argument type depends on the phase (ContainerBuilder or ClassType) and legacy handlers take none, so bare \Closure has no expressible signature
+		- # Compiler/Schedule hooks store polymorphic closures: the argument type depends on the phase (ContainerBuilder or ClassType) and legacy handlers take none, so bare \Closure has no expressible signature
 			identifier: missingType.callable
-			path: src/DI/Compiler.php
-			count: 5
+			paths:
+				- src/DI/Compiler.php
+				- src/DI/Compiler/Schedule.php
+				- src/DI/ContainerBuilder.php
 		- # CompilerExtension::hook() forwards the same polymorphic \Closure to Compiler::addHook()
 			identifier: missingType.callable
 			path: src/DI/CompilerExtension.php

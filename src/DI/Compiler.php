@@ -16,7 +16,6 @@ use function count, is_array, sprintf;
 
 /**
  * DI container compiler.
- * @phpstan-type HookEntry array{callback: \Closure, extension: CompilerExtension|null, before: string|string[]|null, after: string|string[]|null}
  */
 class Compiler
 {
@@ -36,12 +35,7 @@ class Compiler
 	private string $sources = '';
 	private DependencyChecker $dependencies;
 	private string $className = 'Container';
-
-	/** @var array<string, list<HookEntry>> */
-	private array $hooks = [];
-
-	/** the phase whose hooks are currently being drained, or null */
-	private ?Phase $runningPhase = null;
+	private readonly Compiler\Schedule $schedule;
 
 	private ?Nette\PhpGenerator\ClassType $class = null;
 
@@ -53,6 +47,8 @@ class Compiler
 		private readonly ContainerBuilder $builder = new ContainerBuilder,
 	) {
 		$this->dependencies = new DependencyChecker;
+		$this->schedule = new Compiler\Schedule;
+		$this->builder->setSchedule($this->schedule);
 		$this->addExtension(self::Services, new Extensions\ServicesExtension);
 		$this->addExtension(self::Parameters, new Extensions\ParametersExtension($this->configs));
 	}
@@ -113,18 +109,7 @@ class Compiler
 		string|array|null $after = null,
 	): void
 	{
-		if ($phase === $this->runningPhase) {
-			throw new Nette\InvalidStateException("Cannot schedule a hook into phase {$phase->name} while it is running (it would be silently dropped); schedule it into a later phase.");
-		} elseif ($phase === Phase::Setup && ($before !== null || $after !== null)) {
-			throw new Nette\InvalidStateException('Setup phase ordering is declared via #[Hook] attributes (which order the extensions), not via before/after on a manual hook() call.');
-		}
-
-		$this->hooks[$phase->value][] = [
-			'callback' => $callback,
-			'extension' => $extension,
-			'before' => $before,
-			'after' => $after,
-		];
+		$this->schedule->add($phase, $callback, $extension, $before, $after);
 	}
 
 
@@ -254,7 +239,8 @@ class Compiler
 	 */
 	public function compile(): string
 	{
-		$this->processedExtensions = $this->hooks = [];
+		$this->processedExtensions = [];
+		$this->schedule->clear();
 		$this->processExtensions();
 
 		foreach ([Phase::Discover, Phase::Modify] as $phase) {
@@ -286,7 +272,8 @@ class Compiler
 			}
 		}
 
-		$this->runPhase(Phase::Register);
+		$this->schedule->markCompleted(Phase::Setup);
+		$this->runPhase(Phase::Register, final: false); // ServicesExtension's Register hook runs in the second drain
 
 		if ($extra = array_diff_key($this->extensions, $this->processedExtensions, [self::Services => 1])) {
 			throw new Nette\DeprecatedException(sprintf(
@@ -396,26 +383,24 @@ class Compiler
 	/**
 	 * Runs all hooks registered for given phase, in constraint order.
 	 */
-	private function runPhase(Phase $phase): void
+	private function runPhase(Phase $phase, bool $final = true): void
 	{
-		if (!$hooks = $this->hooks[$phase->value] ?? []) {
-			return;
-		}
-
 		if ($phase === Phase::Modify) {
 			$this->builder->resolve(); // so hooks see resolved types
 		}
 
-		$this->runningPhase = $phase;
-		foreach ($this->sortHooks($hooks) as $hook) {
+		$this->schedule->markRunning($phase);
+		foreach ($this->schedule->drainSorted($phase) as $hook) {
 			($hook['callback'])($phase === Phase::Compile ? $this->class : $this->builder);
 			if ($phase === Phase::Modify) {
 				$this->builder->resolve(); // re-resolve for definitions added by the hook
 			}
 		}
 
-		$this->runningPhase = null;
-		$this->hooks[$phase->value] = [];
+		$this->schedule->markIdle();
+		if ($final) {
+			$this->schedule->markCompleted($phase);
+		}
 	}
 
 
@@ -424,30 +409,12 @@ class Compiler
 	 */
 	private function runPhaseForExtension(Phase $phase, CompilerExtension $extension): void
 	{
-		$run = $keep = [];
-		foreach ($this->hooks[$phase->value] ?? [] as $hook) {
-			$hook['extension'] === $extension ? $run[] = $hook : $keep[] = $hook;
-		}
-
-		$this->hooks[$phase->value] = $keep;
-		$this->runningPhase = $phase;
-		foreach ($run as $hook) {
+		$this->schedule->markRunning($phase);
+		foreach ($this->schedule->drainForExtension($phase, $extension) as $hook) {
 			($hook['callback'])($this->builder);
 		}
 
-		$this->runningPhase = null;
-	}
-
-
-	/**
-	 * Orders hooks by their before/after constraints.
-	 * @param  list<HookEntry>  $hooks
-	 * @return list<HookEntry>
-	 */
-	private function sortHooks(array $hooks): array
-	{
-		$items = array_map(fn($hook) => ['owner' => $hook['extension']] + $hook, $hooks);
-		return array_map(fn($i) => $hooks[$i], Helpers::sortByConstraints($items));
+		$this->schedule->markIdle();
 	}
 
 
