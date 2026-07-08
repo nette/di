@@ -9,6 +9,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\{Definition, Helpers};
+use Nette\DI\Expressions\Reference;
 use Nette\Utils\Type;
 use function count, sprintf;
 

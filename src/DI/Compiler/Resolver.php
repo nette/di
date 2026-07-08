@@ -12,7 +12,8 @@ use Nette\DI\{
 	Container, ContainerBuilder, Definition, Definitions, Helpers,
 	MissingServiceException, NotAllowedDuringResolvingException, ServiceCreationException,
 };
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\{Arrays, Callback, Reflection, Validators};
 use function array_key_exists, count, gettype, in_array, is_array, is_int, is_string, sprintf, strlen;

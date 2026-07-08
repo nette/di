@@ -4,7 +4,8 @@
  * Test: LocatorDefinition API
  */
 
-use Nette\DI\Definitions\{LocatorDefinition, Reference};
+use Nette\DI\Definitions\LocatorDefinition;
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

@@ -6,7 +6,8 @@
  */
 
 use Nette\DI\Config\Adapters\NeonAdapter;
-use Nette\DI\Definitions\{Reference, ServiceDefinition, Statement};
+use Nette\DI\Definitions\{ServiceDefinition, Statement};
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

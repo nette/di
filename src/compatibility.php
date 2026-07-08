@@ -86,6 +86,15 @@ namespace Nette\DI\Definitions;
 use Nette\DI;
 
 if (false) {
+	/** @deprecated use Nette\DI\Expressions\Reference */
+	class Reference
+	{
+	}
+} elseif (!class_exists(Reference::class)) {
+	class_alias(DI\Expressions\Reference::class, Reference::class);
+}
+
+if (false) {
 	/** @deprecated use Nette\DI\Definition */
 	abstract class Definition
 	{

@@ -9,7 +9,8 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\{DI, Neon};
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use function is_array, is_string, sprintf;
 
 

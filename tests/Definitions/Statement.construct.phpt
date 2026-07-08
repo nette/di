@@ -4,7 +4,8 @@
  * Test: Nette\DI\Definitions\Statement constructor - entity normalization and validation.
  */
 
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

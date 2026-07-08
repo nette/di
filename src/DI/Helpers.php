@@ -9,7 +9,8 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\DI\Compiler\DynamicParameter;
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\Utils\{Reflection, Type};
 use function array_key_exists, count, is_array, is_scalar, is_string, sprintf, strlen;
 
