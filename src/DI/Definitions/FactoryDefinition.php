@@ -9,6 +9,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\{Definition, Helpers, ServiceCreationException};
+use Nette\DI\Expressions\Reference;
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Type;
 use function count, is_string, sprintf;

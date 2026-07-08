@@ -4,7 +4,8 @@
  * Test: AccessorDefinition API
  */
 
-use Nette\DI\Definitions\{AccessorDefinition, Reference};
+use Nette\DI\Definitions\AccessorDefinition;
+use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

@@ -9,7 +9,8 @@ namespace Nette\DI\Compiler;
 
 use Nette;
 use Nette\DI\{CompilerExtension, Container, ContainerBuilder, Definition, ServiceCreationException};
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Reference;
 use Nette\PhpGenerator as Php;
 use function is_array, is_object, is_string, sprintf;
 

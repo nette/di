@@ -9,6 +9,7 @@ namespace Nette\DI\Definitions;
 
 use Nette;
 use Nette\DI\{Definition, Expression, ServiceCreationException};
+use Nette\DI\Expressions\Reference;
 use Nette\Utils\Strings;
 use function count, is_string;
 
