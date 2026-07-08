@@ -19,6 +19,8 @@ use function class_exists, interface_exists, is_string, sprintf;
  */
 final class Instantiation extends Statement
 {
+	use Chaining;
+
 	public function __construct(
 		public readonly string $class,
 		/** @var array<mixed> */

@@ -18,6 +18,8 @@ use function sprintf;
  */
 final class Reference extends Expression
 {
+	use Chaining;
+
 	public const Self = 'self';
 
 	#[\Deprecated('use Reference::Self')]

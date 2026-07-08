@@ -23,6 +23,8 @@ use function class_exists, function_exists, in_array, interface_exists, is_strin
  */
 final class Call extends Statement
 {
+	use Chaining;
+
 	public function __construct(
 		/** null for a global function, class name for a static call, expression for a method call */
 		public readonly Expression|string|null $target,

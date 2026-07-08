@@ -14,10 +14,13 @@ use function is_string;
 
 
 /**
- * Piece of PHP code with ? placeholders substituted by arguments.
+ * Piece of PHP code with ? placeholders substituted by arguments. Chainable, so a raw expression
+ * (e.g. a generated local variable, code('$baseUrl')) can be continued with ->method()/->property().
  */
 final class PhpCode extends Statement
 {
+	use Chaining;
+
 	public function __construct(
 		public readonly string $code,
 		/** @var array<mixed> */
