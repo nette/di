@@ -13,6 +13,7 @@ use Nette\DI\Definition;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expression;
+use Nette\DI\Expressions;
 use Nette\DI\Expressions\Reference;
 use Nette\DI\MissingServiceException;
 use Nette\DI\NotAllowedDuringResolvingException;
@@ -129,14 +130,15 @@ class Resolver
 	 * @param  array<mixed>  $arguments
 	 * @return array<mixed>
 	 */
-	public function resolveArguments(array $arguments, mixed $entity): array
+	public function resolveArguments(array $arguments, string $usedIn): array
 	{
 		try {
 			$arguments = $this->convertReferences($arguments);
 			return $this->completeArguments($arguments);
 		} catch (ServiceCreationException $e) {
 			if (!str_contains($e->getMessage(), ' (used in')) {
-				$e->setMessage($e->getMessage() . " (used in {$this->entityToString($entity)})");
+				$usedIn = str_replace('@self', '@' . $this->currentService?->getName(), $usedIn);
+				$e->setMessage($e->getMessage() . " (used in $usedIn)");
 			}
 
 			throw $e;
@@ -152,23 +154,12 @@ class Resolver
 	public function completeArguments(array $arguments): array
 	{
 		array_walk_recursive($arguments, function (&$val): void {
-			if ($val instanceof Statement) {
-				$entity = $val->getEntity();
-				if ($entity === 'typed' || $entity === 'tagged') {
-					$services = [];
-					$current = $this->currentService?->getName();
-					foreach ($val->arguments as $argument) {
-						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findAutowired($argument) as $name => $foo) {
-							if ($name !== $current) {
-								$services[] = new Reference($name);
-							}
-						}
-					}
+			if ($val instanceof Statement && ($val->getEntity() === 'typed' || $val->getEntity() === 'tagged')) {
+				$node = $val->getEntity() === 'typed'
+					? new Expressions\ServiceCollection(types: $val->arguments)
+					: new Expressions\ServiceCollection(tags: $val->arguments);
+				$val = $node->complete($this)->references ?? []; // node is replaced with array for back compatibility
 
-					$val = $this->completeArguments($services);
-				} else {
-					$val = $val->complete($this);
-				}
 			} elseif ($val instanceof Expression) {
 				$val = $val->complete($this);
 
@@ -260,23 +251,23 @@ class Resolver
 	}
 
 
-	/** @param  mixed  $entity */
+	/**
+	 * Formats a ServiceDefinition entity (as returned by getEntity()) for an error message.
+	 * @param  string|array{string|Expression, string}|Reference|null  $entity
+	 */
 	private function entityToString($entity): string
 	{
-		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService?->getName() !== null
-				? '@' . $this->currentService->getName()
-				: '@' . $ref->getValue();
 		if (is_string($entity)) {
 			return $entity . '::__construct()';
 		} elseif ($entity instanceof Reference) {
-			$entity = $referenceToText($entity);
+			return '@' . $entity->getValue();
 		} elseif (is_array($entity)) {
 			if (!str_contains($entity[1], '$')) {
 				$entity[1] .= '()';
 			}
 
 			if ($entity[0] instanceof Reference) {
-				$entity[0] = $referenceToText($entity[0]);
+				$entity[0] = '@' . $entity[0]->getValue();
 			} elseif (!is_string($entity[0])) {
 				return $entity[1];
 			}
@@ -303,7 +294,7 @@ class Resolver
 				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
 					$val = ContainerBuilder::literal((new Reference($pair[0]))->resolveType($this) . '::' . $pair[1]);
 				} else { // @service::property
-					$val = new Statement([new Reference($pair[0]), '$' . $pair[1]]);
+					$val = new Expressions\PropertyAccess(new Reference($pair[0]), $pair[1]);
 				}
 			} elseif (is_string($val) && str_starts_with($val, '@@')) { // escaped text @@
 				$val = substr($val, 1);

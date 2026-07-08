@@ -5,7 +5,7 @@
  */
 
 use Nette\DI;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Call;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
@@ -44,5 +44,5 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
-	new Statement([new Reference('self'), 'injectFoo'], [new Reference('01')]),
+	new Call(new Reference('self'), 'injectFoo', [new Reference('01')]),
 ], $builder->getDefinition('sf')->getResultDefinition()->getSetup());

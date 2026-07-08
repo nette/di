@@ -6,6 +6,7 @@
 
 use Nette\DI\Definitions\Statement;
 use Nette\DI\DynamicParameter;
+use Nette\DI\Expressions\Call;
 use Nette\DI\Expressions\PartialCall;
 use Nette\DI\Helpers;
 use Nette\PhpGenerator\Literal;
@@ -55,7 +56,7 @@ Assert::equal(
 	Helpers::expand('%key.foo%', ['key' => new DynamicParameter('func()')]),
 );
 Assert::equal(
-	new Statement('::implode', [['text', new DynamicParameter('func()'), '']]),
+	new Call(null, 'implode', [['text', new DynamicParameter('func()'), '']]),
 	Helpers::expand('text%key%', ['key' => new DynamicParameter('func()')]),
 );
 

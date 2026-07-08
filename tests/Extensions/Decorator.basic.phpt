@@ -5,7 +5,9 @@
  */
 
 use Nette\DI;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Call;
+use Nette\DI\Expressions\PropertyAccess;
+use Nette\DI\Expressions\PropertyMode;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
@@ -82,9 +84,9 @@ Assert::same(
 Assert::true($builder->getDefinition('one')->getTag(DI\Extensions\InjectExtension::TagInject));
 
 Assert::equal([
-	new Statement([new Reference('self'), 'setup'], ['Service']),
-	new Statement([new Reference('self'), 'setup'], ['Object']),
-	new Statement([new Reference('self'), 'setup'], ['hello']),
-	new Statement([new Reference('self'), 'setup']),
-	new Statement([new Reference('self'), '$a'], [10]),
+	new Call(new Reference('self'), 'setup', ['Service']),
+	new Call(new Reference('self'), 'setup', ['Object']),
+	new Call(new Reference('self'), 'setup', ['hello']),
+	new Call(new Reference('self'), 'setup'),
+	new PropertyAccess(new Reference('self'), 'a', PropertyMode::Assign, 10),
 ], $builder->getDefinition('one')->getSetup());

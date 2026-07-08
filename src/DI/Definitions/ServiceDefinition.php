@@ -10,6 +10,7 @@ namespace Nette\DI\Definitions;
 use Nette;
 use Nette\DI\Definition;
 use Nette\DI\Expression;
+use Nette\DI\Expressions\Instantiation;
 use Nette\DI\Expressions\Reference;
 use Nette\DI\ServiceCreationException;
 use Nette\Utils\Strings;
@@ -220,8 +221,8 @@ final class ServiceDefinition extends Definition
 		}
 
 		if ($this->canBeLazy() && !preg_grep('#func_get_arg|func_num_args#i', $lines)) { // latteFactory workaround
-			$class = $this->getEntity();
-			assert($this->creator instanceof Statement && is_string($class) && class_exists($class)); // canBeLazy() guarantees this
+			assert($this->creator instanceof Instantiation); // canBeLazy() guarantees this
+			$class = $this->creator->class;
 			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')
 				? $generator->formatPhp("\$service->__construct(...?:);\n", [$this->creator->arguments])
 				: '';
@@ -241,10 +242,9 @@ final class ServiceDefinition extends Definition
 	private function canBeLazy(): bool
 	{
 		return $this->lazy
-			&& $this->creator instanceof Statement
-			&& is_string($class = $this->creator->getEntity())
+			&& $this->creator instanceof Instantiation // generateCode() runs on the completed creator
 			&& ($this->creator->arguments || $this->setup)
-			&& ($ancestor = ($tmp = class_parents($class)) ? array_pop($tmp) : $class)
+			&& ($ancestor = ($tmp = class_parents($class = $this->creator->class)) ? array_pop($tmp) : $class)
 			&& !(new \ReflectionClass($ancestor))->isInternal();
 	}
 

@@ -90,6 +90,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		if ($val instanceof Reference) {
 			return '@' . $val->getValue();
 
+		} elseif ($val instanceof DI\Expressions\PhpCode) {
+			return new Neon\Entity($val->code, $val->arguments);
+
 		} elseif ($val instanceof DI\Expressions\PartialCall) {
 			return match (true) {
 				$val->target === null => new Neon\Entity('::' . $val->name, ['...']),

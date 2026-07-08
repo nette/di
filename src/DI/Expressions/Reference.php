@@ -9,6 +9,7 @@ namespace Nette\DI\Expressions;
 
 use Nette\DI;
 use Nette\DI\Expression;
+use Nette\PhpGenerator\Literal;
 use function sprintf;
 
 
@@ -38,6 +39,7 @@ final class Reference extends Expression
 
 	public function __construct(
 		private readonly string $value,
+		public readonly bool $shared = true,
 	) {
 	}
 
@@ -81,7 +83,7 @@ final class Reference extends Expression
 			}
 
 			return $this->value === $resolver->getCurrentService()?->getName()
-				? new self(self::Self)
+				? new self(self::Self, $this->shared)
 				: $this;
 		}
 
@@ -116,6 +118,7 @@ final class Reference extends Expression
 		return match (true) {
 			$this->isSelf() => '$service',
 			$this->value === DI\ContainerBuilder::ThisContainer => '$this',
+			!$this->shared => $generator->formatPhp('?->?()', [new Literal('$this'), DI\Container::getMethodName($this->value)]),
 			default => $generator->formatPhp('$this->getService(?)', [$this->value]),
 		};
 	}

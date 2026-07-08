@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: characterizes the REAL v3.3 behaviour of special Statement forms used as a service
- * creator and of Resolver::resolveEntityType() (the ancestor of the planned Expression::resolveType()).
+ * Test: how the special Expression forms resolve their type and behave as a service creator.
  */
 
 use Nette\DI\Compiler;
@@ -55,72 +54,72 @@ function creatorCode(Statement $creator, ?string $type): string
 }
 
 
-// --- resolveEntityType() cannot infer a type for any of these forms ---------------------------
+// --- resolveType() ----------------------------------------------------------------------------
 
-test('resolveEntityType(): special functions are treated as class names', function () {
+test('resolveType(): special functions and a PHP literal are not resolvable (null)', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('not', [true])), ServiceCreationException::class, "Class 'not' not found.");
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('int', ['5'])), ServiceCreationException::class, "Class 'int' not found.");
+	Assert::null($resolver->resolveEntityType(new Statement('not', [true])));
+	Assert::null($resolver->resolveEntityType(new Statement('int', ['5'])));
+	Assert::null($resolver->resolveEntityType(new Statement('new ReflectionClass(?)', [stdClass::class])));
 });
 
 
-test('resolveEntityType(): typed()/tagged() are treated as class names', function () {
+test('resolveType(): typed()/tagged() are still treated as class names', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('typed', [stdClass::class])), ServiceCreationException::class, "Class 'typed' not found.");
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('tagged', ['t'])), ServiceCreationException::class, "Class 'tagged' not found.");
+	Assert::exception(fn() => (new Statement('typed', [stdClass::class]))->resolveType($resolver), ServiceCreationException::class, "Class 'typed' not found.");
+	Assert::exception(fn() => (new Statement('tagged', ['t']))->resolveType($resolver), ServiceCreationException::class, "Class 'tagged' not found.");
 });
 
 
-test('resolveEntityType(): property access has no type reflection (read and append)', function () {
+test('resolveEntityType(): a property read reflects the declared type', function () {
 	[, $resolver] = harness();
-	// the declared property type is never reflected; assigned/appended arguments are irrelevant to resolution,
-	// so the read and write forms share one entity - only the append notation $prop[] differs
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj'])), ServiceCreationException::class, 'Method Holder::$obj() is not callable.');
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj[]'], [1])), ServiceCreationException::class, 'Method Holder::$obj[]() is not callable.');
+	Assert::same(stdClass::class, $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj'])));
 });
 
 
-test('resolveEntityType(): a PHP literal is treated as a class name', function () {
+test('resolveType(): a property write reflects the assigned value; scalars and appends are null', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('new ReflectionClass(?)', [stdClass::class])), ServiceCreationException::class, "Class 'new ReflectionClass(?)' not found.");
+	Assert::same(stdClass::class, (new Statement([new Reference('svc'), '$obj'], [new Statement(stdClass::class)]))->resolveType($resolver));
+	Assert::null((new Statement([new Reference('svc'), '$obj'], [5]))->resolveType($resolver));
+	Assert::null((new Statement([new Reference('svc'), '$obj[]'], [1]))->resolveType($resolver));
 });
 
 
-// --- practical consequence: usable as a creator only WITH an explicit type: --------------------
+// --- as a service creator ---------------------------------------------------------------------
 
-test('special function creator: generates code with a type, fails without one', function () {
+test('special function creator: needs an explicit type; generated code is unchanged', function () {
 	Assert::same('return !(true);', creatorCode(new Statement('not', [true]), stdClass::class));
-	Assert::exception(fn() => creatorCode(new Statement('not', [true]), null), ServiceCreationException::class, "%A?%Class 'not' not found.");
+	Assert::exception(fn() => creatorCode(new Statement('not', [true]), null), ServiceCreationException::class, '%A?%Unknown service type, specify it%A?%');
 });
 
 
-test('typed()/tagged() cannot be used as a creator at all (even with a type)', function () {
+test('typed()/tagged() cannot be used as a creator (even with a type)', function () {
 	Assert::exception(fn() => creatorCode(new Statement('typed', [stdClass::class]), stdClass::class), ServiceCreationException::class, "%A?%Class 'typed' not found.");
 	Assert::exception(fn() => creatorCode(new Statement('tagged', ['t']), stdClass::class), ServiceCreationException::class, "%A?%Class 'tagged' not found.");
 });
 
 
-test('property read creator: generates code with a type, fails without one', function () {
-	Assert::same("return \$this->getService('svc')->obj;", creatorCode(new Statement([new Reference('svc'), '$obj']), stdClass::class));
-	Assert::exception(fn() => creatorCode(new Statement([new Reference('svc'), '$obj']), null), ServiceCreationException::class, '%A?%Method Holder::$obj() is not callable.');
+test('property read creator: works WITHOUT a type thanks to reflection', function () {
+	$expected = "return \$this->getService('svc')->obj;";
+	Assert::same($expected, creatorCode(new Statement([new Reference('svc'), '$obj']), null));
+	Assert::same($expected, creatorCode(new Statement([new Reference('svc'), '$obj']), stdClass::class));
 });
 
 
-test('PHP literal creator: generates code with a type, fails without one', function () {
-	// a PhpLiteral used as a creator must evaluate to an object (a service is an object)
+test('PHP literal creator: needs an explicit type (a literal must evaluate to an object)', function () {
 	Assert::same("return new ReflectionClass('stdClass');", creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), ReflectionClass::class));
-	Assert::exception(fn() => creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), null), ServiceCreationException::class, "%A?%Class 'new ReflectionClass(?)' not found.");
+	Assert::exception(fn() => creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), null), ServiceCreationException::class, '%A?%Unknown service type, specify it%A?%');
 });
 
 
-// --- same behaviour through the NEON config entry point (Compiler + NeonAdapter) ---------------
+// --- same behaviour through the NEON config entry point ---------------------------------------
 // (a PHP literal has no NEON notation - it is an API-only form - so it is absent here)
 
-test('NEON: special function as a creator needs an explicit type', function () {
+test('NEON: a special function as a creator needs an explicit type', function () {
 	Assert::exception(
 		fn() => createContainer(new Compiler, "services:\n\tx: not(true)"),
 		ServiceCreationException::class,
-		"%A?%Class 'not' not found.",
+		'%A?%Unknown service type, specify it%A?%',
 	);
 	Assert::type(Container::class, createContainer(new Compiler, "services:\n\tx:\n\t\tcreate: not(true)\n\t\ttype: stdClass"));
 });
@@ -140,12 +139,7 @@ test('NEON: typed()/tagged() cannot be a creator, even with a type', function ()
 });
 
 
-test('NEON: property read as a creator needs an explicit type, then works at runtime', function () {
-	Assert::exception(
-		fn() => createContainer(new Compiler, "services:\n\tsvc: Holder\n\tx: @svc::\$obj"),
-		ServiceCreationException::class,
-		'%A?%Method Holder::$obj() is not callable.',
-	);
-	$container = createContainer(new Compiler, "services:\n\tsvc: Holder\n\tx:\n\t\tcreate: @svc::\$obj\n\t\ttype: stdClass");
+test('NEON: a property read as a creator works without a type and returns the object', function () {
+	$container = createContainer(new Compiler, "services:\n\tsvc: Holder\n\tx: @svc::\$obj");
 	Assert::type(stdClass::class, $container->getService('x'));
 });

@@ -6,7 +6,9 @@
 
 use Nette\DI;
 use Nette\DI\Attributes\Inject;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\Call;
+use Nette\DI\Expressions\PropertyAccess;
+use Nette\DI\Expressions\PropertyMode;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
@@ -106,31 +108,31 @@ services:
 $builder = $compiler->getContainerBuilder();
 
 Assert::equal([
-	new Statement([new Reference('self'), 'injectA']),
-	new Statement([new Reference('self'), 'injectB']),
-	new Statement([new Reference('self'), 'injectC']),
-	new Statement([new Reference('self'), 'injectD']),
-	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
-	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
+	new Call(new Reference('self'), 'injectA'),
+	new Call(new Reference('self'), 'injectB'),
+	new Call(new Reference('self'), 'injectC'),
+	new Call(new Reference('self'), 'injectD'),
+	new PropertyAccess(new Reference('self'), 'e', PropertyMode::Assign, new Reference('a')),
+	new PropertyAccess(new Reference('self'), 'c', PropertyMode::Assign, new Reference('std')),
+	new PropertyAccess(new Reference('self'), 'a', PropertyMode::Assign, new Reference('std')),
 ], $builder->getDefinition('last.one')->getSetup());
 
 Assert::equal([
-	new Statement([new Reference('self'), 'injectA']),
-	new Statement([new Reference('self'), 'injectB']),
-	new Statement([new Reference('self'), 'injectC']),
-	new Statement([new Reference('self'), 'injectD']),
-	new Statement([new Reference('self'), '$e'], [new Reference('a')]),
-	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
+	new Call(new Reference('self'), 'injectA'),
+	new Call(new Reference('self'), 'injectB'),
+	new Call(new Reference('self'), 'injectC'),
+	new Call(new Reference('self'), 'injectD'),
+	new PropertyAccess(new Reference('self'), 'e', PropertyMode::Assign, new Reference('a')),
+	new PropertyAccess(new Reference('self'), 'c', PropertyMode::Assign, new Reference('std')),
+	new PropertyAccess(new Reference('self'), 'a', PropertyMode::Assign, new Reference('std')),
 ], $builder->getDefinition('ext.one')->getSetup());
 
 Assert::equal([
-	new Statement([new Reference('self'), 'injectA']),
-	new Statement([new Reference('self'), 'injectB'], [1]),
-	new Statement([new Reference('self'), 'injectC'], [1]),
-	new Statement([new Reference('self'), 'injectD']),
-	new Statement([new Reference('self'), '$e'], [new Reference('b')]),
-	new Statement([new Reference('self'), '$c'], [new Reference('std')]),
-	new Statement([new Reference('self'), '$a'], [new Reference('std')]),
+	new Call(new Reference('self'), 'injectA'),
+	new Call(new Reference('self'), 'injectB', [1]),
+	new Call(new Reference('self'), 'injectC', [1]),
+	new Call(new Reference('self'), 'injectD'),
+	new PropertyAccess(new Reference('self'), 'e', PropertyMode::Assign, new Reference('b')),
+	new PropertyAccess(new Reference('self'), 'c', PropertyMode::Assign, new Reference('std')),
+	new PropertyAccess(new Reference('self'), 'a', PropertyMode::Assign, new Reference('std')),
 ], $builder->getDefinition('two')->getSetup());
