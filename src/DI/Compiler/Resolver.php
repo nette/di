@@ -324,6 +324,9 @@ class Resolver
 				: array_values(array_filter($resolver->builder->findAutowired($type), fn($obj) => $obj !== $resolver->currentService));
 		}
 
+		// an open slot (DSL wire()) is treated as an omitted argument to be autowired; keys keep positions
+		$arguments = array_filter($arguments, fn($val): bool => $val !== Expressions\ArgumentPlaceholder::Single);
+
 		$useName = false;
 		$num = -1;
 		$res = [];
