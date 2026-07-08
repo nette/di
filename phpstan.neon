@@ -42,6 +42,7 @@ parameters:
 				- src/DI/Compiler.php
 				- src/DI/Compiler/Schedule.php
 				- src/DI/ContainerBuilder.php
+				- src/DI/Definitions.php
 		- # CompilerExtension::hook() forwards the same polymorphic \Closure to Compiler::addHook()
 			identifier: missingType.callable
 			path: src/DI/CompilerExtension.php
