@@ -75,9 +75,13 @@ final class PropertyAccess extends Statement
 
 	public function generateCode(PhpGenerator $generator): string
 	{
-		$prop = $this->target instanceof Reference
-			? $generator->formatPhp('?->?', [$this->target, $this->name])
-			: $generator->formatPhp('?::$?', [$this->target, $this->name]);
+		if (is_string($this->target)) {
+			$prop = $generator->formatPhp('?::$?', [$this->target, $this->name]);
+		} else {
+			$target = $this->target->generateCode($generator);
+			$target = str_starts_with($target, 'new ') ? "($target)" : $target;
+			$prop = $generator->formatPhp('?->?', [new Php\Literal($target), $this->name]);
+		}
 
 		return match ($this->mode) {
 			PropertyMode::Read => $prop,
