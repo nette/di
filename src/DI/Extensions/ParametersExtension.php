@@ -11,8 +11,11 @@ use Nette;
 use Nette\DI\Attributes\Hook;
 use Nette\DI\Compiler\DynamicParameter;
 use Nette\DI\ContainerBuilder;
+use Nette\DI\DynamicValue;
 use Nette\DI\Helpers;
 use Nette\DI\Phase;
+use Nette\Utils\Arrays;
+use function in_array, is_array;
 
 
 /**
@@ -44,10 +47,14 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	public function doExpandParameters(ContainerBuilder $builder): void
 	{
 		$params = $this->config;
+		$this->dynamicParams = array_merge($this->dynamicParams, self::findDynamicValues($params));
 		foreach ($this->dynamicParams as $key) {
-			$params[$key] = new DynamicParameter('$this->getParameter(' . var_export($key, return: true) . ')');
+			// a dotted name marks a value nested inside a parameter as dynamic
+			$ref = &Arrays::getRef($params, explode('.', $key));
+			$ref = new DynamicParameter('$this->getParameter(' . var_export($key, return: true) . ')');
 		}
 
+		unset($ref);
 		$builder->parameters = Helpers::expand($params, $params, recursive: true);
 		$this->compilerConfig = Helpers::expand($this->compilerConfig, $builder->parameters);
 	}
@@ -80,7 +87,14 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		$method = $manipulator->inheritMethod('getDynamicParameter');
 		$method->addBody('return match($key) {');
 		foreach ($this->collectedDynamicParams as $key => $foo) {
-			$value = Helpers::expand($this->config[$key] ?? null, $builder->parameters);
+			if (in_array((string) $key, $this->dynamicParams, strict: true)) {
+				// an explicitly named parameter falls back to its (possibly nested) config default
+				$default = Arrays::get($this->config, explode('.', (string) $key), null);
+				$value = Helpers::expand($default instanceof DynamicValue ? $default->value : $default, $builder->parameters);
+			} else {
+				// a key promoted by collectDynamicParams() regenerates its already-expanded subtree
+				$value = $builder->parameters[$key] ?? null;
+			}
 			try {
 				$value = $generator->convertArguments($resolver->completeArguments(Helpers::filterArguments([$value])))[0];
 				$method->addBody("\t? => ?,", [$key, $value]);
@@ -127,5 +141,30 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			});
 		}
 		return $dynamicParams;
+	}
+
+
+	/**
+	 * Finds DynamicValue markers anywhere in the tree and returns their dotted names.
+	 * @param  array<string|int, mixed>  $params
+	 * @param  list<string>  $path
+	 * @return list<string>
+	 */
+	private static function findDynamicValues(array $params, array $path = []): array
+	{
+		$names = [];
+		foreach ($params as $key => $value) {
+			$keyPath = [...$path, (string) $key];
+			if ($value instanceof DynamicValue) {
+				if (array_filter($keyPath, fn(string $k): bool => str_contains($k, '.'))) {
+					throw new Nette\InvalidStateException("Dynamic value cannot be used under a key containing a dot ('" . implode('.', $keyPath) . "').");
+				}
+				$names[] = implode('.', $keyPath);
+			} elseif (is_array($value)) {
+				$names = array_merge($names, self::findDynamicValues($value, $keyPath));
+			}
+		}
+
+		return $names;
 	}
 }

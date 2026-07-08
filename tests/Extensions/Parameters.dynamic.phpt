@@ -140,6 +140,69 @@ testException('Reference as parameter', function () {
 }, Nette\InvalidStateException::class, 'Circular reference detected for: one, %dynamic%.');
 
 
+test('Nested dynamic parameter via dotted name', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['db.password']);
+	$container = createContainer($compiler, '
+	parameters:
+		db:
+			host: localhost
+			password: default
+
+	services:
+		one: Service(%db.password%)
+	', ['db.password' => 'secret']);
+	Assert::same('secret', $container->getService('one')->arg);
+	Assert::same(['host' => 'localhost', 'password' => 'secret'], $container->getParameter('db'));
+});
+
+
+test('Nested dynamic parameter falls back to config value', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['db.password']);
+	$container = createContainer($compiler, '
+	parameters:
+		db:
+			host: localhost
+			password: default
+	');
+	Assert::same(['host' => 'localhost', 'password' => 'default'], $container->getParameter('db'));
+
+	// the same class accepts a runtime value; the sibling stays baked
+	$class = $container::class;
+	$other = new $class(['db.password' => 'runtime']);
+	Assert::same(['host' => 'localhost', 'password' => 'runtime'], $other->getParameter('db'));
+});
+
+
+test('Nested dynamic parameter without config value', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['db.password']);
+	$container = createContainer($compiler, '
+	parameters:
+		db:
+			host: localhost
+	', ['db.password' => 'secret']);
+	Assert::same(['host' => 'localhost', 'password' => 'secret'], $container->getParameter('db'));
+});
+
+
+test('Nested dynamic parameter within string expansion', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['db.password']);
+	$container = createContainer($compiler, '
+	parameters:
+		db:
+			password: default
+		dsn: "pw=%db.password%"
+
+	services:
+		one: Service(%dsn%)
+	', ['db.password' => 'secret']);
+	Assert::same('pw=secret', $container->getService('one')->arg);
+});
+
+
 testException('Circula references', function () {
 	$compiler = new DI\Compiler;
 	$compiler->setDynamicParameterNames(['one', 'two']);
