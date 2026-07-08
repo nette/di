@@ -8,7 +8,10 @@
 namespace Nette\DI\Config\Adapters;
 
 use Nette;
+use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
+use Nette\DI\Expressions\PartialCall;
 use Nette\Neon;
 use Nette\Neon\{Nodes, Place};
 use function count, is_array, is_string, sprintf;
@@ -59,21 +62,38 @@ final class NeonEvaluator extends Neon\Evaluator
 	}
 
 
-	protected function evaluateEntity(Nodes\EntityNode $node, Place $place): Statement
+	protected function evaluateEntity(Nodes\EntityNode $node, Place $place): Expression
 	{
-		return new Statement(...$this->evaluateParts($node));
+		[$head, $attributes] = $this->evaluateParts($node);
+		if ($attributes !== Resolver::getFirstClassCallable()) {
+			return new Statement($head, $attributes);
+		}
+
+		$callable = (new Statement($head))->getEntity(); // normalizes Class::method, @service::method, ::function
+		if (!is_array($callable)) {
+			throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$head(...)' in config file (used in '$this->file')");
+		}
+
+		return new PartialCall($callable[0] === '' ? null : $callable[0], $callable[1]);
 	}
 
 
 	/** Each link calls a method on the result of the links before it. */
-	protected function evaluateChain(Nodes\EntityChainNode $node): Statement
+	protected function evaluateChain(Nodes\EntityChainNode $node): Expression
 	{
-		$statement = null;
+		$expression = null;
 		foreach ($node->entities as $link) {
+			if ($expression === null) {
+				$expression = $this->evaluateEntity($link, Place::ChainLink);
+				continue;
+			}
+
 			[$head, $attributes] = $this->evaluateParts($link);
-			$statement = new Statement($statement ? [$statement, ltrim($head, ':')] : $head, $attributes);
+			$expression = $attributes === Resolver::getFirstClassCallable()
+				? new PartialCall($expression, ltrim($head, ':'))
+				: new Statement([$expression, ltrim($head, ':')], $attributes);
 		}
-		return $statement;
+		return $expression;
 	}
 
 
@@ -118,7 +138,7 @@ final class NeonEvaluator extends Neon\Evaluator
 
 		$items = $node->attributes->items ?? [];
 		if (count($items) === 1 && !$items[0]->key && self::isLiteral($items[0]->value, '...')) {
-			return [$head, Nette\DI\Compiler\Resolver::getFirstClassCallable()];
+			return [$head, Resolver::getFirstClassCallable()];
 		}
 
 		$attributes = [];

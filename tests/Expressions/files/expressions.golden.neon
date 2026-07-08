@@ -28,7 +28,7 @@ services:
 	f5: GoldConsumer( @svc::identity(1) )
 
 	# F6xK2 property and constant on reference
-	f6: GoldConsumer( @svc::prop, @svc::VERSION )
+	f6: GoldConsumer( @svc::prop, @svc::Version )
 
 	# F7xK1 chaining from new instance and from reference
 	f7: {create: GoldSvc()::chain()::makeDep(), autowired: false}

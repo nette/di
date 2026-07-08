@@ -69,7 +69,7 @@ return new GoldConsumer($this->getService('svc')->identity(1));
 
 
 == f6
-return new GoldConsumer($this->getService('svc')->prop, GoldSvc::VERSION);
+return new GoldConsumer($this->getService('svc')->prop, GoldSvc::Version);
 
 
 == f7

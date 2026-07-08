@@ -28,6 +28,11 @@ parameters:
 		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
+		- # NEON adapters: a chain holds entities and the head of an entity read from a file is a string, which the types of Neon\Entity and Statement::getEntity() do not express
+			identifier: argument.type
+			paths:
+				- src/DI/Config/Adapters/NeonAdapter.php
+				- src/DI/Config/Adapters/NeonEvaluator.php
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
