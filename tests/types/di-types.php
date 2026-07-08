@@ -96,3 +96,18 @@ function testReferenceNarrowing(Definitions\Reference $ref): void
 		assertType('string', $ref->getValue());
 	}
 }
+
+
+function testContainerBuilderGetOf(ContainerBuilder $builder): void
+{
+	// default: ServiceDefinition
+	assertType(Definitions\ServiceDefinition::class, $builder->get('foo'));
+	assertType(Definitions\ServiceDefinition::class, $builder->get(type: TestService::class));
+
+	// of: addresses another definition class
+	assertType(Definitions\FactoryDefinition::class, $builder->get('foo', of: Definitions\FactoryDefinition::class));
+
+	// find: default Definition, of: narrows
+	assertType('array<string, Nette\DI\Definition>', $builder->find(tag: 't'));
+	assertType('array<string, Nette\DI\Definitions\ServiceDefinition>', $builder->find(tag: 't', of: Definitions\ServiceDefinition::class));
+}
