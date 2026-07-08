@@ -8,6 +8,7 @@
 namespace Nette\DI\Config\Adapters;
 
 use Nette;
+use Nette\DI\Compiler;
 
 
 /**
@@ -16,11 +17,15 @@ use Nette;
 final class PhpAdapter implements Nette\DI\Config\Adapter
 {
 	/**
-	 * Reads configuration from PHP file.
+	 * Reads configuration from PHP file. A file returning a closure (operating on Definitions) is
+	 * wrapped into an internal section so it flows through the array-based loader to the Compiler.
 	 */
 	public function load(string $file): array
 	{
-		return require $file;
+		$data = require $file;
+		return $data instanceof \Closure
+			? [Compiler::Closures => [$data]]
+			: $data;
 	}
 
 
