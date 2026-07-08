@@ -16,6 +16,7 @@ use function count, is_array, sprintf;
 
 /**
  * DI container compiler.
+ * @phpstan-type HookEntry array{callback: \Closure, extension: CompilerExtension|null, before: string|string[]|null, after: string|string[]|null}
  */
 class Compiler
 {
@@ -35,6 +36,17 @@ class Compiler
 	private string $sources = '';
 	private DependencyChecker $dependencies;
 	private string $className = 'Container';
+
+	/** @var array<string, list<HookEntry>> */
+	private array $hooks = [];
+
+	/** the phase whose hooks are currently being drained, or null */
+	private ?Phase $runningPhase = null;
+
+	private ?Nette\PhpGenerator\ClassType $class = null;
+
+	/** @var array<string, true> extension names that have been processed */
+	private array $processedExtensions = [];
 
 
 	public function __construct(
@@ -84,6 +96,35 @@ class Compiler
 		return $type
 			? array_filter($this->extensions, fn($item): bool => $item instanceof $type)
 			: $this->extensions;
+	}
+
+
+	/**
+	 * Registers a hook for given phase. Hooks run in registration order unless before/after constraints dictate otherwise.
+	 * @param  string|string[]|null  $before
+	 * @param  string|string[]|null  $after
+	 * @internal
+	 */
+	public function addHook(
+		Phase $phase,
+		\Closure $callback,
+		?CompilerExtension $extension = null,
+		string|array|null $before = null,
+		string|array|null $after = null,
+	): void
+	{
+		if ($phase === $this->runningPhase) {
+			throw new Nette\InvalidStateException("Cannot schedule a hook into phase {$phase->name} while it is running (it would be silently dropped); schedule it into a later phase.");
+		} elseif ($phase === Phase::Setup && ($before !== null || $after !== null)) {
+			throw new Nette\InvalidStateException('Setup phase ordering is declared via #[Hook] attributes (which order the extensions), not via before/after on a manual hook() call.');
+		}
+
+		$this->hooks[$phase->value][] = [
+			'callback' => $callback,
+			'extension' => $extension,
+			'before' => $before,
+			'after' => $after,
+		];
 	}
 
 
@@ -213,73 +254,200 @@ class Compiler
 	 */
 	public function compile(): string
 	{
+		$this->processedExtensions = $this->hooks = [];
 		$this->processExtensions();
-		$this->processBeforeCompile();
+
+		foreach ([Phase::Discover, Phase::Modify] as $phase) {
+			$this->runPhase($phase);
+		}
+
+		$this->builder->complete();
 		return $this->generateCode();
 	}
 
 
-	/** @internal */
+	/**
+	 * Processes extensions: validates config, calls registerHooks() and runs the Setup
+	 * and Register phases. Extensions are ordered by their Setup hooks; ServicesExtension
+	 * goes last, once all definitions are visible. New extensions may be added during Setup,
+	 * hence the loop.
+	 * @internal
+	 */
 	public function processExtensions(): void
 	{
-		$first = $this->getExtensions(Extensions\ParametersExtension::class) + $this->getExtensions(Extensions\ExtensionsExtension::class);
-		foreach ($first as $name => $extension) {
-			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
-			$extension->setConfig($this->config[$name] = $config);
-			$extension->loadConfiguration();
+		while ($unprocessed = array_diff_key($this->extensions, $this->processedExtensions, [self::Services => 1])) {
+			if ($this->processedExtensions) {
+				$this->checkLateSetupConstraints($unprocessed);
+			}
+
+			foreach ($this->sortExtensionsBySetupHooks($unprocessed) as $name) {
+				$this->initExtension($name);
+				$this->runPhaseForExtension(Phase::Setup, $this->extensions[$name]);
+			}
 		}
 
-		$last = $this->getExtensions(Extensions\InjectExtension::class);
-		$this->extensions = array_merge(array_diff_key($this->extensions, $last), $last);
+		$this->runPhase(Phase::Register);
 
-		if ($decorator = $this->getExtensions(Extensions\DecoratorExtension::class)) {
-			Nette\Utils\Arrays::insertBefore($this->extensions, key($decorator), $this->getExtensions(Extensions\SearchExtension::class));
-		}
-
-		$extensions = array_diff_key($this->extensions, $first, [self::Services => 1]);
-		foreach ($extensions as $name => $extension) {
-			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
-			$extension->setConfig($this->config[$name] = $config);
-		}
-
-		foreach ($extensions as $extension) {
-			$extension->loadConfiguration();
-		}
-
-		foreach ($this->getExtensions(Extensions\ServicesExtension::class) as $name => $extension) {
-			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
-			$extension->setConfig($this->config[$name] = $config);
-			$extension->loadConfiguration();
-		}
-
-		if ($extra = array_diff_key($this->extensions, $extensions, $first, [self::Services => 1])) {
+		if ($extra = array_diff_key($this->extensions, $this->processedExtensions, [self::Services => 1])) {
 			throw new Nette\DeprecatedException(sprintf(
 				"Extensions '%s' were added while container was being compiled.",
 				implode("', '", array_keys($extra)),
 			));
+		}
 
-		} elseif ($extra = key(array_diff_key($this->configs, $this->extensions))) {
+		if (isset($this->extensions[self::Services])) {
+			$this->initExtension(self::Services);
+		}
+
+		foreach ($this->extensions as $extension) {
+			$this->dependencies->add(array_filter([(new \ReflectionClass($extension))->getFileName()]));
+		}
+
+		if ($extra = key(array_diff_key($this->configs, $this->extensions))) {
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				sprintf("Found section '%s' in configuration, but corresponding extension is missing", $extra)
 				. ($hint ? ", did you mean '$hint'?" : '.'),
 			);
 		}
+
+		// Register runs again for ServicesExtension's hook, registered only above
+		$this->runPhase(Phase::Register);
 	}
 
 
-	private function processBeforeCompile(): void
+	/**
+	 * Validates extension config and calls its registerHooks().
+	 */
+	private function initExtension(string $name): void
 	{
-		$this->builder->resolve();
+		$extension = $this->extensions[$name];
+		$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+		$extension->setConfig($this->config[$name] = $config);
+		$extension->registerHooks();
+		$this->processedExtensions[$name] = true;
+	}
 
-		foreach ($this->extensions as $extension) {
-			$extension->beforeCompile();
-			if ($file = (new \ReflectionClass($extension))->getFileName()) {
-				$this->dependencies->add([$file]);
+
+	/**
+	 * An extension registered during the Setup phase (e.g. via the extensions: section) cannot
+	 * jump before extensions whose Setup hooks have already run; fail loudly instead of silently
+	 * violating the constraint.
+	 * @param  array<string, CompilerExtension>  $extensions
+	 */
+	private function checkLateSetupConstraints(array $extensions): void
+	{
+		foreach ($extensions as $name => $extension) {
+			foreach ($this->getSetupConstraints($extension)['before'] as $target) {
+				$ranBefore = $target === '*'
+					|| array_filter(
+						array_intersect_key($this->extensions, $this->processedExtensions),
+						fn($processed) => is_a($processed, $target),
+					);
+				if ($ranBefore) {
+					throw new Nette\InvalidStateException(sprintf(
+						"Extension '%s' declares a Setup hook with before: %s, but it was registered too late - the targeted Setup hooks have already run. Register the extension directly instead of dynamically.",
+						$name,
+						$target === '*' ? "'*'" : $target,
+					));
+				}
+			}
+		}
+	}
+
+
+	/**
+	 * Orders extensions by the before/after constraints of their Setup hooks.
+	 * @param  array<string, CompilerExtension>  $extensions
+	 * @return string[]
+	 */
+	private function sortExtensionsBySetupHooks(array $extensions): array
+	{
+		$items = [];
+		foreach ($extensions as $name => $extension) {
+			$items[$name] = ['owner' => $extension] + $this->getSetupConstraints($extension);
+		}
+
+		return Helpers::sortByConstraints($items);
+	}
+
+
+	/**
+	 * Collects before/after constraints from all Setup hooks declared via attributes.
+	 * @return array{before: string[], after: string[]}
+	 */
+	private function getSetupConstraints(CompilerExtension $extension): array
+	{
+		$before = $after = [];
+		foreach ((new \ReflectionClass($extension))->getMethods() as $method) {
+			foreach ($method->getAttributes(Attributes\Hook::class) as $attr) {
+				$hook = $attr->newInstance();
+				if ($hook->phase === Phase::Setup) {
+					$before = array_merge($before, (array) ($hook->before ?? []));
+					$after = array_merge($after, (array) ($hook->after ?? []));
+				}
 			}
 		}
 
-		$this->builder->complete();
+		return ['before' => $before, 'after' => $after];
+	}
+
+
+	/**
+	 * Runs all hooks registered for given phase, in constraint order.
+	 */
+	private function runPhase(Phase $phase): void
+	{
+		if (!$hooks = $this->hooks[$phase->value] ?? []) {
+			return;
+		}
+
+		if ($phase === Phase::Modify) {
+			$this->builder->resolve(); // so hooks see resolved types
+		}
+
+		$this->runningPhase = $phase;
+		foreach ($this->sortHooks($hooks) as $hook) {
+			($hook['callback'])($phase === Phase::Compile ? $this->class : $this->builder);
+			if ($phase === Phase::Modify) {
+				$this->builder->resolve(); // re-resolve for definitions added by the hook
+			}
+		}
+
+		$this->runningPhase = null;
+		$this->hooks[$phase->value] = [];
+	}
+
+
+	/**
+	 * Runs the phase hooks belonging to a single extension instance, leaving the rest untouched.
+	 */
+	private function runPhaseForExtension(Phase $phase, CompilerExtension $extension): void
+	{
+		$run = $keep = [];
+		foreach ($this->hooks[$phase->value] ?? [] as $hook) {
+			$hook['extension'] === $extension ? $run[] = $hook : $keep[] = $hook;
+		}
+
+		$this->hooks[$phase->value] = $keep;
+		$this->runningPhase = $phase;
+		foreach ($run as $hook) {
+			($hook['callback'])($this->builder);
+		}
+
+		$this->runningPhase = null;
+	}
+
+
+	/**
+	 * Orders hooks by their before/after constraints.
+	 * @param  list<HookEntry>  $hooks
+	 * @return list<HookEntry>
+	 */
+	private function sortHooks(array $hooks): array
+	{
+		$items = array_map(fn($hook) => ['owner' => $hook['extension']] + $hook, $hooks);
+		return array_map(fn($i) => $hooks[$i], Helpers::sortByConstraints($items));
 	}
 
 
@@ -309,15 +477,19 @@ class Compiler
 	}
 
 
-	/** @internal */
+	/**
+	 * Generates the container class from the builder state and runs the Compile phase.
+	 * @internal
+	 */
 	public function generateCode(): string
 	{
 		$generator = $this->createPhpGenerator();
-		$class = $generator->generate($this->className);
+		$this->class = $class = $generator->generate($this->className);
 		$this->dependencies->add($this->builder->getDependencies());
 
+		$this->runPhase(Phase::Compile);
+
 		foreach ($this->extensions as $extension) {
-			$extension->afterCompile($class);
 			$generator->addInitialization($class, $extension);
 		}
 

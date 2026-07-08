@@ -8,7 +8,11 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use function is_int, is_string, sprintf;
+use Nette\DI\Attributes\Hook;
+use Nette\DI\ContainerBuilder;
+use Nette\DI\Definitions\Statement;
+use Nette\DI\Phase;
+use function get_debug_type, is_a, is_int, is_string, sprintf;
 
 
 /**
@@ -16,15 +20,20 @@ use function is_int, is_string, sprintf;
  */
 class ExtensionsExtension extends Nette\DI\CompilerExtension
 {
+	/** @var array<int|string, string|Statement> */
+	protected $config = [];
+
+
 	public function getConfigSchema(): Nette\Schema\Schema
 	{
 		return Nette\Schema\Expect::arrayOf('string|Nette\DI\Definitions\Statement');
 	}
 
 
-	public function loadConfiguration(): void
+	#[Hook(Phase::Setup, after: ParametersExtension::class)]
+	public function doSetup(ContainerBuilder $builder): void
 	{
-		foreach ((array) $this->getConfig() as $name => $class) {
+		foreach ($this->config as $name => $class) {
 			if (is_int($name)) {
 				$name = null;
 			}

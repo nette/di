@@ -8,10 +8,13 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Attributes\Hook;
+use Nette\DI\ContainerBuilder;
 use Nette\DI\Definition;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
+use Nette\DI\Phase;
 use function is_array, is_int, is_string;
 
 
@@ -26,7 +29,8 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration(): void
+	#[Hook(Phase::Register, after: '*')]
+	public function doRegister(ContainerBuilder $builder): void
 	{
 		$this->loadDefinitions($this->config);
 	}

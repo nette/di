@@ -8,8 +8,11 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Attributes\Hook;
 use Nette\DI\Compiler\DynamicParameter;
+use Nette\DI\ContainerBuilder;
 use Nette\DI\Helpers;
+use Nette\DI\Phase;
 
 
 /**
@@ -17,7 +20,7 @@ use Nette\DI\Helpers;
  */
 final class ParametersExtension extends Nette\DI\CompilerExtension
 {
-	/** @var string[] */
+	/** @var string[] names of dynamic parameters set by Compiler */
 	public array $dynamicParams = [];
 
 	/** @var list<array{DynamicParameter, string, list<int|string>}> */
@@ -34,9 +37,9 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration(): void
+	#[Hook(Phase::Setup, before: '*')]
+	public function doExpandParameters(ContainerBuilder $builder): void
 	{
-		$builder = $this->getContainerBuilder();
 		$params = $this->config;
 		foreach ($this->dynamicParams as $key) {
 			$params[$key] = new DynamicParameter('$this->getParameter(' . var_export($key, return: true) . ')');

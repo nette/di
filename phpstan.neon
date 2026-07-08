@@ -33,6 +33,14 @@ parameters:
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
+		- # Compiler hooks store polymorphic closures: the argument type depends on the phase (ContainerBuilder or ClassType) and legacy handlers take none, so bare \Closure has no expressible signature
+			identifier: missingType.callable
+			path: src/DI/Compiler.php
+			count: 5
+		- # CompilerExtension::hook() forwards the same polymorphic \Closure to Compiler::addHook()
+			identifier: missingType.callable
+			path: src/DI/CompilerExtension.php
+			count: 1
 		- # Autowiring: by-reference cache lookups and isset() guards on auto-vivified arrays
 			identifier: identical.alwaysFalse
 			path: src/DI/Compiler/Autowiring.php
@@ -124,6 +132,7 @@ parameters:
 			paths:
 				- src/DI/Extensions/DIExtension.php
 				- src/DI/Extensions/DecoratorExtension.php
+				- src/DI/Extensions/ExtensionsExtension.php
 				- src/DI/Extensions/ParametersExtension.php
 				- src/DI/Extensions/SearchExtension.php
 		- # $config default [] before Schema processing populates the object

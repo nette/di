@@ -13,7 +13,7 @@ use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Utils\Reflection;
 use Nette\Utils\Type;
-use function array_key_exists, is_array, is_scalar, is_string, sprintf, strlen;
+use function array_key_exists, count, in_array, is_array, is_scalar, is_string, sprintf, strlen;
 
 
 /**
@@ -294,5 +294,85 @@ final class Helpers
 			is_scalar($value) ? "'$value'" : get_debug_type($value),
 			$type,
 		));
+	}
+
+
+	/**
+	 * Orders items by their before/after constraints using topological sort (Kahn's algorithm).
+	 * A target matches items whose 'owner' passes is_a() (so subclasses match); '*' matches all
+	 * others except those with the same wildcard. Ties keep the original order.
+	 * @template TKey of array-key
+	 * @param  array<TKey, array{owner: ?object, before: string|string[]|null, after: string|string[]|null}>  $items
+	 * @return list<TKey>
+	 * @throws Nette\InvalidStateException  on circular dependency
+	 */
+	public static function sortByConstraints(array $items): array
+	{
+		$keys = array_keys($items);
+		$pos = array_flip($keys);
+		$graph = array_fill_keys($keys, []);
+		$inDegree = array_fill_keys($keys, 0);
+
+		$owners = null;
+		$match = function (string $target, string $dir) use ($items, &$owners): array {
+			if ($target === '*') {
+				return array_keys(array_filter($items, fn($item) => !in_array('*', (array) ($item[$dir] ?? []), true)));
+			}
+
+			$res = array_keys(array_filter($items, fn($item) => $item['owner'] && is_a($item['owner'], $target)));
+			if (!$res && !class_exists($target) && !interface_exists($target)) {
+				// an absent optional extension is legitimate and stays silent; but when the name resembles a present one, it is most likely a typo - say so
+				$owners ??= array_unique(array_filter(array_map(fn($item) => $item['owner'] === null ? null : $item['owner']::class, $items)));
+				if ($hint = Nette\Utils\Helpers::getSuggestion($owners, $target)) {
+					trigger_error("Hook ordering constraint '$dir: $target' refers to a class that does not exist and was ignored, did you mean '$hint'?", E_USER_WARNING);
+				}
+			}
+
+			return $res;
+		};
+
+		foreach ($items as $key => $item) {
+			foreach ((array) ($item['before'] ?? []) as $target) {
+				foreach ($match($target, 'before') as $other) {
+					if ($key !== $other) {
+						$graph[$key][] = $other;
+						$inDegree[$other]++;
+					}
+				}
+			}
+
+			foreach ((array) ($item['after'] ?? []) as $target) {
+				foreach ($match($target, 'after') as $other) {
+					if ($key !== $other) {
+						$graph[$other][] = $key;
+						$inDegree[$key]++;
+					}
+				}
+			}
+		}
+
+		$queue = array_values(array_filter($keys, fn($k) => $inDegree[$k] === 0));
+		$result = [];
+		while ($queue) {
+			usort($queue, fn($a, $b) => $pos[$a] <=> $pos[$b]);
+			$key = array_shift($queue);
+			$result[] = $key;
+			foreach ($graph[$key] as $next) {
+				if (--$inDegree[$next] === 0) {
+					$queue[] = $next;
+				}
+			}
+		}
+
+		if (count($result) !== count($keys)) {
+			$stuck = array_filter(array_map(
+				fn($k) => in_array($k, $result, true) || !$items[$k]['owner'] ? null : $items[$k]['owner']::class,
+				$keys,
+			));
+			throw new Nette\InvalidStateException('Circular dependency detected in extension hooks'
+				. ($stuck ? ': ' . implode(', ', array_unique($stuck)) : '.'));
+		}
+
+		return $result;
 	}
 }
