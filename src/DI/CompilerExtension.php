@@ -103,6 +103,15 @@ abstract class CompilerExtension
 
 
 	/**
+	 * Returns the name under which this extension is registered.
+	 */
+	public function getName(): string
+	{
+		return $this->name;
+	}
+
+
+	/**
 	 * Reads configuration from file.
 	 * @return array<string, mixed>
 	 */

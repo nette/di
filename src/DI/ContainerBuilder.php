@@ -114,16 +114,18 @@ class ContainerBuilder implements Definitions
 		$definition ??= new Definitions\ServiceDefinition;
 		$definition->setName($name);
 		$definition->setNotifier(function (Definition $def, string $action, mixed $value): void {
-			// the resolution lock reacts only to type/autowired changes; the journal records everything
-			if ($action === 'autowired' || ($action === 'type' && $def->getAutowired())) {
+			// the resolution lock reacts only to changes that may affect resolved types or the
+			// autowiring index (creator determines the type when none is set explicitly);
+			// the journal records everything
+			if ($action === 'autowired' || $action === 'type' || $action === 'creator') {
 				$this->needsResolve = true;
 			}
 
 			if (!$this->resolving) { // internal mutations during resolve are not "what an extension did"
-				$this->journal->record($def, $action, $value);
+				$this->journal->record($def, $action, $value, $this->schedule?->getCurrentActor());
 			}
 		});
-		$this->journal->record($definition, 'added');
+		$this->journal->record($definition, 'added', actor: $this->schedule?->getCurrentActor());
 		$this->lowerNames[strtolower($name)] = $name;
 		return $this->definitions[$name] = $definition;
 	}
@@ -500,10 +502,11 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Resolves service types and rebuilds the autowiring class list.
+	 * A no-op unless a resolution-relevant mutation happened since the last resolve.
 	 */
 	public function resolve(): void
 	{
-		if ($this->resolving) {
+		if ($this->resolving || !$this->needsResolve) {
 			return;
 		}
 

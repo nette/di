@@ -314,11 +314,14 @@ class Compiler
 	 */
 	private function runConfigClosures(): void
 	{
+		$this->schedule->setCurrentActor('config');
 		foreach ($this->configs[self::Closures] ?? [] as $closures) {
 			foreach ($closures as $closure) {
 				$closure($this->builder);
 			}
 		}
+
+		$this->schedule->setCurrentActor(null);
 	}
 
 
@@ -410,12 +413,14 @@ class Compiler
 
 		$this->schedule->markRunning($phase);
 		foreach ($this->schedule->drainSorted($phase) as $hook) {
+			$this->schedule->setCurrentActor($hook['extension']?->getName());
 			($hook['callback'])($phase === Phase::Compile ? $this->class : $this->builder);
 			if ($phase === Phase::Modify) {
 				$this->builder->resolve(); // re-resolve for definitions added by the hook
 			}
 		}
 
+		$this->schedule->setCurrentActor(null);
 		$this->schedule->markIdle();
 		if ($final) {
 			$this->schedule->markCompleted($phase);
@@ -429,10 +434,12 @@ class Compiler
 	private function runPhaseForExtension(Phase $phase, CompilerExtension $extension): void
 	{
 		$this->schedule->markRunning($phase);
+		$this->schedule->setCurrentActor($extension->getName());
 		foreach ($this->schedule->drainForExtension($phase, $extension) as $hook) {
 			($hook['callback'])($this->builder);
 		}
 
+		$this->schedule->setCurrentActor(null);
 		$this->schedule->markIdle();
 	}
 

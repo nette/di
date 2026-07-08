@@ -31,6 +31,9 @@ final class Schedule
 	/** @var array<string, true> phases whose final drain has finished */
 	private array $completed = [];
 
+	/** who is currently running (extension name / config source), for the journal to stamp mutations */
+	private ?string $currentActor = null;
+
 
 	/**
 	 * @param  string|string[]|null  $before
@@ -120,6 +123,18 @@ final class Schedule
 	public function isCompleted(Phase $phase): bool
 	{
 		return isset($this->completed[$phase->value]);
+	}
+
+
+	public function setCurrentActor(?string $actor): void
+	{
+		$this->currentActor = $actor;
+	}
+
+
+	public function getCurrentActor(): ?string
+	{
+		return $this->currentActor;
 	}
 
 
