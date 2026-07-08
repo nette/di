@@ -74,12 +74,7 @@ class ContainerLoader
 			}
 
 			foreach ($toWrite as $name => $content) {
-				if (file_put_contents("$name.tmp", $content) !== strlen($content) || !rename("$name.tmp", $name)) {
-					@unlink("$name.tmp"); // @ - file may not exist
-					throw new Nette\IOException(sprintf("Unable to create file '%s'.", $name));
-				} elseif (function_exists('opcache_invalidate')) {
-					@opcache_invalidate($name, force: true); // @ can be restricted
-				}
+				$this->atomicWrite($name, $content);
 			}
 		}
 
@@ -87,6 +82,36 @@ class ContainerLoader
 			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
 		}
 		flock($handle, LOCK_UN);
+	}
+
+
+	/**
+	 * Atomically writes $content to $file through a temporary file and rename(); on Windows the rename
+	 * is retried briefly, as the target may be momentarily locked by antivirus or opcache.
+	 */
+	private function atomicWrite(string $file, string $content): void
+	{
+		$tmp = "$file.tmp";
+		if (file_put_contents($tmp, $content) !== strlen($content)) {
+			@unlink($tmp); // @ - file may not exist
+			throw new Nette\IOException(sprintf("Unable to create file '%s'. %s", $file, Nette\Utils\Helpers::getLastError()));
+		}
+
+		if (function_exists('opcache_invalidate')) {
+			@opcache_invalidate($file, force: true); // @ can be restricted; frees a possible handle on the old target
+		}
+
+		for ($attempt = 1; !@rename($tmp, $file); $attempt++) { // @ is escalated to exception below
+			if ($attempt >= 3 || !Nette\Utils\Helpers::IsWindows) {
+				@unlink($tmp); // @ - file may not exist
+				throw new Nette\IOException(sprintf("Unable to create file '%s'. %s", $file, Nette\Utils\Helpers::getLastError()));
+			}
+			usleep(100_000);
+		}
+
+		if (function_exists('opcache_invalidate')) {
+			@opcache_invalidate($file, force: true); // @ can be restricted; refresh with the new content
+		}
 	}
 
 
