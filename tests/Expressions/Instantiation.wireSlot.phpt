@@ -6,6 +6,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Expressions\{ArgumentPlaceholder, Call, Instantiation, Reference};
 use Tester\Assert;
 
@@ -38,7 +39,7 @@ function wireHarness(): array
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('dep')->setType(WireDep::class);
-	return [new DI\Resolver($builder), new DI\PhpGenerator($builder)];
+	return [new Resolver($builder), new PhpGenerator($builder)];
 }
 
 

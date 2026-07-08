@@ -4,7 +4,7 @@
  * Test: how the special Expression forms resolve their type and behave as a service creator.
  */
 
-use Nette\DI\{Compiler, Container, ContainerBuilder, PhpGenerator, Resolver, ServiceCreationException};
+use Nette\DI\{Compiler, Compiler\PhpGenerator, Compiler\Resolver, Container, ContainerBuilder, ServiceCreationException};
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;

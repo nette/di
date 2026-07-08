@@ -6,6 +6,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
@@ -25,11 +26,11 @@ class ComSvc
 }
 
 
-function resolver(): DI\Resolver
+function resolver(): Resolver
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('dep')->setType(ComDep::class);
-	return new DI\Resolver($builder);
+	return new Resolver($builder);
 }
 
 

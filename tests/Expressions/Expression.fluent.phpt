@@ -4,6 +4,7 @@
  * Test: Expressions\Chaining - fluent method() / property() / constant() on object-valued nodes.
  */
 
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Expressions\{
 	Call, ConstantFetch, Expansion, Instantiation, PartialCall, PropertyAccess, PropertyMode, Reference, ServiceCollection, SpecialFunction,
 };
@@ -91,8 +92,8 @@ Assert::false(method_exists(PartialCall::class, 'method'));          // chain af
 // generateCode of a chained method call on a service (= NEON @a::b()::c())
 $builder = new Nette\DI\ContainerBuilder;
 $builder->addDefinition('a')->setType(FluentSvc::class);
-$resolver = new Nette\DI\Resolver($builder);
-$generator = new Nette\DI\PhpGenerator($builder);
+$resolver = new Resolver($builder);
+$generator = new PhpGenerator($builder);
 
 $expr = (new Reference('a'))->method('getUrl')->method('getHost');
 $completed = $expr->complete($resolver);

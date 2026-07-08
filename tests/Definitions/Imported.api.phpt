@@ -4,6 +4,7 @@
  * Test: ImportedDefinition
  */
 
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Definitions\ImportedDefinition;
 use Tester\Assert;
 
@@ -18,7 +19,7 @@ testException('Unknown class', function () {
 
 testException('Unknown type', function () {
 	$def = new ImportedDefinition;
-	$resolver = new Nette\DI\Resolver(new Nette\DI\ContainerBuilder);
+	$resolver = new Resolver(new Nette\DI\ContainerBuilder);
 	$resolver->resolveDefinition($def);
 }, Nette\DI\ServiceCreationException::class, 'Type of service is unknown.');
 
@@ -29,12 +30,12 @@ test('', function () {
 	$def->setType(stdClass::class);
 
 	$builder = new Nette\DI\ContainerBuilder;
-	$resolver = new Nette\DI\Resolver($builder);
+	$resolver = new Resolver($builder);
 
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
 
-	$phpGenerator = new Nette\DI\PhpGenerator($builder);
+	$phpGenerator = new PhpGenerator($builder);
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(

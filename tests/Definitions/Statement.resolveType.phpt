@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
@@ -42,11 +43,11 @@ function makesResDep(): ResDep
 }
 
 
-function resolver(): DI\Resolver
+function resolver(): Resolver
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')->setType(ResTarget::class);
-	return new DI\Resolver($builder);
+	return new Resolver($builder);
 }
 
 

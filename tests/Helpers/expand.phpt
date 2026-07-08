@@ -4,8 +4,8 @@
  * Test: Nette\DI\Helpers::expand()
  */
 
+use Nette\DI\{Compiler\DynamicParameter, Helpers};
 use Nette\DI\Definitions\Statement;
-use Nette\DI\{DynamicParameter, Helpers};
 use Nette\DI\Expressions\{Call, PartialCall};
 use Nette\PhpGenerator\Literal;
 use Tester\Assert;

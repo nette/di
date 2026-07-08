@@ -4,8 +4,7 @@
  * Test: ContainerBuilder retrieval API get(), find(), has(), all().
  */
 
-use Nette\DI\ContainerBuilder;
-use Nette\DI\Definitions\Definition;
+use Nette\DI\{ContainerBuilder, Definition};
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -51,7 +50,7 @@ test('get() asserts the definition class; of: addresses non-ServiceDefinition', 
 	// of: Definition::class accepts anything
 	Assert::type(
 		Nette\DI\Definitions\ImportedDefinition::class,
-		$b->get('container', of: Nette\DI\Definitions\Definition::class),
+		$b->get('container', of: Definition::class),
 	);
 });
 

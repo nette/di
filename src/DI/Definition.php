@@ -261,6 +261,3 @@ abstract class Definition
 		return $this->autowired;
 	}
 }
-
-
-class_alias(Definition::class, Definitions\Definition::class);

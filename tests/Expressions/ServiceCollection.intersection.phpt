@@ -5,7 +5,7 @@
  * and deduplication by service name (a service matching several criteria appears once).
  */
 
-use Nette\DI;
+use Nette\DI\Compiler\Resolver;
 use Nette\DI\ContainerBuilder;
 use Nette\DI\Expressions\{Reference, ServiceCollection};
 use Tester\Assert;
@@ -42,7 +42,7 @@ test('multiple types union with dedup: a service implementing both appears once'
 	$builder = new ContainerBuilder;
 	$builder->addDefinition('both')->setType(Both::class);
 	$builder->addDefinition('onlyA')->setType(OnlyA::class);
-	$resolver = new DI\Resolver($builder);
+	$resolver = new Resolver($builder);
 
 	$completed = (new ServiceCollection(types: [IA::class, IB::class]))
 		->complete($resolver->withCurrentServiceAvailable());
@@ -56,7 +56,7 @@ test('type and tag together = intersection', function () {
 	$builder->addDefinition('both')->setType(Both::class)->addTag('t');
 	$builder->addDefinition('onlyA')->setType(OnlyA::class)->addTag('t');
 	$builder->addDefinition('taggedOnly')->setType(stdClass::class)->addTag('t');
-	$resolver = new DI\Resolver($builder);
+	$resolver = new Resolver($builder);
 
 	// IA services intersected with tag 't' -> both, onlyA (stdClass is not IA)
 	$completed = (new ServiceCollection(types: [IA::class], tags: ['t']))

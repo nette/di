@@ -4,6 +4,7 @@
  * Test: FactoryDefinition
  */
 
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Definitions\FactoryDefinition;
 use Tester\Assert;
 
@@ -22,12 +23,12 @@ test('', function () {
 	$def->setImplement(Good2::class);
 
 	$builder = new Nette\DI\ContainerBuilder;
-	$resolver = new Nette\DI\Resolver($builder);
+	$resolver = new Resolver($builder);
 
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
 
-	$phpGenerator = new Nette\DI\PhpGenerator($builder);
+	$phpGenerator = new PhpGenerator($builder);
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(

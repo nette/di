@@ -4,6 +4,7 @@
  * Test: Nette\DI\Expressions\Reference usage.
  */
 
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
 
@@ -46,7 +47,7 @@ Assert::type(Reference::class, Nette\DI\Expressions\Reference::fromType('stdClas
 
 // generateCode()
 $builder = new Nette\DI\ContainerBuilder;
-$generator = new Nette\DI\PhpGenerator($builder);
+$generator = new PhpGenerator($builder);
 Assert::same("\$this->getService('a')", (new Reference('a'))->generateCode($generator));
 Assert::same('$service', (new Reference(Reference::Self))->generateCode($generator));
 Assert::same('$this', (new Reference(Nette\DI\ContainerBuilder::ThisContainer))->generateCode($generator));
@@ -56,7 +57,7 @@ Assert::type(Reference::class, Nette\DI\Expressions\Reference::fromType('stdClas
 // resolveType()
 $defA = $builder->addDefinition('a')->setType(stdClass::class);
 $defB = $builder->addDefinition('b')->setCreator(stdClass::class); // type not resolved yet
-$resolver = new Nette\DI\Resolver($builder);
+$resolver = new Resolver($builder);
 
 Assert::same('stdClass', (new Reference('a'))->resolveType($resolver));
 Assert::same('stdClass', (new Reference('b'))->resolveType($resolver)); // triggers resolveDefinition()
@@ -91,7 +92,7 @@ Assert::exception(
 
 $builder2 = new Nette\DI\ContainerBuilder;
 $builder2->addDefinition('only')->setType(stdClass::class);
-$resolver2 = new Nette\DI\Resolver($builder2);
+$resolver2 = new Resolver($builder2);
 $resolved = Reference::fromType('stdClass')->complete($resolver2);
 Assert::true($resolved->isName());
 Assert::same('only', $resolved->getValue());
