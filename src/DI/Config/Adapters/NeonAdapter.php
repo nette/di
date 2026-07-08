@@ -10,10 +10,11 @@ namespace Nette\DI\Config\Adapters;
 use Nette;
 use Nette\DI;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
 use Nette\DI\Expressions\Reference;
 use Nette\Neon;
 use Nette\Neon\Node;
-use function count, defined, is_array, is_string, sprintf;
+use function defined, is_array, is_string, sprintf;
 
 
 /**
@@ -44,7 +45,6 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		$node = $decoder->parseToNode($input);
 		$traverser = new Neon\Traverser;
 		$node = $traverser->traverse($node, $this->deprecatedQuestionMarkVisitor(...));
-		$node = $traverser->traverse($node, $this->firstClassCallableVisitor(...));
 		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
 		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
 		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
@@ -76,8 +76,8 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		array_walk_recursive(
 			$data,
 			function (&$val): void {
-				if ($val instanceof Statement) {
-					$val = self::statementToEntity($val);
+				if ($val instanceof Expression) {
+					$val = self::expressionToEntity($val);
 				}
 			},
 		);
@@ -85,15 +85,32 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private static function statementToEntity(Statement $val): Neon\Entity
+	private static function expressionToEntity(Expression $val): Neon\Entity|string
 	{
+		if ($val instanceof Reference) {
+			return '@' . $val->getValue();
+
+		} elseif ($val instanceof DI\Expressions\PartialCall) {
+			return match (true) {
+				$val->target === null => new Neon\Entity('::' . $val->name, ['...']),
+				is_string($val->target) => new Neon\Entity($val->target . '::' . $val->name, ['...']),
+				$val->target instanceof Reference => new Neon\Entity('@' . $val->target->getValue() . '::' . $val->name, ['...']),
+				default => new Neon\Entity(
+					Neon\Neon::Chain,
+					[
+						self::expressionToEntity($val->target),
+						new Neon\Entity('::' . $val->name, ['...']),
+					],
+				),
+			};
+		}
+
+		assert($val instanceof Statement);
 		array_walk_recursive(
 			$val->arguments,
 			function (&$val): void {
-				if ($val instanceof Statement) {
-					$val = self::statementToEntity($val);
-				} elseif ($val instanceof Reference) {
-					$val = '@' . $val->getValue();
+				if ($val instanceof Expression) {
+					$val = self::expressionToEntity($val);
 				}
 			},
 		);
@@ -102,35 +119,22 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		if ($entity instanceof Reference) {
 			$entity = '@' . $entity->getValue();
 		} elseif (is_array($entity)) {
-			if ($entity[0] instanceof Statement) {
+			if ($entity[0] instanceof Reference) {
+				$entity = '@' . $entity[0]->getValue() . '::' . $entity[1];
+			} elseif ($entity[0] instanceof Expression) {
 				return new Neon\Entity(
 					Neon\Neon::Chain,
 					[
-						self::statementToEntity($entity[0]),
+						self::expressionToEntity($entity[0]),
 						new Neon\Entity('::' . $entity[1], $val->arguments),
 					],
 				);
-			} elseif ($entity[0] instanceof Reference) {
-				$entity = '@' . $entity[0]->getValue() . '::' . $entity[1];
-			} elseif (is_string($entity[0])) {
+			} else {
 				$entity = $entity[0] . '::' . $entity[1];
 			}
 		}
 
 		return new Neon\Entity($entity, $val->arguments);
-	}
-
-
-	private function firstClassCallableVisitor(Node $node): void
-	{
-		if ($node instanceof Node\EntityNode
-			&& count($node->attributes) === 1
-			&& $node->attributes[0]->key === null
-			&& $node->attributes[0]->value instanceof Node\LiteralNode
-			&& $node->attributes[0]->value->value === '...'
-		) {
-			$node->attributes[0]->value->value = Nette\DI\Compiler\Resolver::getFirstClassCallable()[0];
-		}
 	}
 
 
@@ -189,14 +193,37 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 
 
 	/** @param  non-empty-list<Node\EntityNode>  $chain */
-	private function buildExpression(array $chain): Statement
+	private function buildExpression(array $chain): Expression
 	{
 		$node = array_pop($chain);
 		$entity = $node->toValue();
+
+		if ($this->isPartialCall($node)) {
+			if ($chain) {
+				return new DI\Expressions\PartialCall($this->buildExpression($chain), ltrim($entity->value, ':'));
+			}
+
+			$callable = (new Statement($entity->value))->getEntity(); // normalizes Class::method, @service::method, ::function
+			if (!is_array($callable)) {
+				throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$entity->value(...)' in config file (used in '$this->file')");
+			}
+
+			return new DI\Expressions\PartialCall($callable[0] === '' ? null : $callable[0], $callable[1]);
+		}
+
 		return new Statement(
 			$chain ? [$this->buildExpression($chain), ltrim($entity->value, ':')] : $entity->value,
 			$entity->attributes,
 		);
+	}
+
+
+	private function isPartialCall(Node\EntityNode $node): bool
+	{
+		return array_keys($node->attributes) === [0]
+			&& $node->attributes[0]->key === null
+			&& $node->attributes[0]->value instanceof Node\LiteralNode
+			&& $node->attributes[0]->value->value === '...';
 	}
 
 
@@ -217,9 +244,6 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			if ($attr->value instanceof Node\LiteralNode && $attr->value->value === '_') {
 				unset($node->attributes[$i]);
 				$index = true;
-
-			} elseif ($attr->value instanceof Node\LiteralNode && $attr->value->value === '...') {
-				throw new Nette\DI\InvalidConfigurationException("Replace ... with _ in configuration file '$this->file'.");
 			}
 		}
 

@@ -74,10 +74,7 @@ final class Statement extends Expression
 	{
 		$entity = $this->normalizeEntity($resolver);
 
-		if ($this->arguments === Resolver::getFirstClassCallable()) {
-			return \Closure::class;
-
-		} elseif (is_array($entity)) {
+		if (is_array($entity)) {
 			if ($entity[0] instanceof Expression) {
 				$entity[0] = $entity[0]->resolveType($resolver);
 				if (!$entity[0]) {
@@ -139,15 +136,6 @@ final class Statement extends Expression
 		$arguments = $this->arguments;
 
 		switch (true) {
-			case $this->arguments === Resolver::getFirstClassCallable():
-				if (!is_array($entity) || !Php\Helpers::isIdentifier($entity[1])) {
-					throw new ServiceCreationException(sprintf('Cannot create closure for %s(...)', Callback::toString($entity)));
-				}
-				if ($entity[0] instanceof self) {
-					$entity[0] = $entity[0]->complete($resolver);
-				}
-				break;
-
 			case is_string($entity) && str_contains($entity, '?'): // PHP literal
 				break;
 
@@ -217,7 +205,7 @@ final class Statement extends Expression
 						$resolver->addDependency($rf);
 						break;
 
-					case $entity[0] instanceof self:
+					case $entity[0] instanceof Expression && !$entity[0] instanceof Reference:
 						$entity[0] = $entity[0]->complete($resolver);
 						// break omitted
 
@@ -317,16 +305,16 @@ final class Statement extends Expression
 							? $generator->formatPhp(($append ? '?[]' : '?') . ' = ?', [new Php\Literal($prop), $arguments[0]])
 							: $prop;
 
-					case $entity[0] instanceof self:
-						$inner = $generator->formatPhp('?', [$entity[0]]);
+					case $entity[0] instanceof Reference:
+						return $generator->formatPhp('?->?(...?:)', [$entity[0], $entity[1], $arguments]);
+
+					case $entity[0] instanceof Expression: // method call on the result of expression
+						$inner = $entity[0]->generateCode($generator);
 						if (str_starts_with($inner, 'new ')) {
 							$inner = "($inner)";
 						}
 
 						return $generator->formatPhp('?->?(...?:)', [new Php\Literal($inner), $entity[1], $arguments]);
-
-					case $entity[0] instanceof Reference:
-						return $generator->formatPhp('?->?(...?:)', [$entity[0], $entity[1], $arguments]);
 
 					case $entity[0] === '': // function call
 						return $generator->formatPhp('?(...?:)', [new Php\Literal($entity[1]), $arguments]);

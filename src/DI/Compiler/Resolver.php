@@ -465,18 +465,6 @@ class Resolver
 	}
 
 
-	/**
-	 * Returns the sentinel value used to mark first-class callable syntax (...).
-	 * @return list<mixed>
-	 * @internal
-	 */
-	public static function getFirstClassCallable(): array
-	{
-		static $x = [new Nette\PhpGenerator\Literal('...')];
-		return $x;
-	}
-
-
 	/** @deprecated use Reference::resolveType() */
 	public function resolveReferenceType(Reference $ref): ?string
 	{

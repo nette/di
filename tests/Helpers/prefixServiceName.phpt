@@ -6,6 +6,7 @@
  */
 
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expressions\PartialCall;
 use Nette\DI\Expressions\Reference;
 use Nette\DI\Helpers;
 use Tester\Assert;
@@ -34,4 +35,14 @@ test('prefix descends into Statement entity and arguments', function () {
 	[$head] = $prefixed->getEntity();
 	Assert::same('my.factory', $head->getValue());
 	Assert::same('my.dep', $prefixed->arguments[0]->getValue());
+});
+
+
+test('prefix descends into a first-class callable target', function () {
+	$callable = new PartialCall(new Reference('extension.svc'), 'method');
+	$prefixed = Helpers::prefixServiceName($callable, 'my');
+
+	Assert::type(PartialCall::class, $prefixed);
+	Assert::same('my.svc', $prefixed->target->getValue());
+	Assert::same('method', $prefixed->name);
 });

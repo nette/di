@@ -56,7 +56,7 @@ function compileConfig(string $config): void
 
 $cases = [
 	// [config, exception, message]
-	["services:\n\t- ErrService(...)\n", DI\ServiceCreationException::class, 'Service of type Closure: Cannot create closure for ErrService(...)'],
+	["services:\n\t- ErrService(...)\n", DI\InvalidConfigurationException::class, "Cannot create closure for 'ErrService(...)' in config file (used in %a%)"],
 	["services:\n\t- ErrService( @missing )\n", DI\ServiceCreationException::class, "Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())"],
 	["services:\n\ta: ErrService\n\tb: @a(1, 2)\n", DI\ServiceCreationException::class, "Service 'b' (type of ErrService): Parameters were passed to reference @a, although references cannot have any parameters."],
 	["services:\n\t- UnknownClass\n", DI\ServiceCreationException::class, "Service (UnknownClass::__construct()): Class 'UnknownClass' not found."],
@@ -67,6 +67,7 @@ $cases = [
 	["services:\n\t- ErrHidden::priv()\n", DI\ServiceCreationException::class, 'Service (ErrHidden::priv()): Method ErrHidden::priv() is not callable.'],
 	["services:\n\t- ErrService( not(1, 2) )\n", DI\ServiceCreationException::class, 'Service of type ErrService: Function not() expects 1 parameter, 2 given. (used in ErrService::__construct())'],
 	["services:\n\ta:\n\t\tcreate: ErrService\n\t\tsetup:\n\t\t\t- '\$prop[]'\n", DI\ServiceCreationException::class, "Service 'a' (type of ErrService): Missing argument for \$prop[]."],
+	["parameters:\n\tm: 'foo bar'\nservices:\n\ta: ErrService\n\t- ErrService( @a::%m%(...) )\n", DI\ServiceCreationException::class, "%a%Expected a valid method name, 'foo bar' given.%a%"],
 ];
 
 foreach ($cases as [$config, $exception, $message]) {
@@ -87,3 +88,11 @@ Assert::exception(function () {
 	$builder->getDefinition('a')->setCreator(ErrService::class, [new DI\Definitions\Statement($foreign)]);
 	$builder->complete();
 }, DI\ServiceCreationException::class, "%A?%Service 'a' does not match the expected service.%A?%");
+
+
+// setArguments() on first-class callable creator
+Assert::exception(function () {
+	$def = new DI\Definitions\ServiceDefinition;
+	$def->setCreator(new DI\Expressions\PartialCall(null, 'trim'));
+	$def->setArguments([1]);
+}, Nette\InvalidStateException::class, 'Cannot pass arguments to this creator.');
