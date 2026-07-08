@@ -164,7 +164,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			array_walk_recursive($value, function ($val) use (&$dynamicParams, $key): void {
 				if ($val instanceof DynamicParameter) {
 					$dynamicParams[$key] ??= true;
-				} elseif ($val instanceof Nette\DI\Definitions\Statement) {
+				} elseif ($val instanceof Nette\DI\Expression && !$val instanceof Nette\DI\Expressions\Reference) {
 					$dynamicParams[$key] = false;
 				}
 			});

@@ -153,7 +153,7 @@ class Resolver
 				$node = $val->getEntity() === 'typed'
 					? new Expressions\ServiceCollection(types: $val->arguments)
 					: new Expressions\ServiceCollection(tags: $val->arguments);
-				$val = $node->complete($this)->references ?? []; // node is replaced with array for back compatibility
+				$val = $node->complete($this);
 
 			} elseif ($val instanceof Expression) {
 				$val = $val->complete($this);
@@ -359,7 +359,9 @@ class Resolver
 				} elseif (array_key_exists($paramName, $arguments)) {
 					$value = $arguments[$paramName];
 					if (isset($resolver) && $value instanceof Statement && in_array($value->getEntity(), ['typed', 'tagged'], true)) {
-						$arguments[$paramName] = $resolver->completeArguments([$value])[0]; // the list of the services
+						$collection = $resolver->completeArguments([$value])[0];
+						assert($collection instanceof Expressions\ServiceCollection);
+						$arguments[$paramName] = $collection->references;
 					}
 
 					if (!is_array($arguments[$paramName])) {

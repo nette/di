@@ -20,7 +20,7 @@ use function count, is_string;
  *
  * @property-deprecated ?string $class
  * @property-deprecated Expression $factory
- * @property-deprecated Statement[] $setup
+ * @property-deprecated Expression[] $setup
  */
 final class ServiceDefinition extends Definition
 {
@@ -29,7 +29,7 @@ final class ServiceDefinition extends Definition
 	private ?bool $lazy = null;
 	private Expression $creator;
 
-	/** @var Statement[] */
+	/** @var Expression[] */
 	private array $setup = [];
 
 
@@ -124,13 +124,13 @@ final class ServiceDefinition extends Definition
 	/**
 	 * Replaces all setup steps.
 	 * @deprecated Use clearSetup() and setup()
-	 * @param  Statement[]  $setup
+	 * @param  Expression[]  $setup
 	 */
 	public function setSetup(array $setup): static
 	{
 		foreach ($setup as &$entity) {
-			if (!$entity instanceof Statement) {
-				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Definitions\Statement[].');
+			if (!$entity instanceof Expression) {
+				throw new Nette\InvalidArgumentException('Argument must be Nette\DI\Expression[].');
 			}
 			$entity = $this->prependSelf($entity);
 		}
@@ -141,7 +141,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/** @return Statement[] */
+	/** @return Expression[] */
 	public function getSetup(): array
 	{
 		return $this->setup;
@@ -151,12 +151,12 @@ final class ServiceDefinition extends Definition
 	/**
 	 * Adds a setup step.
 	 * @deprecated Use setup()
-	 * @param  string|array{string|Definition|Reference|Statement, string}|Definition|Reference|Statement  $entity
+	 * @param  string|array{string|Definition|Expression, string}|Definition|Expression  $entity
 	 * @param  array<mixed>  $args
 	 */
-	public function addSetup(string|array|Definition|Reference|Statement $entity, array $args = []): static
+	public function addSetup(string|array|Definition|Expression $entity, array $args = []): static
 	{
-		return $this->setup($entity instanceof Statement ? $entity : new Statement($entity, $args));
+		return $this->setup($entity instanceof Expression && !$entity instanceof Reference ? $entity : new Statement($entity, $args));
 	}
 
 
@@ -166,12 +166,12 @@ final class ServiceDefinition extends Definition
 	 * 'Class::method'), or a statement expression carrying its own arguments (e.g.
 	 * service('x')->call('m')). Arguments are passed as an array (use args() for the name:
 	 * syntax), consistent with create()/call().
-	 * @param  string|array{string, string}|Statement  $target
+	 * @param  string|array{string, string}|Expression  $target
 	 * @param  array<mixed>  $args
 	 */
-	public function setup(string|array|Statement $target, array $args = []): static
+	public function setup(string|array|Expression $target, array $args = []): static
 	{
-		$entity = $target instanceof Statement
+		$entity = $target instanceof Expression && !$target instanceof Reference
 			? $target
 			: new Statement($target, $args);
 		$this->setup[] = $step = $this->prependSelf($entity);
@@ -260,9 +260,9 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	private function prependSelf(Statement $setup): Statement
+	private function prependSelf(Expression $setup): Expression
 	{
-		return is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false
+		return $setup instanceof Statement && is_string($setup->getEntity()) && strpbrk($setup->getEntity(), ':@?\\') === false
 			? new Statement([di\self(), $setup->getEntity()], $setup->arguments)
 			: $setup;
 	}
