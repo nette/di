@@ -41,6 +41,7 @@ class ContainerBuilder
 	private Autowiring $autowiring;
 	private bool $needsResolve = true;
 	private bool $resolving = false;
+	private ?Compiler\Schedule $schedule = null;
 
 	/** @var list<\ReflectionClass<object>|\ReflectionFunctionAbstract|string> */
 	private array $dependencies = [];
@@ -50,6 +51,16 @@ class ContainerBuilder
 	{
 		$this->autowiring = new Autowiring($this);
 		$this->addImportedDefinition(self::ThisContainer)->setType(Container::class);
+	}
+
+
+	/**
+	 * Connects the builder to the compilation schedule so that hook() can defer work into a phase.
+	 * @internal  called by Compiler
+	 */
+	public function setSchedule(Compiler\Schedule $schedule): void
+	{
+		$this->schedule = $schedule;
 	}
 
 
@@ -410,6 +421,35 @@ class ContainerBuilder
 	public function getAll(): array
 	{
 		return $this->definitions;
+	}
+
+
+	/**
+	 * Defers a callback into a compilation phase; the callback receives this builder. This is the
+	 * only way to reach services that other extensions register later - the rest of the vocabulary
+	 * is immediate. Only the Register, Discover and Modify phases are available here.
+	 * @param  string|string[]|null  $before  extension(s) before which the hook should run
+	 * @param  string|string[]|null  $after   extension(s) after which the hook should run
+	 */
+	public function hook(
+		Phase $phase,
+		\Closure $callback,
+		string|array|null $before = null,
+		string|array|null $after = null,
+	): void
+	{
+		if (!in_array($phase, [Phase::Register, Phase::Discover, Phase::Modify], true)) {
+			throw new Nette\InvalidArgumentException(sprintf(
+				'hook() supports only the Register, Discover and Modify phases, %s given.',
+				$phase->name,
+			));
+		} elseif (!$this->schedule) {
+			throw new Nette\InvalidStateException(
+				'Scheduling a hook requires compilation via Nette\DI\Compiler; a standalone ContainerBuilder cannot run phases.',
+			);
+		}
+
+		$this->schedule->add($phase, $callback, before: $before, after: $after);
 	}
 
 
