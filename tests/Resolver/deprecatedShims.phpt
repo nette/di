@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
@@ -26,8 +27,8 @@ class ShimService
 
 $builder = new DI\ContainerBuilder;
 $depDef = $builder->addDefinition('dep')->setType(ShimDep::class);
-$resolver = new DI\Resolver($builder);
-$generator = new DI\PhpGenerator($builder);
+$resolver = new Resolver($builder);
+$generator = new PhpGenerator($builder);
 
 
 test('resolveEntityType() delegates to Statement::resolveType()', function () use ($resolver) {

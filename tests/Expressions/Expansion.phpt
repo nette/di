@@ -6,6 +6,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Expressions\{Expansion, PhpCode};
 use Tester\Assert;
 
@@ -16,7 +17,7 @@ function harness(array $params): array
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->parameters = $params;
-	return [new DI\Resolver($builder), new DI\PhpGenerator($builder)];
+	return [new Resolver($builder), new PhpGenerator($builder)];
 }
 
 

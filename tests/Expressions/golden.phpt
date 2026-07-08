@@ -8,6 +8,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\PhpGenerator;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\{PartialCall, Reference};
 use Tester\Assert;
@@ -116,7 +117,7 @@ $compiler->addConfig((new DI\Config\Loader)->load(__DIR__ . '/files/expressions.
 $compiler->compile();
 
 $builder = $compiler->getContainerBuilder();
-$generator = new DI\PhpGenerator($builder);
+$generator = new PhpGenerator($builder);
 
 $output = '';
 $definitions = $builder->getDefinitions();

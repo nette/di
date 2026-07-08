@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\PhpGenerator;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Tester\Assert;
@@ -17,11 +18,11 @@ class GenTarget
 }
 
 
-function generator(): DI\PhpGenerator
+function generator(): PhpGenerator
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')->setType(GenTarget::class);
-	return new DI\PhpGenerator($builder);
+	return new PhpGenerator($builder);
 }
 
 

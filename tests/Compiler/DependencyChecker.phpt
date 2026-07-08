@@ -5,7 +5,7 @@
  */
 
 use Nette\DI;
-use Nette\DI\DependencyChecker;
+use Nette\DI\Compiler\DependencyChecker;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -84,7 +84,7 @@ Assert::same(
 		[__FILE__ => filemtime(__FILE__)],
 		['Dep1'],
 		[],
-		'54d3c04c0d3d52db5d38d1f0f63b9f5d',
+		'8d641168cc42c45a2b1add7156c7bcbd',
 	],
 	$compiler->exportDependencies(),
 );

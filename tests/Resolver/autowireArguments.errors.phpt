@@ -4,7 +4,7 @@
  * Test: Nette\DI\Resolver::autowireArguments()
  */
 
-use Nette\DI\Resolver;
+use Nette\DI\Compiler\Resolver;
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

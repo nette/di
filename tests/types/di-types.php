@@ -6,6 +6,7 @@
 
 use Nette\DI;
 use Nette\DI\{Compiler, Container, ContainerBuilder, Definitions};
+use Nette\DI\Expressions\Reference;
 use Nette\DI\Extensions\DIExtension;
 use function PHPStan\Testing\assertType;
 
@@ -88,7 +89,7 @@ function testContainerBuilderAddDefinition(ContainerBuilder $builder): void
 }
 
 
-function testReferenceNarrowing(Definitions\Reference $ref): void
+function testReferenceNarrowing(Reference $ref): void
 {
 	assertType('string', $ref->getValue());
 

@@ -5,6 +5,7 @@
  */
 
 use Nette\DI;
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\{PropertyAccess, PropertyMode, Reference};
 use Tester\Assert;
@@ -24,7 +25,7 @@ function harness(): array
 {
 	$builder = new DI\ContainerBuilder;
 	$builder->addDefinition('a')->setType(PropDep::class);
-	return [new DI\Resolver($builder), new DI\PhpGenerator($builder)];
+	return [new Resolver($builder), new PhpGenerator($builder)];
 }
 
 

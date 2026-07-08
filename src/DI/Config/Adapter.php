@@ -19,6 +19,3 @@ interface Adapter
 	 */
 	function load(string $file): array;
 }
-
-
-interface_exists(IAdapter::class);

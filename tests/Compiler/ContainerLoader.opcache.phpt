@@ -36,7 +36,7 @@ namespace {
 	Nette\Utils\FileSystem::write($file, "<?php\nclass {$class}_first extends Nette\\DI\\Container {}\nreturn '{$class}_first';\n");
 	Nette\Utils\FileSystem::write(
 		"$file.meta",
-		serialize([DI\DependencyChecker::Version, [__FILE__ => filemtime(__FILE__)], [], [], [], '']),
+		serialize([DI\Compiler\DependencyChecker::Version, [__FILE__ => filemtime(__FILE__)], [], [], [], '']),
 	);
 
 

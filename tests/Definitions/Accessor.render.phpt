@@ -4,6 +4,7 @@
  * Test: AccessorDefinition
  */
 
+use Nette\DI\Compiler\{PhpGenerator, Resolver};
 use Nette\DI\Definitions\AccessorDefinition;
 use Tester\Assert;
 
@@ -23,12 +24,12 @@ test('', function () {
 
 	$builder = new Nette\DI\ContainerBuilder;
 	$builder->addDefinition('a')->setType(stdClass::class);
-	$resolver = new Nette\DI\Resolver($builder);
+	$resolver = new Resolver($builder);
 
 	$resolver->resolveDefinition($def);
 	$resolver->completeDefinition($def);
 
-	$phpGenerator = new Nette\DI\PhpGenerator($builder);
+	$phpGenerator = new PhpGenerator($builder);
 	$method = $phpGenerator->generateMethod($def);
 
 	Assert::match(
