@@ -6,6 +6,7 @@
 
 use Nette\DI\Definitions\Statement;
 use Nette\DI\{DynamicParameter, Helpers};
+use Nette\DI\Expressions\PartialCall;
 use Nette\PhpGenerator\Literal;
 use Tester\Assert;
 
@@ -60,6 +61,12 @@ Assert::equal(
 Assert::equal(
 	new Statement('Foo', ['hello', 2]),
 	Helpers::expand(new Statement('%cls%', ['%arg%', 2]), ['cls' => 'Foo', 'arg' => 'hello']),
+);
+
+// %param% is expanded in every slot of a first-class callable (target + name)
+Assert::equal(
+	new PartialCall('Foo', 'bar'),
+	Helpers::expand(new PartialCall('%cls%', '%m%'), ['cls' => 'Foo', 'm' => 'bar']),
 );
 
 

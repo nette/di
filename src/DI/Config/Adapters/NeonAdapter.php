@@ -9,7 +9,9 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\{DI, Neon};
+use Nette\DI\Compiler\Resolver;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\Expression;
 use Nette\DI\Expressions\Reference;
 use function is_array, is_string, sprintf;
 
@@ -64,41 +66,53 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$val = $this->process($val);
 
 			} elseif ($val instanceof Neon\Entity) {
-				if ($val->value === Neon\Neon::Chain) {
-					$tmp = null;
-					foreach ($this->process($val->attributes) as $st) {
-						$tmp = new Statement(
-							$tmp === null ? $st->getEntity() : [$tmp, ltrim(implode('::', (array) $st->getEntity()), ':')],
-							$st->arguments,
-						);
-					}
-
-					$val = $tmp;
-
-				} else {
-					$tmp = $this->process([$val->value]);
-					if (is_string($tmp[0]) && str_contains($tmp[0], '?')) {
-						throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
-					}
-
-					$attributes = $this->process($val->attributes);
-					array_walk_recursive($attributes, function (mixed $attribute, int|string $name): void {
-						if ($attribute instanceof DI\Config\Replacement) {
-							throw new Nette\DI\InvalidConfigurationException(sprintf(
-								"Replacing operator is available only for arrays, item '%s!' is not array (used in '%s')",
-								$name,
-								$this->file,
-							));
-						}
-					});
-					$val = new Statement($tmp[0], $attributes);
-				}
+				$val = $this->buildExpression($val->value === Neon\Neon::Chain ? $val->attributes : [$val]);
 			}
 
 			$res[$key] = $replacing ? new DI\Config\Replacement($val) : $val;
 		}
 
 		return $res;
+	}
+
+
+	/** @param  non-empty-list<Neon\Entity>  $chain */
+	private function buildExpression(array $chain): Expression
+	{
+		$entity = array_pop($chain);
+		[$value] = $this->process([$entity->value]);
+		if (is_string($value) && str_contains($value, '?')) {
+			throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
+		}
+
+		if ($entity->attributes === Resolver::getFirstClassCallable()) {
+			if ($chain) {
+				return new DI\Expressions\PartialCall($this->buildExpression($chain), ltrim($value, ':'));
+			}
+
+			$callable = (new Statement($value))->getEntity(); // normalizes Class::method, @service::method, ::function
+			if (!is_array($callable)) {
+				throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$value(...)' in config file (used in '$this->file')");
+			}
+
+			return new DI\Expressions\PartialCall($callable[0] === '' ? null : $callable[0], $callable[1]);
+		}
+
+		$attributes = $this->process($entity->attributes);
+		array_walk_recursive($attributes, function (mixed $attribute, int|string $key): void {
+			if ($attribute instanceof DI\Config\Replacement) {
+				throw new Nette\DI\InvalidConfigurationException(sprintf(
+					"Replacing operator is available only for arrays, item '%s!' is not array (used in '%s')",
+					$key,
+					$this->file,
+				));
+			}
+		});
+
+		return new Statement(
+			$chain ? [$this->buildExpression($chain), ltrim($value, ':')] : $value,
+			$attributes,
+		);
 	}
 
 
@@ -111,8 +125,8 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		array_walk_recursive(
 			$data,
 			function (&$val): void {
-				if ($val instanceof Statement) {
-					$val = self::statementToEntity($val);
+				if ($val instanceof Expression) {
+					$val = self::expressionToEntity($val);
 				}
 			},
 		);
@@ -120,15 +134,26 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	}
 
 
-	private static function statementToEntity(Statement $val): Neon\Entity
+	private static function expressionToEntity(Expression $val): Neon\Entity|string
 	{
+		if ($val instanceof Reference) {
+			return '@' . $val->getValue();
+
+		} elseif ($val instanceof DI\Expressions\PartialCall) {
+			return match (true) {
+				$val->target === null => new Neon\Entity('::' . $val->name, ['...']),
+				is_string($val->target) => new Neon\Entity($val->target . '::' . $val->name, ['...']),
+				$val->target instanceof Reference => new Neon\Entity('@' . $val->target->getValue() . '::' . $val->name, ['...']),
+				default => self::appendToChain(self::expressionToEntity($val->target), new Neon\Entity('::' . $val->name, ['...'])),
+			};
+		}
+
+		assert($val instanceof Statement);
 		array_walk_recursive(
 			$val->arguments,
 			function (&$val): void {
-				if ($val instanceof Statement) {
-					$val = self::statementToEntity($val);
-				} elseif ($val instanceof Reference) {
-					$val = '@' . $val->getValue();
+				if ($val instanceof Expression) {
+					$val = self::expressionToEntity($val);
 				}
 			},
 		);
@@ -137,25 +162,31 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		if ($entity instanceof Reference) {
 			$entity = '@' . $entity->getValue();
 		} elseif (is_array($entity)) {
-			if ($entity[0] instanceof Statement) {
-				$inner = self::statementToEntity($entity[0]);
-				return new Neon\Entity(
-					Neon\Neon::Chain,
-					[
-						...($inner->value === Neon\Neon::Chain ? $inner->attributes : [$inner]),
-						new Neon\Entity('::' . $entity[1], $val->arguments),
-					],
-				);
-			} elseif ($entity[0] instanceof Reference) {
+			if ($entity[0] instanceof Reference) {
 				$entity = '@' . $entity[0]->getValue() . '::' . $entity[1];
+			} elseif ($entity[0] instanceof Expression) {
+				return self::appendToChain(self::expressionToEntity($entity[0]), new Neon\Entity('::' . $entity[1], $val->arguments));
 			} elseif ($entity[0] instanceof DI\Definition) {
 				$name = $entity[0]->getName() ?? throw new Nette\InvalidStateException('A statement calling a method of an unnamed definition cannot be dumped.');
 				$entity = '@' . $name . '::' . $entity[1];
-			} elseif (is_string($entity[0])) {
+			} else {
 				$entity = $entity[0] . '::' . $entity[1];
 			}
 		}
 
 		return new Neon\Entity($entity, $val->arguments);
+	}
+
+
+	/** A target that is a chain itself is flattened, nette/neon 4 refuses a chain as a link. */
+	private static function appendToChain(Neon\Entity|string $target, Neon\Entity $link): Neon\Entity
+	{
+		return new Neon\Entity(
+			Neon\Neon::Chain,
+			[
+				...($target instanceof Neon\Entity && $target->value === Neon\Neon::Chain ? $target->attributes : [$target]),
+				$link,
+			],
+		);
 	}
 }

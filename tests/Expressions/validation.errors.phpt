@@ -58,8 +58,13 @@ $cases = [
 	// [config, exception, message]
 	[
 		"services:\n\t- ErrService(...)\n",
-		DI\ServiceCreationException::class,
-		'Service of type Closure: Cannot create closure for ErrService(...)',
+		DI\InvalidConfigurationException::class,
+		"Cannot create closure for 'ErrService(...)' in config file (used in %a%)",
+	],
+	[
+		"services:\n\t- ErrService(1, ...)\n",
+		DI\InvalidConfigurationException::class,
+		"Replace ... with _ in configuration file '%a%'.",
 	],
 	[
 		"services:\n\t- ErrService( @missing )\n",
@@ -111,6 +116,11 @@ $cases = [
 		DI\ServiceCreationException::class,
 		"Service 'a' (type of ErrService): Missing argument for \$prop[].",
 	],
+	[
+		"parameters:\n\tm: 'foo bar'\nservices:\n\ta: ErrService\n\t- ErrService( @a::%m%(...) )\n",
+		DI\ServiceCreationException::class,
+		"%a%Expected a valid method name, 'foo bar' given.%a%",
+	],
 ];
 
 foreach ($cases as [$config, $exception, $message]) {
@@ -131,3 +141,11 @@ Assert::exception(function () {
 	$builder->getDefinition('a')->setCreator(ErrService::class, [new DI\Definitions\Statement($foreign)]);
 	$builder->complete();
 }, DI\ServiceCreationException::class, "%A?%Service 'a' does not match the expected service.%A?%");
+
+
+// setArguments() on first-class callable creator
+Assert::exception(function () {
+	$def = new DI\Definitions\ServiceDefinition;
+	$def->setCreator(new DI\Expressions\PartialCall(null, 'trim'));
+	$def->setArguments([1]);
+}, Nette\InvalidStateException::class, 'Cannot pass arguments to this creator.');
