@@ -115,6 +115,15 @@ final class Schedule
 
 
 	/**
+	 * Has the given phase's final drain already finished?
+	 */
+	public function isCompleted(Phase $phase): bool
+	{
+		return isset($this->completed[$phase->value]);
+	}
+
+
+	/**
 	 * Resets the schedule for a fresh compilation.
 	 */
 	public function clear(): void

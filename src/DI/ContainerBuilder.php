@@ -335,11 +335,15 @@ class ContainerBuilder
 	 */
 	public function get(?string $name = null, ?string $type = null, ?string $of = null): Definition
 	{
-		$def = match (true) {
-			$type !== null && $name === null => $this->getDefinitionByType($type),
-			$name !== null && $type === null => $this->getDefinition($name),
-			default => throw new Nette\InvalidArgumentException('Pass exactly one of name or type to get().'),
-		};
+		try {
+			$def = match (true) {
+				$type !== null && $name === null => $this->getDefinitionByType($type),
+				$name !== null && $type === null => $this->getDefinition($name),
+				default => throw new Nette\InvalidArgumentException('Pass exactly one of name or type to get().'),
+			};
+		} catch (MissingServiceException $e) {
+			throw new MissingServiceException($e->getMessage() . $this->timelineHint());
+		}
 
 		$of ??= Definitions\ServiceDefinition::class;
 		if (!$def instanceof $of) {
@@ -352,6 +356,31 @@ class ContainerBuilder
 		}
 
 		return $def;
+	}
+
+
+	/**
+	 * Removes a service by name or type; the definition must exist (immediate, no deferral).
+	 * To drop a service registered by an extension, use hook(Phase::Discover, ..., after: '*').
+	 * @param  class-string|null  $type
+	 */
+	public function remove(?string $name = null, ?string $type = null): void
+	{
+		$def = $this->get($name, $type, of: Definition::class);
+		assert($def->getName() !== null);
+		$this->removeDefinition($def->getName());
+	}
+
+
+	/**
+	 * A hint appended to a "service not found" error while services may still be registered
+	 * (before the Discover phase completes), teaching the config-time vs. hook() timeline.
+	 */
+	private function timelineHint(): string
+	{
+		return $this->schedule && !$this->schedule->isCompleted(Phase::Discover)
+			? ' Services registered by extensions are not available yet at config time; reach them from a hook(Phase::Modify, ...).'
+			: '';
 	}
 
 
