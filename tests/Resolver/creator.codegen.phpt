@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder code generator.
+ * Test: Nette\DI: code generation for creators and setup.
  */
 
 use Nette\DI;

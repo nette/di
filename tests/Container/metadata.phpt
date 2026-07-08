@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\Compiler: services tags.
+ * Test: Nette\DI\Container: runtime metadata (wiring, tags, aliases).
  */
 
 use Nette\DI;

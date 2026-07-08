@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\Compiler and user extension.
+ * Test: Nette\DI\CompilerExtension: lifecycle (loadConfiguration, beforeCompile, afterCompile).
  */
 
 use Nette\DI;
