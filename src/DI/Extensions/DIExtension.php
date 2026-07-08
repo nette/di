@@ -8,6 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI;
 use Nette\DI\Attributes\Hook;
 use Nette\DI\{ContainerBuilder, Phase};
 use Nette\DI\Definitions\ServiceDefinition;
@@ -69,7 +70,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	public function doEnableLazyProxies(ContainerBuilder $builder): void
 	{
 		if ($this->config->lazy) {
-			foreach ($builder->getDefinitions() as $def) {
+			foreach ($builder->getAll() as $def) {
 				if ($def instanceof ServiceDefinition && $def->isLazy() === null) {
 					$def->lazy();
 				}
@@ -91,7 +92,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 
 		if (
 			$this->debugMode
-			&& ($this->config->debugger ?? $this->getContainerBuilder()->getByType(Tracy\Bar::class))
+			&& ($this->config->debugger ?? $this->getContainerBuilder()->has(type: Tracy\Bar::class))
 		) {
 			$this->enableTracyIntegration();
 		}
@@ -138,10 +139,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	{
 		Nette\Bridges\DITracy\ContainerPanel::$compilationTime = $this->time;
 		$this->initialization->addBody($this->getContainerBuilder()->formatPhp('?;', [
-			new Nette\DI\Definitions\Statement(
-				'@Tracy\Bar::addPanel',
-				[new Nette\DI\Definitions\Statement(Nette\Bridges\DITracy\ContainerPanel::class)],
-			),
+			di\wire(Tracy\Bar::class)->call('addPanel', [di\create(Nette\Bridges\DITracy\ContainerPanel::class)]),
 		]));
 	}
 }
