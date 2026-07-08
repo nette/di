@@ -28,7 +28,7 @@ final class ServiceDefinition extends Definition
 {
 	use Nette\SmartObject;
 
-	public ?bool $lazy = null;
+	private ?bool $lazy = null;
 	private Expression $creator;
 
 	/** @var Statement[] */
@@ -182,12 +182,21 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * Enables or disables lazy instantiation (fluent alias of the $lazy property).
+	 * Enables or disables lazy instantiation.
 	 */
 	public function lazy(bool $state = true): static
 	{
 		$this->lazy = $state;
 		return $this;
+	}
+
+
+	/**
+	 * Returns the lazy instantiation mode, or null when it has not been set.
+	 */
+	public function isLazy(): ?bool
+	{
+		return $this->lazy;
 	}
 
 

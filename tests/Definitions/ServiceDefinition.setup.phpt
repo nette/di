@@ -73,9 +73,9 @@ test('lazy(), tag(), removeTag(), autowired() aliases', function () {
 	$def = (new ServiceDefinition)->setName('a');
 
 	$def->lazy();
-	Assert::true($def->lazy);
+	Assert::true($def->isLazy());
 	$def->lazy(false);
-	Assert::false($def->lazy);
+	Assert::false($def->isLazy());
 
 	$def->tag('db', 'main');
 	Assert::same('main', $def->getTag('db'));

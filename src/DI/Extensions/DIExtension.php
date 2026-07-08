@@ -73,8 +73,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	{
 		if ($this->config->lazy && PHP_VERSION_ID >= 80400) {
 			foreach ($builder->getDefinitions() as $def) {
-				if ($def instanceof ServiceDefinition) {
-					$def->lazy ??= true;
+				if ($def instanceof ServiceDefinition && $def->isLazy() === null) {
+					$def->lazy();
 				}
 			}
 		}
