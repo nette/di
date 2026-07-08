@@ -18,18 +18,15 @@ use function is_array, is_string, sprintf;
 
 /**
  * Assignment or calling statement.
- * It also serves as the base class of the specialized Nette\DI\Expressions\* nodes for backward compatibility.
+ *
  * @property string|array{string|Definition|Expression,string}|Definition|Reference|null $entity
  */
-class Statement extends Expression
+final class Statement extends Expression
 {
 	use Nette\SmartObject;
 
-	private string|array|Definition|Reference|null $entity = null;
-
-
 	public function __construct(
-		string|array|Definition|Reference|null $entity,
+		private string|array|Definition|Reference|null $entity,
 		/** @var array<mixed> */
 		public array $arguments = [],
 	) {

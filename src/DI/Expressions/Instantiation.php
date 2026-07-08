@@ -8,22 +8,21 @@
 namespace Nette\DI\Expressions;
 
 use Nette\DI\Compiler\{PhpGenerator, Resolver};
-use Nette\DI\Definitions\Statement;
-use Nette\DI\ServiceCreationException;
+use Nette\DI\{Expression, ServiceCreationException};
 use function is_string, sprintf;
 
 
 /**
  * Class instantiation, i.e. new Class(...arguments) with constructor autowiring.
  */
-final class Instantiation extends Statement
+final class Instantiation extends Expression
 {
 	use Chaining;
 
 	public function __construct(
 		public readonly string $class,
 		/** @var array<mixed> */
-		public array $arguments = [],
+		public readonly array $arguments = [],
 	) {
 	}
 
@@ -93,11 +92,5 @@ final class Instantiation extends Statement
 	{
 		$class = $cb($this->class);
 		return new self(is_string($class) ? $class : $this->class, $cb($this->arguments));
-	}
-
-
-	public function getEntity(): string
-	{
-		return $this->class;
 	}
 }

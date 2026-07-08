@@ -8,7 +8,6 @@
 namespace Nette\DI\Expressions;
 
 use Nette\DI\Compiler\{PhpGenerator, Resolver};
-use Nette\DI\Definitions\Statement;
 use Nette\DI\{Expression, ServiceCreationException};
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Type;
@@ -18,7 +17,7 @@ use function is_string, sprintf;
 /**
  * Property read ($obj->prop), assignment ($obj->prop = value) or append ($obj->prop[] = value).
  */
-final class PropertyAccess extends Statement
+final class PropertyAccess extends Expression
 {
 	public function __construct(
 		public readonly Expression|string $target,
@@ -27,7 +26,6 @@ final class PropertyAccess extends Statement
 		/** the assigned value; unused for a read */
 		public readonly mixed $value = null,
 	) {
-		$this->arguments = $mode === PropertyMode::Read ? [] : [$value];
 	}
 
 
@@ -114,15 +112,5 @@ final class PropertyAccess extends Statement
 			is_string($target) => $target . '::',
 			default => '',
 		} . $this->label();
-	}
-
-
-	/**
-	 * Legacy Statement-shaped entity, for code inspecting completed definitions.
-	 * @return array{Expression|string, string}
-	 */
-	public function getEntity(): array
-	{
-		return [$this->target, '$' . $this->name . ($this->mode === PropertyMode::Append ? '[]' : '')];
 	}
 }

@@ -12,7 +12,7 @@ use Nette\DI;
 use Nette\DI\Attributes\Hook;
 use Nette\DI\{ContainerBuilder, Definitions, Phase};
 use Nette\Utils\Reflection;
-use function sprintf;
+use function is_array, sprintf;
 
 
 /**
@@ -69,7 +69,7 @@ final class InjectExtension extends DI\CompilerExtension
 				di\wire((string) $type),
 			);
 			foreach ($setups as $key => $setup) {
-				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
+				if (self::getSetupMember($setup) == self::getSetupMember($inject)) { // intentionally ==
 					$inject = $setup;
 					$builder = null;
 					unset($setups[$key]);
@@ -85,7 +85,7 @@ final class InjectExtension extends DI\CompilerExtension
 		foreach (array_reverse(self::getInjectMethods($class)) as $method) {
 			$inject = di\self()->method($method);
 			foreach ($setups as $key => $setup) {
-				if ($setup->getEntity() == $inject->getEntity()) { // intentionally ==
+				if (self::getSetupMember($setup) == self::getSetupMember($inject)) { // intentionally ==
 					$inject = $setup;
 					unset($setups[$key]);
 				}
@@ -95,6 +95,24 @@ final class InjectExtension extends DI\CompilerExtension
 		}
 
 		$def->setSetup($setups);
+	}
+
+
+	/**
+	 * Returns the target and the member a setup step works on, such as [@self, '$prop'] or [@self, 'method'].
+	 * @return ?array{mixed, string}
+	 */
+	private static function getSetupMember(DI\Expression $setup): ?array
+	{
+		return match (true) {
+			$setup instanceof Definitions\Statement => is_array($entity = $setup->getEntity()) ? $entity : null,
+			$setup instanceof DI\Expressions\PropertyAccess => [
+				$setup->target,
+				'$' . $setup->name . ($setup->mode === DI\Expressions\PropertyMode::Append ? '[]' : ''),
+			],
+			$setup instanceof DI\Expressions\Call => [$setup->target ?? '', $setup->name],
+			default => null,
+		};
 	}
 
 

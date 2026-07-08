@@ -9,7 +9,6 @@ namespace Nette\DI\Expressions;
 
 use Nette;
 use Nette\DI\Compiler\{PhpGenerator, Resolver};
-use Nette\DI\Definitions\Statement;
 use Nette\DI\{Expression, ServiceCreationException};
 use Nette\PhpGenerator as Php;
 use Nette\Utils\Callback;
@@ -19,7 +18,7 @@ use function in_array, is_string, sprintf;
 /**
  * Call of a global function, a static method or a method on the result of another expression.
  */
-final class Call extends Statement
+final class Call extends Expression
 {
 	use Chaining;
 
@@ -28,7 +27,7 @@ final class Call extends Statement
 		public readonly Expression|string|null $target,
 		public readonly string $name,
 		/** @var array<mixed> */
-		public array $arguments = [],
+		public readonly array $arguments = [],
 	) {
 	}
 
@@ -187,15 +186,5 @@ final class Call extends Statement
 		}
 
 		return $target;
-	}
-
-
-	/**
-	 * Legacy Statement-shaped entity, for code inspecting completed definitions.
-	 * @return array{Expression|string, string}
-	 */
-	public function getEntity(): array
-	{
-		return [$this->target ?? '', $this->name];
 	}
 }

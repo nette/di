@@ -169,16 +169,20 @@ final class FactoryDefinition extends Definition
 		if ($resultDef instanceof ServiceDefinition) {
 			$this->completeParameters($resolver);
 			$creator = $resultDef->getCreator();
-			assert($creator instanceof Statement);
-			$this->convertArguments($creator->arguments);
-			foreach ($resultDef->getSetup() as $setup) {
-				$this->convertArguments($setup->arguments);
+			foreach ([$creator, ...$resultDef->getSetup()] as $statement) {
+				if ($statement instanceof Statement) {
+					$this->convertArguments($statement->arguments);
+				}
 			}
 
-			if ($resultDef->getEntity() instanceof Reference && !$creator->arguments) {
+			if (
+				$creator instanceof Statement
+				&& ($entity = $creator->getEntity()) instanceof Reference
+				&& !$creator->arguments
+			) {
 				$resultDef->setCreator([ // render as $container->createMethod()
 					new Reference(Nette\DI\ContainerBuilder::ThisContainer),
-					Nette\DI\Container::getMethodName($resultDef->getEntity()->getValue()),
+					Nette\DI\Container::getMethodName($entity->getValue()),
 				]);
 			}
 		}
