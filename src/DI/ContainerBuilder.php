@@ -15,7 +15,7 @@ use function is_int, sprintf;
 /**
  * Container builder.
  */
-class ContainerBuilder
+class ContainerBuilder implements Definitions
 {
 	public const
 		ThisService = 'self',
