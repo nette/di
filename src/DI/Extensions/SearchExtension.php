@@ -8,6 +8,8 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Attributes\Hook;
+use Nette\DI\{ContainerBuilder, Phase};
 use Nette\Loaders\RobotLoader;
 use Nette\Schema\Expect;
 use Nette\Utils\Arrays;
@@ -55,7 +57,8 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration(): void
+	#[Hook(Phase::Register)]
+	public function doScanDirectories(ContainerBuilder $builder): void
 	{
 		foreach (array_filter($this->config) as $name => $batch) {
 			if (!is_dir($batch->in)) {
@@ -70,6 +73,28 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			foreach ($this->findClasses($batch) as $class) {
 				$this->classes[$class] = [...$this->classes[$class] ?? [], ...$batch->tags];
 			}
+		}
+	}
+
+
+	#[Hook(Phase::Discover)]
+	public function doDiscoverServices(ContainerBuilder $builder): void
+	{
+		foreach ($this->classes as $class => $foo) {
+			if ($builder->findByType($class)) {
+				unset($this->classes[$class]);
+			}
+		}
+
+		foreach ($this->classes as $class => $tags) {
+			if (class_exists($class)) {
+				$def = $builder->addDefinition(null)->setType($class);
+			} elseif (method_exists($class, 'create')) {
+				$def = $builder->addFactoryDefinition(null)->setImplement($class);
+			} else {
+				$def = $builder->addAccessorDefinition(null)->setImplement($class);
+			}
+			$def->setTags(Arrays::normalize($tags, filling: true));
 		}
 	}
 
@@ -121,29 +146,6 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		}
 
 		return $found;
-	}
-
-
-	public function beforeCompile(): void
-	{
-		$builder = $this->getContainerBuilder();
-
-		foreach ($this->classes as $class => $foo) {
-			if ($builder->findByType($class)) {
-				unset($this->classes[$class]);
-			}
-		}
-
-		foreach ($this->classes as $class => $tags) {
-			if (class_exists($class)) {
-				$def = $builder->addDefinition(null)->setType($class);
-			} elseif (method_exists($class, 'create')) {
-				$def = $builder->addFactoryDefinition(null)->setImplement($class);
-			} else {
-				$def = $builder->addAccessorDefinition(null)->setImplement($class);
-			}
-			$def->setTags(Arrays::normalize($tags, filling: true));
-		}
 	}
 
 
