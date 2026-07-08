@@ -10,6 +10,7 @@ use Nette\DI\ContainerBuilder;
 use Nette\DI\Expressions\Reference;
 use Nette\DI\Expressions\ServiceCollection;
 use Tester\Assert;
+use function Nette\DI\create, Nette\DI\services;
 
 require __DIR__ . '/../bootstrap.php';
 
@@ -63,6 +64,18 @@ test('type and tag together = intersection', function () {
 		->complete($resolver->withCurrentServiceAvailable());
 
 	Assert::same(['both', 'onlyA'], refNames($completed));
+});
+
+
+test('runtime: services(type:, tag:) collects the intersection', function () {
+	$builder = new ContainerBuilder;
+	$builder->addDefinition('both')->setType(Both::class)->addTag('t');
+	$builder->addDefinition('onlyA')->setType(OnlyA::class);
+	$builder->addDefinition('collector')->setCreator(Collector::class, [services(type: IA::class, tag: 't')]);
+
+	$container = createContainer($builder);
+	$collector = $container->getService('collector');
+	Assert::same([$container->getService('both')], $collector->items);
 });
 
 
