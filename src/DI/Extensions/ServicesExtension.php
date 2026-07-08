@@ -117,7 +117,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (isset($config->lazy)) {
-			$definition->lazy = $config->lazy;
+			$definition->lazy($config->lazy);
 		}
 	}
 

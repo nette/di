@@ -70,8 +70,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	{
 		if ($this->config->lazy) {
 			foreach ($builder->getDefinitions() as $def) {
-				if ($def instanceof ServiceDefinition) {
-					$def->lazy ??= true;
+				if ($def instanceof ServiceDefinition && $def->isLazy() === null) {
+					$def->lazy();
 				}
 			}
 		}
