@@ -19,6 +19,9 @@ use function count, is_array, sprintf;
  */
 class Compiler
 {
+	/** internal config section holding PHP config-file closures operating on Definitions */
+	public const Closures = '@closures';
+
 	private const
 		Services = 'services',
 		Parameters = 'parameters',
@@ -241,6 +244,7 @@ class Compiler
 	{
 		$this->processedExtensions = [];
 		$this->schedule->clear();
+		$this->runConfigClosures();
 		$this->processExtensions();
 
 		foreach ([Phase::Discover, Phase::Modify] as $phase) {
@@ -290,7 +294,7 @@ class Compiler
 			$this->dependencies->add(array_filter([(new \ReflectionClass($extension))->getFileName()]));
 		}
 
-		if ($extra = key(array_diff_key($this->configs, $this->extensions))) {
+		if ($extra = key(array_diff_key($this->configs, $this->extensions, [self::Closures => 1]))) {
 			$hint = Nette\Utils\Helpers::getSuggestion(array_keys($this->extensions), $extra);
 			throw new InvalidConfigurationException(
 				sprintf("Found section '%s' in configuration, but corresponding extension is missing", $extra)
@@ -300,6 +304,21 @@ class Compiler
 
 		// Register runs again for ServicesExtension's hook, registered only above
 		$this->runPhase(Phase::Register);
+	}
+
+
+	/**
+	 * Runs the closures returned by PHP config files (see PhpAdapter) against the Definitions.
+	 * They run first, at load-time: their add() is immediate and precedes the extensions, while
+	 * hook()/remove() reaching framework services must be deferred into a phase (ADR definitions-dsl).
+	 */
+	private function runConfigClosures(): void
+	{
+		foreach ($this->configs[self::Closures] ?? [] as $closures) {
+			foreach ($closures as $closure) {
+				$closure($this->builder);
+			}
+		}
 	}
 
 
