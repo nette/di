@@ -624,8 +624,10 @@ class ContainerBuilder implements Definitions
 
 
 	/**
+	 * Formats a PHP statement with ? placeholders resolved against $args. DI-aware: Expression args
+	 * are completed and generated, Definition args become references. Used e.g. for code emitted
+	 * into the container's initialize() method (see CompilerExtension::onStartup()).
 	 * @param  array<mixed>  $args
-	 * @deprecated
 	 */
 	public function formatPhp(string $statement, array $args): string
 	{

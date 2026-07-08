@@ -103,7 +103,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	{
 		foreach ($this->dynamicValidators as [$param, $expected, $path]) {
 			if ($param instanceof DynamicParameter) {
-				$this->initialization->addBody(
+				$this->onStartup(
 					'Nette\Utils\Validators::assert(?, ?, ?);',
 					[$param, $expected, "dynamic parameter used in '" . implode("\u{a0}›\u{a0}", $path) . "'"],
 				);

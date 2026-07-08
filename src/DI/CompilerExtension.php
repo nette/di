@@ -157,6 +157,25 @@ abstract class CompilerExtension
 
 
 	/**
+	 * Adds code to the container's initialize() method, run when the container is created.
+	 * Accepts a DSL expression (e.g. service('session')->method('start')) or a PHP statement string
+	 * with ? placeholders resolved against $args (which may themselves contain DSL expressions).
+	 * A full replacement for $this->initialization->addBody().
+	 * @param  array<mixed>  $args
+	 */
+	public function onStartup(Expression|string $code, array $args = []): static
+	{
+		$builder = $this->getContainerBuilder();
+		$this->initialization->addBody(
+			$code instanceof Expression
+				? $builder->formatPhp('?;', [$code])   // onStartup supplies the `;`
+				: $builder->formatPhp($code, $args),    // string: caller writes the `;`, like addBody()
+		);
+		return $this;
+	}
+
+
+	/**
 	 * Prepend extension name to identifier or service name.
 	 */
 	public function prefix(string $id): string
