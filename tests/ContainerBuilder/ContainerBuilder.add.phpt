@@ -106,7 +106,7 @@ test('factory()/accessor() build typed definitions', function () {
 test('factory() configures the produced service, fluent setup() delegates to the result', function () {
 	$b = new ContainerBuilder;
 	$b->add('factory', di\factory(AddFactory::class, di\create(AddSvc::class, ['hi'])))
-		->getResultDefinition()->setup('make');
+		->setup('make');
 
 	$def = $b->get('factory', of: FactoryDefinition::class);
 	Assert::count(1, $def->getResultDefinition()->getSetup());

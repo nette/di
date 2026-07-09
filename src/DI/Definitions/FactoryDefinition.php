@@ -70,6 +70,54 @@ final class FactoryDefinition extends Definition
 	}
 
 
+	/**
+	 * Configures the creator of the service the factory produces (mirrors NEON, where create:
+	 * on a factory definition configures the result, while tags:/autowired: belong to the factory).
+	 * @param  string|array{string|Nette\DI\Expression, string}|Definition|Nette\DI\Expression  $creator
+	 * @param  array<mixed>  $args
+	 */
+	public function setCreator(string|array|Definition|Nette\DI\Expression $creator, array $args = []): static
+	{
+		$this->getServiceResultDefinition()->setCreator($creator, $args);
+		return $this;
+	}
+
+
+	/**
+	 * Adds a setup step of the service the factory produces (mirrors NEON).
+	 * @param  string|array{string, string}|Statement  $target
+	 * @param  array<mixed>  $args
+	 */
+	public function setup(string|array|Statement $target, array $args = []): static
+	{
+		$this->getServiceResultDefinition()->setup($target, $args);
+		return $this;
+	}
+
+
+	/**
+	 * Sets the creator arguments of the service the factory produces (mirrors NEON).
+	 * @param  array<mixed>  $args
+	 */
+	public function setArguments(array $args = []): static
+	{
+		$this->getServiceResultDefinition()->setArguments($args);
+		return $this;
+	}
+
+
+	private function getServiceResultDefinition(): ServiceDefinition
+	{
+		return $this->resultDefinition instanceof ServiceDefinition
+			? $this->resultDefinition
+			: throw new Nette\InvalidStateException(sprintf(
+				"Service '%s': the result definition is a %s and cannot be configured this way.",
+				$this->getName(),
+				$this->resultDefinition::class,
+			));
+	}
+
+
 	public function setResultDefinition(Definition $definition): static
 	{
 		$this->resultDefinition = $definition;

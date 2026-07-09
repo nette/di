@@ -228,7 +228,7 @@ function factory(string $interface, string|Expression|null $creates = null): Fac
 {
 	$def = (new FactoryDefinition)->setImplement($interface);
 	if ($creates !== null) {
-		$def->getResultDefinition()->setCreator(is_string($creates) ? create($creates) : $creates);
+		$def->setCreator(is_string($creates) ? create($creates) : $creates);
 	}
 
 	return $def;
