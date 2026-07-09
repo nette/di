@@ -42,3 +42,12 @@ Assert::same(Reference::Self, $ref->getValue());
 // deprecated alias Nette\DI\Expressions\Reference
 Assert::type(Reference::class, new Nette\DI\Expressions\Reference('a'));
 Assert::type(Nette\DI\Expressions\Reference::class, new Reference('a'));
+Assert::type(Reference::class, Nette\DI\Expressions\Reference::fromType('stdClass'));
+
+
+// generateCode()
+$builder = new Nette\DI\ContainerBuilder;
+$generator = new Nette\DI\PhpGenerator($builder);
+Assert::same("\$this->getService('a')", (new Reference('a'))->generateCode($generator));
+Assert::same('$service', (new Reference(Reference::Self))->generateCode($generator));
+Assert::same('$this', (new Reference(Nette\DI\ContainerBuilder::ThisContainer))->generateCode($generator));

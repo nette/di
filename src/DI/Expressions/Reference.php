@@ -7,6 +7,7 @@
 
 namespace Nette\DI\Expressions;
 
+use Nette\DI;
 use Nette\DI\Expression;
 
 
@@ -61,5 +62,15 @@ final class Reference extends Expression
 	public function isSelf(): bool
 	{
 		return $this->value === self::Self;
+	}
+
+
+	public function generateCode(DI\Compiler\PhpGenerator $generator): string
+	{
+		return match (true) {
+			$this->isSelf() => '$service',
+			$this->value === DI\ContainerBuilder::ThisContainer => '$this',
+			default => $generator->formatPhp('$this->getService(?)', [$this->value]),
+		};
 	}
 }
