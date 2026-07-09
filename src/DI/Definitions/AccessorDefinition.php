@@ -86,12 +86,12 @@ final class AccessorDefinition extends Definition
 	}
 
 
-	public function resolveType(Nette\DI\Resolver $resolver): void
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 	}
 
 
-	public function complete(Nette\DI\Resolver $resolver): void
+	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		if (!$this->reference) {
 			$type = $this->getType();
@@ -109,7 +109,7 @@ final class AccessorDefinition extends Definition
 	}
 
 
-	public function generateCode(Nette\DI\PhpGenerator $generator): string
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
 	{
 		$type = $this->getType();
 		assert($type !== null);

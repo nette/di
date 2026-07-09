@@ -106,12 +106,12 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	public function resolveType(Nette\DI\Resolver $resolver): void
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 	}
 
 
-	public function complete(Nette\DI\Resolver $resolver): void
+	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		if ($this->tagged !== null) {
 			$this->references = [];
@@ -191,7 +191,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
-	public function generateCode(Nette\DI\PhpGenerator $generator): string
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
 	{
 		$type = $this->getType();
 		assert($type !== null);

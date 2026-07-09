@@ -35,7 +35,7 @@ overrides:
 			- src/DI/Definitions/FactoryDefinition.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
-			- src/DI/PhpGenerator.php
+			- src/DI/Compiler/PhpGenerator.php
 		upgrading: {declarations: {deprecatedClass: keep, deprecatedMember: keep}}
 
 	- # renaming the parameters would break calls naming def:

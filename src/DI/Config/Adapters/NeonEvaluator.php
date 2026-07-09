@@ -118,7 +118,7 @@ final class NeonEvaluator extends Neon\Evaluator
 
 		$items = $node->attributes->items ?? [];
 		if (count($items) === 1 && !$items[0]->key && self::isLiteral($items[0]->value, '...')) {
-			return [$head, Nette\DI\Resolver::getFirstClassCallable()];
+			return [$head, Nette\DI\Compiler\Resolver::getFirstClassCallable()];
 		}
 
 		$attributes = [];
