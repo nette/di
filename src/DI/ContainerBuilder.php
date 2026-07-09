@@ -124,6 +124,25 @@ class ContainerBuilder
 
 
 	/**
+	 * Registers a new service (errors if the name exists); returns its definition for fluent config.
+	 * The creator is a class name, an expression or a ready-made definition.
+	 * @template TDef of Definition
+	 * @param  class-string|Expression|TDef  $creator
+	 * @return ($creator is Definition ? TDef : Definitions\ServiceDefinition)
+	 */
+	public function add(?string $name, string|Expression|Definition $creator): Definition
+	{
+		if ($creator instanceof Definition) {
+			return $this->addDefinition($name, $creator);
+		}
+
+		$def = new Definitions\ServiceDefinition;
+		$def->setCreator($creator instanceof Expression ? $creator : create($creator));
+		return $this->addDefinition($name, $def);
+	}
+
+
+	/**
 	 * Removes the specified service definition.
 	 */
 	public function removeDefinition(string $name): void

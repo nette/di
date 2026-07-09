@@ -4,6 +4,7 @@
  * PHPStan type tests.
  */
 
+use Nette\DI;
 use Nette\DI\Compiler;
 use Nette\DI\Container;
 use Nette\DI\ContainerBuilder;
@@ -14,6 +15,29 @@ use function PHPStan\Testing\assertType;
 
 class TestService
 {
+}
+
+interface TestFactory
+{
+	public function create(): TestService;
+}
+
+interface TestAccessor
+{
+	public function get(): TestService;
+}
+
+
+function testContainerBuilderAdd(ContainerBuilder $builder): void
+{
+	// creator = class-string or expression -> ServiceDefinition (even after fluent narrowing)
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->add('a', TestService::class));
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->add('b', di\create(TestService::class)));
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->add('c', di\create(TestService::class))->setType(TestService::class));
+	assertType('Nette\DI\Definitions\FactoryDefinition', $builder->add('d', di\factory(TestFactory::class)));
+	assertType('Nette\DI\Definitions\AccessorDefinition', $builder->add('e', di\accessor(TestAccessor::class)));
+	assertType('Nette\DI\Definitions\ImportedDefinition', $builder->add('f', di\imported(TestService::class)));
+	assertType('Nette\DI\Definitions\ServiceDefinition', $builder->add('g', di\factory(TestFactory::class))->getResultDefinition());
 }
 
 
