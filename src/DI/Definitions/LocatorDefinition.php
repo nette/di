@@ -60,6 +60,7 @@ final class LocatorDefinition extends Definition
 	}
 
 
+	/** @deprecated Use getType() */
 	public function getImplement(): ?string
 	{
 		return $this->getType();

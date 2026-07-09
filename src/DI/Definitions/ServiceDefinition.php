@@ -48,7 +48,8 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * Alias for setCreator()
+	 * Sets the creator.
+	 * @deprecated Use setCreator()
 	 * @param  string|array{string|Expression, string}|Definition|Expression  $factory
 	 * @param  array<mixed>  $args
 	 */
@@ -59,7 +60,8 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * Alias for getCreator()
+	 * Gets the creator.
+	 * @deprecated Use getCreator()
 	 */
 	public function getFactory(): Expression
 	{
@@ -122,6 +124,8 @@ final class ServiceDefinition extends Definition
 
 
 	/**
+	 * Replaces all setup steps.
+	 * @deprecated Use clearSetup() and setup()
 	 * @param  Statement[]  $setup
 	 */
 	public function setSetup(array $setup): static
@@ -148,6 +152,7 @@ final class ServiceDefinition extends Definition
 
 	/**
 	 * Adds a setup step.
+	 * @deprecated Use setup()
 	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $entity
 	 * @param  array<mixed>  $args
 	 */
@@ -231,7 +236,7 @@ final class ServiceDefinition extends Definition
 
 		// auto-disable autowiring for aliases
 		if ($this->getAutowired() === true && $this->getEntity() instanceof Reference) {
-			$this->setAutowired(false);
+			$this->autowired(false);
 		}
 	}
 

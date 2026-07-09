@@ -62,6 +62,7 @@ final class AccessorDefinition extends Definition
 	}
 
 
+	/** @deprecated Use getType() */
 	public function getImplement(): ?string
 	{
 		return $this->getType();
