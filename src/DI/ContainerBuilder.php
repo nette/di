@@ -675,7 +675,6 @@ class ContainerBuilder implements Definitions
 				$val = $val->complete(new Resolver($this));
 
 			} elseif ($val instanceof Definition) {
-				assert($val->getName() !== null);
 				$val = new Expressions\Reference($val->getName());
 			}
 		});

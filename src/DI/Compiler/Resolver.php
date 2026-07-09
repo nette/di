@@ -87,7 +87,7 @@ class Resolver
 	public function resolveDefinition(Definition $def): void
 	{
 		if (isset($this->recursive[$def])) {
-			$names = array_map(fn($item) => $item->getName(), iterator_to_array($this->recursive));
+			$names = array_map(fn($item) => $item->getName(throw: false) ?? '?', iterator_to_array($this->recursive));
 			throw new ServiceCreationException(sprintf('Circular reference detected for services: %s.', implode(', ', $names)));
 		}
 
@@ -137,7 +137,7 @@ class Resolver
 			return $this->completeArguments($arguments);
 		} catch (ServiceCreationException $e) {
 			if (!str_contains($e->getMessage(), ' (used in')) {
-				$usedIn = str_replace('@self', '@' . $this->currentService?->getName(), $usedIn);
+				$usedIn = str_replace('@self', '@' . $this->currentService?->getName(throw: false), $usedIn);
 				$e->setMessage($e->getMessage() . " (used in $usedIn)");
 			}
 
@@ -229,7 +229,7 @@ class Resolver
 				: new ServiceCreationException($e->getMessage(), 0, $e);
 		}
 
-		$name = $def->getName();
+		$name = $def->getName(throw: false);
 		$type = $def->getType();
 		if ($name && !ctype_digit($name)) {
 			$message = "Service '$name'" . ($type ? " (type of $type)" : '') . ': ';

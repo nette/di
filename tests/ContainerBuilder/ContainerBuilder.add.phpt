@@ -114,3 +114,18 @@ test('factory() configures the produced service, fluent setup() delegates to the
 	$container = createContainer($b);
 	Assert::same('hi', $container->getByType(AddFactory::class)->create()->x);
 });
+
+
+test('getName() on an unregistered definition throws, throw: false gives null', function () {
+	$def = di\imported(AddSvc::class);
+	Assert::exception(
+		fn() => $def->getName(),
+		Nette\InvalidStateException::class,
+		'The definition has no name yet;%a%',
+	);
+	Assert::null($def->getName(throw: false));
+
+	$b = new ContainerBuilder;
+	$registered = $b->add('svc', AddSvc::class);
+	Assert::same('svc', $registered->getName(throw: false));
+});

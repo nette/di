@@ -92,7 +92,6 @@ class PhpGenerator
 	public function generateMethod(Definition $def): Php\Method
 	{
 		$name = $def->getName();
-		assert($name !== null);
 		try {
 			$method = new Php\Method(Container::getMethodName($name));
 			$method->setPublic();

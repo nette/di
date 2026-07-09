@@ -157,7 +157,7 @@ class Statement extends Expression
 		}
 
 		if ($item instanceof Definition) {
-			$name = $item->getName();
+			$name = $item->getName(throw: false);
 			if ($name === null || $resolver->getContainerBuilder()->getDefinition($name) !== $item) {
 				throw new ServiceCreationException(sprintf("Service '%s' does not match the expected service.", $name));
 			}

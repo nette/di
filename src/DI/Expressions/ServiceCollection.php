@@ -32,7 +32,7 @@ final class ServiceCollection extends Expression
 	public function complete(Resolver $resolver): static
 	{
 		$builder = $resolver->getContainerBuilder();
-		$current = $resolver->getCurrentService()?->getName();
+		$current = $resolver->getCurrentService()?->getName(throw: false);
 
 		// union of names within each dimension, intersection across the dimensions given
 		$byType = $this->types

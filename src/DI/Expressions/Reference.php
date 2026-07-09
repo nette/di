@@ -84,7 +84,7 @@ final class Reference extends Expression
 				throw new DI\ServiceCreationException(sprintf("Reference to missing service '%s'.", $this->value));
 			}
 
-			return $this->value === $resolver->getCurrentService()?->getName()
+			return $this->value === $resolver->getCurrentService()?->getName(throw: false)
 				? new self(self::Self, $this->shared)
 				: $this;
 		}
