@@ -52,7 +52,7 @@ class ContainerBuilder implements Definitions
 	{
 		$this->journal = new Compiler\Journal;
 		$this->autowiring = new Autowiring($this);
-		$this->addImportedDefinition(self::ThisContainer)->setType(Container::class);
+		$this->registerDefinition(self::ThisContainer, new Definitions\ImportedDefinition)->setType(Container::class);
 	}
 
 
@@ -77,6 +77,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Adds new service definition.
+	 * @deprecated Use add()
 	 * @template TDef of Definition
 	 * @param  TDef|null  $definition
 	 * @return ($definition is null ? Definitions\ServiceDefinition : TDef)
@@ -150,12 +151,14 @@ class ContainerBuilder implements Definitions
 	}
 
 
+	/** @deprecated Use add() with Nette\DI\accessor() */
 	public function addAccessorDefinition(?string $name): Definitions\AccessorDefinition
 	{
 		return $this->registerDefinition($name, new Definitions\AccessorDefinition);
 	}
 
 
+	/** @deprecated Use add() with Nette\DI\factory() */
 	public function addFactoryDefinition(?string $name): Definitions\FactoryDefinition
 	{
 		return $this->registerDefinition($name, new Definitions\FactoryDefinition);
@@ -169,6 +172,7 @@ class ContainerBuilder implements Definitions
 	}
 
 
+	/** @deprecated Use add() with Nette\DI\imported() */
 	public function addImportedDefinition(?string $name): Definitions\ImportedDefinition
 	{
 		return $this->registerDefinition($name, new Definitions\ImportedDefinition);
@@ -197,8 +201,15 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Removes the specified service definition.
+	 * @deprecated Use remove()
 	 */
 	public function removeDefinition(string $name): void
+	{
+		$this->removeByName($name);
+	}
+
+
+	private function removeByName(string $name): void
 	{
 		$this->needsResolve = true;
 		$name = $this->aliases[$name] ?? $name;
@@ -208,8 +219,15 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Gets the service definition.
+	 * @deprecated Use get()
 	 */
 	public function getDefinition(string $name): Definition
+	{
+		return $this->lookupByName($name);
+	}
+
+
+	private function lookupByName(string $name): Definition
 	{
 		$service = $this->aliases[$name] ?? $name;
 		if (!isset($this->definitions[$service])) {
@@ -222,6 +240,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Gets all service definitions.
+	 * @deprecated Use getAll()
 	 * @return array<string, Definition>
 	 */
 	public function getDefinitions(): array
@@ -232,8 +251,15 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Does the service definition or alias exist?
+	 * @deprecated Use has()
 	 */
 	public function hasDefinition(string $name): bool
+	{
+		return $this->hasName($name);
+	}
+
+
+	private function hasName(string $name): bool
 	{
 		$name = $this->aliases[$name] ?? $name;
 		return isset($this->definitions[$name]);
@@ -289,6 +315,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Excludes classes from autowiring.
+	 * @deprecated Use excludeFromAutowiring()
 	 * @param  class-string[]  $types
 	 */
 	public function addExcludedClasses(array $types): static
@@ -299,6 +326,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Resolves autowired service name by type.
+	 * @deprecated Use has(type:) or get(type:)->getName()
 	 * @param  class-string  $type
 	 * @return ($throw is true ? string : ?string)
 	 * @throws MissingServiceException
@@ -313,12 +341,23 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Gets autowired service definition of the specified type.
+	 * @deprecated Use get(type:)
 	 * @param  class-string  $type
 	 * @throws MissingServiceException
 	 */
 	public function getDefinitionByType(string $type): Definition
 	{
-		return $this->getDefinition($this->getByType($type, throw: true));
+		return $this->lookupByType($type);
+	}
+
+
+	/**
+	 * @param  class-string  $type
+	 */
+	private function lookupByType(string $type): Definition
+	{
+		$this->needResolved();
+		return $this->lookupByName($this->autowiring->getByType($type, throw: true));
 	}
 
 
@@ -338,11 +377,22 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Gets the service names and definitions of the specified type.
+	 * @deprecated Use find(type:)
 	 * @param  class-string  $type
 	 * @return array<string, Definition>
 	 * @throws NotAllowedDuringResolvingException
 	 */
 	public function findByType(string $type): array
+	{
+		return $this->findAllByType($type);
+	}
+
+
+	/**
+	 * @param  class-string  $type
+	 * @return array<string, Definition>
+	 */
+	private function findAllByType(string $type): array
 	{
 		$this->needResolved();
 		$found = [];
@@ -358,6 +408,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Gets the service names and tag values.
+	 * @deprecated Use find(tag:) and Definition::getTag()
 	 * @return array<string, mixed>  service name => tag value
 	 */
 	public function findByTag(string $tag): array
@@ -390,8 +441,8 @@ class ContainerBuilder implements Definitions
 		self::checkServiceName($name, 'get');
 		try {
 			$def = match (true) {
-				$type !== null && $name === null => $this->getDefinitionByType($type),
-				$name !== null && $type === null => $this->getDefinition($name),
+				$type !== null && $name === null => $this->lookupByType($type),
+				$name !== null && $type === null => $this->lookupByName($name),
 				default => throw new Nette\InvalidArgumentException('Pass exactly one of name or type to get().'),
 			};
 		} catch (MissingServiceException $e) {
@@ -420,7 +471,7 @@ class ContainerBuilder implements Definitions
 	public function remove(?string $name = null, ?string $type = null): void
 	{
 		$def = $this->get($name, $type, of: Definition::class);
-		$this->removeDefinition($def->getName());
+		$this->removeByName($def->getName());
 	}
 
 
@@ -447,7 +498,7 @@ class ContainerBuilder implements Definitions
 	public function find(?string $type = null, ?string $tag = null, ?string $of = null): array
 	{
 		$found = match (true) {
-			$type !== null && $tag === null => $this->findByType($type),
+			$type !== null && $tag === null => $this->findAllByType($type),
 			$tag !== null && $type === null => $this->getDefinitionsByTag($tag),
 			default => throw new Nette\InvalidArgumentException('Pass exactly one of type or tag to find().'),
 		};
@@ -464,8 +515,10 @@ class ContainerBuilder implements Definitions
 	private function getDefinitionsByTag(string $tag): array
 	{
 		$found = [];
-		foreach (array_keys($this->findByTag($tag)) as $name) {
-			$found[$name] = $this->getDefinition($name);
+		foreach ($this->definitions as $name => $def) {
+			if ($def->getTag($tag) !== null) {
+				$found[$name] = $def;
+			}
 		}
 
 		return $found;
@@ -480,8 +533,8 @@ class ContainerBuilder implements Definitions
 	{
 		self::checkServiceName($name, 'has');
 		return match (true) {
-			$name !== null && $type === null && $tag === null => $this->hasDefinition($name),
-			$type !== null && $name === null && $tag === null => (bool) $this->findByType($type),
+			$name !== null && $type === null && $tag === null => $this->hasName($name),
+			$type !== null && $name === null && $tag === null => (bool) $this->findAllByType($type),
 			$tag !== null && $name === null && $type === null => (bool) $this->getDefinitionsByTag($tag),
 			default => throw new Nette\InvalidArgumentException('Pass exactly one of name, type or tag to has().'),
 		};
@@ -505,7 +558,7 @@ class ContainerBuilder implements Definitions
 
 
 	/**
-	 * Gets all service definitions (alias of getDefinitions()).
+	 * Gets all service definitions.
 	 * @return array<string, Definition>
 	 */
 	public function getAll(): array
@@ -663,6 +716,7 @@ class ContainerBuilder implements Definitions
 
 	/**
 	 * Creates a PHP literal value, optionally formatted with arguments.
+	 * @deprecated Use Nette\DI\code()
 	 * @param  array<mixed>|null  $args
 	 */
 	public static function literal(string $code, ?array $args = null): Nette\PhpGenerator\Literal

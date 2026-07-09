@@ -32,14 +32,22 @@ overrides:
 
 	- # the package keeps its own deprecated API working, so it uses it
 		paths:
+			- src/DI/Compiler/Autowiring.php
+			- src/DI/Compiler/PhpGenerator.php
+			- src/DI/Compiler/Resolver.php
 			- src/DI/CompilerExtension.php
 			- src/DI/Config/Adapters/NeonAdapter.php
 			- src/DI/Config/Adapters/NeonEvaluator.php
 			- src/DI/Container.php
 			- src/DI/Definitions/FactoryDefinition.php
+			- src/DI/Definitions/LocatorDefinition.php
+			- src/DI/Definitions/Statement.php
+			- src/DI/Expressions/Reference.php
+			- src/DI/Expressions/ServiceCollection.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
-			- src/DI/Compiler/PhpGenerator.php
+			- src/DI/Extensions/InjectExtension.php
+			- src/DI/Extensions/ServicesExtension.php
 		upgrading: {declarations: {deprecatedClass: keep, deprecatedMember: keep}}
 
 	- # renaming the parameters would break calls naming def:

@@ -107,6 +107,7 @@ abstract class Definition
 	}
 
 
+	/** @deprecated Use tag() */
 	final public function addTag(string $tag, mixed $attr = true): static
 	{
 		return $this->tag($tag, $attr);
@@ -161,6 +162,7 @@ abstract class Definition
 
 	/**
 	 * Sets the autowiring mode.
+	 * @deprecated Use autowired()
 	 * @param  bool|class-string|class-string[]  $state
 	 */
 	final public function setAutowired(bool|string|array $state = true): static
