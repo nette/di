@@ -83,6 +83,6 @@ test('dump round-trips expression nodes', function () {
 	Assert::exception(
 		fn() => $adapter->dump(['x' => new Statement([new ServiceDefinition, 'm'])]),
 		Nette\InvalidStateException::class,
-		'A statement calling a method of an unnamed definition cannot be dumped.',
+		'The definition has no name yet; it is assigned when the definition is registered via add().',
 	);
 });

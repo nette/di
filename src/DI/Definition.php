@@ -46,9 +46,17 @@ abstract class Definition
 	}
 
 
-	final public function getName(): ?string
+	/**
+	 * Returns the service name, which is assigned when the definition is registered in the builder.
+	 * By default it throws for an unregistered definition (e.g. a factory result definition); pass
+	 * throw: false to get null instead.
+	 * @return ($throw is true ? string : ?string)
+	 */
+	final public function getName(bool $throw = true): ?string
 	{
-		return $this->name;
+		return $this->name ?? ($throw
+			? throw new Nette\InvalidStateException('The definition has no name yet; it is assigned when the definition is registered via add().')
+			: null);
 	}
 
 
