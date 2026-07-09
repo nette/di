@@ -147,32 +147,33 @@ final class ServiceDefinition extends Definition
 
 
 	/**
+	 * Adds a setup step.
 	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $entity
 	 * @param  array<mixed>  $args
 	 */
 	public function addSetup(string|array|Definition|Reference|Statement $entity, array $args = []): static
 	{
-		$entity = $entity instanceof Statement
-			? $entity
-			: new Statement($entity, $args);
-		$this->setup[] = $step = $this->prependSelf($entity);
-		$this->notify('setup', $step);
-		return $this;
+		return $this->setup($entity instanceof Statement ? $entity : new Statement($entity, $args));
 	}
 
 
 	/**
-	 * Adds a setup step (fluent DSL alias of addSetup()). The target is a method call on the
-	 * service ('method'), a property assignment/append ('$prop' / '$prop[]'), a static call
-	 * ([Class::class, 'method'] or 'Class::method'), or a statement expression carrying its own
-	 * arguments (e.g. service('x')->method('m')). Arguments are passed as an array (use args()
-	 * for the name: syntax), consistent with create()/call().
+	 * Adds a setup step. The target is a method call on the service ('method'), a property
+	 * assignment/append ('$prop' / '$prop[]'), a static call ([Class::class, 'method'] or
+	 * 'Class::method'), or a statement expression carrying its own arguments (e.g.
+	 * service('x')->method('m')). Arguments are passed as an array (use args() for the name:
+	 * syntax), consistent with create()/call().
 	 * @param  string|array{string, string}|Statement  $target
 	 * @param  array<mixed>  $args
 	 */
 	public function setup(string|array|Statement $target, array $args = []): static
 	{
-		return $this->addSetup($target, $args);
+		$entity = $target instanceof Statement
+			? $target
+			: new Statement($target, $args);
+		$this->setup[] = $step = $this->prependSelf($entity);
+		$this->notify('setup', $step);
+		return $this;
 	}
 
 

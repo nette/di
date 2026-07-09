@@ -104,7 +104,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		if (isset($config->setup)) {
 			if (!empty($config->reset['setup'])) {
-				$definition->setSetup([]);
+				$definition->clearSetup();
 			}
 
 			foreach (Helpers::filterArguments($config->setup) as $setup) {
@@ -112,12 +112,12 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 					$setup = new Statement(key($setup), array_values($setup));
 				}
 
-				$definition->addSetup($setup);
+				$definition->setup($setup);
 			}
 		}
 
 		if (isset($config->inject)) {
-			$definition->addTag(InjectExtension::TagInject, $config->inject);
+			$definition->tag(InjectExtension::TagInject, $config->inject);
 		}
 
 		if (isset($config->lazy)) {
@@ -144,7 +144,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		if (isset($config->implement)) {
 			$definition->setImplement($config->implement);
-			$definition->setAutowired();
+			$definition->autowired();
 		}
 
 		if ($config->create) {
@@ -168,7 +168,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		if (isset($config->setup)) {
 			if (!empty($config->reset['setup'])) {
-				$resultDef->setSetup([]);
+				$resultDef->clearSetup();
 			}
 
 			foreach (Helpers::filterArguments($config->setup) as $setup) {
@@ -176,12 +176,12 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 					$setup = new Statement(key($setup), array_values($setup));
 				}
 
-				$resultDef->addSetup($setup);
+				$resultDef->setup($setup);
 			}
 		}
 
 		if (isset($config->inject)) {
-			$definition->addTag(InjectExtension::TagInject, $config->inject);
+			$definition->tag(InjectExtension::TagInject, $config->inject);
 		}
 	}
 
@@ -196,9 +196,8 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			foreach ($config->references as $name => $reference) {
 				if ($reference instanceof Statement) {
 					$config->references[$name] = '@' . $this->getContainerBuilder()
-						->addDefinition(null)
-						->setFactory($reference)
-						->setAutowired(false)
+						->add(null, $reference)
+						->autowired(false)
 						->getName();
 				}
 			}
@@ -223,7 +222,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	private function updateDefinition(Definition $definition, \stdClass $config): void
 	{
 		if (isset($config->autowired)) {
-			$definition->setAutowired($config->autowired);
+			$definition->autowired($config->autowired);
 		}
 
 		if (isset($config->tags)) {
@@ -233,9 +232,9 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 			foreach ($config->tags as $tag => $attrs) {
 				if (is_int($tag) && is_string($attrs)) {
-					$definition->addTag($attrs);
+					$definition->tag($attrs);
 				} else {
-					$definition->addTag($tag, $attrs);
+					$definition->tag($tag, $attrs);
 				}
 			}
 		}
@@ -263,6 +262,6 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 
 		return $name && $builder->hasDefinition($name)
 			? $builder->getDefinition($name)
-			: $builder->addDefinition($name, new $config->defType);
+			: $builder->add($name, new $config->defType);
 	}
 }

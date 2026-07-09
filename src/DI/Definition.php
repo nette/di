@@ -101,9 +101,7 @@ abstract class Definition
 
 	final public function addTag(string $tag, mixed $attr = true): static
 	{
-		$this->tags[$tag] = $attr;
-		$this->notify('tag', [$tag, $attr]);
-		return $this;
+		return $this->tag($tag, $attr);
 	}
 
 
@@ -114,11 +112,13 @@ abstract class Definition
 
 
 	/**
-	 * Adds a tag (fluent alias of addTag()).
+	 * Adds a tag with an optional value.
 	 */
 	final public function tag(string $tag, mixed $value = true): static
 	{
-		return $this->addTag($tag, $value);
+		$this->tags[$tag] = $value;
+		$this->notify('tag', [$tag, $value]);
+		return $this;
 	}
 
 
@@ -134,20 +134,10 @@ abstract class Definition
 
 
 	/**
-	 * Sets the autowiring mode (fluent alias of setAutowired()).
-	 * @param  bool|class-string|class-string[]  $state
-	 */
-	final public function autowired(bool|string|array $state = true): static
-	{
-		return $this->setAutowired($state);
-	}
-
-
-	/**
 	 * Sets the autowiring mode. Pass false to disable, true to enable for all types, or one or more class names to restrict autowiring to specific types.
 	 * @param  bool|class-string|class-string[]  $state
 	 */
-	final public function setAutowired(bool|string|array $state = true): static
+	final public function autowired(bool|string|array $state = true): static
 	{
 		$changed = $this->autowired !== $state;
 		$this->autowired = is_string($state) || is_array($state)
@@ -161,6 +151,16 @@ abstract class Definition
 	}
 
 
+	/**
+	 * Sets the autowiring mode.
+	 * @param  bool|class-string|class-string[]  $state
+	 */
+	final public function setAutowired(bool|string|array $state = true): static
+	{
+		return $this->autowired($state);
+	}
+
+
 	/** @return bool|class-string[] */
 	final public function getAutowired(): bool|array
 	{
@@ -168,9 +168,9 @@ abstract class Definition
 	}
 
 
-	public function setExported(bool $state = true): static
+	public function exported(bool $state = true): static
 	{
-		return $this->addTag('nette.exported', $state);
+		return $this->tag('nette.exported', $state);
 	}
 
 

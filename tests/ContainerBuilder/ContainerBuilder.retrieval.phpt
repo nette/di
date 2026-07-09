@@ -103,6 +103,29 @@ test('has() by name and type', function () {
 });
 
 
+test('has() by tag', function () {
+	$b = builder();
+	Assert::true($b->has(tag: 't'));
+	Assert::false($b->has(tag: 'missing'));
+	Assert::exception(fn() => $b->has('one', tag: 't'), Nette\InvalidArgumentException::class);
+});
+
+
+test('a backslashed positional name is a mistaken type and teaches', function () {
+	$b = builder();
+	Assert::exception(
+		fn() => $b->has('Foo\Bar'),
+		Nette\InvalidArgumentException::class,
+		'Service name never contains a backslash; did you mean has(type: Foo\Bar)?',
+	);
+	Assert::exception(
+		fn() => $b->get('Foo\Bar'),
+		Nette\InvalidArgumentException::class,
+		'Service name never contains a backslash; did you mean get(type: Foo\Bar)?',
+	);
+});
+
+
 test('all() returns every definition', function () {
 	$b = builder();
 	Assert::same(['container', 'one', 'two'], array_keys($b->getAll()));

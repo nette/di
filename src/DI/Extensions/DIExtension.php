@@ -65,7 +65,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	#[Hook(Phase::Register)]
 	public function doRegisterExcludedClasses(ContainerBuilder $builder): void
 	{
-		$builder->addExcludedClasses($this->config->excluded);
+		$builder->excludeFromAutowiring($this->config->excluded);
 	}
 
 
