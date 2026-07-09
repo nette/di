@@ -8,6 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Definition;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
@@ -212,7 +213,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function updateDefinition(Definitions\Definition $definition, \stdClass $config): void
+	private function updateDefinition(Definition $definition, \stdClass $config): void
 	{
 		if (isset($config->autowired)) {
 			$definition->setAutowired($config->autowired);
@@ -246,7 +247,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function retrieveDefinition(?string $name, \stdClass $config): Definitions\Definition
+	private function retrieveDefinition(?string $name, \stdClass $config): Definition
 	{
 		$builder = $this->getContainerBuilder();
 		if (!empty($config->reset['all'])) {

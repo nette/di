@@ -164,7 +164,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			&& $node->attributes[0]->value instanceof Node\LiteralNode
 			&& $node->attributes[0]->value->value === '...'
 		) {
-			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
+			$node->attributes[0]->value->value = Nette\DI\Compiler\Resolver::getFirstClassCallable()[0];
 		}
 	}
 

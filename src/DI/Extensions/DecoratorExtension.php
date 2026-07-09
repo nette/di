@@ -8,6 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Definition;
 use Nette\DI\Definitions;
 use Nette\Schema\Expect;
 use function is_array, sprintf;
@@ -93,13 +94,13 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 
 	/**
 	 * @param  class-string  $type
-	 * @return array<string, Definitions\Definition>
+	 * @return array<string, Definition>
 	 */
 	private function findByType(string $type): array
 	{
 		return array_filter(
 			$this->getContainerBuilder()->getDefinitions(),
-			fn(Definitions\Definition $def): bool => ($def->getType() !== null && is_a($def->getType(), $type, allow_string: true))
+			fn(Definition $def): bool => ($def->getType() !== null && is_a($def->getType(), $type, allow_string: true))
 				|| ($def instanceof Definitions\FactoryDefinition && $def->getResultType() !== null && is_a($def->getResultType(), $type, allow_string: true)),
 		);
 	}

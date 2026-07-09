@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Definition;
 use Nette\DI\Helpers;
 use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
@@ -82,7 +83,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	public function resolveType(Nette\DI\Resolver $resolver): void
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		$implement = $this->getType();
 		if (!$implement) {
@@ -113,7 +114,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	public function complete(Nette\DI\Resolver $resolver): void
+	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		$resultDef = $this->resultDefinition;
 
@@ -136,7 +137,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	private function completeParameters(Nette\DI\Resolver $resolver): void
+	private function completeParameters(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		assert($this->resultDefinition instanceof ServiceDefinition);
 		$interface = $this->getType();
@@ -197,7 +198,7 @@ final class FactoryDefinition extends Definition
 	}
 
 
-	public function generateCode(Nette\DI\PhpGenerator $generator): string
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
 	{
 		$implement = $this->getType();
 		assert($implement !== null);

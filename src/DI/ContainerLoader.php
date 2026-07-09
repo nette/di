@@ -8,6 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Compiler\DependencyChecker;
 use function is_string, sprintf, strlen;
 
 

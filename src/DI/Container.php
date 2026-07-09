@@ -8,7 +8,8 @@
 namespace Nette\DI;
 
 use Nette;
-use function array_key_exists, count, in_array, is_object, sprintf, strlen;
+use Nette\DI\Compiler\Resolver;
+use function array_key_exists, count, is_object, sprintf;
 
 
 /**

@@ -35,19 +35,19 @@ parameters:
 			path: src/DI/Extensions/ParametersExtension.php
 		- # Autowiring: by-reference cache lookups and isset() guards on auto-vivified arrays
 			identifier: identical.alwaysFalse
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		-
 			identifier: isset.offset
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		-
 			identifier: booleanAnd.alwaysFalse
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		-
 			identifier: nullCoalesce.offset
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		- # defensive guard against unexpected dependency types in the array union
 			identifier: instanceof.alwaysTrue
-			path: src/DI/DependencyChecker.php
+			path: src/DI/Compiler/DependencyChecker.php
 		- # getByType() generic template limitation
 			identifier: return.type
 			path: src/DI/Container.php
@@ -73,13 +73,13 @@ parameters:
 			count: 1
 		- # string as class-string in various places
 			identifier: argument.type
-			path: src/DI/Resolver.php
+			path: src/DI/Compiler/Resolver.php
 		- # class_parents/class_implements key type
 			identifier: offsetAccess.invalidOffset
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		- # $this->$list assignment
 			identifier: assign.propertyType
-			path: src/DI/Autowiring.php
+			path: src/DI/Compiler/Autowiring.php
 		- # string from array key used as class-string
 			identifier: argument.type
 			path: src/DI/Extensions/SearchExtension.php
@@ -106,13 +106,13 @@ parameters:
 			path: src/DI/Helpers.php
 		- # normalizeEntity: reference tracking defeats type narrowing
 			identifier: return.type
-			path: src/DI/Resolver.php
+			path: src/DI/Compiler/Resolver.php
 		- # string as class-string for ReflectionClass in canBeLazy
 			identifier: argument.type
 			path: src/DI/Definitions/ServiceDefinition.php
 		- # string as class-string for ReflectionClass in calculateHash
 			identifier: argument.type
-			path: src/DI/DependencyChecker.php
+			path: src/DI/Compiler/DependencyChecker.php
 		- # exportMeta complex return shape with optional keys
 			identifier: return.type
 			path: src/DI/ContainerBuilder.php

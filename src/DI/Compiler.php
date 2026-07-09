@@ -8,6 +8,8 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Compiler\DependencyChecker;
+use Nette\DI\Compiler\PhpGenerator;
 use Nette\Schema;
 use function count, is_array, sprintf;
 

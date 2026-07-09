@@ -5,8 +5,13 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI;
+namespace Nette\DI\Compiler;
 
+use Nette\DI\ContainerBuilder;
+use Nette\DI\Definition;
+use Nette\DI\Helpers;
+use Nette\DI\MissingServiceException;
+use Nette\DI\ServiceCreationException;
 use function count, is_array, sprintf;
 
 
@@ -74,7 +79,7 @@ class Autowiring
 	/**
 	 * Gets the service names and definitions of the specified type.
 	 * @param class-string  $type
-	 * @return array<string, Definitions\Definition>  service name => definition
+	 * @return array<string, Definition>  service name => definition
 	 */
 	public function findByType(string $type): array
 	{

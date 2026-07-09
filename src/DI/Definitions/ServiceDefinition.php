@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Definition;
 use Nette\DI\ServiceCreationException;
 use Nette\Utils\Strings;
 use function count, is_string;
@@ -142,7 +143,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function resolveType(Nette\DI\Resolver $resolver): void
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		if (!$this->getEntity()) {
 			$type = $this->getType();
@@ -170,7 +171,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function complete(Nette\DI\Resolver $resolver): void
+	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 		$entity = $this->creator->getEntity();
 		if ($entity instanceof Reference && !$this->creator->arguments && !$this->setup) {
@@ -194,7 +195,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	public function generateCode(Nette\DI\PhpGenerator $generator): string
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
 	{
 		$lines = [];
 		foreach ([$this->creator, ...$this->setup] as $stmt) {

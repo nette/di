@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Definition;
 
 
 /**
@@ -21,17 +22,17 @@ final class ImportedDefinition extends Definition
 	}
 
 
-	public function resolveType(Nette\DI\Resolver $resolver): void
+	public function resolveType(Nette\DI\Compiler\Resolver $resolver): void
 	{
 	}
 
 
-	public function complete(Nette\DI\Resolver $resolver): void
+	public function complete(Nette\DI\Compiler\Resolver $resolver): void
 	{
 	}
 
 
-	public function generateCode(Nette\DI\PhpGenerator $generator): string
+	public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string
 	{
 		return $generator->formatPhp(
 			'throw new Nette\DI\ServiceCreationException(?);',

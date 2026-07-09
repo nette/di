@@ -40,7 +40,7 @@ function createContainer($source, $config = null, array $params = []): ?Nette\DI
 	$class = 'Container' . @++$GLOBALS['counter'];
 	if ($source instanceof Nette\DI\ContainerBuilder) {
 		$source->complete();
-		$code = (new Nette\DI\PhpGenerator($source))->generate($class);
+		$code = (new Nette\DI\Compiler\PhpGenerator($source))->generate($class);
 
 	} elseif ($source instanceof Nette\DI\Compiler) {
 		if (is_string($config)) {

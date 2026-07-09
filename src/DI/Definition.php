@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI\Definitions;
+namespace Nette\DI;
 
 use Nette;
 use function is_array, is_string, sprintf;
@@ -13,7 +13,7 @@ use function is_array, is_string, sprintf;
 
 /**
  * Abstract base for all service definition types used by ContainerBuilder.
- * @method string generateCode(Nette\DI\PhpGenerator $generator)
+ * @method string generateCode(Nette\DI\Compiler\PhpGenerator $generator)
  */
 abstract class Definition
 {
@@ -155,13 +155,13 @@ abstract class Definition
 	/********************* life cycle ****************d*g**/
 
 
-	abstract public function resolveType(Nette\DI\Resolver $resolver): void;
+	abstract public function resolveType(Nette\DI\Compiler\Resolver $resolver): void;
 
 
-	abstract public function complete(Nette\DI\Resolver $resolver): void;
+	abstract public function complete(Nette\DI\Compiler\Resolver $resolver): void;
 
 
-	//abstract public function generateCode(Nette\DI\PhpGenerator $generator): string;
+	//abstract public function generateCode(Nette\DI\Compiler\PhpGenerator $generator): string;
 
 
 	/** @param (\Closure(): void)|null $notifier */
@@ -175,7 +175,7 @@ abstract class Definition
 
 
 	/** @deprecated */
-	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\PhpGenerator $generator): void
+	public function generateMethod(Nette\PhpGenerator\Method $method, Nette\DI\Compiler\PhpGenerator $generator): void
 	{
 		$method->setBody($this->generateCode($generator));
 	}

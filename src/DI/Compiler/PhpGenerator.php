@@ -5,11 +5,16 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI;
+namespace Nette\DI\Compiler;
 
 use Nette;
+use Nette\DI\CompilerExtension;
+use Nette\DI\Container;
+use Nette\DI\ContainerBuilder;
+use Nette\DI\Definition;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
+use Nette\DI\ServiceCreationException;
 use Nette\PhpGenerator as Php;
 use function is_array, is_object, is_string, sprintf;
 
@@ -85,7 +90,7 @@ class PhpGenerator
 	}
 
 
-	public function generateMethod(Definitions\Definition $def): Php\Method
+	public function generateMethod(Definition $def): Php\Method
 	{
 		$name = $def->getName();
 		assert($name !== null);

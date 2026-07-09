@@ -8,7 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\DynamicParameter;
+use Nette\DI\Compiler\DynamicParameter;
 use Nette\DI\Helpers;
 
 
@@ -70,8 +70,8 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 			return;
 		}
 
-		$resolver = new Nette\DI\Resolver($builder);
-		$generator = new Nette\DI\PhpGenerator($builder);
+		$resolver = new Nette\DI\Compiler\Resolver($builder);
+		$generator = new Nette\DI\Compiler\PhpGenerator($builder);
 		$method = $manipulator->inheritMethod('getDynamicParameter');
 		$method->addBody('return match($key) {');
 		foreach ($dynamicParams as $key => $foo) {

@@ -8,6 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Compiler\DynamicParameter;
 use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Utils\Reflection;
