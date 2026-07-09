@@ -5,9 +5,13 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI;
+namespace Nette\DI\Compiler;
 
 use Nette;
+use Nette\DI\{
+	Container, ContainerBuilder, Definition, Definitions, Helpers,
+	MissingServiceException, NotAllowedDuringResolvingException, ServiceCreationException,
+};
 use Nette\DI\Definitions\{Reference, Statement};
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\{Arrays, Callback, Reflection, Validators};

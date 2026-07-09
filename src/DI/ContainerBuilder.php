@@ -8,6 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
+use Nette\DI\Compiler\{Autowiring, PhpGenerator, Resolver};
 use function is_int, sprintf;
 
 

@@ -38,7 +38,7 @@ overrides:
 			- src/DI/Definitions/FactoryDefinition.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
-			- src/DI/PhpGenerator.php
+			- src/DI/Compiler/PhpGenerator.php
 		upgrading: {api: keep, declarations: {deprecatedClass: keep, deprecatedMember: keep}}
 
 	- # the tests exercise the deprecated API, or read what only it exposes

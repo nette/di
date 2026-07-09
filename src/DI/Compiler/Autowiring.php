@@ -5,8 +5,9 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI;
+namespace Nette\DI\Compiler;
 
+use Nette\DI\{ContainerBuilder, Definition, Helpers, MissingServiceException, ServiceCreationException};
 use function count, is_array, sprintf;
 
 
