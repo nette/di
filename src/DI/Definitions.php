@@ -58,10 +58,10 @@ interface Definitions
 	function find(?string $type = null, ?string $tag = null, ?string $of = null): array;
 
 	/**
-	 * Does a service of the given name or type exist? Pass exactly one.
+	 * Does a service of the given name, type or tag exist? Pass exactly one.
 	 * @param  class-string|null  $type
 	 */
-	function has(?string $name = null, ?string $type = null): bool;
+	function has(?string $name = null, ?string $type = null, ?string $tag = null): bool;
 
 	/**
 	 * Gets all service definitions.
