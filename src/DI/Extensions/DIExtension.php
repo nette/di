@@ -8,7 +8,10 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Attributes\Hook;
+use Nette\DI\{ContainerBuilder, Phase};
 use Nette\DI\Definitions\ServiceDefinition;
+use Nette\PhpGenerator\ClassType;
 use Tracy;
 use function is_array;
 use const PHP_VERSION_ID;
@@ -56,17 +59,17 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function loadConfiguration(): void
+	#[Hook(Phase::Register)]
+	public function doRegisterExcludedClasses(ContainerBuilder $builder): void
 	{
-		$builder = $this->getContainerBuilder();
 		$builder->addExcludedClasses($this->config->excluded);
 	}
 
 
-	public function beforeCompile(): void
+	#[Hook(Phase::Modify)]
+	public function doEnableLazyProxies(ContainerBuilder $builder): void
 	{
 		if ($this->config->lazy && PHP_VERSION_ID >= 80400) {
-			$builder = $this->getContainerBuilder();
 			foreach ($builder->getDefinitions() as $def) {
 				if ($def instanceof ServiceDefinition) {
 					$def->lazy ??= true;
@@ -76,7 +79,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function afterCompile(Nette\PhpGenerator\ClassType $class): void
+	#[Hook(Phase::Compile, after: ParametersExtension::class)]
+	public function doConfigureContainerClass(ClassType $class): void
 	{
 		if ($this->config->parentClass) {
 			$class->setExtends($this->config->parentClass);
@@ -95,7 +99,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function restrictParameters(Nette\PhpGenerator\ClassType $class): void
+	private function restrictParameters(ClassType $class): void
 	{
 		if (!$this->config->export->parameters) {
 			$class->removeMethod('getParameters');
@@ -104,7 +108,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function restrictTags(Nette\PhpGenerator\ClassType $class): void
+	private function restrictTags(ClassType $class): void
 	{
 		$option = $this->config->export->tags;
 		if ($option === true) {
@@ -116,7 +120,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	private function restrictTypes(Nette\PhpGenerator\ClassType $class): void
+	private function restrictTypes(ClassType $class): void
 	{
 		$option = $this->config->export->types;
 		if ($option === true) {
