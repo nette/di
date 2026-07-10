@@ -8,8 +8,11 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
+use Nette\DI\Attributes\Hook;
+use Nette\DI\ContainerBuilder;
 use Nette\DI\Definition;
 use Nette\DI\Definitions;
+use Nette\DI\Phase;
 use Nette\Schema\Expect;
 use function is_array, sprintf;
 
@@ -35,9 +38,9 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 	}
 
 
-	public function beforeCompile(): void
+	#[Hook(Phase::Modify, before: InjectExtension::class)]
+	public function doApplyDecorations(ContainerBuilder $builder): void
 	{
-		$this->getContainerBuilder()->resolve();
 		foreach ($this->config as $type => $info) {
 			if (!class_exists($type) && !interface_exists($type)) {
 				throw new Nette\DI\InvalidConfigurationException(sprintf("Decorated class '%s' not found.", $type));
