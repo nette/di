@@ -84,4 +84,4 @@ testException('DynamicValue under a dotted key', function () {
 	createContainer($compiler, [
 		'parameters' => ['a.b' => ['c' => new DynamicValue]],
 	]);
-}, Nette\InvalidStateException::class, "Dynamic value cannot be used under a key containing a dot ('a.b.c').");
+}, Nette\InvalidStateException::class, "Dynamic parameter cannot be used under a key containing a dot ('a.b.c').");

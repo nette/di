@@ -176,8 +176,9 @@ class Compiler
 
 
 	/**
-	 * Sets the names of dynamic parameters.
-	 * @param  string[]  $names
+	 * Sets the names of dynamic parameters. A name given as a list of keys addresses
+	 * a value nested inside a parameter (its runtime name is the dot-joined path).
+	 * @param  array<string|list<string>>  $names
 	 */
 	public function setDynamicParameterNames(array $names): static
 	{

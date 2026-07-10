@@ -140,9 +140,9 @@ testException('Reference as parameter', function () {
 }, Nette\InvalidStateException::class, 'Circular reference detected for: one, %dynamic%.');
 
 
-test('Nested dynamic parameter via dotted name', function () {
+test('Nested dynamic parameter via key path', function () {
 	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['db.password']);
+	$compiler->setDynamicParameterNames([['db', 'password']]);
 	$container = createContainer($compiler, '
 	parameters:
 		db:
@@ -159,7 +159,7 @@ test('Nested dynamic parameter via dotted name', function () {
 
 test('Nested dynamic parameter falls back to config value', function () {
 	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['db.password']);
+	$compiler->setDynamicParameterNames([['db', 'password']]);
 	$container = createContainer($compiler, '
 	parameters:
 		db:
@@ -177,7 +177,7 @@ test('Nested dynamic parameter falls back to config value', function () {
 
 test('Nested dynamic parameter without config value', function () {
 	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['db.password']);
+	$compiler->setDynamicParameterNames([['db', 'password']]);
 	$container = createContainer($compiler, '
 	parameters:
 		db:
@@ -189,7 +189,7 @@ test('Nested dynamic parameter without config value', function () {
 
 test('Nested dynamic parameter within string expansion', function () {
 	$compiler = new DI\Compiler;
-	$compiler->setDynamicParameterNames(['db.password']);
+	$compiler->setDynamicParameterNames([['db', 'password']]);
 	$container = createContainer($compiler, '
 	parameters:
 		db:
@@ -200,6 +200,18 @@ test('Nested dynamic parameter within string expansion', function () {
 		one: Service(%dsn%)
 	', ['db.password' => 'secret']);
 	Assert::same('pw=secret', $container->getService('one')->arg);
+});
+
+
+test('Dotted string name keeps its legacy flat meaning', function () {
+	$compiler = new DI\Compiler;
+	$compiler->setDynamicParameterNames(['db.password']);
+	$container = createContainer($compiler, '
+	parameters:
+		db.password: default
+	', ['db.password' => 'runtime']);
+	Assert::same('runtime', $container->getParameter('db.password'));
+	Assert::false(array_key_exists('db', $container->getParameters())); // no nested structure is synthesized
 });
 
 

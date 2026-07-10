@@ -15,7 +15,7 @@ use Nette\DI\DynamicValue;
 use Nette\DI\Helpers;
 use Nette\DI\Phase;
 use Nette\Utils\Arrays;
-use function in_array, is_array;
+use function is_array, strval;
 
 
 /**
@@ -23,7 +23,7 @@ use function in_array, is_array;
  */
 final class ParametersExtension extends Nette\DI\CompilerExtension
 {
-	/** @var string[] names of dynamic parameters set by Compiler */
+	/** @var array<string|list<string>> names of dynamic parameters set by Compiler; a list addresses a nested value by its key path */
 	public array $dynamicParams = [];
 
 	/** @var list<array{DynamicParameter, string, list<int|string>}> */
@@ -48,15 +48,35 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	{
 		$params = $this->config;
 		$this->dynamicParams = array_merge($this->dynamicParams, self::findDynamicValues($params));
-		foreach ($this->dynamicParams as $key) {
-			// a dotted name marks a value nested inside a parameter as dynamic
-			$ref = &Arrays::getRef($params, explode('.', $key));
-			$ref = new DynamicParameter('$this->getParameter(' . var_export($key, return: true) . ')');
+		foreach ($this->dynamicParamPaths() as $name => $path) {
+			$ref = &Arrays::getRef($params, $path);
+			$ref = new DynamicParameter('$this->getParameter(' . var_export($name, return: true) . ')');
 		}
 
 		unset($ref);
 		$builder->parameters = Helpers::expand($params, $params, recursive: true);
 		$this->compilerConfig = Helpers::expand($this->compilerConfig, $builder->parameters);
+	}
+
+
+	/**
+	 * Maps runtime names of dynamic parameters to their key paths. A string entry stands for
+	 * itself (a plain top-level name, dots have no special meaning), a list entry addresses
+	 * a nested value and its runtime name is the dot-joined path.
+	 * @return array<string, list<string>>
+	 */
+	private function dynamicParamPaths(): array
+	{
+		$paths = [];
+		foreach ($this->dynamicParams as $key) {
+			$path = is_array($key) ? array_map(strval(...), $key) : [$key];
+			if (is_array($key) && array_filter($path, fn(string $k): bool => str_contains($k, '.'))) {
+				throw new Nette\InvalidStateException("Dynamic parameter cannot be used under a key containing a dot ('" . implode('.', $path) . "').");
+			}
+			$paths[implode('.', $path)] = $path;
+		}
+
+		return $paths;
 	}
 
 
@@ -86,10 +106,11 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 		$method = $manipulator->inheritMethod('getDynamicParameter');
 		$method->addBody('return match($key) {');
+		$paths = $this->dynamicParamPaths();
 		foreach ($this->collectedDynamicParams as $key => $foo) {
-			if (in_array((string) $key, $this->dynamicParams, strict: true)) {
-				// an explicitly named parameter falls back to its (possibly nested) config default
-				$default = Arrays::get($this->config, explode('.', (string) $key), null);
+			if ($path = $paths[$key] ?? null) {
+				// an explicitly named parameter falls back to its config default
+				$default = Arrays::get($this->config, $path, null);
 				$value = Helpers::expand($default instanceof DynamicValue ? $default->value : $default, $builder->parameters);
 			} else {
 				// a key promoted by collectDynamicParams() regenerates its already-expanded subtree
@@ -129,7 +150,7 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	/** @return array<string, bool> */
 	private function collectDynamicParams(ContainerBuilder $builder): array
 	{
-		$dynamicParams = array_fill_keys($this->dynamicParams, true);
+		$dynamicParams = array_fill_keys(array_keys($this->dynamicParamPaths()), true);
 		foreach ($builder->parameters as $key => $value) {
 			$value = [$value];
 			array_walk_recursive($value, function ($val) use (&$dynamicParams, $key): void {
@@ -145,26 +166,23 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * Finds DynamicValue markers anywhere in the tree and returns their dotted names.
+	 * Finds DynamicValue markers anywhere in the tree and returns their key paths.
 	 * @param  array<string|int, mixed>  $params
 	 * @param  list<string>  $path
-	 * @return list<string>
+	 * @return list<list<string>>
 	 */
 	private static function findDynamicValues(array $params, array $path = []): array
 	{
-		$names = [];
+		$found = [];
 		foreach ($params as $key => $value) {
 			$keyPath = [...$path, (string) $key];
 			if ($value instanceof DynamicValue) {
-				if (array_filter($keyPath, fn(string $k): bool => str_contains($k, '.'))) {
-					throw new Nette\InvalidStateException("Dynamic value cannot be used under a key containing a dot ('" . implode('.', $keyPath) . "').");
-				}
-				$names[] = implode('.', $keyPath);
+				$found[] = $keyPath;
 			} elseif (is_array($value)) {
-				$names = array_merge($names, self::findDynamicValues($value, $keyPath));
+				$found = array_merge($found, self::findDynamicValues($value, $keyPath));
 			}
 		}
 
-		return $names;
+		return $found;
 	}
 }
