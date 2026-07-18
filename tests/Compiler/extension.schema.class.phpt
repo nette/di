@@ -14,8 +14,7 @@ class FooExtension extends Nette\DI\CompilerExtension
 	public function __construct()
 	{
 		$this->config = new class {
-			/** @var ?string */
-			public $key;
+			public ?string $key = null;
 		};
 	}
 }
