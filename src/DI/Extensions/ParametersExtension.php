@@ -40,6 +40,13 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 	}
 
 
+	public function getConfigSchema(): Nette\Schema\Schema
+	{
+		// parameters are a free-form tree merged deeply across layers
+		return Nette\Schema\Expect::array()->mergeWith(Nette\DI\Config\Helpers::merge(...));
+	}
+
+
 	#[Hook(Phase::Setup, before: '*')]
 	public function doExpandParameters(ContainerBuilder $builder): void
 	{
