@@ -218,3 +218,23 @@ test('Invalid statement as parameter', function () {
 		'Call to undefined method Service::unknown()',
 	);
 });
+
+
+test('parameters are merged deeply across layers', function () {
+	$compiler = new DI\Compiler;
+	$compiler->addConfig(['parameters' => [
+		'db' => ['host' => 'localhost', 'options' => ['a' => 1, 'b' => 1]],
+		'list' => [1],
+	]]);
+	$container = createContainer($compiler, '
+	parameters:
+		db:
+			options: [b: 2, c: 3]
+		list: [2]
+	');
+
+	Assert::same([
+		'db' => ['host' => 'localhost', 'options' => ['a' => 1, 'b' => 2, 'c' => 3]],
+		'list' => [1, 2],
+	], $container->getParameters());
+});
