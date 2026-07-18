@@ -29,6 +29,9 @@ final class Helpers
 		if (is_array($left) && isset($left[self::PREVENT_MERGING])) {
 			unset($left[self::PREVENT_MERGING]);
 			return $left;
+
+		} elseif ($left instanceof Replacement) {
+			return $left->value;
 		}
 
 		if (is_array($left) && is_array($right)) {

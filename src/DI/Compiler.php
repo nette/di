@@ -10,7 +10,7 @@ namespace Nette\DI;
 use Nette;
 use Nette\DI\Compiler\{DependencyChecker, PhpGenerator};
 use Nette\Schema;
-use function count, is_array, sprintf;
+use function count, in_array, is_array, sprintf;
 
 
 /**
@@ -450,8 +450,7 @@ class Compiler
 
 
 	/**
-	 * Merges and validates configurations against scheme. Service definitions resolve their replacements
-	 * themselves, as a definition that is not an array gets the marker only once it is normalized.
+	 * Merges and validates configurations against scheme.
 	 * @param  array<mixed[]>  $configs
 	 * @return array<string, mixed>|object
 	 */
@@ -462,17 +461,14 @@ class Compiler
 		bool $services = false,
 	): array|object
 	{
-		if (!$services) {
-			$configs = array_map(Config\Replacement::resolve(...), $configs);
-		}
-
+		$configs = self::resolveMergingMarkers(array_values($configs), $services);
 		$processor = new Schema\Processor;
 		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {
 			$context->path = $name ? [$name] : [];
 			$context->dynamics = &$this->extensions[self::Parameters]->dynamicValidators;
 		};
 		try {
-			$res = $processor->processMultiple($schema, array_values($configs));
+			$res = $processor->processMultiple($schema, $configs);
 		} catch (Schema\ValidationException $e) {
 			throw new Nette\DI\InvalidConfigurationException($e->getMessage());
 		}
@@ -482,6 +478,105 @@ class Compiler
 		}
 
 		return $res;
+	}
+
+
+	/**
+	 * Resolves '!' merging markers: a marked key discards its value from earlier configuration layers.
+	 * Inside service definitions the marker also translates to the 'reset' option.
+	 * @param  list<mixed>  $configs
+	 * @return list<mixed>
+	 */
+	private static function resolveMergingMarkers(array $configs, bool $services): array
+	{
+		$resets = []; // resets of services whose definition is not an array, so it cannot carry them
+		foreach ($configs as $i => $config) {
+			/** @var list<list<int|string>> $paths */
+			$paths = [];
+			if ($config instanceof Config\Replacement) {
+				$config = $config->value;
+				$paths[] = [];
+			} elseif (is_array($config) && isset($config[Config\Helpers::PREVENT_MERGING])) {
+				unset($config[Config\Helpers::PREVENT_MERGING]);
+				$paths[] = [];
+			}
+
+			if (is_array($config)) { // empty section is null
+				$config = self::stripMergingMarkers($config, [], $paths);
+			}
+
+			if ($services) {
+				foreach ($paths as $path) {
+					if (count($path) === 1) {
+						if (is_array($config[$path[0]])) {
+							$config[$path[0]]['reset']['all'] = true;
+						} else {
+							$resets[$path[0]]['reset']['all'] = true;
+						}
+					} elseif (count($path) === 2 && in_array($path[1], ['arguments', 'setup', 'tags'], true)) {
+						$config[$path[0]]['reset'][$path[1]] = true;
+					}
+				}
+			}
+
+			$configs[$i] = $config;
+			foreach ($paths as $path) {
+				if (array_filter($path, is_int(...))) {
+					continue; // items under a numeric key are appended, an earlier layer holds a different item there
+				}
+
+				for ($j = 0; $j < $i; $j++) {
+					if ($path === []) {
+						$configs[$j] = [];
+					} elseif (is_array($configs[$j])) { // a section that is not an array has no path to drop
+						self::unsetPath($configs[$j], $path);
+					}
+				}
+			}
+		}
+
+		return $resets ? [$resets, ...$configs] : array_values($configs);
+	}
+
+
+	/**
+	 * @param  array<mixed>  $config
+	 * @param  list<int|string>  $path
+	 * @param  list<list<int|string>>  $paths
+	 * @return array<mixed>
+	 */
+	private static function stripMergingMarkers(array $config, array $path, array &$paths): array
+	{
+		foreach ($config as $key => $val) {
+			if ($val instanceof Config\Replacement) {
+				$val = $val->value;
+				$paths[] = [...$path, $key];
+			} elseif (is_array($val) && isset($val[Config\Helpers::PREVENT_MERGING])) {
+				unset($val[Config\Helpers::PREVENT_MERGING]);
+				$paths[] = [...$path, $key];
+			}
+
+			$config[$key] = is_array($val)
+				? self::stripMergingMarkers($val, [...$path, $key], $paths)
+				: $val;
+		}
+
+		return $config;
+	}
+
+
+	/**
+	 * @param  array<mixed>  $config
+	 * @param  non-empty-list<int|string>  $path
+	 */
+	private static function unsetPath(array &$config, array $path): void
+	{
+		$key = array_shift($path);
+		if (!$path) {
+			unset($config[$key]);
+		} elseif (isset($config[$key]) && is_array($config[$key])) {
+			self::unsetPath($config[$key], $path);
+		}
 	}
 
 

@@ -32,10 +32,10 @@ Assert::same(['item' => []], merge('item!:', 'item: 123'));
 
 Assert::same(['item' => []], merge('item!: []', 'item: []'));
 
-Assert::equal(['item' => new Config\Replacement(231)], merge('item!: 231', 'item:'));
+Assert::same(['item' => 231], merge('item!: 231', 'item:'));
 
-Assert::equal(['item' => new Config\Replacement(231)], merge('item!: 231', 'item: [1]'));
+Assert::same(['item' => 231], merge('item!: 231', 'item: [1]'));
 
-Assert::equal(['item' => new Config\Replacement('%foo%')], merge('item!: %foo%', 'item: [1]'));
+Assert::same(['item' => '%foo%'], merge('item!: %foo%', 'item: [1]'));
 
 Assert::same(['item' => [1]], merge('item: [1]', 'item!: 231'));

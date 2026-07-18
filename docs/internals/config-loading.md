@@ -48,16 +48,28 @@ of sources with the main file **appended last**, stored as `$configs[section][] 
 $data` — **the cross-source merge per section happens later**, in phase A via Schema
 (`processSchema` → `Schema\Processor::processMultiple`, where the **last** dataset
 wins — which is what makes the main file override its includes).
-Merge semantics (`Schema\Helpers::merge`): the **left/new operand wins**; numeric keys
-append (lists concatenate), string keys merge recursively, `null` does not overwrite an
-array, a scalar does; a `PREVENT_MERGING` marker returns the left operand only.
+Merge semantics are those of the schema of each section. DI's own merge
+(`Config\Helpers::merge`, also used by `Loader` for includes): the **left/new operand
+wins**; numeric keys append (lists concatenate), string keys merge recursively, `null`
+does not overwrite an array, a scalar does; a `PREVENT_MERGING` marker returns the left
+operand only. `parameters` declare exactly this merge (`mergeWith()`), because
+nette/schema 2.0 does not merge an undescribed array deeply by itself.
 
-A value marked by `!` that is not an array cannot carry the marker, so the adapter wraps it
-in `Config\Replacement`. The wrapper survives `%param%` expansion, which matters: other
-sections are expanded **before** their layers merge, so `list!: %param%` holding an array
-would otherwise merge with earlier layers. `processSchema` turns the wrappers back into
-values (an array gets the marker) just before the schema merges the layers; a service
-definition does it in `DefinitionSchema::normalize`, once it is an array.
+**`!` markers are resolved by DI, not by Schema.** Before `processMultiple`,
+`Compiler::resolveMergingMarkers()` strips every marker from the layers of a section and
+drops its path from the earlier layers, so nette/schema never sees one, whether 1.4 or
+2.0 is installed. A path through a numeric key is not dropped: items under it are
+appended, so an earlier layer holds a different item there (another anonymous
+service). In the `services` section the marker also becomes `reset` (`all` for a
+definition, or `arguments`/`setup`/`tags`), which reaches definitions created by
+extensions too.
+
+A value that is not an array cannot carry the marker, so the adapter wraps it in
+`Config\Replacement`. The wrapper survives `%param%` expansion, which matters: other
+sections are expanded **before** their layers merge, so `list!: %param%` holding an
+array would otherwise merge with earlier layers. A service definition that is not an
+array gets its `reset` from an extra leading layer, as each layer is normalized by the
+schema on its own.
 
 ## NEON adapter
 
