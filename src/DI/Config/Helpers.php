@@ -13,7 +13,6 @@ use function is_array;
 
 /**
  * Configuration helpers.
- * @deprecated
  */
 final class Helpers
 {
@@ -22,10 +21,31 @@ final class Helpers
 	public const PREVENT_MERGING = '_prevent_merging';
 
 
-	/** @deprecated */
+	/**
+	 * Merges configurations. Left has higher priority than right one.
+	 */
 	public static function merge(mixed $left, mixed $right): mixed
 	{
-		return Nette\Schema\Helpers::merge($left, $right);
+		if (is_array($left) && isset($left[self::PREVENT_MERGING])) {
+			unset($left[self::PREVENT_MERGING]);
+			return $left;
+		}
+
+		if (is_array($left) && is_array($right)) {
+			$index = 0;
+			foreach ($left as $key => $val) {
+				if ($key === $index) {
+					$right[] = $val;
+					$index++;
+				} else {
+					$right[$key] = static::merge($val, $right[$key] ?? null);
+				}
+			}
+
+			return $right;
+		}
+
+		return $left === null && is_array($right) ? $right : $left;
 	}
 
 

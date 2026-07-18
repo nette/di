@@ -18,7 +18,7 @@ function merge(string $override, string $base): array
 	$loader = new DI\Config\Loader;
 	$b = $loader->load(Tester\FileMock::create($base, 'neon'));
 	$o = $loader->load(Tester\FileMock::create($override, 'neon'));
-	return Nette\Schema\Helpers::merge($o, $b);
+	return DI\Config\Helpers::merge($o, $b);
 }
 
 

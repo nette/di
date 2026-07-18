@@ -18,7 +18,11 @@ fileExtensions:
 
 imports: {grouping: {class: grouped}}
 
-upgrading: {phpdoc: {deprecated: keep}} # a deprecation stays soft, the attribute would report every call
+upgrading:
+	phpdoc: {deprecated: keep} # a deprecation stays soft, the attribute would report every call
+	api: # the own merging of the package, nette/schema 2.0 has neither of them
+		replacedMembers: {Nette\DI\Config\Helpers::merge: keep}
+		forbiddenMembers: {Nette\DI\Config\Helpers::PREVENT_MERGING: keep}
 
 overrides:
 	-

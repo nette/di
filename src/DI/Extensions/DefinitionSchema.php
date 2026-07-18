@@ -52,13 +52,13 @@ class DefinitionSchema implements Schema
 	}
 
 
-	public function merge(mixed $def, mixed $base): mixed
+	public function merge(mixed $def, mixed $base, ?Context $context = null): mixed
 	{
 		if (!empty($def['alteration'])) {
 			unset($def['alteration']);
 		}
 
-		return Nette\Schema\Helpers::merge($def, $base);
+		return Helpers::merge($def, $base);
 	}
 
 
@@ -180,7 +180,11 @@ class DefinitionSchema implements Schema
 			'type' => Expect::type('string'),
 			'create' => Expect::type('callable|Nette\DI\Expression'),
 			'arguments' => Expect::array(),
-			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
+			'setup' => Expect::listOf(Expect::anyOf(
+				Expect::type('callable'),
+				Expect::type(Statement::class),
+				Expect::array()->min(1)->max(1),
+			)),
 			'inject' => Expect::bool(),
 			'autowired' => Expect::type('bool|string|array'),
 			'tags' => Expect::array(),
@@ -210,7 +214,11 @@ class DefinitionSchema implements Schema
 			'create' => Expect::type('callable|Nette\DI\Definitions\Statement'),
 			'implement' => Expect::string(),
 			'arguments' => Expect::array(),
-			'setup' => Expect::listOf('callable|Nette\DI\Definitions\Statement|array:1'),
+			'setup' => Expect::listOf(Expect::anyOf(
+				Expect::type('callable'),
+				Expect::type(Statement::class),
+				Expect::array()->min(1)->max(1),
+			)),
 			'references' => Expect::array(),
 			'tagged' => Expect::string(),
 			'inject' => Expect::bool(),
