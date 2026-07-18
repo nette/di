@@ -56,7 +56,6 @@ parameters:
 	);
 });
 
-
 test('Compiler config with parameters overriding by a parameter', function () {
 	$compiler = new DI\Compiler;
 
@@ -77,6 +76,50 @@ parameters:
 
 	Assert::same(['php', 'node'], $compiler->getContainerBuilder()->parameters['languages']);
 	Assert::same(2, $compiler->getContainerBuilder()->parameters['version']);
+});
+
+
+test('Compiler config with whole section overriding', function () {
+	$compiler = new DI\Compiler;
+
+	$compiler->loadConfig(Tester\FileMock::create('
+parameters:
+	languages: [java]
+	debug: true
+', 'neon'));
+
+	$compiler->loadConfig(Tester\FileMock::create('
+parameters!:
+	languages: [php]
+', 'neon'));
+
+	$compiler->compile();
+
+	Assert::same(
+		['languages' => ['php']],
+		$compiler->getConfig()['parameters'],
+	);
+});
+
+
+test('replacing an item of an anonymous service leaves the anonymous services of earlier layers alone', function () {
+	$compiler = new DI\Compiler;
+
+	$compiler->loadConfig(Tester\FileMock::create('
+services:
+	- {create: ArrayObject, setup: [setFlags(1)]}
+', 'neon'));
+
+	$compiler->loadConfig(Tester\FileMock::create('
+services:
+	- {create: ArrayIterator, setup!: [setFlags(2)]}
+', 'neon'));
+
+	$compiler->compile();
+	$builder = $compiler->getContainerBuilder();
+
+	Assert::count(1, $builder->getDefinitionByType(ArrayObject::class)->getSetup());
+	Assert::count(1, $builder->getDefinitionByType(ArrayIterator::class)->getSetup());
 });
 
 

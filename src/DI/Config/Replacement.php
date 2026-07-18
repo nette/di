@@ -7,8 +7,6 @@
 
 namespace Nette\DI\Config;
 
-use function is_array;
-
 
 /**
  * Wraps a value marked by the replacing operator ! that is not an array and thus cannot carry
@@ -20,26 +18,5 @@ final readonly class Replacement
 	public function __construct(
 		public mixed $value,
 	) {
-	}
-
-
-	/**
-	 * Unwraps the replacements in the configuration; an array gets the PREVENT_MERGING marker instead.
-	 */
-	public static function resolve(mixed $config): mixed
-	{
-		if ($config instanceof self) {
-			$config = self::resolve($config->value);
-			if (is_array($config)) {
-				$config[Helpers::PREVENT_MERGING] = true;
-			}
-
-			return $config;
-
-		} elseif (is_array($config)) {
-			return array_map(self::resolve(...), $config);
-		}
-
-		return $config;
 	}
 }
