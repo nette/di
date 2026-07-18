@@ -92,7 +92,7 @@ abstract class CompilerExtension
 			) . ($hint ? ", did you mean '{$name}\u{a0}›\u{a0}{$hint}'?" : '.'));
 		}
 
-		return Nette\Schema\Helpers::merge($config, $expected);
+		return Nette\DI\Config\Helpers::merge($config, $expected);
 	}
 
 
