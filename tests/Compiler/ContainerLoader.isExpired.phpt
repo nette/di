@@ -15,7 +15,7 @@ $loader = new DI\ContainerLoader(getTempDir() . '/subdir', autoRebuild: true);
 
 // create container
 Assert::with($loader, function () {
-	$this->loadFile('class1', function () {});
+	$this->loadCurrent('class1', "$this->tempDirectory/class1.php", function () {});
 });
 
 // ensure files are created

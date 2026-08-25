@@ -31,10 +31,12 @@ class ContainerLoader
 	public function load(callable $generator, mixed $key = null): string
 	{
 		$class = $this->getClassName($key);
-		if (!class_exists($class, autoload: false)) {
-			$this->loadFile($class, $generator(...));
+		$file = "$this->tempDirectory/$class.php";
+		if ($this->autoRebuild) {
+			$this->loadCurrent($class, $file, $generator(...));
+		} else {
+			$this->loadOnce($class, $file, $generator(...));
 		}
-
 		return $class;
 	}
 
@@ -49,14 +51,70 @@ class ContainerLoader
 	}
 
 
-	/** @param  (\Closure(Compiler): ?string)  $generator */
-	private function loadFile(string $class, \Closure $generator): void
+	/**
+	 * Includes the file at most once; it is never rebuilt.
+	 * @param  (\Closure(Compiler): ?string)  $generator
+	 */
+	private function loadOnce(string $class, string $file, \Closure $generator): void
 	{
-		$file = "$this->tempDirectory/$class.php";
-		if (!$this->isExpired($file) && (@include $file) !== false) { // @ file may not exist
+		if (class_exists($class, autoload: false) || (@include $file) !== false) { // @ - file may not exist
 			return;
 		}
 
+		$this->withLock($file, function () use ($class, $file, $generator): void {
+			if (!is_file($file)) {
+				$this->writeContainer($class, $file, $generator);
+			}
+
+			if ((@include $file) === false) { // @ - error escalated to exception
+				throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+			}
+		});
+	}
+
+
+	/**
+	 * Rebuilds the file when expired and includes it.
+	 * @param  (\Closure(Compiler): ?string)  $generator
+	 */
+	private function loadCurrent(string $class, string $file, \Closure $generator): void
+	{
+		if (class_exists($class, autoload: false)
+			|| (!$this->isExpired($file) && (@include $file) !== false)) { // @ - file may not exist
+			return;
+		}
+
+		$this->withLock($file, function () use ($class, $file, $generator): void {
+			if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
+				if (isset($updatedMeta)) {
+					$this->atomicWrite("$file.meta", $updatedMeta);
+				} else {
+					$this->writeContainer($class, $file, $generator);
+				}
+			}
+
+			if ((@include $file) === false) { // @ - error escalated to exception
+				throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+			}
+		});
+	}
+
+
+	/** @param  (\Closure(Compiler): ?string)  $generator */
+	private function writeContainer(string $class, string $file, \Closure $generator): void
+	{
+		[$code, $meta] = $this->generate($class, $generator);
+		$this->atomicWrite($file, $code);
+		$this->atomicWrite("$file.meta", $meta);
+	}
+
+
+	/**
+	 * Runs $fn holding an exclusive lock on the sibling .lock file (against concurrent compilation).
+	 * @param  \Closure(): mixed  $fn
+	 */
+	private function withLock(string $file, \Closure $fn): mixed
+	{
 		Nette\Utils\FileSystem::createDir($this->tempDirectory);
 
 		$handle = @fopen("$file.lock", 'c+'); // @ is escalated to exception
@@ -66,22 +124,11 @@ class ContainerLoader
 			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		}
 
-		if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
-			if (isset($updatedMeta)) {
-				$toWrite["$file.meta"] = $updatedMeta;
-			} else {
-				[$toWrite[$file], $toWrite["$file.meta"]] = $this->generate($class, $generator);
-			}
-
-			foreach ($toWrite as $name => $content) {
-				$this->atomicWrite($name, $content);
-			}
+		try {
+			return $fn();
+		} finally {
+			flock($handle, LOCK_UN);
 		}
-
-		if ((@include $file) === false) { // @ - error escalated to exception
-			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
-		}
-		flock($handle, LOCK_UN);
 	}
 
 
@@ -117,15 +164,11 @@ class ContainerLoader
 
 	private function isExpired(string $file, ?string &$updatedMeta = null): bool
 	{
-		if ($this->autoRebuild) {
-			$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
-			$orig = $meta[2] ?? null;
-			return empty($meta[0])
-				|| DependencyChecker::isExpired(...$meta)
-				|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
-		}
-
-		return false;
+		$meta = @unserialize((string) file_get_contents("$file.meta")); // @ - file may not exist
+		$orig = $meta[2] ?? null;
+		return empty($meta[0])
+			|| DependencyChecker::isExpired(...$meta)
+			|| ($orig !== $meta[2] && $updatedMeta = serialize($meta));
 	}
 
 

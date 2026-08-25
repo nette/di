@@ -69,6 +69,11 @@ parameters:
 		- # runtime-derived class name; class is loaded by load(), contract is class-string<Container>
 			identifier: return.type
 			path: src/DI/ContainerLoader.php
+		- # narrowing of `@include $file` leaks from the earlier condition; include has side effects and is re-evaluated
+			identifier: identical.alwaysTrue
+			message: '#^Strict comparison using === between false and false will always evaluate to true\.$#'
+			path: src/DI/ContainerLoader.php
+			count: 1
 		- # string as class-string in various places
 			identifier: argument.type
 			path: src/DI/Resolver.php
