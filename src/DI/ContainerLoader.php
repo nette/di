@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use function sprintf, strlen;
+use function is_string, sprintf, strlen;
 
 
 /**
@@ -16,6 +16,10 @@ use function sprintf, strlen;
  */
 class ContainerLoader
 {
+	/** @var array<string, array<string, string>>  compiled file => [content hash => loaded class] (auto-rebuild only) */
+	private static array $loaded = [];
+
+
 	public function __construct(
 		private readonly string $tempDirectory,
 		private readonly bool $autoRebuild = false,
@@ -33,17 +37,16 @@ class ContainerLoader
 		$class = $this->getClassName($key);
 		$file = "$this->tempDirectory/$class.php";
 		if ($this->autoRebuild) {
-			$this->loadCurrent($class, $file, $generator(...));
+			return $this->loadCurrent($class, $file, $generator(...));
 		} else {
 			$this->loadOnce($class, $file, $generator(...));
+			return $class;
 		}
-		return $class;
 	}
 
 
 	/**
-	 * Returns the container class name derived from the given key.
-	 * @return class-string<Container>
+	 * Returns the base class name derived from the given key (with auto-rebuild an alias of the first loaded container).
 	 */
 	public function getClassName(mixed $key): string
 	{
@@ -74,37 +77,78 @@ class ContainerLoader
 
 
 	/**
-	 * Rebuilds the file when expired and includes it.
+	 * Rebuilds the file when expired and includes it whenever its content has not been loaded yet.
+	 * Every build declares a fresh class (the file returns its name), as PHP cannot redeclare a loaded one.
 	 * @param  (\Closure(Compiler): ?string)  $generator
 	 */
-	private function loadCurrent(string $class, string $file, \Closure $generator): void
+	private function loadCurrent(string $class, string $file, \Closure $generator): string
 	{
-		if (class_exists($class, autoload: false)
-			|| (!$this->isExpired($file) && (@include $file) !== false)) { // @ - file may not exist
-			return;
+		if (isset(self::$loaded[$file]) && !$this->isExpired($file)) {
+			$code = @file_get_contents($file); // @ - file may not exist
+			if ($code !== false && ($loaded = self::$loaded[$file][hash('xxh128', $code)] ?? null)) {
+				return $loaded;
+			}
 		}
 
-		$this->withLock($file, function () use ($class, $file, $generator): void {
+		return $this->withLock($file, function () use ($class, $file, $generator): string {
 			if (!is_file($file) || $this->isExpired($file, $updatedMeta)) {
 				if (isset($updatedMeta)) {
 					$this->atomicWrite("$file.meta", $updatedMeta);
 				} else {
-					$this->writeContainer($class, $file, $generator);
+					$unique = $class . '_' . bin2hex(random_bytes(4));
+					$this->writeContainer($unique, $file, $generator, returnClass: $unique);
 				}
 			}
 
-			if ((@include $file) === false) { // @ - error escalated to exception
-				throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+			$code = @file_get_contents($file); // @ - error escalated to exception
+			if ($code === false) {
+				throw new Nette\IOException(sprintf("Unable to read '%s'. %s", $file, Nette\Utils\Helpers::getLastError()));
 			}
+
+			return self::$loaded[$file][hash('xxh128', $code)] ??= $this->includeFreshFile($class, $file);
 		});
 	}
 
 
+	/**
+	 * Includes a file whose content has not been loaded yet and returns the class it declares.
+	 */
+	private function includeFreshFile(string $class, string $file): string
+	{
+		if (
+			!isset(self::$loaded[$file])
+			&& class_exists($class, autoload: false)
+			&& realpath((new \ReflectionClass($class))->getFileName() ?: '') === realpath($file)
+		) {
+			return $class; // included outside of this loader
+		}
+
+		if (function_exists('opcache_invalidate')) {
+			@opcache_invalidate($file, force: true); // @ can be restricted; the file may have been rebuilt by another process
+		}
+
+		$declared = @include $file; // @ - error escalated to exception
+		if ($declared === false) {
+			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
+		} elseif (!is_string($declared) || !class_exists($declared, autoload: false)) {
+			$declared = $class; // the file declares $class itself: built without auto-rebuild or by a custom generator
+		}
+
+		if (!class_exists($declared, autoload: false)) {
+			throw new Nette\InvalidStateException(sprintf("File '%s' does not declare class %s.", $file, $class));
+		} elseif (!class_exists($class, autoload: false)) {
+			class_alias($declared, $class); // getClassName() stays a valid name of the first loaded container
+		}
+
+		return $declared;
+	}
+
+
 	/** @param  (\Closure(Compiler): ?string)  $generator */
-	private function writeContainer(string $class, string $file, \Closure $generator): void
+	private function writeContainer(string $class, string $file, \Closure $generator, ?string $returnClass = null): void
 	{
 		[$code, $meta] = $this->generate($class, $generator);
-		$this->atomicWrite($file, $code);
+		$this->atomicWrite($file, $returnClass ? "$code\nreturn " . var_export($returnClass, return: true) . ";\n" : $code);
 		$this->atomicWrite("$file.meta", $meta);
 	}
 

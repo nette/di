@@ -24,7 +24,7 @@ Assert::true(is_file($file));
 Assert::true(is_file("$file.meta"));
 
 // load again
-file_put_contents($file, ''); // remove file to avoid class redeclare error
 Assert::with($loader, function () {
-	$this->loadCurrent('class1', "$this->tempDirectory/class1.php", function () { Assert::fail('Should not be recreated'); });
+	$class = $this->loadCurrent('class1', "$this->tempDirectory/class1.php", function () { Assert::fail('Should not be recreated'); });
+	Assert::same((new ReflectionClass('class1'))->getName(), $class);
 });
