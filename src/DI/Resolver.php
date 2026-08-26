@@ -170,9 +170,7 @@ class Resolver
 	 */
 	public function completeDefinition(Definition $def): void
 	{
-		$this->currentService = in_array($def, $this->builder->getDefinitions(), strict: true)
-			? $def
-			: null;
+		$this->currentService = $def;
 		$this->currentServiceType = $def->getType();
 		$this->currentServiceAllowed = false;
 
@@ -505,7 +503,7 @@ class Resolver
 	/** @param  mixed  $entity */
 	private function entityToString($entity): string
 	{
-		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService
+		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService?->getName() !== null
 				? '@' . $this->currentService->getName()
 				: '@' . $ref->getValue();
 		if (is_string($entity)) {
