@@ -42,6 +42,13 @@ Assert::with(DefinitionSchema::class, function () {
 	$statement = new Statement(Iface::class, ['tagged' => 123]);
 	Assert::same(['implement' => Iface::class, 'tagged' => 123], $schema->normalize($statement, $context));
 
+	$statement = new Statement(Iface::class, ['tagged' => 123, 'extra' => 'stdClass']);
+	Assert::exception(
+		fn() => $schema->normalize($statement, $context),
+		Nette\DI\InvalidConfigurationException::class,
+		"Argument 'tagged' cannot be combined with other arguments in Iface(...).",
+	);
+
 	// aliases
 	Assert::same(['create' => 'val'], $schema->normalize(['class' => 'val'], $context));
 	Assert::same(['create' => 'val'], $schema->normalize(['factory' => 'val'], $context));
