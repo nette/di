@@ -47,3 +47,9 @@ Assert::exception(
 	fn() => $builder->addDefinition('aa~'),
 	Nette\InvalidArgumentException::class,
 );
+
+Assert::exception(
+	fn() => $builder->addDefinition('self'),
+	Nette\InvalidArgumentException::class,
+	"Service name 'self' is reserved for references to the current service.",
+);
