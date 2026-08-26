@@ -91,7 +91,7 @@ class Container
 	public function addService(string $name, object $service): static
 	{
 		$name = $this->aliases[$name] ?? $name;
-		if (isset($this->instances[$name])) {
+		if (isset($this->instances[$name]) || isset($this->factories[$name])) {
 			throw new Nette\InvalidStateException(sprintf("Service '%s' already exists.", $name));
 		}
 
@@ -125,12 +125,12 @@ class Container
 
 
 	/**
-	 * Removes a service instance from the container.
+	 * Removes a service instance or its factory from the container.
 	 */
 	public function removeService(string $name): void
 	{
 		$name = $this->aliases[$name] ?? $name;
-		unset($this->instances[$name]);
+		unset($this->instances[$name], $this->factories[$name]);
 	}
 
 
