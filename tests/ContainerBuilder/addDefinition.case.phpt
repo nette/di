@@ -16,3 +16,10 @@ Assert::exception(function () {
 	$builder->addDefinition('one');
 	$builder->addDefinition('One');
 }, Nette\InvalidStateException::class, "Service 'One' has the same name as 'one' in a case-insensitive manner.");
+
+
+// removed definition frees its name
+$builder = new ContainerBuilder;
+$builder->addDefinition('one');
+$builder->removeDefinition('one');
+Assert::type(Nette\DI\Definitions\ServiceDefinition::class, $builder->addDefinition('One'));

@@ -33,6 +33,9 @@ class ContainerBuilder
 	/** @var array<string, Definition> */
 	private array $definitions = [];
 
+	/** @var array<string, string> lowercase name => service name */
+	private array $lowerNames = [];
+
 	/** @var array<string, string> alias => service name */
 	private array $aliases = [];
 	private Autowiring $autowiring;
@@ -76,15 +79,8 @@ class ContainerBuilder
 				throw new Nette\InvalidStateException(sprintf("Service '%s' has already been added.", $name));
 			}
 
-			$lname = strtolower($name);
-			foreach ($this->definitions as $nm => $foo) {
-				if ($lname === strtolower($nm)) {
-					throw new Nette\InvalidStateException(sprintf(
-						"Service '%s' has the same name as '%s' in a case-insensitive manner.",
-						$name,
-						$nm,
-					));
-				}
+			if ($similar = $this->lowerNames[strtolower($name)] ?? null) {
+				throw new Nette\InvalidStateException("Service '$name' has the same name as '$similar' in a case-insensitive manner.");
 			}
 		}
 
@@ -93,6 +89,7 @@ class ContainerBuilder
 		$definition->setNotifier(function (): void {
 			$this->needsResolve = true;
 		});
+		$this->lowerNames[strtolower($name)] = $name;
 		return $this->definitions[$name] = $definition;
 	}
 
@@ -128,7 +125,7 @@ class ContainerBuilder
 	{
 		$this->needsResolve = true;
 		$name = $this->aliases[$name] ?? $name;
-		unset($this->definitions[$name]);
+		unset($this->definitions[$name], $this->lowerNames[strtolower($name)]);
 	}
 
 
