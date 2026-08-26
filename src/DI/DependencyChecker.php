@@ -11,7 +11,7 @@ use Nette;
 use Nette\Utils\Reflection;
 use ReflectionClass;
 use ReflectionMethod;
-use function array_combine, array_flip, array_keys, array_map, array_merge, array_unique, class_implements, class_parents, class_uses, count, get_debug_type, get_parent_class, hash, is_object, is_string, rtrim, serialize, sprintf, str_contains;
+use function count, is_object, is_string, sprintf;
 use const PHP_VERSION_ID;
 
 

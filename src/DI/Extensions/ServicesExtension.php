@@ -11,7 +11,7 @@ use Nette;
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Helpers;
-use function array_replace, array_values, is_array, is_int, is_string, key, preg_match, substr;
+use function is_array, is_int, is_string;
 
 
 /**

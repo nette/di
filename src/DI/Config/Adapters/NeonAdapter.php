@@ -13,7 +13,7 @@ use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Neon;
 use Nette\Neon\Node;
-use function array_values, array_walk_recursive, constant, count, defined, implode, is_array, is_string, ltrim, preg_match, preg_replace, sprintf, str_contains, str_ends_with, str_starts_with, substr;
+use function count, defined, is_array, is_string, sprintf;
 
 
 /**

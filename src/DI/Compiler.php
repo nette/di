@@ -9,7 +9,7 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\Schema;
-use function array_diff_key, array_filter, array_keys, array_merge, array_values, assert, count, implode, key, sprintf, strtolower;
+use function count, is_array, sprintf;
 
 
 /**

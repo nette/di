@@ -9,7 +9,7 @@ namespace Nette\DI;
 
 use Nette;
 use Nette\DI\Definitions\Definition;
-use function array_diff, array_filter, array_walk_recursive, class_implements, class_parents, is_a, is_int, key, ksort, preg_match, sprintf, strtolower;
+use function is_int, sprintf;
 
 
 /**

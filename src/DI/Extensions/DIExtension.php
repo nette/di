@@ -10,7 +10,7 @@ namespace Nette\DI\Extensions;
 use Nette;
 use Nette\DI\Definitions\ServiceDefinition;
 use Tracy;
-use function array_flip, array_intersect_key, is_array, microtime;
+use function is_array;
 use const PHP_VERSION_ID;
 
 
