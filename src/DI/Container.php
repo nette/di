@@ -31,6 +31,9 @@ class Container
 	/** @var array<class-string, array<int, list<string>>>  type => (high/low/no => service names) */
 	protected array $wiring = [];
 
+	/** @var string[]  names that getMethodName() does not encode reversibly: decoded name => service name */
+	protected array $names = [];
+
 	/** @var object[]  service name => instance */
 	private array $instances = [];
 
@@ -334,16 +337,17 @@ class Container
 			$aliases[$target][] = $alias;
 		}
 
-		$names = [];
+		$list = [];
 		foreach (array_keys($this->methods) as $method) {
 			if (strlen($method) > 13 && str_starts_with($method, 'createService')) {
-				$names[lcfirst(str_replace('__', '.', substr($method, 13)))] = true;
+				$name = lcfirst(str_replace('__', '.', substr($method, 13)));
+				$list[$this->names[$name] ?? $name] = true;
 			}
 		}
-		$names += $this->factories;
+		$list += $this->factories;
 
 		$descriptors = [];
-		foreach (array_keys($names) as $name) {
+		foreach (array_keys($list) as $name) {
 			$type = $this->getServiceType($name) ?: null;
 			$wiring = $type === null ? null : $this->wiring[Helpers::normalizeClass($type)] ?? null;
 			$tags = [];

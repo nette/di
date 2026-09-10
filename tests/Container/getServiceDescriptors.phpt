@@ -79,3 +79,24 @@ $container->addService('untyped', fn() => new stdClass);
 $untyped = $container->getServiceDescriptors()['untyped'];
 Assert::null($untyped->type);
 Assert::null($untyped->autowired);
+
+
+// name starting with an uppercase letter cannot be derived back from the method name
+$builder = new DI\ContainerBuilder;
+$builder->addDefinition('PDO')
+	->setType(Service::class)
+	->addTag('mytag', 'value');
+$builder->addDefinition('lower')->setType(Runtime::class);
+$builder->addAlias('shortcut', 'PDO');
+$container = createContainer($builder);
+$descriptors = $container->getServiceDescriptors();
+Assert::contains('PDO', array_keys($descriptors));
+Assert::false(array_key_exists('pDO', $descriptors));
+
+// the whole descriptor is looked up by that name, not just its label
+$pdo = $descriptors['PDO'];
+Assert::same('PDO', $pdo->name);
+Assert::same(Service::class, $pdo->type);
+Assert::same(['mytag' => 'value'], $pdo->tags);
+Assert::same(['shortcut'], $pdo->aliases);
+Assert::true($pdo->autowired);

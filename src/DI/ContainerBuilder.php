@@ -76,6 +76,12 @@ class ContainerBuilder
 				$name,
 			));
 
+		} elseif (str_contains($name, '__')) {
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service name '%s' must not contain '__', which is reserved for encoding dots in method names.",
+				$name,
+			));
+
 		} elseif ($name === self::ThisService) {
 			throw new Nette\InvalidArgumentException("Service name 'self' is reserved for references to the current service.");
 
@@ -377,6 +383,10 @@ class ContainerBuilder
 		foreach ($defs as $name => $def) {
 			foreach ($def->getTags() as $tag => $value) {
 				$meta['tags'][$tag][$name] = $value;
+			}
+
+			if ($name !== lcfirst($name)) { // ucfirst() in getMethodName() is not reversible for such a name
+				$meta['names'][lcfirst($name)] = $name;
 			}
 		}
 
