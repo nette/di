@@ -126,10 +126,66 @@ final class LocatorDefinition extends Definition
 
 				$this->references[$tag] = new Reference($name);
 			}
+		} elseif ($type = $this->getType()) {
+			$this->validateReferences($type);
 		}
 
 		foreach ($this->references as $name => $ref) {
 			$this->references[$name] = $resolver->normalizeReference($ref);
+		}
+	}
+
+
+	/**
+	 * Checks that references and methods pair up, leaving no method silently unimplemented.
+	 * @param  class-string  $type
+	 */
+	private function validateReferences(string $type): void
+	{
+		$methods = $accepted = [];
+		$generic = false;
+		foreach ((new \ReflectionClass($type))->getMethods() as $rm) {
+			if (!preg_match('#^(get|create)(.*)#', $rm->name, $m)) {
+				continue;
+			} elseif ($m[2] === '') {
+				$generic = true;
+				continue;
+			}
+
+			$methods[$rm->name] = $rm;
+			foreach (self::getReferenceNames($m[2]) as $name) {
+				$accepted[$name] = $rm->name;
+			}
+		}
+
+		$matched = [];
+		foreach (array_keys($this->references) as $name) {
+			$methodName = $accepted[$name] ?? null;
+			if ($methodName === null) {
+				if (!$generic) {
+					throw new Nette\DI\ServiceCreationException(sprintf(
+						"Reference '%s' does not match any get*() or create*() method.",
+						$name,
+					));
+				}
+			} elseif (isset($matched[$methodName])) {
+				throw new Nette\DI\ServiceCreationException(sprintf(
+					"References '%s' and '%s' both match method %s::%s().",
+					$matched[$methodName],
+					$name,
+					$type,
+					$methodName,
+				));
+
+			} else {
+				$matched[$methodName] = $name;
+			}
+		}
+
+		foreach ($methods as $methodName => $rm) {
+			if (!isset($matched[$methodName]) && !($rm->getReturnType()?->allowsNull() ?? false)) {
+				throw new Nette\DI\ServiceCreationException(sprintf('Missing reference for method %s::%s().', $type, $methodName));
+			}
 		}
 	}
 
@@ -151,13 +207,12 @@ final class LocatorDefinition extends Definition
 			if (!preg_match('#^(get|create)(.*)#', $rm->name, $m)) {
 				continue;
 			}
-			$name = lcfirst($m[2]);
 			$nullable = $rm->getReturnType()?->allowsNull() ?? false;
 
 			$methodInner = $class->addMethod($rm->name)
 				->setReturnType((string) Nette\Utils\Type::fromReflection($rm));
 
-			if (!$name) {
+			if ($m[2] === '') {
 				$class->addProperty('mapping', array_map(fn($item) => $item->getValue(), $this->references))
 					->setPrivate();
 
@@ -171,8 +226,8 @@ final class LocatorDefinition extends Definition
 						XX . $m[1] . 'Service($this->mapping[$name]);')
 					->addParameter('name');
 
-			} elseif (isset($this->references[$name])) {
-				$ref = $this->references[$name]->getValue();
+			} elseif ($reference = $this->findReference($m[2])) {
+				$ref = $reference->getValue();
 				if ($m[1] === 'get') {
 					$methodInner->setBody('return $this->container->getService(?);', [$ref]);
 				} else {
@@ -186,5 +241,33 @@ final class LocatorDefinition extends Definition
 		}
 
 		$method->setBody('return new class ($this) ' . $class . ';');
+	}
+
+
+	private function findReference(string $suffix): ?Reference
+	{
+		foreach (self::getReferenceNames($suffix) as $name) {
+			if (isset($this->references[$name])) {
+				return $this->references[$name];
+			}
+		}
+
+		return null;
+	}
+
+
+	/**
+	 * Names under which a get*()/create*() method looks for its reference: the leading acronym
+	 * lowercased (getPDO() => 'pdo'), plus the plain lcfirst() form kept for compatibility.
+	 * @return string[]
+	 */
+	private static function getReferenceNames(string $suffix): array
+	{
+		$normalized = preg_replace_callback(
+			'#^[A-Z]+(?=[A-Z][a-z]|[^A-Za-z]|$)|^[A-Z]#',
+			fn($m) => strtolower($m[0]),
+			$suffix,
+		);
+		return array_unique([$normalized, lcfirst($suffix)]);
 	}
 }
