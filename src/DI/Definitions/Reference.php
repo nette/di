@@ -50,12 +50,14 @@ final class Reference
 	}
 
 
+	/** @phpstan-assert-if-true class-string $this->getValue() */
 	public function isType(): bool
 	{
 		return str_contains($this->value, '\\');
 	}
 
 
+	/** @phpstan-assert-if-true self::Self $this->getValue() */
 	public function isSelf(): bool
 	{
 		return $this->value === self::Self;
