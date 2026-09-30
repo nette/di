@@ -62,3 +62,37 @@ function testContainerBuilderAddDefinition(ContainerBuilder $builder): void
 	$factoryDef = $builder->addDefinition('baz', new Definitions\FactoryDefinition);
 	assertType(Definitions\FactoryDefinition::class, $factoryDef);
 }
+
+
+function testReferenceNarrowing(Definitions\Reference $ref): void
+{
+	assertType('string', $ref->getValue());
+
+	if ($ref->isType()) {
+		assertType('class-string', $ref->getValue());
+	} elseif ($ref->isName()) {
+		assertType('string', $ref->getValue());
+	} elseif ($ref->isSelf()) {
+		assertType("'self'", $ref->getValue());
+	}
+
+	if ($ref->isName()) {
+		assertType('string', $ref->getValue());
+	}
+
+	if ($ref->isSelf()) {
+		assertType("'self'", $ref->getValue());
+	}
+
+	if (!$ref->isType()) {
+		assertType('string', $ref->getValue());
+	}
+
+	if (!$ref->isName()) {
+		assertType('string', $ref->getValue());
+	}
+
+	if (!$ref->isSelf()) {
+		assertType('string', $ref->getValue());
+	}
+}
