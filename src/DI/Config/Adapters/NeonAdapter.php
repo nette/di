@@ -10,8 +10,7 @@ namespace Nette\DI\Config\Adapters;
 use Nette;
 use Nette\{DI, Neon};
 use Nette\DI\Definitions\{Reference, Statement};
-use Nette\Neon\Node;
-use function count, is_array, is_string, sprintf;
+use function is_array, is_string, sprintf;
 
 
 /**
@@ -35,15 +34,9 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		}
 
 		$this->file = $file;
-		$decoder = new Neon\Decoder;
-		$node = $decoder->parseToNode($input);
-		$traverser = new Neon\Traverser;
-		$node = $traverser->traverse($node, $this->firstClassCallableVisitor(...));
-		$node = $traverser->traverse($node, $this->removeUnderscoreVisitor(...));
-		$node = $traverser->traverse($node, $this->convertAtSignVisitor(...));
-		$node = $traverser->traverse($node, $this->deprecatedParametersVisitor(...));
-		$node = $traverser->traverse($node, $this->resolveConstantsVisitor(...));
-		return $this->process((array) $node->toValue());
+		return class_exists(Neon\Evaluator::class)
+			? (array) (new NeonEvaluator($file))->evaluate(Neon\Neon::parse($input)->value)
+			: $this->process((array) (new NeonVisitors($file))->decode($input));
 	}
 
 
@@ -137,10 +130,11 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			$entity = '@' . $entity->getValue();
 		} elseif (is_array($entity)) {
 			if ($entity[0] instanceof Statement) {
+				$inner = self::statementToEntity($entity[0]);
 				return new Neon\Entity(
 					Neon\Neon::Chain,
 					[
-						self::statementToEntity($entity[0]),
+						...($inner->value === Neon\Neon::Chain ? $inner->attributes : [$inner]),
 						new Neon\Entity('::' . $entity[1], $val->arguments),
 					],
 				);
@@ -152,104 +146,5 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 		}
 
 		return new Neon\Entity($entity, $val->arguments);
-	}
-
-
-	private function firstClassCallableVisitor(Node $node): void
-	{
-		if ($node instanceof Node\EntityNode
-			&& count($node->attributes) === 1
-			&& $node->attributes[0]->key === null
-			&& $node->attributes[0]->value instanceof Node\LiteralNode
-			&& $node->attributes[0]->value->value === '...'
-		) {
-			$node->attributes[0]->value->value = Nette\DI\Resolver::getFirstClassCallable()[0];
-		}
-	}
-
-
-	private function removeUnderscoreVisitor(Node $node): void
-	{
-		if (!$node instanceof Node\EntityNode) {
-			return;
-		}
-
-		$index = false;
-		foreach ($node->attributes as $i => $attr) {
-			if ($attr->key !== null) {
-				continue;
-			}
-
-			$attr->key = $index ? new Node\LiteralNode((string) $i) : null;
-
-			if ($attr->value instanceof Node\LiteralNode && $attr->value->value === '_') {
-				unset($node->attributes[$i]);
-				$index = true;
-
-			} elseif ($attr->value instanceof Node\LiteralNode && $attr->value->value === '...') {
-				trigger_error("Replace ... with _ in configuration file '$this->file'.", E_USER_DEPRECATED);
-				unset($node->attributes[$i]);
-				$index = true;
-			}
-		}
-
-		$node->attributes = array_values($node->attributes);
-	}
-
-
-	private function convertAtSignVisitor(Node $node): void
-	{
-		if ($node instanceof Node\StringNode) {
-			if (str_starts_with($node->value, '@@')) {
-				trigger_error(
-					"There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)",
-					E_USER_DEPRECATED,
-				);
-			} else {
-				$node->value = preg_replace('#^@#', '$0$0', $node->value); // escape
-			}
-
-		} elseif (
-			$node instanceof Node\LiteralNode
-			&& is_string($node->value)
-			&& str_starts_with($node->value, '@@')
-		) {
-			trigger_error(
-				"There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$node->value' (used in $this->file)",
-				E_USER_DEPRECATED,
-			);
-		}
-	}
-
-
-	private function deprecatedParametersVisitor(Node $node): void
-	{
-		if (($node instanceof Node\StringNode || $node instanceof Node\LiteralNode)
-			&& is_string($node->value)
-			&& str_contains($node->value, '%parameters%')
-		) {
-			trigger_error('%parameters% is deprecated, use @container::getParameters() (in ' . $this->file . ')', E_USER_DEPRECATED);
-		}
-	}
-
-
-	private function resolveConstantsVisitor(Node $node): void
-	{
-		$items = match (true) {
-			$node instanceof Node\ArrayNode => $node->items,
-			$node instanceof Node\EntityNode => $node->attributes,
-			default => null,
-		};
-		if ($items) {
-			foreach ($items as $item) {
-				if ($item->value instanceof Node\LiteralNode
-					&& is_string($item->value->value)
-					&& preg_match('#^([\w\\\]*)::[A-Z]\w+$#D', $item->value->value)
-					&& defined(ltrim($item->value->value, ':'))
-				) {
-					$item->value->value = constant(ltrim($item->value->value, ':'));
-				}
-			}
-		}
 	}
 }

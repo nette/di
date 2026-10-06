@@ -54,8 +54,14 @@ array, a scalar does; a `PREVENT_MERGING` marker returns the left operand only.
 
 ## NEON adapter
 
-`NeonAdapter` parses NEON to an AST, runs a chain of visitors, then `process()`. The
-facts that matter downstream:
+`NeonAdapter` reads NEON by one of two paths, chosen by the installed nette/neon. With
+4.0, `NeonEvaluator` (a subclass of its `Evaluator`) builds the whole configuration
+from the tree in one pass. With 3.x, `NeonVisitors` runs a chain of visitors over the
+AST and `process()` then turns the entities into `Statement`s and handles the `!`
+suffix. The two paths must stay in step; the result is the same, except that under
+4.0 the keys `@a` and `@@a`, or `a` and `a!`, in one array are a duplicated key.
+PHPStan analyses with 4.0 installed, so `NeonVisitors` is excluded from it. The facts
+that matter downstream:
 
 - **`@` escaping.** A **quoted** string starting with `@` is doubled to `@@` (in
   quotes `@` means literal text, not a reference); an **unquoted** `@foo` passes

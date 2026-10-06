@@ -6,6 +6,7 @@ parameters:
 
 	excludePaths:
 		- src/compatibility.php
+		- src/DI/Config/Adapters/NeonVisitors.php # needs nette/neon 3.x, analysed with 4.0 installed
 
 	fileExtensions:
 		- php
@@ -27,9 +28,6 @@ parameters:
 		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
-		- # NeonAdapter: argument types vary by Neon node kind; runtime branching keeps them safe
-			identifier: argument.type
-			path: src/DI/Config/Adapters/NeonAdapter.php
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
@@ -92,9 +90,6 @@ parameters:
 		- # promoted property stores broad array, getEntity() declares precise tuple
 			identifier: return.type
 			path: src/DI/Definitions/Statement.php
-		- # array_values after unset not recognized as list
-			identifier: assign.propertyType
-			path: src/DI/Config/Adapters/NeonAdapter.php
 		- # getByType template type unresolvable in closure
 			identifier: argument.templateType
 			path: src/DI/Container.php
