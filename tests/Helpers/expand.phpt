@@ -5,8 +5,7 @@
  */
 
 use Nette\DI\Definitions\Statement;
-use Nette\DI\DynamicParameter;
-use Nette\DI\Helpers;
+use Nette\DI\{DynamicParameter, Helpers};
 use Nette\PhpGenerator\Literal;
 use Tester\Assert;
 

@@ -4,10 +4,7 @@
  * PHPStan type tests.
  */
 
-use Nette\DI\Compiler;
-use Nette\DI\Container;
-use Nette\DI\ContainerBuilder;
-use Nette\DI\Definitions;
+use Nette\DI\{Compiler, Container, ContainerBuilder, Definitions};
 use Nette\DI\Extensions\DIExtension;
 use function PHPStan\Testing\assertType;
 

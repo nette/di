@@ -8,9 +8,8 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\Definitions;
+use Nette\DI\{Definitions, Helpers};
 use Nette\DI\Definitions\Statement;
-use Nette\DI\Helpers;
 use function is_array, is_int, is_string;
 
 

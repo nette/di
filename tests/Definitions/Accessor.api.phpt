@@ -4,8 +4,7 @@
  * Test: AccessorDefinition API
  */
 
-use Nette\DI\Definitions\AccessorDefinition;
-use Nette\DI\Definitions\Reference;
+use Nette\DI\Definitions\{AccessorDefinition, Reference};
 use Tester\Assert;
 
 

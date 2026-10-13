@@ -8,8 +8,7 @@
 namespace Nette\Bridges\DIPsr;
 
 use Nette;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
 
 
 class ContainerException extends Nette\InvalidStateException implements ContainerExceptionInterface

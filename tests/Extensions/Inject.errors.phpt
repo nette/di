@@ -4,8 +4,7 @@
  * Test: Nette\DI\Compiler: inject.
  */
 
-use Nette\DI;
-use Nette\InvalidStateException;
+use Nette\{DI, InvalidStateException};
 use Tester\Assert;
 
 

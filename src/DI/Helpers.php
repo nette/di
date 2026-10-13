@@ -8,10 +8,8 @@
 namespace Nette\DI;
 
 use Nette;
-use Nette\DI\Definitions\Reference;
-use Nette\DI\Definitions\Statement;
-use Nette\Utils\Reflection;
-use Nette\Utils\Type;
+use Nette\DI\Definitions\{Reference, Statement};
+use Nette\Utils\{Reflection, Type};
 use function array_key_exists, is_array, is_scalar, is_string, sprintf, strlen;
 
 

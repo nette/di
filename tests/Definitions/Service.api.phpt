@@ -4,8 +4,7 @@
  * Test: ServiceDefinition
  */
 
-use Nette\DI\Definitions\ServiceDefinition;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Definitions\{ServiceDefinition, Statement};
 use Tester\Assert;
 
 

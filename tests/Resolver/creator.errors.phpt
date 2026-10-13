@@ -5,8 +5,7 @@
  */
 
 use Nette\DI;
-use Nette\DI\Definitions\Reference;
-use Nette\DI\Definitions\Statement;
+use Nette\DI\Definitions\{Reference, Statement};
 
 
 require __DIR__ . '/../bootstrap.php';

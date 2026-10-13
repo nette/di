@@ -4,12 +4,9 @@
  * Test: Nette\Bridges\DIPsr\PsrContainer
  */
 
-use Nette\Bridges\DIPsr\ContainerException;
-use Nette\Bridges\DIPsr\NotFoundException;
-use Nette\Bridges\DIPsr\PsrContainer;
+use Nette\Bridges\DIPsr\{ContainerException, NotFoundException, PsrContainer};
 use Nette\DI;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
+use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
 use Tester\Assert;
 
 

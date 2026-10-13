@@ -4,8 +4,7 @@
  * Test: LocatorDefinition API
  */
 
-use Nette\DI\Definitions\LocatorDefinition;
-use Nette\DI\Definitions\Reference;
+use Nette\DI\Definitions\{LocatorDefinition, Reference};
 use Tester\Assert;
 
 

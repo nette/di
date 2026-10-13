@@ -8,10 +8,8 @@
 namespace Nette\DI\Config\Adapters;
 
 use Nette;
-use Nette\DI;
-use Nette\DI\Definitions\Reference;
-use Nette\DI\Definitions\Statement;
-use Nette\Neon;
+use Nette\{DI, Neon};
+use Nette\DI\Definitions\{Reference, Statement};
 use Nette\Neon\Node;
 use function count, is_array, is_string, sprintf;
 

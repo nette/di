@@ -5,14 +5,8 @@
  * creator and of Resolver::resolveEntityType() (the ancestor of the planned Expression::resolveType()).
  */
 
-use Nette\DI\Compiler;
-use Nette\DI\Container;
-use Nette\DI\ContainerBuilder;
-use Nette\DI\Definitions\Reference;
-use Nette\DI\Definitions\Statement;
-use Nette\DI\PhpGenerator;
-use Nette\DI\Resolver;
-use Nette\DI\ServiceCreationException;
+use Nette\DI\{Compiler, Container, ContainerBuilder, PhpGenerator, Resolver, ServiceCreationException};
+use Nette\DI\Definitions\{Reference, Statement};
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';

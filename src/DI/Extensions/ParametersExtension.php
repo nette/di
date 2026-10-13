@@ -8,8 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\DynamicParameter;
-use Nette\DI\Helpers;
+use Nette\DI\{DynamicParameter, Helpers};
 
 
 /**

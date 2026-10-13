@@ -8,8 +8,7 @@
 namespace Nette\Bridges\DIPsr;
 
 use Nette;
-use Nette\DI\Container;
-use Nette\DI\Helpers;
+use Nette\DI\{Container, Helpers};
 use Psr\Container\ContainerInterface;
 use function count, sprintf;
 

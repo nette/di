@@ -50,8 +50,7 @@ namespace A\B
 
 namespace C
 {
-	use A\AInjected;
-	use A\B;
+	use A\{AInjected, B};
 	use C\CInjected as CAlias;
 
 	class CClass
