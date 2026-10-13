@@ -14,7 +14,7 @@ use Nette\DI\Definitions\Statement;
 use Nette\Schema\Context;
 use Nette\Schema\Expect;
 use Nette\Schema\Schema;
-use function is_array, is_string;
+use function array_key_exists, count, is_array, is_string, sprintf;
 
 
 /**

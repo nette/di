@@ -13,7 +13,7 @@ use Nette\DI\Definitions\Reference;
 use Nette\DI\Definitions\Statement;
 use Nette\Neon;
 use Nette\Neon\Node;
-use function count, defined, is_array, is_string, sprintf;
+use function count, is_array, is_string, sprintf;
 
 
 /**

@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use function array_key_exists, count, in_array, is_object, sprintf, strlen;
+use function array_key_exists, count, is_object, sprintf, strlen;
 
 
 /**
@@ -343,7 +343,7 @@ class Container
 			$descriptors[$name] = new ServiceDescriptor(
 				name: $name,
 				type: $type,
-				autowired: $wiring ? in_array($name, array_merge($wiring[0] ?? [], $wiring[1] ?? []), strict: true) : null,
+				autowired: $wiring ? in_array($name, array_merge($wiring[0] ?? [], $wiring[1] ?? []), true) : null,
 				tags: $tags,
 				aliases: $aliases[$name] ?? [],
 				instance: $this->instances[$name] ?? null,

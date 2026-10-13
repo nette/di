@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use function is_string, sprintf, strlen;
+use function function_exists, is_string, sprintf, strlen;
 
 
 /**
@@ -60,7 +60,7 @@ class ContainerLoader
 	 */
 	private function loadOnce(string $class, string $file, \Closure $generator): void
 	{
-		if (class_exists($class, autoload: false) || (@include $file) !== false) { // @ - file may not exist
+		if (class_exists($class, false) || (@include $file) !== false) { // @ - file may not exist
 			return;
 		}
 
@@ -117,7 +117,7 @@ class ContainerLoader
 	{
 		if (
 			!isset(self::$loaded[$file])
-			&& class_exists($class, autoload: false)
+			&& class_exists($class, false)
 			&& realpath((new \ReflectionClass($class))->getFileName() ?: '') === realpath($file)
 		) {
 			return $class; // included outside of this loader
@@ -130,13 +130,13 @@ class ContainerLoader
 		$declared = @include $file; // @ - error escalated to exception
 		if ($declared === false) {
 			throw new Nette\IOException(sprintf("Unable to include '%s'.", $file));
-		} elseif (!is_string($declared) || !class_exists($declared, autoload: false)) {
+		} elseif (!is_string($declared) || !class_exists($declared, false)) {
 			$declared = $class; // the file declares $class itself: built without auto-rebuild or by a custom generator
 		}
 
-		if (!class_exists($declared, autoload: false)) {
+		if (!class_exists($declared, false)) {
 			throw new Nette\InvalidStateException(sprintf("File '%s' does not declare class %s.", $file, $class));
-		} elseif (!class_exists($class, autoload: false)) {
+		} elseif (!class_exists($class, false)) {
 			class_alias($declared, $class); // getClassName() stays a valid name of the first loaded container
 		}
 

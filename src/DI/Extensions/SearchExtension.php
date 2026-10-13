@@ -110,7 +110,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 					||
 					($rc->isInterface()
 					&& count($methods = $rc->getMethods()) === 1
-					&& in_array($methods[0]->name, ['get', 'create'], strict: true))
+					&& in_array($methods[0]->name, ['get', 'create'], true))
 				)
 				&& (!$acceptRE || preg_match($acceptRE, $rc->name))
 				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))
