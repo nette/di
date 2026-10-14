@@ -28,6 +28,24 @@ class Test
 }
 
 
+class Sensitive
+{
+	public function __construct(
+		#[SensitiveParameter]
+		public $value,
+	) {
+	}
+
+
+	public function echo(
+		#[SensitiveParameter]
+		$value,
+	) {
+		return $value;
+	}
+}
+
+
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('one')
 	->setType(stdClass::class);
@@ -40,3 +58,6 @@ Assert::type(Test::class, $test);
 Assert::same($container, $test->container);
 Assert::false($container->callMethod([$test, 'method']));
 Assert::true($container->callMethod([$test, 'method'], [(object) ['prop' => true]]));
+$sensitive = $container->createInstance(Sensitive::class, ['secret']);
+Assert::same('secret', $sensitive->value);
+Assert::same('secret', $container->callMethod([$sensitive, 'echo'], ['secret']));

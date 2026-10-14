@@ -58,12 +58,14 @@ change-notifier from every definition** (the graph is frozen from here), then ru
 references, and per entity kind (class / function / static or instance method /
 `not` / a cast / a first-class callable) reflects the target and **fills missing
 arguments by autowiring**, recursing into nested statements and `typed()`/`tagged()`
-collections.
+collections. Once the arguments are complete, each one passed to a
+`#[SensitiveParameter]` (of any type, variadics excepted) is formatted to PHP on the
+spot and wrapped in a `/*sensitive{*/…/*}*/` literal, which Tracy masks. This must
+not move into the static `autowireArguments()`: `Container::createInstance()` and
+`callMethod()` use it at runtime, where a literal would replace the real value.
 
-Argument autowiring respects positional and named arguments and variadics
-(`#[SensitiveParameter]` only wraps an explicitly passed scalar in a
-sensitive-marked literal in the generated code), and resolves a missing object /
-`Type[]` argument through a getter — `getByType($type)` for a single service, or all
+Argument autowiring respects positional and named arguments and variadics, and
+resolves a missing object / `Type[]` argument through a getter — `getByType($type)` for a single service, or all
 autowired services of the type for an array. **This is where type-based autowiring
 actually happens** — in complete, with a finished index — which is why type
 references were left unresolved during resolve. A special case: a service's own

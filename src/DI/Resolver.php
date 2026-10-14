@@ -11,7 +11,7 @@ use Nette;
 use Nette\DI\Definitions\{Definition, Reference, Statement};
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\{Arrays, Callback, Reflection, Validators};
-use function array_key_exists, count, gettype, in_array, is_array, is_int, is_scalar, is_string, sprintf, strlen;
+use function array_key_exists, count, gettype, in_array, is_array, is_int, is_string, sprintf, strlen;
 
 
 /**
@@ -200,6 +200,7 @@ class Resolver
 		$getter = fn(string $type, bool $single) => $single
 			? $this->getByType($type)
 			: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
+		$method = null;
 
 		switch (true) {
 			case $statement->arguments === self::getFirstClassCallable():
@@ -246,7 +247,7 @@ class Resolver
 						$rm->isProtected() ? 'protected' : 'private',
 					));
 				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
-					$arguments = self::autowireArguments($constructor, $arguments, $getter);
+					$arguments = self::autowireArguments($method = $constructor, $arguments, $getter);
 					$this->addDependency($constructor);
 				} elseif ($arguments) {
 					throw new ServiceCreationException(sprintf(
@@ -286,7 +287,7 @@ class Resolver
 						}
 
 						$rf = new \ReflectionFunction($entity[1]);
-						$arguments = self::autowireArguments($rf, $arguments, $getter);
+						$arguments = self::autowireArguments($method = $rf, $arguments, $getter);
 						$this->addDependency($rf);
 						break;
 
@@ -313,7 +314,7 @@ class Resolver
 									throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $type, $entity[1]));
 								}
 
-								$arguments = self::autowireArguments($rm, $arguments, $getter);
+								$arguments = self::autowireArguments($method = $rm, $arguments, $getter);
 								$this->addDependency($rm);
 							}
 						}
@@ -328,6 +329,10 @@ class Resolver
 			}
 
 			throw $e;
+		}
+
+		if ($method) {
+			$arguments = $this->hideSensitiveArguments($method, $arguments);
 		}
 
 		return new Statement($entity, $arguments);
@@ -365,6 +370,25 @@ class Resolver
 				$val = $this->normalizeEntity(new Statement($val));
 			}
 		});
+		return $arguments;
+	}
+
+
+	/**
+	 * Wraps the arguments of #[SensitiveParameter] parameters in sensitive markers, which Tracy hides.
+	 * @param  array<mixed>  $arguments
+	 * @return array<mixed>
+	 */
+	private function hideSensitiveArguments(\ReflectionFunctionAbstract $method, array $arguments): array
+	{
+		foreach ($method->getParameters() as $param) {
+			$key = array_key_exists($param->name, $arguments) ? $param->name : $param->getPosition();
+			if (!$param->isVariadic() && array_key_exists($key, $arguments) && $param->getAttributes(\SensitiveParameter::class)) {
+				$code = (new PhpGenerator($this->builder))->formatPhp('/*sensitive{*/?/*}*/', [$arguments[$key]]);
+				$arguments[$key] = ContainerBuilder::literal($code);
+			}
+		}
+
 		return $arguments;
 	}
 
@@ -608,10 +632,7 @@ class Resolver
 				}
 
 			} elseif (array_key_exists($key = $paramName, $arguments) || array_key_exists($key = $num, $arguments)) {
-				$val = $arguments[$key];
-				$res[$useName ? $paramName : $num] = is_scalar($val) && $param->getAttributes(\SensitiveParameter::class)
-					? ContainerBuilder::literal('/*sensitive{*/?/*}*/', [$val])
-					: $val;
+				$res[$useName ? $paramName : $num] = $arguments[$key];
 				unset($arguments[$key], $arguments[$num]); // unset $num to enable overwriting in configuration
 
 			} elseif (($aw = self::autowireArgument($param, $getter)) !== null) {
