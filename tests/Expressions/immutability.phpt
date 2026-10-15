@@ -51,7 +51,7 @@ test('shared Reference instance used in two definitions', function () {
 	$reference = new Reference('shared');
 	$builder->addDefinition('a')->setCreator(ConsumerA::class, [$reference]);
 	$builder->addDefinition('b')->setCreator(ConsumerB::class, [$reference]);
-	$builder->addDefinition('shared2')->setCreator(Shared::class, []); // not autowired into $reference
+	$builder->addDefinition('shared2')->setCreator(Shared::class); // not autowired into $reference
 
 	$builder->complete();
 

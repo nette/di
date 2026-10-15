@@ -165,7 +165,11 @@ class ContainerLoader
 		if (!$handle) {
 			throw new Nette\IOException(sprintf("Unable to create file '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
 		} elseif (!@flock($handle, LOCK_EX)) { // @ is escalated to exception
-			throw new Nette\IOException(sprintf("Unable to acquire exclusive lock on '%s.lock'. %s", $file, Nette\Utils\Helpers::getLastError()));
+			throw new Nette\IOException(sprintf(
+				"Unable to acquire exclusive lock on '%s.lock'. %s",
+				$file,
+				Nette\Utils\Helpers::getLastError(),
+			));
 		}
 
 		try {

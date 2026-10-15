@@ -9,7 +9,6 @@ use Nette\DI;
 use Psr\Container\{ContainerExceptionInterface, NotFoundExceptionInterface};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 

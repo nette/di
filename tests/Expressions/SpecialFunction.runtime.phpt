@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -28,7 +27,7 @@ class Service
 }
 
 
-const NUM = 231;
+const Num = 231;
 
 $compiler = new DI\Compiler;
 $compiler->setDynamicParameterNames(['dynamic']);
@@ -36,7 +35,7 @@ $container = createContainer($compiler, '
 parameters:
 	t: true
 	f: false
-	fn: ::constant(NUM)
+	fn: ::constant(Num)
 	not: not(%f%)
 	string: string(%f%)
 

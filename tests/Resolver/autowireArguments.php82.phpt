@@ -8,7 +8,6 @@
 use Nette\DI\Resolver;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -24,7 +23,7 @@ class Test
 // disjunctive normal form types
 Assert::exception(
 	fn() => Resolver::autowireArguments(
-		new ReflectionFunction(function ((Foo & Test)|string $x) {}),
+		new ReflectionFunction(function ((Foo&Test)|string $x) {}),
 		[],
 		function () {},
 	),

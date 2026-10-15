@@ -100,7 +100,9 @@ final class DecoratorExtension extends Nette\DI\CompilerExtension
 		return array_filter(
 			$this->getContainerBuilder()->getDefinitions(),
 			fn(Definitions\Definition $def): bool => ($def->getType() !== null && is_a($def->getType(), $type, allow_string: true))
-				|| ($def instanceof Definitions\FactoryDefinition && $def->getResultType() !== null && is_a($def->getResultType(), $type, allow_string: true)),
+				|| ($def instanceof Definitions\FactoryDefinition
+					&& $def->getResultType() !== null
+					&& is_a($def->getResultType(), $type, allow_string: true)),
 		);
 	}
 }

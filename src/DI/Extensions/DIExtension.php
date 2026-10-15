@@ -27,13 +27,12 @@ final class DIExtension extends Nette\DI\CompilerExtension
 
 	/** @var object{debugger: ?bool, excluded: list<class-string>, parentClass: ?string, export: object{parameters: bool, tags: list<string>|bool|null, types: list<string>|bool|null}, lazy: bool} */
 	protected $config = [];
-	private bool $debugMode;
 	private float $time;
 
 
-	public function __construct(bool $debugMode = false)
-	{
-		$this->debugMode = $debugMode;
+	public function __construct(
+		private bool $debugMode = false,
+	) {
 		$this->time = microtime(as_float: true);
 
 		$this->config = new class {
@@ -88,8 +87,8 @@ final class DIExtension extends Nette\DI\CompilerExtension
 		$this->restrictTypes($class);
 
 		if (
-			$this->debugMode &&
-			($this->config->debugger ?? $this->getContainerBuilder()->getByType(Tracy\Bar::class))
+			$this->debugMode
+			&& ($this->config->debugger ?? $this->getContainerBuilder()->getByType(Tracy\Bar::class))
 		) {
 			$this->enableTracyIntegration();
 		}

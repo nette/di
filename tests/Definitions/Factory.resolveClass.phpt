@@ -8,6 +8,7 @@ namespace A
 {
 	use B\Bar;
 
+
 	class Factory
 	{
 		public function createFoo(): Foo
@@ -52,13 +53,12 @@ namespace {
 	use Nette\DI;
 	use Tester\Assert;
 
-
 	require __DIR__ . '/../bootstrap.php';
 
 
 	interface StdClassFactory
 	{
-		public function create(): stdClass;
+		function create(): stdClass;
 	}
 
 

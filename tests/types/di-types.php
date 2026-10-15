@@ -54,11 +54,11 @@ function testContainerBuilderGetByType(ContainerBuilder $builder): void
 function testContainerBuilderAddDefinition(ContainerBuilder $builder): void
 {
 	$serviceDef = $builder->addDefinition('foo');
-	assertType('Nette\DI\Definitions\ServiceDefinition', $serviceDef);
+	assertType(Definitions\ServiceDefinition::class, $serviceDef);
 
 	$accessorDef = $builder->addDefinition('bar', new Definitions\AccessorDefinition);
-	assertType('Nette\DI\Definitions\AccessorDefinition', $accessorDef);
+	assertType(Definitions\AccessorDefinition::class, $accessorDef);
 
 	$factoryDef = $builder->addDefinition('baz', new Definitions\FactoryDefinition);
-	assertType('Nette\DI\Definitions\FactoryDefinition', $factoryDef);
+	assertType(Definitions\FactoryDefinition::class, $factoryDef);
 }

@@ -7,12 +7,11 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 interface IShape
 {
-	public function getName(): string;
+	function getName(): string;
 }
 
 class Circle implements IShape
@@ -41,17 +40,17 @@ class Ellipse extends Circle
 
 interface ICircleFactory
 {
-	public function create(Circle $shape): Picture;
+	function create(Circle $shape): Picture;
 }
 
 interface ITriangleFactory
 {
-	public function create(Triangle $shape): Picture;
+	function create(Triangle $shape): Picture;
 }
 
 interface IEllipseFactory
 {
-	public function create(Ellipse $shape): Picture;
+	function create(Ellipse $shape): Picture;
 }
 
 class Picture

@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -17,7 +16,7 @@ class Lorem
 
 interface ILoremAccessor
 {
-	public function get(): Lorem;
+	function get(): Lorem;
 }
 
 

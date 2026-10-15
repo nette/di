@@ -7,13 +7,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface ITestFactory
 {
-	public function create(): Test;
+	function create(): Test;
 }
 
 class Foo

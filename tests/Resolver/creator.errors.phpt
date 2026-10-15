@@ -7,7 +7,6 @@
 use Nette\DI;
 use Nette\DI\Definitions\{Reference, Statement};
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -61,10 +60,9 @@ testException('non-existent interface in factory definition causes error', funct
 }, Nette\InvalidArgumentException::class, "Service 'one': Interface 'Unknown' not found.");
 
 
-
 interface Bad4
 {
-	public function create();
+	function create();
 }
 
 testException('undeclared return type in factory interface triggers error', function () {
@@ -76,7 +74,7 @@ testException('undeclared return type in factory interface triggers error', func
 
 interface Bad5
 {
-	public function get($arg);
+	function get($arg);
 }
 
 testException('method with parameters in accessor interface causes error', function () {

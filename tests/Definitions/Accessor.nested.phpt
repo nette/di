@@ -7,18 +7,17 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface StdClassAccessor
 {
-	public function get(): stdClass;
+	function get(): stdClass;
 }
 
 interface StdClassAccessorAccessor
 {
-	public function get(): StdClassAccessor;
+	function get(): StdClassAccessor;
 }
 
 
@@ -30,7 +29,7 @@ $builder->addAccessorDefinition('two')
 	->setImplement(StdClassAccessor::class);
 
 $builder->addDefinition('three')
-	->setClass(stdClass::class);
+	->setType(stdClass::class);
 
 
 $container = createContainer($builder);

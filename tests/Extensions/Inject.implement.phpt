@@ -8,13 +8,12 @@ use Nette\DI;
 use Nette\DI\Definitions\{Reference, Statement};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface ServiceFactory
 {
-	public function create(): Service;
+	function create(): Service;
 }
 
 class Service

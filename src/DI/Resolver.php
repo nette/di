@@ -119,7 +119,8 @@ class Resolver
 				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)), 0, $e);
 			} elseif ($reflection instanceof \ReflectionMethod && $refClass && (!$reflection->isPublic()
 				|| ($refClass->isTrait() && !$reflection->isStatic())
-			)) {
+			)
+			) {
 				throw new ServiceCreationException(sprintf('Method %s() is not callable.', Callback::toString($entity)));
 			}
 
@@ -128,7 +129,10 @@ class Resolver
 			$type = Nette\Utils\Type::fromReflection($reflection) ?? ($annotation = Helpers::getReturnTypeAnnotation($reflection));
 			if ($type && !in_array($type->getSingleName(), ['object', 'mixed'], true)) {
 				if (isset($annotation)) {
-					trigger_error('Annotation @return should be replaced with native return type at ' . Callback::toString($entity), E_USER_DEPRECATED);
+					trigger_error(
+						'Annotation @return should be replaced with native return type at ' . Callback::toString($entity),
+						E_USER_DEPRECATED,
+					);
 				}
 
 				return Helpers::ensureClassType(
@@ -194,8 +198,8 @@ class Resolver
 		$entity = $this->normalizeEntity($statement);
 		$arguments = $this->convertReferences($statement->arguments);
 		$getter = fn(string $type, bool $single) => $single
-				? $this->getByType($type)
-				: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
+			? $this->getByType($type)
+			: array_values(array_filter($this->builder->findAutowired($type), fn($obj) => $obj !== $this->currentService));
 
 		switch (true) {
 			case $statement->arguments === self::getFirstClassCallable():
@@ -236,7 +240,11 @@ class Resolver
 				} elseif ((new \ReflectionClass($entity))->isAbstract()) {
 					throw new ServiceCreationException(sprintf('Class %s is abstract.', $entity));
 				} elseif (($rm = (new \ReflectionClass($entity))->getConstructor()) !== null && !$rm->isPublic()) {
-					throw new ServiceCreationException(sprintf('Class %s has %s constructor.', $entity, $rm->isProtected() ? 'protected' : 'private'));
+					throw new ServiceCreationException(sprintf(
+						'Class %s has %s constructor.',
+						$entity,
+						$rm->isProtected() ? 'protected' : 'private',
+					));
 				} elseif ($constructor = (new \ReflectionClass($entity))->getConstructor()) {
 					$arguments = self::autowireArguments($constructor, $arguments, $getter);
 					$this->addDependency($constructor);
@@ -251,7 +259,13 @@ class Resolver
 
 			case $entity instanceof Reference:
 				if ($arguments) {
-					$e = $this->completeException(new ServiceCreationException(sprintf('Parameters were passed to reference @%s, although references cannot have any parameters.', $entity->getValue())), $this->currentService);
+					$e = $this->completeException(
+						new ServiceCreationException(sprintf(
+							'Parameters were passed to reference @%s, although references cannot have any parameters.',
+							$entity->getValue(),
+						)),
+						$this->currentService,
+					);
 					trigger_error($e->getMessage(), E_USER_DEPRECATED);
 				}
 				$entity = [new Reference(ContainerBuilder::ThisContainer), Container::getMethodName($entity->getValue())];
@@ -333,7 +347,9 @@ class Resolver
 					$services = [];
 					$current = $this->currentService?->getName();
 					foreach ($val->arguments as $argument) {
-						foreach ($entity === 'tagged' ? $this->builder->findByTag($argument) : $this->builder->findAutowired($argument) as $name => $foo) {
+						foreach ($entity === 'tagged'
+							? $this->builder->findByTag($argument)
+							: $this->builder->findAutowired($argument) as $name => $foo) {
 							if ($name !== $current) {
 								$services[] = new Reference($name);
 							}
@@ -341,6 +357,7 @@ class Resolver
 					}
 
 					$val = $this->completeArguments($services);
+
 				} else {
 					$val = $this->completeStatement($val, $this->currentServiceAllowed);
 				}
@@ -368,7 +385,6 @@ class Resolver
 		if ($item instanceof Definition) {
 			if ($this->builder->getDefinition($item->getName()) !== $item) {
 				throw new ServiceCreationException(sprintf("Service '%s' does not match the expected service.", $item->getName()));
-
 			}
 			$item = new Reference($item->getName());
 		}
@@ -382,7 +398,7 @@ class Resolver
 
 
 	/**
-	 * Normalizes reference to 'self' or named reference (or leaves it typed if it is not possible during resolving) and checks existence of service.
+	 * Normalizes reference to 'self' or named reference (leaves it typed if not possible during resolving) and checks the service exists.
 	 */
 	public function normalizeReference(Reference $ref): Reference
 	{
@@ -499,8 +515,8 @@ class Resolver
 	private function entityToString($entity): string
 	{
 		$referenceToText = fn(Reference $ref): string => $ref->isSelf() && $this->currentService?->getName() !== null
-				? '@' . $this->currentService->getName()
-				: '@' . $ref->getValue();
+			? '@' . $this->currentService->getName()
+			: '@' . $ref->getValue();
 		if (is_string($entity)) {
 			return $entity . '::__construct()';
 		} elseif ($entity instanceof Reference) {
@@ -583,11 +599,11 @@ class Resolver
 						));
 					}
 
-					$res = array_merge($res, $arguments[$paramName]);
+					$res = [...$res, ...$arguments[$paramName]];
 					unset($arguments[$paramName]);
 
 				} else {
-					$res = array_merge($res, $arguments);
+					$res = [...$res, ...$arguments];
 					$arguments = [];
 				}
 
@@ -687,8 +703,8 @@ class Resolver
 			)
 			&& ($itemType = Reflection::expandClassName($m[1], $method->getDeclaringClass()))
 			&& (class_exists($itemType) || interface_exists($itemType))
-				? $itemType
-				: null;
+			? $itemType
+			: null;
 	}
 
 

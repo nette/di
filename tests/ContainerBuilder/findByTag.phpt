@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -16,7 +15,7 @@ $builder->addDefinition('one')
 	->setType(stdClass::class);
 $builder->addDefinition('two')
 	->setType(stdClass::class)
-	->addTag('debugPanel', true);
+	->addTag('debugPanel');
 $builder->addDefinition('three')
 	->setType(stdClass::class)
 	->addTag('component');

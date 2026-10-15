@@ -7,18 +7,17 @@
 use Nette\DI\Definitions\AccessorDefinition;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface Bad1
 {
-	public function get();
+	function get();
 }
 
 interface Good1
 {
-	public function get(): stdClass;
+	function get(): stdClass;
 }
 
 

@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -20,12 +19,9 @@ class Lorem
 
 class Ipsum
 {
-	public $value;
-
-
-	public function __construct($value)
-	{
-		$this->value = $value;
+	public function __construct(
+		public $value,
+	) {
 	}
 
 

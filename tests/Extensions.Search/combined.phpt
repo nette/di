@@ -38,4 +38,4 @@ search:
 		n: 123
 ');
 
-Assert::same(['Foo\Bar\ClassBar'], array_keys($services));
+Assert::same([Foo\Bar\ClassBar::class], array_keys($services));

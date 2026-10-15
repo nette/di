@@ -7,13 +7,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface ILoremFactory
 {
-	public function create(): Lorem;
+	function create(): Lorem;
 }
 
 class Lorem
@@ -30,21 +29,20 @@ class Lorem
 
 interface IArticleFactory
 {
-	public function create($title): Article;
+	function create($title): Article;
 }
 
 class Article
 {
 	public const Abc = 123;
 
-	public $title;
 	public $method;
 	public $prop;
 
 
-	public function __construct($title)
-	{
-		$this->title = $title;
+	public function __construct(
+		public $title,
+	) {
 	}
 
 
@@ -82,46 +80,40 @@ class Baz
 
 interface IFooFactory
 {
-	public function create(?Baz $baz = null): Foo;
+	function create(?Baz $baz = null): Foo;
 }
 
 class Dolor
 {
 	public $bar;
 
-	public $foo;
 
-
-	public function __construct(?Bar $bar, $foo)
-	{
+	public function __construct(
+		?Bar $bar,
+		public $foo,
+	) {
 		$this->bar = $bar;
-		$this->foo = $foo;
 	}
 }
 
 interface DolorFactory
 {
-	public function create(?Bar $bar, $foo): Dolor;
+	function create(?Bar $bar, $foo): Dolor;
 }
 
 
 class TestClass
 {
-	public $foo;
-
-	public $bar;
-
-
-	public function __construct($foo, $bar)
-	{
-		$this->foo = $foo;
-		$this->bar = $bar;
+	public function __construct(
+		public $foo,
+		public $bar,
+	) {
 	}
 }
 
 interface ITestClassFactory
 {
-	public function create($bar): TestClass;
+	function create($bar): TestClass;
 }
 
 class TestExtension extends DI\CompilerExtension
@@ -256,7 +248,7 @@ class Bad1
 
 interface Bad2
 {
-	public function create(Baz $bar): Bad1;
+	function create(Baz $bar): Bad1;
 }
 
 Assert::exception(function () {
@@ -265,7 +257,6 @@ Assert::exception(function () {
 		->setImplement(Bad2::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad2): Type of \$bar in Bad2::create() doesn't match type in Bad1 constructor.");
-
 
 
 class Bad3
@@ -277,7 +268,7 @@ class Bad3
 
 interface Bad4
 {
-	public function create($baz): Bad3;
+	function create($baz): Bad3;
 }
 
 Assert::exception(function () {
@@ -286,7 +277,6 @@ Assert::exception(function () {
 		->setImplement(Bad4::class);
 	$builder->complete();
 }, Nette\InvalidStateException::class, "Service 'one' (type of Bad4): Cannot implement Bad4::create(): factory method parameters (\$baz) are not matching Bad3::__construct() parameters (\$bar). Did you mean to use '\$bar' in factory method?");
-
 
 
 class Bad5
@@ -298,7 +288,7 @@ class Bad5
 
 interface Bad6
 {
-	public function create($baz): Bad5;
+	function create($baz): Bad5;
 }
 
 Assert::exception(function () {

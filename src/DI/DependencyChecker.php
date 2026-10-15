@@ -35,7 +35,7 @@ class DependencyChecker
 	 */
 	public function add(array $deps): static
 	{
-		$this->dependencies = array_merge($this->dependencies, $deps);
+		$this->dependencies = [...$this->dependencies, ...$deps];
 		return $this;
 	}
 
@@ -164,6 +164,7 @@ class DependencyChecker
 				}
 
 				$uses = Reflection::getUseStatements($class);
+
 			} else {
 				$method = new \ReflectionFunction($name);
 				$uses = null;

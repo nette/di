@@ -8,11 +8,10 @@ use Nette\DI\Definitions\Statement;
 use Nette\DI\Extensions\DefinitionSchema;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
-interface IFace
+interface Iface
 {
 }
 

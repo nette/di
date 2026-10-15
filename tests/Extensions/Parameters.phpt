@@ -3,15 +3,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 class Service
 {
 	public const Name = 'hello';
-
-	public $arg;
 
 
 	public static function method($name)
@@ -20,9 +17,9 @@ class Service
 	}
 
 
-	public function __construct($arg)
-	{
-		$this->arg = $arg;
+	public function __construct(
+		public $arg,
+	) {
 	}
 }
 

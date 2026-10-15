@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 
 /**
- * Test: Nette\DI\ContainerBuilder and resolving class in generated factories. Return type is located in method signature instead of return type.
+ * Test: Nette\DI\ContainerBuilder and resolving class in generated factories.
+ * Return type is located in method signature instead of return type.
  */
 
 use Nette\DI;

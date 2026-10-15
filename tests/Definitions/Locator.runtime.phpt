@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -21,22 +20,22 @@ class LoremChild extends Lorem
 
 interface Locator
 {
-	public function get($name): Lorem;
+	function get($name): Lorem;
 }
 
 interface LocatorN
 {
-	public function get($name): ?Lorem;
+	function get($name): ?Lorem;
 }
 
 interface LocatorFactory
 {
-	public function create($name): Lorem;
+	function create($name): Lorem;
 }
 
 interface LocatorFactoryN
 {
-	public function create($name): ?Lorem;
+	function create($name): ?Lorem;
 }
 
 

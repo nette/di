@@ -12,8 +12,8 @@ require __DIR__ . '/../bootstrap.php';
 
 
 $compiler = new DI\Compiler;
-$compiler->addExtension('tracy', new Tracy\Bridges\Nette\TracyExtension(true));
-$compiler->addExtension('di', new DIExtension(true));
+$compiler->addExtension('tracy', new Tracy\Bridges\Nette\TracyExtension(debugMode: true));
+$compiler->addExtension('di', new DIExtension(debugMode: true));
 $container = createContainer($compiler, '');
 $container->initialize();
 

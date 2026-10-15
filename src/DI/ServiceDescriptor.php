@@ -13,16 +13,14 @@ namespace Nette\DI;
  */
 final class ServiceDescriptor
 {
-	/**
-	 * @param  array<string, mixed>  $tags  tag name => tag value
-	 * @param  list<string>  $aliases  alias names pointing to this service
-	 * @param  ?bool  $autowired  true = yes, false = no, null = unknown (no autowiring metadata)
-	 */
 	public function __construct(
 		public readonly string $name,
 		public readonly ?string $type,
+		/** true = yes, false = no, null = unknown (no autowiring metadata) */
 		public readonly ?bool $autowired,
+		/** @var array<string, mixed> tag name => tag value */
 		public readonly array $tags,
+		/** @var list<string> alias names pointing to this service */
 		public readonly array $aliases,
 		public readonly ?object $instance,
 	) {

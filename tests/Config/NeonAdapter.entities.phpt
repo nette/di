@@ -67,7 +67,7 @@ Assert::equal(
 );
 
 
-// ... deprecated
+// @ ... is deprecated
 $data = @$adapter->load(Tester\FileMock::create('
 - Class(arg1, ..., [...])
 ', 'neon'));
@@ -78,7 +78,7 @@ Assert::equal(
 );
 
 
-// @ escaping
+// @ escaping with @@ is deprecated
 $data = @$adapter->load(Tester\FileMock::create('
 - @@double
 - "@@doublequoted"
@@ -98,7 +98,7 @@ Assert::equal(
 
 
 // constants
-$data = @$adapter->load(Tester\FileMock::create('
+$data = $adapter->load(Tester\FileMock::create('
 - Foo::Bar
 - ArrayIterator::STD_PROP_LIST
 - "ArrayIterator::STD_PROP_LIST"

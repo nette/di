@@ -31,7 +31,11 @@ final class PsrContainer implements ContainerInterface
 			$name = $names[0];
 		} elseif (count($names) > 1) {
 			natsort($names);
-			throw new NotFoundException(sprintf('Multiple services of type %s found: %s.', Helpers::normalizeClass($id), implode(', ', $names)));
+			throw new NotFoundException(sprintf(
+				'Multiple services of type %s found: %s.',
+				Helpers::normalizeClass($id),
+				implode(', ', $names),
+			));
 		} elseif ($this->container->hasService($id)) {
 			$name = $id;
 		} else {

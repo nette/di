@@ -7,13 +7,12 @@
 use Nette\DI\Definitions\LocatorDefinition;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface Good
 {
-	public function get($name): stdClass;
+	function get($name): stdClass;
 }
 
 

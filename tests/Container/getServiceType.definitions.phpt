@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -17,12 +16,12 @@ class Service
 
 interface Accessor
 {
-	public function get(): Service;
+	function get(): Service;
 }
 
 interface Factory
 {
-	public function create(): Service;
+	function create(): Service;
 }
 
 

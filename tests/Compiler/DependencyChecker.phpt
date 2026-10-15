@@ -8,7 +8,6 @@ use Nette\DI;
 use Nette\DI\DependencyChecker;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 $compiler = new DI\Compiler;

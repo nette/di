@@ -7,7 +7,6 @@
 use Nette\DI\Definitions\{AccessorDefinition, Reference};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -17,34 +16,34 @@ interface Bad1
 
 interface Bad2
 {
-	public function create();
+	function create();
 }
 
 interface Bad3
 {
-	public function get();
+	function get();
 
-	public function foo();
+	function foo();
 }
 
 interface Bad4
 {
-	public static function get();
+	static function get();
 }
 
 interface Bad5
 {
-	public function get($arg);
+	function get($arg);
 }
 
 interface Bad6
 {
-	public function get();
+	function get();
 }
 
 interface Good1
 {
-	public function get(): stdClass;
+	function get(): stdClass;
 }
 
 

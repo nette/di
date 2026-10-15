@@ -7,18 +7,17 @@
 use Nette\DI\Definitions\FactoryDefinition;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface Bad1
 {
-	public function create();
+	function create();
 }
 
 interface Good1
 {
-	public function create(): stdClass;
+	function create(): stdClass;
 }
 
 

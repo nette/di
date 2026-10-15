@@ -7,7 +7,6 @@
 use Nette\DI\Definitions\{LocatorDefinition, Reference};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -17,46 +16,46 @@ interface Bad1
 
 interface Bad2
 {
-	public function create();
+	function create();
 }
 
 interface Bad3
 {
-	public function get();
+	function get();
 }
 
 interface Bad4
 {
-	public function get($name);
+	function get($name);
 
-	public function foo();
+	function foo();
 }
 
 interface Bad5
 {
-	public static function get($name);
+	static function get($name);
 }
 
 interface Bad6
 {
-	public function get($arg, $arg2);
+	function get($arg, $arg2);
 }
 
 interface Good1
 {
-	public function get($name);
+	function get($name);
 }
 
 interface Good2
 {
-	public function create($name);
+	function create($name);
 }
 
 interface Good3
 {
-	public function createA(): stdClass;
+	function createA(): stdClass;
 
-	public function getB(): stdClass;
+	function getB(): stdClass;
 }
 
 

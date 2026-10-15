@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -37,7 +36,7 @@ class SelfInjectingWidget extends Widget
 
 interface WidgetFactory
 {
-	public function create(): Widget;
+	function create(): Widget;
 }
 
 

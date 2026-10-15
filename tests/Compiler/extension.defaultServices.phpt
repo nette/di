@@ -7,20 +7,22 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface IBar
 {
 }
+
 interface IIpsum
 {
 }
+
 interface IIpsumFactory
 {
-	public function create(): IIpsum;
+	function create(): IIpsum;
 }
+
 interface IFooBar
 {
 }
@@ -28,15 +30,19 @@ interface IFooBar
 class Foo
 {
 }
+
 class Bar implements IBar
 {
 }
+
 class Lorem
 {
 }
+
 class Ipsum implements IIpsum
 {
 }
+
 class FooBar implements IFooBar
 {
 }

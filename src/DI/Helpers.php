@@ -86,7 +86,11 @@ final class Helpers
 				} elseif ($val instanceof DynamicParameter || $val instanceof Statement) {
 					$dynamic = true;
 				} elseif (!is_scalar($val)) {
-					throw new Nette\InvalidArgumentException(sprintf("Unable to concatenate non-scalar parameter '%s' into '%s'.", $part, $string));
+					throw new Nette\InvalidArgumentException(sprintf(
+						"Unable to concatenate non-scalar parameter '%s' into '%s'.",
+						$part,
+						$string,
+					));
 				}
 			}
 		}
@@ -149,6 +153,7 @@ final class Helpers
 			}
 
 			return $res;
+
 		} elseif (is_string($value)) {
 			return preg_replace('#^@|%#', '$0$0', $value);
 		}
@@ -256,7 +261,12 @@ final class Helpers
 		if (!$type) {
 			throw new ServiceCreationException(sprintf('%s is not declared.', ucfirst($hint)));
 		} elseif (!$type->isClass() || (!$allowNullable && $type->allows('null'))) {
-			throw new ServiceCreationException(sprintf("%s is expected to not be %sbuilt-in/complex, '%s' given.", ucfirst($hint), $allowNullable ? '' : 'nullable/', $type));
+			throw new ServiceCreationException(sprintf(
+				"%s is expected to not be %sbuilt-in/complex, '%s' given.",
+				ucfirst($hint),
+				$allowNullable ? '' : 'nullable/',
+				$type,
+			));
 		}
 
 		$class = $type->getSingleName();

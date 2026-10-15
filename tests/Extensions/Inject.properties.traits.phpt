@@ -15,6 +15,7 @@ namespace B
 {
 	use A\AInjected;
 
+
 	trait BTrait
 	{
 		/** @var AInjected @inject */
@@ -25,6 +26,7 @@ namespace B
 namespace C
 {
 	use B;
+
 
 	class CClass
 	{

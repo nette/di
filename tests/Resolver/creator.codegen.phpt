@@ -8,7 +8,6 @@ use Nette\DI;
 use Nette\DI\Definitions\Reference;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -49,7 +48,7 @@ $builder->addDefinition('four')
 	->addSetup('methodC', ['@self', '@container'])
 	->addSetup('methodD', ['@one']);
 
-$builder->addDefinition('five', null)
+$builder->addDefinition('five')
 	->setCreator('Service::create');
 
 $six = $builder->addDefinition('six')

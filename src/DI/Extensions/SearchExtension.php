@@ -50,8 +50,8 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 				'tags' => Expect::array(),
 			]),
 		)->before(fn($val) => is_string($val['in'] ?? null)
-				? ['default' => $val]
-				: $val);
+			? ['default' => $val]
+			: $val);
 	}
 
 
@@ -68,7 +68,7 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			}
 
 			foreach ($this->findClasses($batch) as $class) {
-				$this->classes[$class] = array_merge($this->classes[$class] ?? [], $batch->tags);
+				$this->classes[$class] = [...$this->classes[$class] ?? [], ...$batch->tags];
 			}
 		}
 	}
@@ -85,15 +85,15 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 		$robot->setTempDirectory($this->tempDir);
 		$robot->addDirectory($config->in);
 		$robot->acceptFiles = $config->files ?: ['*.php'];
-		$robot->ignoreDirs = array_values(array_merge($robot->ignoreDirs, $exclude->files));
+		$robot->ignoreDirs = array_values([...$robot->ignoreDirs, ...$exclude->files]);
 		$robot->reportParseErrors(false);
 		$robot->refresh();
 		$classes = array_unique(array_keys($robot->getIndexedClasses()));
 
 		$acceptRE = self::buildNameRegexp($config->classes);
 		$rejectRE = self::buildNameRegexp($exclude->classes);
-		$acceptParent = array_merge($config->extends, $config->implements);
-		$rejectParent = array_merge($exclude->extends, $exclude->implements);
+		$acceptParent = [...$config->extends, ...$config->implements];
+		$rejectParent = [...$exclude->extends, ...$exclude->implements];
 
 		$found = [];
 		foreach ($classes as $class) {
@@ -107,10 +107,9 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 			$rc = new \ReflectionClass($class);
 			if (
 				($rc->isInstantiable()
-					||
-					($rc->isInterface()
-					&& count($methods = $rc->getMethods()) === 1
-					&& in_array($methods[0]->name, ['get', 'create'], true))
+					|| ($rc->isInterface()
+						&& count($methods = $rc->getMethods()) === 1
+						&& in_array($methods[0]->name, ['get', 'create'], true))
 				)
 				&& (!$acceptRE || preg_match($acceptRE, $rc->name))
 				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))

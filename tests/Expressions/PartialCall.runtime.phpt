@@ -8,12 +8,9 @@ require __DIR__ . '/../bootstrap.php';
 
 class Service
 {
-	public $cb;
-
-
-	public function __construct($cb)
-	{
-		$this->cb = $cb;
+	public function __construct(
+		public $cb,
+	) {
 	}
 
 

@@ -7,23 +7,19 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface IArticleFactory
 {
-	public function create($title): Article;
+	function create($title): Article;
 }
 
 class Article
 {
-	public $title;
-
-
-	public function __construct($title)
-	{
-		$this->title = $title;
+	public function __construct(
+		public $title,
+	) {
 	}
 }
 

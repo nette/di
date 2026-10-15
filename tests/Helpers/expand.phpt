@@ -9,7 +9,6 @@ use Nette\DI\{DynamicParameter, Helpers};
 use Nette\PhpGenerator\Literal;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -94,13 +93,13 @@ Assert::exception(
 
 Assert::same(
 	['key1' => 'hello', 'key2' => '*%key1%*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']), // deprecated
+	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*']), // @ %parameters% is deprecated
 );
 Assert::same(
 	['key1' => 'hello', 'key2' => '*hello*'],
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true), // deprecated
+	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*'], recursive: true), // @ %parameters% is deprecated
 );
 Assert::same(
 	'own',
-	@Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']), // deprecated
+	Helpers::expand('%parameters%', ['key1' => 'hello', 'key2' => '*%key1%*', 'parameters' => 'own']),
 );

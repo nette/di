@@ -53,15 +53,31 @@ function creatorCode(Statement $creator, ?string $type): string
 
 test('resolveEntityType(): special functions are treated as class names', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('not', [true])), ServiceCreationException::class, "Class 'not' not found.");
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('int', ['5'])), ServiceCreationException::class, "Class 'int' not found.");
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement('not', [true])),
+		ServiceCreationException::class,
+		"Class 'not' not found.",
+	);
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement('int', ['5'])),
+		ServiceCreationException::class,
+		"Class 'int' not found.",
+	);
 });
 
 
 test('resolveEntityType(): typed()/tagged() are treated as class names', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('typed', [stdClass::class])), ServiceCreationException::class, "Class 'typed' not found.");
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('tagged', ['t'])), ServiceCreationException::class, "Class 'tagged' not found.");
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement('typed', [stdClass::class])),
+		ServiceCreationException::class,
+		"Class 'typed' not found.",
+	);
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement('tagged', ['t'])),
+		ServiceCreationException::class,
+		"Class 'tagged' not found.",
+	);
 });
 
 
@@ -69,14 +85,26 @@ test('resolveEntityType(): property access has no type reflection (read and appe
 	[, $resolver] = harness();
 	// the declared property type is never reflected; assigned/appended arguments are irrelevant to resolution,
 	// so the read and write forms share one entity - only the append notation $prop[] differs
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj'])), ServiceCreationException::class, 'Method Holder::$obj() is not callable.');
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj[]'], [1])), ServiceCreationException::class, 'Method Holder::$obj[]() is not callable.');
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj'])),
+		ServiceCreationException::class,
+		'Method Holder::$obj() is not callable.',
+	);
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement([new Reference('svc'), '$obj[]'], [1])),
+		ServiceCreationException::class,
+		'Method Holder::$obj[]() is not callable.',
+	);
 });
 
 
 test('resolveEntityType(): a PHP literal is treated as a class name', function () {
 	[, $resolver] = harness();
-	Assert::exception(fn() => $resolver->resolveEntityType(new Statement('new ReflectionClass(?)', [stdClass::class])), ServiceCreationException::class, "Class 'new ReflectionClass(?)' not found.");
+	Assert::exception(
+		fn() => $resolver->resolveEntityType(new Statement('new ReflectionClass(?)', [stdClass::class])),
+		ServiceCreationException::class,
+		"Class 'new ReflectionClass(?)' not found.",
+	);
 });
 
 
@@ -84,26 +112,49 @@ test('resolveEntityType(): a PHP literal is treated as a class name', function (
 
 test('special function creator: generates code with a type, fails without one', function () {
 	Assert::same('return !(true);', creatorCode(new Statement('not', [true]), stdClass::class));
-	Assert::exception(fn() => creatorCode(new Statement('not', [true]), null), ServiceCreationException::class, "%A?%Class 'not' not found.");
+	Assert::exception(
+		fn() => creatorCode(new Statement('not', [true]), null),
+		ServiceCreationException::class,
+		"%A?%Class 'not' not found.",
+	);
 });
 
 
 test('typed()/tagged() cannot be used as a creator at all (even with a type)', function () {
-	Assert::exception(fn() => creatorCode(new Statement('typed', [stdClass::class]), stdClass::class), ServiceCreationException::class, "%A?%Class 'typed' not found.");
-	Assert::exception(fn() => creatorCode(new Statement('tagged', ['t']), stdClass::class), ServiceCreationException::class, "%A?%Class 'tagged' not found.");
+	Assert::exception(
+		fn() => creatorCode(new Statement('typed', [stdClass::class]), stdClass::class),
+		ServiceCreationException::class,
+		"%A?%Class 'typed' not found.",
+	);
+	Assert::exception(
+		fn() => creatorCode(new Statement('tagged', ['t']), stdClass::class),
+		ServiceCreationException::class,
+		"%A?%Class 'tagged' not found.",
+	);
 });
 
 
 test('property read creator: generates code with a type, fails without one', function () {
 	Assert::same("return \$this->getService('svc')->obj;", creatorCode(new Statement([new Reference('svc'), '$obj']), stdClass::class));
-	Assert::exception(fn() => creatorCode(new Statement([new Reference('svc'), '$obj']), null), ServiceCreationException::class, '%A?%Method Holder::$obj() is not callable.');
+	Assert::exception(
+		fn() => creatorCode(new Statement([new Reference('svc'), '$obj']), null),
+		ServiceCreationException::class,
+		'%A?%Method Holder::$obj() is not callable.',
+	);
 });
 
 
 test('PHP literal creator: generates code with a type, fails without one', function () {
 	// a PhpLiteral used as a creator must evaluate to an object (a service is an object)
-	Assert::same("return new ReflectionClass('stdClass');", creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), ReflectionClass::class));
-	Assert::exception(fn() => creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), null), ServiceCreationException::class, "%A?%Class 'new ReflectionClass(?)' not found.");
+	Assert::same(
+		"return new ReflectionClass('stdClass');",
+		creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), ReflectionClass::class),
+	);
+	Assert::exception(
+		fn() => creatorCode(new Statement('new ReflectionClass(?)', [stdClass::class]), null),
+		ServiceCreationException::class,
+		"%A?%Class 'new ReflectionClass(?)' not found.",
+	);
 });
 
 

@@ -7,7 +7,6 @@
 use Nette\Schema\Expect;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 

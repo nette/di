@@ -7,13 +7,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface IFactory
 {
-	public static function create();
+	static function create();
 }
 
 class Factory implements IFactory

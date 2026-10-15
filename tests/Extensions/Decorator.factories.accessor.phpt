@@ -7,12 +7,11 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 interface FooAccessor
 {
-	public function get(): Foo;
+	function get(): Foo;
 }
 
 class Foo

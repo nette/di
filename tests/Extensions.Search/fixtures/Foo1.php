@@ -2,6 +2,7 @@
 
 namespace Foo;
 
+
 class ClassBar
 {
 }

@@ -7,7 +7,6 @@
 use Nette\DI\Config;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 define('TEMP_FILE', getTempDir() . '/cfg.php');

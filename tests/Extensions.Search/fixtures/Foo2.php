@@ -2,6 +2,7 @@
 
 namespace Foo\Bar;
 
+
 class ClassBar extends \stdClass
 {
 }

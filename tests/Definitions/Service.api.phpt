@@ -7,7 +7,6 @@
 use Nette\DI\Definitions\{ServiceDefinition, Statement};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -31,7 +30,7 @@ test('type versus entity II.', function () {
 	$def = new ServiceDefinition;
 	$def->setCreator(stdClass::class);
 	Assert::null($def->getType());
-	Assert::equal(new Statement(stdClass::class, []), $def->getCreator());
+	Assert::equal(new Statement(stdClass::class), $def->getCreator());
 
 	$def->setArguments([1, 2]);
 	Assert::null($def->getType());

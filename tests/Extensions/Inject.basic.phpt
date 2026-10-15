@@ -8,7 +8,6 @@ use Nette\DI;
 use Nette\DI\Definitions\{Reference, Statement};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -23,7 +22,6 @@ class ConcreteDependencyA extends AbstractDependency
 class ConcreteDependencyB extends AbstractDependency
 {
 }
-
 
 
 class ParentClass
@@ -60,7 +58,6 @@ class Service extends ParentClass
 	{
 	}
 }
-
 
 
 class LastExtension extends DI\CompilerExtension

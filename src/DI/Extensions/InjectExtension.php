@@ -107,8 +107,8 @@ final class InjectExtension extends DI\CompilerExtension
 
 		$methods = array_keys($classes);
 		uksort($classes, fn(string $a, string $b): int => $classes[$a] === $classes[$b]
-				? array_search($a, $methods, strict: true) <=> array_search($b, $methods, strict: true)
-				: (is_a($classes[$a], $classes[$b], allow_string: true) ? 1 : -1));
+			? array_search($a, $methods, strict: true) <=> array_search($b, $methods, strict: true)
+			: (is_a($classes[$a], $classes[$b], allow_string: true) ? 1 : -1));
 		return array_keys($classes);
 	}
 
@@ -125,7 +125,10 @@ final class InjectExtension extends DI\CompilerExtension
 			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if (!$rp->isPublic() || $rp->isStatic() || $rp->isReadOnly()) {
-					throw new Nette\InvalidStateException(sprintf('Property %s for injection must not be static, readonly and must be public.', Reflection::toString($rp)));
+					throw new Nette\InvalidStateException(sprintf(
+						'Property %s for injection must not be static, readonly and must be public.',
+						Reflection::toString($rp),
+					));
 				}
 
 				$type = Nette\Utils\Type::fromReflection($rp);

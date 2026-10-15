@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -22,12 +21,9 @@ class FooExtension extends DI\CompilerExtension
 
 class BarExtension extends DI\CompilerExtension
 {
-	private $param;
-
-
-	public function __construct($param)
-	{
-		$this->param = $param;
+	public function __construct(
+		private $param,
+	) {
 	}
 
 

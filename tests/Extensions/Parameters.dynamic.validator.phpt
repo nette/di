@@ -4,7 +4,6 @@ use Nette\DI;
 use Nette\Schema\Expect;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -31,7 +30,7 @@ testException("Dynamic parameter of type int given to 'string' configuration", f
 			string: %dynamic%
 	', ['dynamic' => 123]);
 	$container->initialize();
-}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo\u{00A0}›\u{00A0}key\u{00A0}›\u{00A0}string' expects to be string, int 123 given.");
 
 
 testException("Dynamic parameter of type null given to 'string' configuration", function () {
@@ -44,7 +43,7 @@ testException("Dynamic parameter of type null given to 'string' configuration", 
 			string: %dynamic%
 	', ['dynamic' => null]);
 	$container->initialize();
-}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, null given.");
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo\u{00A0}›\u{00A0}key\u{00A0}›\u{00A0}string' expects to be string, null given.");
 
 
 testException("Dynamic sub-parameter of type int given to 'string' configuration", function () {
@@ -57,7 +56,7 @@ testException("Dynamic sub-parameter of type int given to 'string' configuration
 			string: %dynamic.sub%
 	', ['dynamic' => ['sub' => 123]]);
 	$container->initialize();
-}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo › key › string' expects to be string, int 123 given.");
+}, Nette\Utils\AssertionException::class, "The dynamic parameter used in 'foo\u{00A0}›\u{00A0}key\u{00A0}›\u{00A0}string' expects to be string, int 123 given.");
 
 
 test("Dynamic parameter of type int successfully given to 'int|null' configuration", function () {

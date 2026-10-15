@@ -7,13 +7,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface StdClassFactory
 {
-	public function create(): stdClass;
+	function create(): stdClass;
 }
 
 class FactoryReceiver

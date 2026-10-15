@@ -8,7 +8,6 @@ use Nette\DI;
 use Nette\DI\Extensions\DIExtension;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 

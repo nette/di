@@ -83,6 +83,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 					}
 
 					$val = $tmp;
+
 				} else {
 					$tmp = $this->process([$val->value]);
 					if (is_string($tmp[0]) && str_contains($tmp[0], '?')) {
@@ -200,7 +201,10 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		if ($node instanceof Node\StringNode) {
 			if (str_starts_with($node->value, '@@')) {
-				trigger_error("There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
+				trigger_error(
+					"There is no need to escape @ anymore, replace @@ with @ in: '$node->value' (used in $this->file)",
+					E_USER_DEPRECATED,
+				);
 			} else {
 				$node->value = preg_replace('#^@#', '$0$0', $node->value); // escape
 			}
@@ -210,7 +214,10 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			&& is_string($node->value)
 			&& str_starts_with($node->value, '@@')
 		) {
-			trigger_error("There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$node->value' (used in $this->file)", E_USER_DEPRECATED);
+			trigger_error(
+				"There is no need to escape @ anymore, replace @@ with @ and put string in quotes: '$node->value' (used in $this->file)",
+				E_USER_DEPRECATED,
+			);
 		}
 	}
 

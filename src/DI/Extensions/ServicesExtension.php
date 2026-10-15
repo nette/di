@@ -188,7 +188,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 				if ($reference instanceof Statement) {
 					$config->references[$name] = '@' . $this->getContainerBuilder()
 						->addDefinition(null)
-						->setFactory($reference)
+						->setCreator($reference)
 						->setAutowired(false)
 						->getName();
 				}

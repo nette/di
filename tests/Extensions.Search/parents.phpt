@@ -17,8 +17,8 @@ Assert::same([
 	'ClassOk3',
 	'CountableClass',
 	'ExtendsStdClass',
-	'Foo\Bar\ClassBar',
-	'Foo\ClassBar',
+	Foo\Bar\ClassBar::class,
+	Foo\ClassBar::class,
 	'InterfaceOk1',
 	'InterfaceOk2',
 ], array_keys($services));
@@ -31,7 +31,7 @@ search:
 	extends: stdClass
 ');
 
-Assert::same(['ExtendsStdClass', 'Foo\Bar\ClassBar'], array_keys($services));
+Assert::same(['ExtendsStdClass', Foo\Bar\ClassBar::class], array_keys($services));
 
 
 
@@ -43,7 +43,7 @@ search:
 		- Countable
 ');
 
-Assert::same(['CountableClass', 'ExtendsStdClass', 'Foo\Bar\ClassBar'], array_keys($services));
+Assert::same(['CountableClass', 'ExtendsStdClass', Foo\Bar\ClassBar::class], array_keys($services));
 
 
 
@@ -56,7 +56,7 @@ search:
 		- Countable
 ');
 
-Assert::same(['CountableClass', 'ExtendsStdClass', 'Foo\Bar\ClassBar'], array_keys($services));
+Assert::same(['CountableClass', 'ExtendsStdClass', Foo\Bar\ClassBar::class], array_keys($services));
 
 
 
@@ -94,7 +94,7 @@ Assert::same([
 	'ClassOk2',
 	'ClassOk3',
 	'CountableClass',
-	'Foo\ClassBar',
+	Foo\ClassBar::class,
 	'InterfaceOk1',
 	'InterfaceOk2',
 ], array_keys($services));

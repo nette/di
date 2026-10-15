@@ -7,18 +7,17 @@
 use Nette\DI\Definitions\{LocatorDefinition, Reference};
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface Good1
 {
-	public function get($name);
+	function get($name);
 }
 
 interface Good2
 {
-	public function create($name): stdClass;
+	function create($name): stdClass;
 }
 
 class Service

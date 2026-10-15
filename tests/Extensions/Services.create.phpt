@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -22,13 +21,12 @@ class Factory
 
 class Lorem
 {
-	public $arg;
 	public $foo;
 
 
-	public function __construct($arg = null)
-	{
-		$this->arg = $arg;
+	public function __construct(
+		public $arg = null,
+	) {
 	}
 
 
@@ -41,12 +39,9 @@ class Lorem
 
 class Ipsum
 {
-	public $arg;
-
-
-	public function __construct($arg)
-	{
-		$this->arg = $arg;
+	public function __construct(
+		public $arg,
+	) {
 	}
 }
 

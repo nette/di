@@ -7,7 +7,6 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
@@ -30,7 +29,7 @@ class Bar extends Foo implements IBar
 
 $builder = new DI\ContainerBuilder;
 $builder->addDefinition('bar')
-		->setType(Bar::class);
+	->setType(Bar::class);
 $builder->addExcludedClasses([Foo::class, IBar::class]);
 
 

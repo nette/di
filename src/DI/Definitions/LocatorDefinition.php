@@ -29,14 +29,19 @@ final class LocatorDefinition extends Definition
 
 		$methods = (new \ReflectionClass($interface))->getMethods();
 		if (!$methods) {
-			throw new Nette\InvalidArgumentException(sprintf("Service '%s': Interface %s must have at least one method.", $this->getName(), $interface));
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service '%s': Interface %s must have at least one method.",
+				$this->getName(),
+				$interface,
+			));
 		}
 
 		foreach ($methods as $method) {
 			if ($method->isStatic() || !(
 				(preg_match('#^(get|create)$#', $method->name) && $method->getNumberOfParameters() === 1)
 				|| (preg_match('#^(get|create)[A-Z]#', $method->name) && $method->getNumberOfParameters() === 0)
-			)) {
+			)
+			) {
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Service '%s': Method %s::%s() does not meet the requirements: is create(\$name), get(\$name), create*() or get*() and is non-static.",
 					$this->getName(),
@@ -161,9 +166,9 @@ final class LocatorDefinition extends Definition
 
 					XX . "\t" . ($nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service \'$name\' is not defined.");') . <<<'XX'
 
-					}
-					return $this->container->
-					XX . $m[1] . 'Service($this->mapping[$name]);')
+						}
+						return $this->container->
+						XX . $m[1] . 'Service($this->mapping[$name]);')
 					->addParameter('name');
 
 			} elseif (isset($this->references[$name])) {
@@ -174,7 +179,9 @@ final class LocatorDefinition extends Definition
 					$methodInner->setBody('return $this->container->?();', [Nette\DI\Container::getMethodName($ref)]);
 				}
 			} else {
-				$methodInner->setBody($nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service is not defined.");');
+				$methodInner->setBody(
+					$nullable ? 'return null;' : 'throw new Nette\DI\MissingServiceException("Service is not defined.");',
+				);
 			}
 		}
 

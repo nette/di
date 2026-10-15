@@ -7,24 +7,20 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 class Foo
 {
-	public $value;
-
-
-	public function __construct($value)
-	{
-		$this->value = $value;
+	public function __construct(
+		public $value,
+	) {
 	}
 }
 
 interface FooFactory
 {
-	public function create(): Foo;
+	function create(): Foo;
 }
 
 

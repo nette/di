@@ -18,8 +18,8 @@ use Tracy;
 class ContainerPanel implements Tracy\IBarPanel
 {
 	public static ?float $compilationTime = null;
-	private Nette\DI\Container $container;
-	private ?float $elapsedTime;
+	private readonly Nette\DI\Container $container;
+	private readonly ?float $elapsedTime;
 
 
 	public function __construct(Container $container)

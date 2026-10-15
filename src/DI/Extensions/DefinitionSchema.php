@@ -77,10 +77,14 @@ class DefinitionSchema implements Schema
 			$res = ['implement' => $def->getEntity()];
 			if (array_key_exists('tagged', $def->arguments)) {
 				if (count($def->arguments) > 1) {
-					throw new Nette\DI\InvalidConfigurationException(sprintf("Argument 'tagged' cannot be combined with other arguments in %s(...).", $def->getEntity()));
+					throw new Nette\DI\InvalidConfigurationException(sprintf(
+						"Argument 'tagged' cannot be combined with other arguments in %s(...).",
+						$def->getEntity(),
+					));
 				}
 
 				$res['tagged'] = $def->arguments['tagged'];
+
 			} elseif (array_keys($def->arguments) === [0]) {
 				$res['create'] = $def->arguments[0];
 			} elseif ($def->arguments) {
@@ -115,7 +119,6 @@ class DefinitionSchema implements Schema
 
 
 	/**
-	 * @param  string|int  $key
 	 * @param  array<string, mixed>  $def
 	 */
 	private function sniffType(string|int $key, array $def): string

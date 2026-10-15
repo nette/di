@@ -45,7 +45,10 @@ class Autowiring
 		if (empty($types[$type])) {
 			if ($throw) {
 				if (!class_exists($type) && !interface_exists($type)) {
-					throw new MissingServiceException(sprintf("Service of type '%s' not found. Check the class name because it cannot be found.", $type));
+					throw new MissingServiceException(sprintf(
+						"Service of type '%s' not found. Check the class name because it cannot be found.",
+						$type,
+					));
 				}
 
 				throw new MissingServiceException(sprintf('Service of type %s not found. Did you add it to configuration file?', $type));
@@ -80,7 +83,7 @@ class Autowiring
 	{
 		$type = Helpers::normalizeClass($type);
 		$definitions = $this->builder->getDefinitions();
-		$names = array_merge($this->highPriority[$type] ?? [], $this->lowPriority[$type] ?? []);
+		$names = [...$this->highPriority[$type] ?? [], ...$this->lowPriority[$type] ?? []];
 		$res = [];
 		foreach ($names as $name) {
 			$res[$name] = $definitions[$name];
@@ -150,7 +153,7 @@ class Autowiring
 					foreach ($autowired as $autowiredType) {
 						if (is_a($parent, $autowiredType, allow_string: true)) {
 							if (empty($preferred[$parent]) && isset($this->highPriority[$parent])) {
-								$this->lowPriority[$parent] = array_merge($this->lowPriority[$parent] ?? [], $this->highPriority[$parent]);
+								$this->lowPriority[$parent] = [...$this->lowPriority[$parent] ?? [], ...$this->highPriority[$parent]];
 								$this->highPriority[$parent] = [];
 							}
 

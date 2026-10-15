@@ -71,7 +71,10 @@ class ContainerBuilder
 			$name = '0' . $i; // prevents converting to integer in array key
 
 		} elseif (is_int(key([$name => 1])) || !preg_match('#^\w+(\.\w+)*$#D', $name)) {
-			throw new Nette\InvalidArgumentException(sprintf("Service name must be a alpha-numeric string and not a number, '%s' given.", $name));
+			throw new Nette\InvalidArgumentException(sprintf(
+				"Service name must be a alpha-numeric string and not a number, '%s' given.",
+				$name,
+			));
 
 		} elseif ($name === self::ThisService) {
 			throw new Nette\InvalidArgumentException("Service name 'self' is reserved for references to the current service.");

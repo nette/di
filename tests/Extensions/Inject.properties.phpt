@@ -37,6 +37,7 @@ namespace A\B
 	use A;
 	use Nette\DI\Attributes\Inject;
 
+
 	class BClass extends A\AClass
 	{
 		#[Inject]
@@ -52,6 +53,7 @@ namespace C
 {
 	use A\{AInjected, B};
 	use C\CInjected as CAlias;
+
 
 	class CClass
 	{

@@ -56,16 +56,56 @@ function compileConfig(string $config): void
 
 $cases = [
 	// [config, exception, message]
-	["services:\n\t- ErrService(...)\n", DI\ServiceCreationException::class, 'Service of type Closure: Cannot create closure for ErrService(...)'],
-	["services:\n\t- ErrService( @missing )\n", DI\ServiceCreationException::class, "Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())"],
-	["services:\n\t- UnknownClass\n", DI\ServiceCreationException::class, "Service (UnknownClass::__construct()): Class 'UnknownClass' not found."],
-	["services:\n\t- ErrAbstract\n", DI\ServiceCreationException::class, 'Service of type ErrAbstract: Class ErrAbstract is abstract.'],
-	["services:\n\t- ErrPrivateCtor\n", DI\ServiceCreationException::class, 'Service of type ErrPrivateCtor: Class ErrPrivateCtor has private constructor.'],
-	["services:\n\t- ErrNoCtor(1)\n", DI\ServiceCreationException::class, 'Service of type ErrNoCtor: Unable to pass arguments, class ErrNoCtor has no constructor.'],
-	["services:\n\ta: {create: ErrInterface}\n", DI\ServiceCreationException::class, "Service 'a': Interface ErrInterface can not be used as 'create' or 'factory', did you mean 'implement'?"],
-	["services:\n\t- ErrHidden::priv()\n", DI\ServiceCreationException::class, 'Service (ErrHidden::priv()): Method ErrHidden::priv() is not callable.'],
-	["services:\n\t- ErrService( not(1, 2) )\n", DI\ServiceCreationException::class, 'Service of type ErrService: Function not() expects 1 parameter, 2 given. (used in ErrService::__construct())'],
-	["services:\n\ta:\n\t\tcreate: ErrService\n\t\tsetup:\n\t\t\t- '\$prop[]'\n", DI\ServiceCreationException::class, "Service 'a' (type of ErrService): Missing argument for \$prop[]."],
+	[
+		"services:\n\t- ErrService(...)\n",
+		DI\ServiceCreationException::class,
+		'Service of type Closure: Cannot create closure for ErrService(...)',
+	],
+	[
+		"services:\n\t- ErrService( @missing )\n",
+		DI\ServiceCreationException::class,
+		"Service of type ErrService: Reference to missing service 'missing'. (used in ErrService::__construct())",
+	],
+	[
+		"services:\n\t- UnknownClass\n",
+		DI\ServiceCreationException::class,
+		"Service (UnknownClass::__construct()): Class 'UnknownClass' not found.",
+	],
+	[
+		"services:\n\t- ErrAbstract\n",
+		DI\ServiceCreationException::class,
+		'Service of type ErrAbstract: Class ErrAbstract is abstract.',
+	],
+	[
+		"services:\n\t- ErrPrivateCtor\n",
+		DI\ServiceCreationException::class,
+		'Service of type ErrPrivateCtor: Class ErrPrivateCtor has private constructor.',
+	],
+	[
+		"services:\n\t- ErrNoCtor(1)\n",
+		DI\ServiceCreationException::class,
+		'Service of type ErrNoCtor: Unable to pass arguments, class ErrNoCtor has no constructor.',
+	],
+	[
+		"services:\n\ta: {create: ErrInterface}\n",
+		DI\ServiceCreationException::class,
+		"Service 'a': Interface ErrInterface can not be used as 'create' or 'factory', did you mean 'implement'?",
+	],
+	[
+		"services:\n\t- ErrHidden::priv()\n",
+		DI\ServiceCreationException::class,
+		'Service (ErrHidden::priv()): Method ErrHidden::priv() is not callable.',
+	],
+	[
+		"services:\n\t- ErrService( not(1, 2) )\n",
+		DI\ServiceCreationException::class,
+		'Service of type ErrService: Function not() expects 1 parameter, 2 given. (used in ErrService::__construct())',
+	],
+	[
+		"services:\n\ta:\n\t\tcreate: ErrService\n\t\tsetup:\n\t\t\t- '\$prop[]'\n",
+		DI\ServiceCreationException::class,
+		"Service 'a' (type of ErrService): Missing argument for \$prop[].",
+	],
 ];
 
 foreach ($cases as [$config, $exception, $message]) {

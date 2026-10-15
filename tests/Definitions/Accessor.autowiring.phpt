@@ -7,13 +7,12 @@
 use Nette\DI;
 use Tester\Assert;
 
-
 require __DIR__ . '/../bootstrap.php';
 
 
 interface StdClassAccessor
 {
-	public function get(): stdClass;
+	function get(): stdClass;
 }
 
 class AccessorReceiver
