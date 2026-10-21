@@ -1,17 +1,13 @@
 {
 	"name": "nette/di",
-	"description": "💎 Nette Dependency Injection Container: Flexible, compiled and full-featured DIC with perfectly usable autowiring and support for all new PHP features.",
-	"keywords": ["nette", "di", "dic", "ioc", "factory", "compiled", "static"],
-	"homepage": "https://nette.org",
+	"description": "💎 Nette DI: a dependency injection container with autowiring, configured in NEON and compiled into readable PHP code. Factories and accessors are generated from an interface alone.",
+	"keywords": ["nette", "dependency injection", "di", "container", "dic", "ioc", "autowiring", "service container"],
+	"homepage": "https://doc.nette.org/dependency-injection",
 	"license": ["BSD-3-Clause", "GPL-2.0-only", "GPL-3.0-only"],
 	"authors": [
 		{
 			"name": "David Grudl",
 			"homepage": "https://davidgrudl.com"
-		},
-		{
-			"name": "Nette Community",
-			"homepage": "https://nette.org/contributors"
 		}
 	],
 	"require": {
