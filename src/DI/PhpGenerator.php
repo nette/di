@@ -84,7 +84,7 @@ class PhpGenerator
 	}
 
 
-	public function generateMethod(Definitions\Definition $def): Php\Method
+	public function generateMethod(Definition $def): Php\Method
 	{
 		$name = $def->getName();
 		assert($name !== null);

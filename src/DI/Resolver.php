@@ -8,7 +8,7 @@
 namespace Nette\DI;
 
 use Nette;
-use Nette\DI\Definitions\{Definition, Reference, Statement};
+use Nette\DI\Definitions\{Reference, Statement};
 use Nette\PhpGenerator\Helpers as PhpHelpers;
 use Nette\Utils\{Arrays, Callback, Reflection, Validators};
 use function array_key_exists, count, gettype, in_array, is_array, is_int, is_string, sprintf, strlen;

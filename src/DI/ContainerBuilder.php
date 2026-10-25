@@ -8,7 +8,6 @@
 namespace Nette\DI;
 
 use Nette;
-use Nette\DI\Definitions\Definition;
 use function is_int, sprintf;
 
 

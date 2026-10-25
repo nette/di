@@ -35,3 +35,13 @@ namespace Nette\DI {
 		class_alias(Definitions\Statement::class, Statement::class);
 	}
 }
+
+namespace Nette\DI\Definitions {
+	if (false) {
+		abstract class Definition
+		{
+		}
+	} elseif (!class_exists(Definition::class)) {
+		class_alias(\Nette\DI\Definition::class, Definition::class);
+	}
+}

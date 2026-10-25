@@ -8,6 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
+use Nette\DI\Definition;
 use function is_array, is_string;
 
 

@@ -8,7 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\DI\ServiceCreationException;
+use Nette\DI\{Definition, ServiceCreationException};
 use Nette\Utils\Strings;
 use function count, is_string;
 

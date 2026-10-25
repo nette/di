@@ -5,7 +5,7 @@
  * Copyright (c) 2004 David Grudl (https://davidgrudl.com)
  */
 
-namespace Nette\DI\Definitions;
+namespace Nette\DI;
 
 use Nette;
 use function is_array, is_string, sprintf;
@@ -203,3 +203,6 @@ abstract class Definition
 		return $this->autowired;
 	}
 }
+
+
+class_alias(Definition::class, Definitions\Definition::class);

@@ -8,7 +8,7 @@
 namespace Nette\DI\Definitions;
 
 use Nette;
-use Nette\DI\PhpGenerator;
+use Nette\DI\{Definition, PhpGenerator};
 
 
 /**

@@ -77,7 +77,7 @@ class Autowiring
 	/**
 	 * Gets the service names and definitions of the specified type.
 	 * @param class-string  $type
-	 * @return array<string, Definitions\Definition>  service name => definition
+	 * @return array<string, Definition>  service name => definition
 	 */
 	public function findByType(string $type): array
 	{
