@@ -14,7 +14,7 @@ use function is_array, is_string;
 /**
  * Assignment or calling statement.
  *
- * @property string|array{string|Reference|Statement,string}|Definition|Reference|null $entity
+ * @property string|array{string|Definition|Reference|Statement,string}|Definition|Reference|null $entity
  */
 final class Statement implements Nette\Schema\DynamicParameter
 {
@@ -55,7 +55,7 @@ final class Statement implements Nette\Schema\DynamicParameter
 	}
 
 
-	/** @return string|array{string|Reference|Statement, string}|Definition|Reference|null */
+	/** @return string|array{string|Definition|Reference|Statement, string}|Definition|Reference|null */
 	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->entity;

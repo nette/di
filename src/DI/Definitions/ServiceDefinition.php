@@ -45,7 +45,7 @@ final class ServiceDefinition extends Definition
 
 	/**
 	 * Alias for setCreator()
-	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $factory
+	 * @param  string|array{string|Definition|Reference|Statement, string}|Definition|Reference|Statement  $factory
 	 * @param  array<mixed>  $args
 	 */
 	public function setFactory(string|array|Definition|Reference|Statement $factory, array $args = []): static
@@ -64,7 +64,7 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $creator
+	 * @param  string|array{string|Definition|Reference|Statement, string}|Definition|Reference|Statement  $creator
 	 * @param  array<mixed>  $args
 	 */
 	public function setCreator(string|array|Definition|Reference|Statement $creator, array $args = []): static
@@ -82,7 +82,7 @@ final class ServiceDefinition extends Definition
 	}
 
 
-	/** @return string|array{string|Reference|Statement, string}|Definition|Reference|null */
+	/** @return string|array{string|Definition|Reference|Statement, string}|Definition|Reference|null */
 	public function getEntity(): string|array|Definition|Reference|null
 	{
 		return $this->creator->getEntity();
@@ -129,7 +129,7 @@ final class ServiceDefinition extends Definition
 
 
 	/**
-	 * @param  string|array{string|Reference|Statement, string}|Definition|Reference|Statement  $entity
+	 * @param  string|array{string|Definition|Reference|Statement, string}|Definition|Reference|Statement  $entity
 	 * @param  array<mixed>  $args
 	 */
 	public function addSetup(string|array|Definition|Reference|Statement $entity, array $args = []): static
