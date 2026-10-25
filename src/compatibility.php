@@ -38,6 +38,7 @@ namespace Nette\DI {
 
 namespace Nette\DI\Definitions {
 	if (false) {
+		/** @deprecated use Nette\DI\Definition */
 		abstract class Definition
 		{
 		}
