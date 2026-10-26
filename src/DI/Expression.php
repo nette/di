@@ -42,6 +42,7 @@ abstract class Expression implements Nette\Schema\DynamicParameter
 	/**
 	 * Returns a clone of the expression with all child values transformed by the callback.
 	 * It is used for recursive processing of values in configuration (parameter expansion etc.).
+	 * @internal
 	 */
 	abstract public function transformValues(callable $cb): static;
 }
