@@ -6,7 +6,7 @@
  */
 
 use Nette\DI\Config\Adapters\NeonAdapter;
-use Nette\DI\Definitions\{Reference, Statement};
+use Nette\DI\Definitions\{Reference, ServiceDefinition, Statement};
 use Tester\Assert;
 
 require __DIR__ . '/../bootstrap.php';
@@ -38,4 +38,10 @@ test('dump round-trips expression nodes', function () {
 	$strip = fn(string $s): string => trim(preg_replace('#^#m', '', explode("\n\n", $s, 2)[1] ?? $s));
 
 	Assert::same('x: Foo(1, @svc)', $strip($adapter->dump(['x' => new Statement('Foo', [1, new Reference('svc')])])));
+	Assert::same('x: @svc::m(1)', $strip($adapter->dump(['x' => new Statement([(new ServiceDefinition)->setName('svc'), 'm'], [1])])));
+	Assert::exception(
+		fn() => $adapter->dump(['x' => new Statement([new ServiceDefinition, 'm'])]),
+		Nette\InvalidStateException::class,
+		'A statement calling a method of an unnamed definition cannot be dumped.',
+	);
 });

@@ -140,7 +140,10 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				);
 			} elseif ($entity[0] instanceof Reference) {
 				$entity = '@' . $entity[0]->getValue() . '::' . $entity[1];
-			} elseif (is_string($entity[0])) {
+			} elseif ($entity[0] instanceof DI\Definition) {
+				$name = $entity[0]->getName() ?? throw new Nette\InvalidStateException('A statement calling a method of an unnamed definition cannot be dumped.');
+				$entity = '@' . $name . '::' . $entity[1];
+			} else {
 				$entity = $entity[0] . '::' . $entity[1];
 			}
 		}
