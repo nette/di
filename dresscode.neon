@@ -51,3 +51,7 @@ overrides:
 			- tests/Extensions/Inject.methods.phpt
 			- tests/Extensions/Inject.properties.traits.phpt
 		naming: {abstractClassAffix: keep, interfaceAffix: keep, traitAffix: keep}
+
+	- # the test function shadows a native one
+		paths: [tests/Compiler/ContainerLoader.opcache.phpt]
+		naming: {function: keep}
