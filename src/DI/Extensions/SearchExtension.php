@@ -119,7 +119,9 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 
 		$found = [];
 		foreach ($classes as $class) {
-			if (!class_exists($class) && !interface_exists($class) && !trait_exists($class)) {
+			if (($acceptRE && !preg_match($acceptRE, $class)) || ($rejectRE && preg_match($rejectRE, $class))) {
+				continue; // a class rejected by name is not loaded
+			} elseif (!class_exists($class) && !interface_exists($class) && !trait_exists($class)) {
 				throw new Nette\InvalidStateException(sprintf(
 					'Class %s was found, but it cannot be loaded by autoloading.',
 					$class,
@@ -133,8 +135,6 @@ final class SearchExtension extends Nette\DI\CompilerExtension
 						&& count($methods = $rc->getMethods()) === 1
 						&& in_array($methods[0]->name, ['get', 'create'], true))
 				)
-				&& (!$acceptRE || preg_match($acceptRE, $rc->name))
-				&& (!$rejectRE || !preg_match($rejectRE, $rc->name))
 				&& (!$acceptParent || Arrays::some($acceptParent, fn($nm) => $rc->isSubclassOf($nm)))
 				&& (!$rejectParent || Arrays::every($rejectParent, fn($nm) => !$rc->isSubclassOf($nm)))
 			) {
