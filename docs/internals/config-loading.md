@@ -52,6 +52,13 @@ Merge semantics (`Schema\Helpers::merge`): the **left/new operand wins**; numeri
 append (lists concatenate), string keys merge recursively, `null` does not overwrite an
 array, a scalar does; a `PREVENT_MERGING` marker returns the left operand only.
 
+A value marked by `!` that is not an array cannot carry the marker, so the adapter wraps it
+in `Config\Replacement`. The wrapper survives `%param%` expansion, which matters: other
+sections are expanded **before** their layers merge, so `list!: %param%` holding an array
+would otherwise merge with earlier layers. `processSchema` turns the wrappers back into
+values (an array gets the marker) just before the schema merges the layers; a service
+definition does it in `DefinitionSchema::normalize`, once it is an array.
+
 ## NEON adapter
 
 `NeonAdapter` reads NEON by one of two paths, chosen by the installed nette/neon. With
@@ -70,7 +77,8 @@ that matter downstream:
 - **Entities become `Statement`s.** `Foo(a, b)` → `new Statement('Foo', ['a', 'b'])`;
   a chain `Foo()::bar()::baz()` nests them.
 - **`!` suffix = prevent-merge.** A key ending `!` means "replace, don't merge" and
-  injects the `PREVENT_MERGING` marker.
+  injects the `PREVENT_MERGING` marker into an array, or wraps any other value in
+  `Config\Replacement`.
 
 Crucially, the adapter **does not** turn `@service` argument strings into `Reference`
 objects — they stay strings until an extension calls `Helpers::filterArguments`

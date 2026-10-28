@@ -245,7 +245,7 @@ class Compiler
 		}
 
 		foreach ($this->getExtensions(Extensions\ServicesExtension::class) as $name => $extension) {
-			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name);
+			$config = $this->processSchema($extension->getConfigSchema(), $this->configs[$name] ?? [], $name, services: true);
 			$extension->setConfig($this->config[$name] = $config);
 			$extension->loadConfiguration();
 		}
@@ -282,12 +282,22 @@ class Compiler
 
 
 	/**
-	 * Merges and validates configurations against scheme.
+	 * Merges and validates configurations against scheme. Service definitions resolve their replacements
+	 * themselves, as a definition that is not an array gets the marker only once it is normalized.
 	 * @param  array<mixed[]>  $configs
 	 * @return array<string, mixed>|object
 	 */
-	private function processSchema(Schema\Schema $schema, array $configs, ?string $name = null): array|object
+	private function processSchema(
+		Schema\Schema $schema,
+		array $configs,
+		?string $name = null,
+		bool $services = false,
+	): array|object
 	{
+		if (!$services) {
+			$configs = array_map(Config\Replacement::resolve(...), $configs);
+		}
+
 		$processor = new Schema\Processor;
 		$processor->onNewContext[] = function (Schema\Context $context) use ($name) {
 			$context->path = $name ? [$name] : [];
@@ -332,7 +342,7 @@ class Compiler
 		$configList = Helpers::expand($configList, $this->builder->parameters);
 		$extension = $this->extensions[self::Services];
 		assert($extension instanceof Extensions\ServicesExtension);
-		$config = $this->processSchema($extension->getConfigSchema(), [$configList]);
+		$config = $this->processSchema($extension->getConfigSchema(), [$configList], services: true);
 		assert(is_array($config));
 		$extension->loadDefinitions($config);
 	}

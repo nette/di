@@ -59,3 +59,68 @@ test('Prevent merging config with no predefined parameters', function () {
 	');
 	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
 });
+
+test('Prevent merging config after an empty section', function () {
+	$compiler = new Nette\DI\Compiler;
+	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->loadConfig(Tester\FileMock::create('
+	foo:
+	', 'neon'));
+	$compiler->loadConfig(Tester\FileMock::create('
+	foo:
+		mapping!: [bar]
+	', 'neon'));
+	$compiler->compile();
+	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
+});
+
+test('Parameter expanding to an array is merged', function () {
+	$compiler = new Nette\DI\Compiler;
+	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addConfig([
+		'foo' => [
+			'mapping' => ['foo'],
+		],
+	]);
+	createContainer($compiler, '
+	parameters:
+		list: [bar]
+	foo:
+		mapping: %list%
+	');
+	Assert::equal((object) ['mapping' => ['foo', 'bar']], $foo->getConfig());
+});
+
+test('Prevent merging config with a parameter', function () {
+	$compiler = new Nette\DI\Compiler;
+	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addConfig([
+		'foo' => [
+			'mapping' => ['foo'],
+		],
+	]);
+	createContainer($compiler, '
+	parameters:
+		list: [bar]
+	foo:
+		mapping!: %list%
+	');
+	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
+});
+
+test('Prevent merging whole section with a parameter', function () {
+	$compiler = new Nette\DI\Compiler;
+	$compiler->addExtension('foo', $foo = new FooExtension);
+	$compiler->addConfig([
+		'foo' => [
+			'mapping' => ['foo'],
+		],
+	]);
+	$compiler->loadConfig(Tester\FileMock::create('
+	parameters:
+		section: {mapping: [bar]}
+	foo!: %section%
+	', 'neon'));
+	$compiler->compile();
+	Assert::equal((object) ['mapping' => ['bar']], $foo->getConfig());
+});
