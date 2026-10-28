@@ -15,7 +15,7 @@ use Nette\DI\{
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expressions\Reference;
 use Nette\Utils\{Arrays, Reflection};
-use function array_key_exists, gettype, is_array, is_int, is_string, sprintf, strlen;
+use function array_key_exists, gettype, in_array, is_array, is_int, is_string, sprintf, strlen;
 
 
 /**
@@ -357,6 +357,11 @@ class Resolver
 					));
 
 				} elseif (array_key_exists($paramName, $arguments)) {
+					$value = $arguments[$paramName];
+					if (isset($resolver) && $value instanceof Statement && in_array($value->getEntity(), ['typed', 'tagged'], true)) {
+						$arguments[$paramName] = $resolver->completeArguments([$value])[0]; // the list of the services
+					}
+
 					if (!is_array($arguments[$paramName])) {
 						throw new ServiceCreationException(sprintf(
 							'Parameter %s must be array, %s given.',
