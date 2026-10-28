@@ -31,6 +31,7 @@ overrides:
 			- src/DI/CompilerExtension.php
 			- src/DI/Config/Adapters/NeonAdapter.php
 			- src/DI/Config/Adapters/NeonEvaluator.php
+			- src/DI/Config/Replacement.php
 			- src/DI/Container.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
