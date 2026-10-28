@@ -236,6 +236,47 @@ final class Helpers
 
 
 	/**
+	 * Creates the access to a member written without parentheses: $name is a static property, a name starting
+	 * with a capital letter is a constant and any other name is a property.
+	 */
+	public static function accessMember(Expression|string $target, string $member): Expression
+	{
+		return match (true) {
+			str_starts_with($member, '$') => new Expressions\PropertyAccess($target, substr($member, 1), static: true),
+			ctype_upper($member[0] ?? '') => new Expressions\ConstantFetch($target, $member),
+			default => new Expressions\PropertyAccess($target, $member),
+		};
+	}
+
+
+	/**
+	 * Creates the assignment to a property, or the append to it when the name ends with [];
+	 * $name is a static property and any other name is a property of the target.
+	 */
+	public static function assignMember(Expression|string $target, string $member, mixed $value): Expressions\PropertyAccess
+	{
+		$append = str_ends_with($member, '[]');
+		$name = $append ? substr($member, 0, -2) : $member;
+		return new Expressions\PropertyAccess(
+			$target,
+			ltrim($name, '$'),
+			$append ? Expressions\PropertyMode::Append : Expressions\PropertyMode::Assign,
+			$value,
+			static: str_starts_with($name, '$'),
+		);
+	}
+
+
+	/**
+	 * Returns the target written before :: as a reference for @service, otherwise as the class name.
+	 */
+	public static function createTarget(string $target): Reference|string
+	{
+		return str_starts_with($target, '@') ? new Reference(substr($target, 1)) : $target;
+	}
+
+
+	/**
 	 * Validates that the type is a non-nullable class type and returns the class name.
 	 * @return class-string
 	 * @throws ServiceCreationException

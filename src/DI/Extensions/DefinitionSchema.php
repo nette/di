@@ -165,7 +165,7 @@ class DefinitionSchema implements Schema
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf(Expect::anyOf(
 				Expect::type('callable'),
-				Expect::type(Statement::class),
+				Expect::type(Nette\DI\Expression::class),
 				Expect::array()->min(1)->max(1),
 			)),
 			'inject' => Expect::bool(),
@@ -199,7 +199,7 @@ class DefinitionSchema implements Schema
 			'arguments' => Expect::array(),
 			'setup' => Expect::listOf(Expect::anyOf(
 				Expect::type('callable'),
-				Expect::type(Statement::class),
+				Expect::type(Nette\DI\Expression::class),
 				Expect::array()->min(1)->max(1),
 			)),
 			'references' => Expect::array(),

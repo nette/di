@@ -68,6 +68,16 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				$val->target instanceof Reference => new Neon\Entity('@' . $val->target->getValue() . '::' . $val->name, ['...']),
 				default => self::appendToChain(self::expressionToEntity($val->target), new Neon\Entity('::' . $val->name, ['...'])),
 			};
+
+		} elseif ($val instanceof DI\Expressions\PropertyAccess || $val instanceof DI\Expressions\ConstantFetch) {
+			$member = $val instanceof DI\Expressions\PropertyAccess && ($val->static || is_string($val->target))
+				? '$' . $val->name
+				: $val->name;
+			return match (true) {
+				is_string($val->target) => $val->target . '::' . $member,
+				$val->target instanceof Reference => '@' . $val->target->getValue() . '::' . $member,
+				default => throw new Nette\NotSupportedException("NEON cannot write '::$member' without parentheses after an expression."),
+			};
 		}
 
 		assert($val instanceof Statement);

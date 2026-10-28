@@ -16,6 +16,7 @@ use function is_string, sprintf;
 
 /**
  * Property read ($obj->prop), assignment ($obj->prop = value) or append ($obj->prop[] = value).
+ * A static property is read on a class name, or on the type of the target ($obj::$prop).
  */
 final class PropertyAccess extends Expression
 {
@@ -25,6 +26,8 @@ final class PropertyAccess extends Expression
 		public readonly PropertyMode $mode = PropertyMode::Read,
 		/** the assigned value; unused for a read */
 		public readonly mixed $value = null,
+		/** a static property of the type of an expression target; a class name target is always static */
+		public readonly bool $static = false,
 	) {
 	}
 
@@ -37,6 +40,10 @@ final class PropertyAccess extends Expression
 		}
 
 		$class = $this->target instanceof Expression ? $this->target->resolveType($resolver) : $this->target;
+		if ($this->target instanceof Expression && !$this->static) {
+			$this->checkIsNotMethod($class);
+		}
+
 		if ($class === null
 			|| (!class_exists($class) && !interface_exists($class))
 			|| !($rc = new \ReflectionClass($class))->hasProperty($this->name)
@@ -58,11 +65,20 @@ final class PropertyAccess extends Expression
 			));
 		}
 
-		$target = $this->target instanceof Expression
-			? $this->target->complete($resolver)
-			: $this->target;
+		$target = $this->target;
+		if ($target instanceof Expression && $this->static) {
+			$target = $target->resolveType($resolver) ?? throw new ServiceCreationException(sprintf(
+				"Cannot resolve the type to read static property '%s'.",
+				$this->label(),
+			));
+		} elseif ($target instanceof Expression) {
+			$target = $target->complete($resolver);
+		}
 
 		if ($this->mode === PropertyMode::Read) {
+			if ($target instanceof Expression) {
+				$this->checkIsNotMethod($target->resolveType($resolver));
+			}
 			return new self($target, $this->name, $this->mode);
 		}
 
@@ -71,11 +87,33 @@ final class PropertyAccess extends Expression
 	}
 
 
+	/**
+	 * A name written without parentheses reads a property; when the class has only a method of that name,
+	 * it was most likely meant to be called.
+	 */
+	private function checkIsNotMethod(?string $class): void
+	{
+		if ($class === null || !class_exists($class)) {
+			return;
+		}
+
+		$rc = new \ReflectionClass($class);
+		if ($rc->hasMethod($this->name) && !$rc->hasProperty($this->name) && !$rc->hasMethod('__get')) {
+			throw new ServiceCreationException(sprintf(
+				"Class %s has no property '%s', only a method; write '%s()' to call it.",
+				$class,
+				$this->label(),
+				$this->name,
+			));
+		}
+	}
+
+
 	public function generateCode(PhpGenerator $generator): string
 	{
-		$prop = $this->target instanceof Reference
-			? $generator->formatPhp('?->?', [$this->target, $this->name])
-			: $generator->formatPhp('?::$?', [$this->target, $this->name]);
+		$prop = is_string($this->target)
+			? $generator->formatPhp('?::$?', [$this->target, $this->name])
+			: $generator->formatPhp('?->?', [$this->target, $this->name]);
 
 		return match ($this->mode) {
 			PropertyMode::Read => $prop,
@@ -93,6 +131,7 @@ final class PropertyAccess extends Expression
 			is_string($name) ? $name : $this->name,
 			$this->mode,
 			$cb($this->value),
+			$this->static,
 		);
 	}
 

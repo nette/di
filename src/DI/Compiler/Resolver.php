@@ -9,7 +9,7 @@ namespace Nette\DI\Compiler;
 
 use Nette;
 use Nette\DI\{
-	ContainerBuilder, Definition, Definitions, Expression, Expressions,
+	ContainerBuilder, Definition, Definitions, Expression, Expressions, Helpers,
 	MissingServiceException, NotAllowedDuringResolvingException, ServiceCreationException,
 };
 use Nette\DI\Definitions\Statement;
@@ -295,7 +295,7 @@ class Resolver
 
 
 	/**
-	 * Converts @service and @service::property strings in arguments to References and Statements.
+	 * Converts @service and @service::member::member strings in arguments to expressions.
 	 * @param  array<mixed>  $arguments
 	 * @return array<mixed>
 	 */
@@ -303,13 +303,10 @@ class Resolver
 	{
 		array_walk_recursive($arguments, function (&$val): void {
 			if (is_string($val) && strlen($val) > 1 && $val[0] === '@' && $val[1] !== '@') {
-				$pair = explode('::', substr($val, 1), 2);
-				if (!isset($pair[1])) { // @service
-					$val = new Reference($pair[0]);
-				} elseif (preg_match('#^[A-Z][a-zA-Z0-9_]*$#D', $pair[1])) { // @service::CONSTANT
-					$val = ContainerBuilder::literal(new Reference($pair[0])->resolveType($this) . '::' . $pair[1]);
-				} else { // @service::property
-					$val = new Expressions\PropertyAccess(new Reference($pair[0]), $pair[1]);
+				$members = explode('::', substr($val, 1));
+				$val = new Reference(array_shift($members));
+				foreach ($members as $member) {
+					$val = Helpers::accessMember($val, $member);
 				}
 			} elseif (is_string($val) && str_starts_with($val, '@@')) { // escaped text @@
 				$val = substr($val, 1);
