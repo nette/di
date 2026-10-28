@@ -8,7 +8,7 @@
 namespace Nette\DI\Extensions;
 
 use Nette;
-use Nette\DI\Config\Helpers;
+use Nette\DI\Config\{Helpers, Replacement};
 use Nette\DI\Definitions;
 use Nette\DI\Definitions\Statement;
 use Nette\Schema\{Context, Expect, Schema};
@@ -67,6 +67,13 @@ class DefinitionSchema implements Schema
 	 */
 	public function normalize(mixed $def, Context $context): mixed
 	{
+		if ($def instanceof Replacement) {
+			$def = $this->normalize($def->value, $context);
+			$def[Helpers::PREVENT_MERGING] = true;
+			return $def;
+		}
+
+		$def = Replacement::resolve($def);
 		if ($def === null || $def === false) {
 			return (array) $def;
 

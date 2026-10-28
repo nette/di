@@ -94,14 +94,11 @@ final class NeonEvaluator extends Neon\Evaluator
 			default => null,
 		};
 		if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
-			if (!is_array($value) && $value !== null) {
-				throw new Nette\DI\InvalidConfigurationException(sprintf(
-					"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
-					$key,
-					$this->file,
-				));
+			if (is_array($value) || $value === null) {
+				$value[Nette\DI\Config\Helpers::PREVENT_MERGING] = true;
+			} else {
+				$value = new Nette\DI\Config\Replacement($value);
 			}
-			$value[Nette\DI\Config\Helpers::PREVENT_MERGING] = true;
 		}
 		return $value;
 	}
@@ -140,6 +137,16 @@ final class NeonEvaluator extends Neon\Evaluator
 				$attributes[] = $this->evaluateItem($item);
 			}
 		}
+
+		array_walk_recursive($attributes, function (mixed $value, int|string $key): void {
+			if ($value instanceof Nette\DI\Config\Replacement) {
+				throw new Nette\DI\InvalidConfigurationException(sprintf(
+					"Replacing operator is available only for arrays, item '%s!' is not array (used in '%s')",
+					$key,
+					$this->file,
+				));
+			}
+		});
 		return [$head, $attributes];
 	}
 

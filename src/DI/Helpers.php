@@ -42,6 +42,9 @@ final class Helpers
 				self::expand($var->arguments, $params, $recursive),
 			);
 
+		} elseif ($var instanceof Config\Replacement) {
+			return new Config\Replacement(self::expand($var->value, $params, $recursive));
+
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
 			trigger_error('%parameters% is deprecated, use @container::getParameters()', E_USER_DEPRECATED);
 			return $recursive

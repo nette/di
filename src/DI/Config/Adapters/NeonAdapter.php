@@ -49,17 +49,14 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 	{
 		$res = [];
 		foreach ($arr as $key => $val) {
+			$replacing = false;
 			if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
-				if (!is_array($val) && $val !== null) {
-					throw new Nette\DI\InvalidConfigurationException(sprintf(
-						"Replacing operator is available only for arrays, item '%s' is not array (used in '%s')",
-						$key,
-						$this->file,
-					));
-				}
-
 				$key = substr($key, 0, -1);
-				$val[DI\Config\Helpers::PREVENT_MERGING] = true;
+				if (is_array($val) || $val === null) {
+					$val[DI\Config\Helpers::PREVENT_MERGING] = true;
+				} else {
+					$replacing = true;
+				}
 			}
 
 			if (is_array($val)) {
@@ -83,11 +80,21 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 						throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
 					}
 
-					$val = new Statement($tmp[0], $this->process($val->attributes));
+					$attributes = $this->process($val->attributes);
+					array_walk_recursive($attributes, function (mixed $attribute, int|string $name): void {
+						if ($attribute instanceof DI\Config\Replacement) {
+							throw new Nette\DI\InvalidConfigurationException(sprintf(
+								"Replacing operator is available only for arrays, item '%s!' is not array (used in '%s')",
+								$name,
+								$this->file,
+							));
+						}
+					});
+					$val = new Statement($tmp[0], $attributes);
 				}
 			}
 
-			$res[$key] = $val;
+			$res[$key] = $replacing ? new DI\Config\Replacement($val) : $val;
 		}
 
 		return $res;

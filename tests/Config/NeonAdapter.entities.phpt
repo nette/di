@@ -116,3 +116,17 @@ Assert::equal(
 	],
 	$data,
 );
+
+
+// replacing operator in arguments
+Assert::exception(
+	fn() => (new NeonAdapter)->load(Tester\FileMock::create('- ent(a!: 1)', 'neon')),
+	Nette\DI\InvalidConfigurationException::class,
+	"Replacing operator is available only for arrays, item 'a!' is not array %a%",
+);
+
+Assert::exception(
+	fn() => (new NeonAdapter)->load(Tester\FileMock::create('- ent([b!: 1])', 'neon')),
+	Nette\DI\InvalidConfigurationException::class,
+	"Replacing operator is available only for arrays, item 'b!' is not array %a%",
+);
