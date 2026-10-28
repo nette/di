@@ -11,8 +11,8 @@ use Nette;
 use Nette\{DI, Neon};
 use Nette\DI\Definitions\Statement;
 use Nette\DI\Expression;
-use Nette\DI\Expressions\{ArgumentPlaceholder, Reference};
-use function is_array, is_string, sprintf;
+use Nette\DI\Expressions\Reference;
+use function is_array, is_string;
 
 
 /**
@@ -20,10 +20,6 @@ use function is_array, is_string, sprintf;
  */
 final class NeonAdapter implements Nette\DI\Config\Adapter
 {
-	private const PreventMergingSuffix = '!';
-	private string $file;
-
-
 	/**
 	 * Reads configuration from NEON file.
 	 * @return array<string, mixed>
@@ -35,83 +31,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 			$input = substr($input, 3);
 		}
 
-		$this->file = $file;
-		return class_exists(Neon\Evaluator::class)
-			? (array) new NeonEvaluator($file)->evaluate(Neon\Neon::parse($input)->value)
-			: $this->process((array) new NeonVisitors($file)->decode($input));
-	}
-
-
-	/**
-	 * @param  array<mixed>  $arr
-	 * @return array<mixed>
-	 * @throws Nette\InvalidStateException
-	 */
-	public function process(array $arr): array
-	{
-		$res = [];
-		foreach ($arr as $key => $val) {
-			$replacing = false;
-			if (is_string($key) && str_ends_with($key, self::PreventMergingSuffix)) {
-				$key = substr($key, 0, -1);
-				if (is_array($val) || $val === null) {
-					$val[DI\Config\Helpers::PREVENT_MERGING] = true;
-				} else {
-					$replacing = true;
-				}
-			}
-
-			if (is_array($val)) {
-				$val = $this->process($val);
-
-			} elseif ($val instanceof Neon\Entity) {
-				$val = $this->buildExpression($val->value === Neon\Neon::Chain ? $val->attributes : [$val]);
-			}
-
-			$res[$key] = $replacing ? new DI\Config\Replacement($val) : $val;
-		}
-
-		return $res;
-	}
-
-
-	/** @param  non-empty-list<Neon\Entity>  $chain */
-	private function buildExpression(array $chain): Expression
-	{
-		$entity = array_pop($chain);
-		[$value] = $this->process([$entity->value]);
-		if (is_string($value) && str_contains($value, '?')) {
-			throw new Nette\DI\InvalidConfigurationException("Operator ? is deprecated in config file (used in '$this->file')");
-		}
-
-		if ($entity->attributes === [ArgumentPlaceholder::Variadic]) {
-			if ($chain) {
-				return new DI\Expressions\PartialCall($this->buildExpression($chain), ltrim($value, ':'));
-			}
-
-			$callable = new Statement($value)->getEntity(); // normalizes Class::method, @service::method, ::function
-			if (!is_array($callable)) {
-				throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$value(...)' in config file (used in '$this->file')");
-			}
-
-			return new DI\Expressions\PartialCall($callable[0] === '' ? null : $callable[0], $callable[1]);
-		}
-
-		$attributes = $this->process($entity->attributes);
-		array_walk_recursive($attributes, function (mixed $attribute, int|string $key): void {
-			if ($attribute instanceof DI\Config\Replacement) {
-				throw new Nette\DI\InvalidConfigurationException(sprintf(
-					"Replacing operator is available only for arrays, item '%s!' is not array (used in '%s')",
-					$key,
-					$this->file,
-				));
-			}
-		});
-
-		return new Statement(
-			$chain ? [$this->buildExpression($chain), ltrim($value, ':')] : $value,
-			$attributes,
-		);
+		return (array) new NeonEvaluator($file)->evaluate(Neon\Neon::parse($input)->value);
 	}
 
 

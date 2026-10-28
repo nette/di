@@ -14,7 +14,7 @@
 		"php": "8.4 - 8.6",
 		"ext-tokenizer": "*",
 		"ext-ctype": "*",
-		"nette/neon": "^3.4 || ^4.0",
+		"nette/neon": "^4.0",
 		"nette/php-generator": "^4.1.6",
 		"nette/robot-loader": "^4.0",
 		"nette/schema": "^1.4 || ^2.0",

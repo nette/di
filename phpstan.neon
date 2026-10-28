@@ -4,9 +4,6 @@ parameters:
 	paths:
 		- src
 
-	excludePaths:
-		- src/DI/Config/Adapters/NeonVisitors.php # needs nette/neon 3.x, analysed with 4.0 installed
-
 	fileExtensions:
 		- php
 		- phtml
@@ -27,11 +24,9 @@ parameters:
 		- # ServicesExtension: schema-derived config narrows broader DI Statement arguments
 			identifier: argument.type
 			path: src/DI/Extensions/ServicesExtension.php
-		- # NEON adapters: a chain holds entities and the head of an entity read from a file is a string, which the types of Neon\Entity and Statement::getEntity() do not express
+		- # NeonEvaluator: the head of an entity read from a file is a string, which the type of Statement::getEntity() does not express
 			identifier: argument.type
-			paths:
-				- src/DI/Config/Adapters/NeonAdapter.php
-				- src/DI/Config/Adapters/NeonEvaluator.php
+			path: src/DI/Config/Adapters/NeonEvaluator.php
 		- # ParametersExtension: defensive instanceof against runtime config substitution
 			identifier: instanceof.alwaysTrue
 			path: src/DI/Extensions/ParametersExtension.php
