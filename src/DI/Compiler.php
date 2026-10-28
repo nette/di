@@ -132,11 +132,19 @@ class Compiler
 
 
 	/**
-	 * Adds new configuration.
+	 * Adds new configuration. Once the parameters are expanded, the configuration is expanded on adding.
 	 * @param  array<string, mixed>  $config
 	 */
 	public function addConfig(array $config): static
 	{
+		if (isset($this->processedExtensions[self::Parameters])) {
+			if (isset($config[self::Parameters])) {
+				throw new Nette\InvalidStateException("Section 'parameters' cannot be added once the parameters are expanded.");
+			}
+
+			$config = Helpers::expand($config, $this->builder->parameters);
+		}
+
 		foreach ($config as $section => $data) {
 			$this->configs[$section][] = $data;
 		}
