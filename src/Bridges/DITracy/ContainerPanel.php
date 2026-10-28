@@ -59,6 +59,7 @@ class ContainerPanel implements Tracy\IBarPanel
 			$parameters = $rc->getMethod('getStaticParameters')->getDeclaringClass()->getName() === Container::class
 				? null
 				: $container->getParameters();
+			$keysToHide = Tracy\Debugger::getBlueScreen()->keysToHide;
 			require __DIR__ . '/dist/panel.phtml';
 		});
 	}

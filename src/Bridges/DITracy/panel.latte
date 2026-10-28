@@ -2,6 +2,7 @@
 {varType array<string, Nette\DI\ServiceDescriptor> $services}
 {varType array<string, mixed>|null $parameters}
 {varType string $file}
+{varType string[] $keysToHide}
 
 <style class="tracy-debug">
 	#tracy-debug .nette-ContainerPanel table {
@@ -52,7 +53,7 @@
 				</td>
 				<td>
 					{if $service->instance !== null && !$service->instance instanceof Nette\DI\Container}
-						{Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5])}
+						{Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5, Dumper::KEYS_TO_HIDE => $keysToHide])}
 					{elseif $service->instance !== null}
 						<code>{get_class($service->instance)}</code>
 					{elseif $service->type !== null}
@@ -77,7 +78,7 @@
 		{if $parameters === null}
 			<i>disabled via 'di › export › parameters'</i>
 		{else}
-			{Dumper::toHtml($parameters)}
+			{Dumper::toHtml($parameters, [Dumper::KEYS_TO_HIDE => $keysToHide])}
 		{/if}
 	</div>
 </div>

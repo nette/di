@@ -4,6 +4,7 @@ use Tracy\Dumper;
 /** @var array<string,Nette\DI\ServiceDescriptor> $services */
 /** @var array<string,mixed>|null $parameters */
 /** @var string $file */
+/** @var string[] $keysToHide */
 echo '
 <style class="tracy-debug">
 	#tracy-debug .nette-ContainerPanel table {
@@ -75,7 +76,7 @@ foreach ($services as $name => $service) /* pos 46:8 */ {
 ';
 	if ($service->instance !== null && !$service->instance instanceof Nette\DI\Container) /* pos 55:6 */ {
 		echo '					';
-		echo Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5]) /* pos 56:7 */;
+		echo Dumper::toHtml($service->instance, [Dumper::COLLAPSE => true, Dumper::LIVE => true, Dumper::DEPTH => 5, Dumper::KEYS_TO_HIDE => $keysToHide]) /* pos 56:7 */;
 		echo "\n";
 	} elseif ($service->instance !== null) /* pos 57:6 */ {
 		echo '					<code>';
@@ -98,7 +99,7 @@ foreach ($services as $name => $service) /* pos 46:8 */ {
 		echo '					';
 		echo Tracy\Helpers::escapeHtml(key($service->tags)) /* pos 66:7 */;
 		echo ' = ';
-		echo Dumper::toHtml(current($service->tags), [Dumper::COLLAPSE => true]) /* pos 66:29 */;
+		echo Dumper::toHtml(current($service->tags), [Dumper::COLLAPSE => true]) /* pos 66:31 */;
 		echo "\n";
 	} else /* pos 67:6 */ {
 		echo '					';
@@ -120,11 +121,11 @@ echo '		</tbody>
 	<div class="nette-ContainerPanel-parameters">
 ';
 if ($parameters === null) /* pos 78:3 */ {
-	echo '		<i>disabled via \'di › export › parameters\'</i>
+	echo '		<i>disabled via \'di › export › parameters\'</i>
 ';
 } else /* pos 80:3 */ {
 	echo '		';
-	echo Dumper::toHtml($parameters) /* pos 81:4 */;
+	echo Dumper::toHtml($parameters, [Dumper::KEYS_TO_HIDE => $keysToHide]) /* pos 81:4 */;
 	echo "\n";
 }
 echo '	</div>
