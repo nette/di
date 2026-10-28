@@ -58,8 +58,12 @@ final class ParametersExtension extends Nette\DI\CompilerExtension
 		}
 
 		unset($ref);
-		$builder->parameters = Helpers::expand($params, $params, recursive: true);
-		$this->compilerConfig = Helpers::expand($this->compilerConfig, $builder->parameters);
+		$builder->parameters = Helpers::expand($params, $params, recursive: true, path: ['parameters']);
+		foreach ($this->compilerConfig as $section => $layers) {
+			foreach ($layers as $i => $layer) {
+				$this->compilerConfig[$section][$i] = Helpers::expand($layer, $builder->parameters, path: [$section]);
+			}
+		}
 	}
 
 

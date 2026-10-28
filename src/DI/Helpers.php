@@ -26,29 +26,30 @@ final class Helpers
 	 * Expands %placeholders%.
 	 * @param  array<string, mixed>  $params
 	 * @param  bool|array<string, int>  $recursive
+	 * @param  list<int|string>  $path  keys leading to $var, named by an error message
 	 * @throws Nette\InvalidArgumentException
 	 */
-	public static function expand(mixed $var, array $params, bool|array $recursive = false): mixed
+	public static function expand(mixed $var, array $params, bool|array $recursive = false, array $path = []): mixed
 	{
 		if (is_array($var)) {
 			$res = [];
 			foreach ($var as $key => $val) {
-				$res[self::expand($key, $params, $recursive)] = self::expand($val, $params, $recursive);
+				$res[self::expand($key, $params, $recursive, $path)] = self::expand($val, $params, $recursive, [...$path, $key]);
 			}
 			return $res;
 
 		} elseif ($var instanceof Expression) {
-			return $var->transformValues(fn($val) => self::expand($val, $params, $recursive));
+			return $var->transformValues(fn($val) => self::expand($val, $params, $recursive, $path));
 
 		} elseif ($var instanceof Config\Replacement) {
-			return new Config\Replacement(self::expand($var->value, $params, $recursive));
+			return new Config\Replacement(self::expand($var->value, $params, $recursive, $path));
 
 		} elseif ($var === '%parameters%' && !array_key_exists('parameters', $params)) {
 			throw new Nette\DeprecatedException('%parameters% is deprecated, use @container::getParameters()');
 
 		} elseif (is_string($var)) {
 			$recursive = is_array($recursive) ? $recursive : ($recursive ? [] : null);
-			return self::expandString($var, $params, $recursive);
+			return self::expandString($var, $params, $recursive, path: $path);
 
 		} else {
 			return $var;
@@ -60,6 +61,7 @@ final class Helpers
 	 * Expands %placeholders% in string
 	 * @param  array<string, mixed>  $params
 	 * @param  ?array<string, int>  $recursive
+	 * @param  list<int|string>  $path
 	 * @throws Nette\InvalidArgumentException
 	 */
 	private static function expandString(
@@ -67,6 +69,7 @@ final class Helpers
 		array $params,
 		?array $recursive,
 		bool $onlyString = false,
+		array $path = [],
 	): mixed
 	{
 		$parts = preg_split('#%([\w.-]*)%#i', $string, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -78,7 +81,7 @@ final class Helpers
 			} elseif ($part === '') {
 				$res[] = '%';
 			} else {
-				$res[] = $val = self::expandParameter($part, $params, $recursive, $onlyString);
+				$res[] = $val = self::expandParameter($part, $params, $recursive, $onlyString, $path);
 				if (strlen($part) + 2 === strlen($string)) {
 					return $val;
 				} elseif ($val instanceof DynamicParameter || $val instanceof Definitions\Statement) {
@@ -102,12 +105,14 @@ final class Helpers
 	/**
 	 * @param  array<string, mixed>  $params
 	 * @param  ?array<string, int>  $recursive
+	 * @param  list<int|string>  $location  keys of the configuration where the parameter is used
 	 */
 	private static function expandParameter(
 		string $parameter,
 		array $params,
 		?array $recursive,
 		bool $onlyString,
+		array $location,
 	): mixed
 	{
 		$val = $params;
@@ -135,7 +140,11 @@ final class Helpers
 			} elseif ($val instanceof Definitions\Statement) {
 				$val = new Expressions\PhpCode('(?)[?]', [$val, $key]);
 			} else {
-				throw new Nette\InvalidArgumentException(sprintf("Missing parameter '%s'.", $parameter));
+				throw new Nette\InvalidArgumentException(sprintf(
+					"Missing parameter '%s'%s.",
+					$parameter,
+					$location ? " in '" . implode("\u{a0}›\u{a0}", $location) . "'" : '',
+				));
 			}
 		}
 		return $val;
