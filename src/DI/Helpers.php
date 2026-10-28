@@ -114,6 +114,10 @@ final class Helpers
 		$path = [];
 		$keys = explode('.', $parameter);
 		while (($key = $path[] = array_shift($keys)) !== null) {
+			if ($val instanceof \stdClass) { // a structure of a schema
+				$val = (array) $val;
+			}
+
 			if (is_array($val) && array_key_exists($key, $val)) {
 				$val = $val[$key];
 				$fullExpand = !$onlyString && !$keys; // last

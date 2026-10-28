@@ -20,6 +20,7 @@ Assert::same('item', Helpers::expand('%key%', ['key' => 'item']));
 Assert::same(123, Helpers::expand('%key%', ['key' => 123]));
 Assert::same('a123b123c', Helpers::expand('a%key%b%key%c', ['key' => 123]));
 Assert::same(123, Helpers::expand('%key1.key2%', ['key1' => ['key2' => 123]]));
+Assert::same(123, Helpers::expand('%key1.key2.key3%', ['key1' => (object) ['key2' => (object) ['key3' => 123]]]));
 Assert::same('%key2%', Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => 123]));
 Assert::same(123, Helpers::expand('%key1%', ['key1' => '%key2%', 'key2' => 123], true));
 Assert::same([123], Helpers::expand(['%key1%'], ['key1' => '%key2%', 'key2' => 123], true));
