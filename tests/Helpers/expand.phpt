@@ -78,6 +78,12 @@ Assert::exception(
 );
 
 Assert::exception(
+	fn() => Helpers::expand(['services' => ['foo' => new Statement('Foo', ['%missing%'])]], []),
+	Nette\InvalidArgumentException::class,
+	"Missing parameter 'missing' in 'services\u{a0}›\u{a0}foo\u{a0}›\u{a0}0'.",
+);
+
+Assert::exception(
 	fn() => Helpers::expand('%key1%a', ['key1' => ['key2' => 123]]),
 	Nette\InvalidArgumentException::class,
 	"Unable to concatenate non-scalar parameter 'key1' into '%key1%a'.",

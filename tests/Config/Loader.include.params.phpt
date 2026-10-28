@@ -13,7 +13,7 @@ require __DIR__ . '/../bootstrap.php';
 testException('', function () {
 	$config = new Config\Loader;
 	$data = $config->load('files/loader.includes.params.neon');
-}, Nette\InvalidArgumentException::class, "Missing parameter 'name'.");
+}, Nette\InvalidArgumentException::class, "Missing parameter 'name' in 'includes\u{a0}›\u{a0}0'.");
 
 
 test('', function () {

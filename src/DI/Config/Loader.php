@@ -57,7 +57,7 @@ class Loader
 		$res = [];
 		if (isset($data[self::IncludesKey])) {
 			Validators::assert($data[self::IncludesKey], 'list', "section 'includes' in file '$file'");
-			$includes = Nette\DI\Helpers::expand($data[self::IncludesKey], $this->parameters);
+			$includes = Nette\DI\Helpers::expand($data[self::IncludesKey], $this->parameters, path: [self::IncludesKey]);
 			foreach ($includes as $include) {
 				$include = $this->expandIncludedFile($include, $file);
 				$res = Helpers::merge($this->load($include, $merge), $res);
