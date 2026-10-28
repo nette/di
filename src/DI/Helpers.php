@@ -11,7 +11,7 @@ use Nette;
 use Nette\DI\Compiler\DynamicParameter;
 use Nette\DI\Expressions\Reference;
 use Nette\Utils\{Reflection, Type};
-use function array_key_exists, count, is_array, is_scalar, is_string, sprintf, strlen;
+use function array_key_exists, count, is_array, is_int, is_scalar, is_string, sprintf, strlen;
 
 
 /**
@@ -33,8 +33,23 @@ final class Helpers
 	{
 		if (is_array($var)) {
 			$res = [];
+			$spread = false;
 			foreach ($var as $key => $val) {
-				$res[self::expand($key, $params, $recursive, $path)] = self::expand($val, $params, $recursive, [...$path, $key]);
+				if ($val instanceof Definitions\Statement && $val->getEntity() === '...') { // spread ...(%array%)
+					$items = self::expand($val->arguments[0] ?? null, $params, $recursive, [...$path, $key]);
+					$res = is_array($items)
+						? [...$res, ...$items]
+						: throw new Nette\InvalidArgumentException(sprintf(
+							'Spread operator ...() expects an array known at compile time, %s given%s.',
+							get_debug_type($items),
+							self::formatLocation($path),
+						));
+					$spread = true;
+				} elseif ($spread && is_int($key)) { // the spread has shifted the positions
+					$res[] = self::expand($val, $params, $recursive, [...$path, $key]);
+				} else {
+					$res[self::expand($key, $params, $recursive, $path)] = self::expand($val, $params, $recursive, [...$path, $key]);
+				}
 			}
 			return $res;
 
@@ -143,11 +158,18 @@ final class Helpers
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Missing parameter '%s'%s.",
 					$parameter,
-					$location ? " in '" . implode("\u{a0}›\u{a0}", $location) . "'" : '',
+					self::formatLocation($location),
 				));
 			}
 		}
 		return $val;
+	}
+
+
+	/** @param  list<int|string>  $location */
+	private static function formatLocation(array $location): string
+	{
+		return $location ? " in '" . implode("\u{a0}›\u{a0}", $location) . "'" : '';
 	}
 
 
