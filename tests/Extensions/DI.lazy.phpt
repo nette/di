@@ -23,6 +23,11 @@ class Service
 }
 
 
+class Plain
+{
+}
+
+
 function isLazy(object $obj): bool
 {
 	return new ReflectionObject($obj)->isUninitializedLazyObject($obj);
@@ -50,6 +55,24 @@ test('Eager is default', function () {
 	Assert::false(isLazy($container->getByName('default')));
 	Assert::false(isLazy($container->getByName('eager')));
 	Assert::true(isLazy($container->getByName('lazy')));
+});
+
+
+test('A constructor without arguments is deferred, a class without constructor is not', function () {
+	$compiler = new DI\Compiler;
+	$compiler->addExtension('di', new DIExtension);
+	$container = createContainer($compiler, '
+	services:
+		constructor:
+			create: Service
+			lazy: true
+		plain:
+			create: Plain
+			lazy: true
+	');
+
+	Assert::true(isLazy($container->getByName('constructor')));
+	Assert::false(isLazy($container->getByName('plain')));
 });
 
 

@@ -297,7 +297,7 @@ final class ServiceDefinition extends Definition
 	{
 		return $this->lazy
 			&& $this->creator instanceof Instantiation // generateCode() runs on the completed creator
-			&& ($this->creator->arguments || $this->setup)
+			&& ($this->creator->arguments || $this->setup || method_exists($this->creator->class, '__construct'))
 			&& ($ancestor = ($tmp = class_parents($class = $this->creator->class)) ? array_pop($tmp) : $class)
 			&& !(new \ReflectionClass($ancestor))->isInternal();
 	}
