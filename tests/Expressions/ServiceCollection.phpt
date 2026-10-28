@@ -39,14 +39,14 @@ function builder(): DI\ContainerBuilder
 
 test('resolveType() is unknown (a collection is an array)', function () {
 	$resolver = new Resolver(builder());
-	Assert::null((new ServiceCollection(types: [CollDep::class]))->resolveType($resolver));
+	Assert::null(new ServiceCollection(types: [CollDep::class])->resolveType($resolver));
 });
 
 
 test('by types collects all autowired services of the type', function () {
 	$builder = builder();
 	$generator = new PhpGenerator($builder);
-	$completed = (new ServiceCollection(types: [CollDep::class]))->complete(new Resolver($builder));
+	$completed = new ServiceCollection(types: [CollDep::class])->complete(new Resolver($builder));
 
 	Assert::type(ServiceCollection::class, $completed);
 	Assert::same("[\$this->getService('a'), \$this->getService('b')]", $completed->generateCode($generator));
@@ -56,7 +56,7 @@ test('by types collects all autowired services of the type', function () {
 test('by tags collects all services with the tag', function () {
 	$builder = builder();
 	$generator = new PhpGenerator($builder);
-	$completed = (new ServiceCollection(tags: ['mark']))->complete(new Resolver($builder));
+	$completed = new ServiceCollection(tags: ['mark'])->complete(new Resolver($builder));
 
 	Assert::same("[\$this->getService('a'), \$this->getService('b')]", $completed->generateCode($generator));
 });
@@ -65,8 +65,8 @@ test('by tags collects all services with the tag', function () {
 test('the current service is excluded from the collection', function () {
 	$builder = builder();
 	$generator = new PhpGenerator($builder);
-	$resolver = (new Resolver($builder))->withCurrentService($builder->getDefinition('a'));
-	$completed = (new ServiceCollection(types: [CollDep::class]))->complete($resolver);
+	$resolver = new Resolver($builder)->withCurrentService($builder->getDefinition('a'));
+	$completed = new ServiceCollection(types: [CollDep::class])->complete($resolver);
 
 	Assert::same("[\$this->getService('b')]", $completed->generateCode($generator));
 });
@@ -75,7 +75,7 @@ test('the current service is excluded from the collection', function () {
 test('an empty collection generates an empty array', function () {
 	$builder = builder();
 	$generator = new PhpGenerator($builder);
-	$completed = (new ServiceCollection(tags: ['nonexistent']))->complete(new Resolver($builder));
+	$completed = new ServiceCollection(tags: ['nonexistent'])->complete(new Resolver($builder));
 	Assert::same('[]', $completed->generateCode($generator));
 });
 

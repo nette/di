@@ -47,10 +47,10 @@ final class Instantiation extends Expression
 	{
 		if (!class_exists($this->class)) {
 			throw new ServiceCreationException(sprintf("Class '%s' not found.", $this->class));
-		} elseif ((new \ReflectionClass($this->class))->isAbstract()) {
+		} elseif (new \ReflectionClass($this->class)->isAbstract()) {
 			throw new ServiceCreationException(sprintf('Class %s is abstract.', $this->class));
 		} elseif (
-			($constructor = (new \ReflectionClass($this->class))->getConstructor()) !== null
+			($constructor = new \ReflectionClass($this->class)->getConstructor()) !== null
 			&& !$constructor->isPublic()
 		) {
 			throw new ServiceCreationException(sprintf(

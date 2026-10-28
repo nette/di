@@ -44,7 +44,7 @@ test('multiple types union with dedup: a service implementing both appears once'
 	$builder->addDefinition('onlyA')->setType(OnlyA::class);
 	$resolver = new Resolver($builder);
 
-	$completed = (new ServiceCollection(types: [IA::class, IB::class]))
+	$completed = new ServiceCollection(types: [IA::class, IB::class])
 		->complete($resolver->withCurrentServiceAvailable());
 
 	Assert::same(['both', 'onlyA'], refNames($completed));
@@ -59,7 +59,7 @@ test('type and tag together = intersection', function () {
 	$resolver = new Resolver($builder);
 
 	// IA services intersected with tag 't' -> both, onlyA (stdClass is not IA)
-	$completed = (new ServiceCollection(types: [IA::class], tags: ['t']))
+	$completed = new ServiceCollection(types: [IA::class], tags: ['t'])
 		->complete($resolver->withCurrentServiceAvailable());
 
 	Assert::same(['both', 'onlyA'], refNames($completed));

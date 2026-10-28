@@ -299,7 +299,7 @@ class Compiler
 		}
 
 		foreach ($this->extensions as $extension) {
-			$this->dependencies->add(array_filter([(new \ReflectionClass($extension))->getFileName()]));
+			$this->dependencies->add(array_filter([new \ReflectionClass($extension)->getFileName()]));
 		}
 
 		if ($extra = key(array_diff_key($this->configs, $this->extensions, [self::Closures => 1]))) {
@@ -401,7 +401,7 @@ class Compiler
 	private function getSetupConstraints(CompilerExtension $extension): array
 	{
 		$before = $after = [];
-		foreach ((new \ReflectionClass($extension))->getMethods() as $method) {
+		foreach (new \ReflectionClass($extension)->getMethods() as $method) {
 			foreach ($method->getAttributes(Attributes\Hook::class) as $attr) {
 				$hook = $attr->newInstance();
 				if ($hook->phase === Phase::Setup) {

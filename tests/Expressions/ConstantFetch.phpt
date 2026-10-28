@@ -39,7 +39,7 @@ test('complete() resolves the type of a service reference target', function () {
 
 test('complete() resolves a type reference target', function () {
 	[$resolver, $generator] = harness();
-	$completed = (new ConstantFetch(Reference::fromType(ConstFixture::class), 'Version'))->complete($resolver);
+	$completed = new ConstantFetch(Reference::fromType(ConstFixture::class), 'Version')->complete($resolver);
 	Assert::same('ConstFixture', $completed->target);
 	Assert::same('ConstFixture::Version', $completed->generateCode($generator));
 });
@@ -47,7 +47,7 @@ test('complete() resolves a type reference target', function () {
 
 test('an already-resolved class target generates directly', function () {
 	[, $generator] = harness();
-	Assert::same('ConstFixture::Version', (new ConstantFetch('ConstFixture', 'Version'))->generateCode($generator));
+	Assert::same('ConstFixture::Version', new ConstantFetch('ConstFixture', 'Version')->generateCode($generator));
 });
 
 
@@ -61,7 +61,7 @@ test('complete() leaves the original untouched (immutability)', function () {
 
 testException('generateCode() before complete() throws', function () {
 	[, $generator] = harness();
-	(new ConstantFetch(new Reference('svc'), 'Version'))->generateCode($generator);
+	new ConstantFetch(new Reference('svc'), 'Version')->generateCode($generator);
 }, LogicException::class);
 
 

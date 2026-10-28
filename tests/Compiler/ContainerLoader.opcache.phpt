@@ -28,10 +28,10 @@ namespace {
 
 	$tempDir = getTempDir() . '/opcache';
 	$key = ['opcache-key', __FILE__];
-	$load = fn() => (new DI\ContainerLoader($tempDir, autoRebuild: true))->load(fn() => Assert::fail('Should not be recreated'), $key);
+	$load = fn() => new DI\ContainerLoader($tempDir, autoRebuild: true)->load(fn() => Assert::fail('Should not be recreated'), $key);
 
 	// container built by an earlier request
-	$class = (new DI\ContainerLoader($tempDir))->getClassName($key);
+	$class = new DI\ContainerLoader($tempDir)->getClassName($key);
 	$file = "$tempDir/$class.php";
 	Nette\Utils\FileSystem::write($file, "<?php\nclass {$class}_first extends Nette\\DI\\Container {}\nreturn '{$class}_first';\n");
 	Nette\Utils\FileSystem::write(

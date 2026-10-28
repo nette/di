@@ -27,7 +27,7 @@ resolved once and emitted as an optimized PHP class (cached on disk), so runtime
 requests just `include` it. Full autowiring, NEON configuration, and a
 `CompilerExtension` plug-in system. Library component, not an application.
 
-- **PHP Version**: 8.3 - 8.6
+- **PHP Version**: 8.4 - 8.6
 - **Package**: `nette/di`
 
 ## Essential Commands

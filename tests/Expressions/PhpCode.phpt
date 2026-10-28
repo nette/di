@@ -29,14 +29,14 @@ function harness(): array
 
 test('resolveType() is unknown for raw PHP code', function () {
 	[$resolver] = harness();
-	Assert::null((new PhpCode('substr(?, ?)', ['x', 1]))->resolveType($resolver));
+	Assert::null(new PhpCode('substr(?, ?)', ['x', 1])->resolveType($resolver));
 });
 
 
 test('generateCode() substitutes placeholders', function () {
 	[, $generator] = harness();
-	Assert::same("substr('x', 1)", (new PhpCode('substr(?, ?)', ['x', 1]))->generateCode($generator));
-	Assert::same('$service->prop = 5', (new PhpCode('$service->prop = ?', [5]))->generateCode($generator));
+	Assert::same("substr('x', 1)", new PhpCode('substr(?, ?)', ['x', 1])->generateCode($generator));
+	Assert::same('$service->prop = 5', new PhpCode('$service->prop = ?', [5])->generateCode($generator));
 });
 
 

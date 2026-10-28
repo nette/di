@@ -33,7 +33,7 @@ final class LocatorDefinition extends Definition
 			));
 		}
 
-		$methods = (new \ReflectionClass($interface))->getMethods();
+		$methods = new \ReflectionClass($interface)->getMethods();
 		if (!$methods) {
 			throw new Nette\InvalidArgumentException(sprintf(
 				"Service '%s': Interface %s must have at least one method.",
@@ -151,7 +151,7 @@ final class LocatorDefinition extends Definition
 	{
 		$methods = $accepted = [];
 		$generic = false;
-		foreach ((new \ReflectionClass($type))->getMethods() as $rm) {
+		foreach (new \ReflectionClass($type)->getMethods() as $rm) {
 			if (!preg_match('#^(get|create)(.*)#', $rm->name, $m)) {
 				continue;
 			} elseif ($m[2] === '') {
@@ -210,7 +210,7 @@ final class LocatorDefinition extends Definition
 				->setPrivate()
 				->setType($generator->getClassName());
 
-		foreach ((new \ReflectionClass($type))->getMethods() as $rm) {
+		foreach (new \ReflectionClass($type)->getMethods() as $rm) {
 			if (!preg_match('#^(get|create)(.*)#', $rm->name, $m)) {
 				continue;
 			}

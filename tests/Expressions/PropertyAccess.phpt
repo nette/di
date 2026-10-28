@@ -32,35 +32,35 @@ function harness(): array
 test('resolveType(): read reflects the property type, write reflects the assigned value', function () {
 	[$resolver] = harness();
 	// read: type from the property reflection
-	Assert::same(stdClass::class, (new PropertyAccess(new Reference('a'), 'obj'))->resolveType($resolver));
+	Assert::same(stdClass::class, new PropertyAccess(new Reference('a'), 'obj')->resolveType($resolver));
 	// an untyped or scalar property has no service type
-	Assert::null((new PropertyAccess(new Reference('a'), 'prop'))->resolveType($resolver));
-	Assert::null((new PropertyAccess(new Reference('a'), 'num'))->resolveType($resolver));
+	Assert::null(new PropertyAccess(new Reference('a'), 'prop')->resolveType($resolver));
+	Assert::null(new PropertyAccess(new Reference('a'), 'num')->resolveType($resolver));
 	// a missing property (e.g. magic __get) -> null
-	Assert::null((new PropertyAccess(new Reference('a'), 'missing'))->resolveType($resolver));
+	Assert::null(new PropertyAccess(new Reference('a'), 'missing')->resolveType($resolver));
 	// write: type of the assigned value
 	Assert::same(
 		stdClass::class,
-		(new PropertyAccess(new Reference('a'), 'obj', PropertyMode::Assign, new Statement(stdClass::class)))->resolveType($resolver),
+		new PropertyAccess(new Reference('a'), 'obj', PropertyMode::Assign, new Statement(stdClass::class))->resolveType($resolver),
 	);
-	Assert::null((new PropertyAccess(new Reference('a'), 'obj', PropertyMode::Assign, 5))->resolveType($resolver));
+	Assert::null(new PropertyAccess(new Reference('a'), 'obj', PropertyMode::Assign, 5)->resolveType($resolver));
 });
 
 
 test('generateCode(): read, assign, append on a reference', function () {
 	[, $generator] = harness();
-	Assert::same("\$this->getService('a')->prop", (new PropertyAccess(new Reference('a'), 'prop'))->generateCode($generator));
+	Assert::same("\$this->getService('a')->prop", new PropertyAccess(new Reference('a'), 'prop')->generateCode($generator));
 	Assert::same(
 		"\$this->getService('a')->prop = 5",
-		(new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign, 5))->generateCode($generator),
+		new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign, 5)->generateCode($generator),
 	);
 	Assert::same(
 		"\$this->getService('a')->items[] = 5",
-		(new PropertyAccess(new Reference('a'), 'items', PropertyMode::Append, 5))->generateCode($generator),
+		new PropertyAccess(new Reference('a'), 'items', PropertyMode::Append, 5)->generateCode($generator),
 	);
 	Assert::same(
 		'$service->prop = 1',
-		(new PropertyAccess(new Reference(Reference::Self), 'prop', PropertyMode::Assign, 1))->generateCode($generator),
+		new PropertyAccess(new Reference(Reference::Self), 'prop', PropertyMode::Assign, 1)->generateCode($generator),
 	);
 });
 
@@ -69,18 +69,18 @@ test('a read and an assignment of null are distinguished', function () {
 	[, $generator] = harness();
 	Assert::same(
 		"\$this->getService('a')->prop",
-		(new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Read))->generateCode($generator),
+		new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Read)->generateCode($generator),
 	);
 	Assert::same(
 		"\$this->getService('a')->prop = null",
-		(new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign))->generateCode($generator),
+		new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign)->generateCode($generator),
 	);
 });
 
 
 test('generateCode(): static property keeps the historical quoted form', function () {
 	[, $generator] = harness();
-	Assert::same("'PropDep'::\$prop = 5", (new PropertyAccess('PropDep', 'prop', PropertyMode::Assign, 5))->generateCode($generator));
+	Assert::same("'PropDep'::\$prop = 5", new PropertyAccess('PropDep', 'prop', PropertyMode::Assign, 5)->generateCode($generator));
 });
 
 
@@ -98,14 +98,14 @@ test('complete() converts @service value and completes nested expressions, origi
 
 test('complete() of a read leaves no value to resolve', function () {
 	[$resolver, $generator] = harness();
-	$completed = (new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Read))->complete($resolver);
+	$completed = new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Read)->complete($resolver);
 	Assert::same("\$this->getService('a')->prop", $completed->generateCode($generator));
 });
 
 
 testException('complete(): error in value is annotated with the property', function () {
 	[$resolver] = harness();
-	(new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign, '@missing'))->complete($resolver);
+	new PropertyAccess(new Reference('a'), 'prop', PropertyMode::Assign, '@missing')->complete($resolver);
 }, DI\ServiceCreationException::class, "Reference to missing service 'missing'. (used in @a::\$prop)");
 
 
@@ -142,11 +142,11 @@ test('property Statements complete to PropertyAccess nodes with the right mode',
 
 testException('append without a value is rejected', function () {
 	[$resolver] = harness();
-	(new Statement([new Reference('a'), '$items[]']))->complete($resolver);
+	new Statement([new Reference('a'), '$items[]'])->complete($resolver);
 }, DI\ServiceCreationException::class, 'Missing argument for $items[].');
 
 
 testException('more than one value is rejected', function () {
 	[$resolver] = harness();
-	(new Statement([new Reference('a'), '$prop'], [1, 2]))->complete($resolver);
+	new Statement([new Reference('a'), '$prop'], [1, 2])->complete($resolver);
 }, Nette\Utils\AssertionException::class, "The setup arguments for '%a%' expects to be list in range 0..1, array given.");

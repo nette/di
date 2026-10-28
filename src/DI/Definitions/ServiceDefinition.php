@@ -277,7 +277,7 @@ final class ServiceDefinition extends Definition
 		if ($this->canBeLazy() && !preg_grep('#func_get_arg|func_num_args#i', $lines)) { // latteFactory workaround
 			assert($this->creator instanceof Instantiation); // canBeLazy() guarantees this
 			$class = $this->creator->class;
-			$lines[0] = (new \ReflectionClass($class))->hasMethod('__construct')
+			$lines[0] = new \ReflectionClass($class)->hasMethod('__construct')
 				? $generator->formatPhp("\$service->__construct(...?:);\n", [$this->creator->arguments])
 				: '';
 			return "return new ReflectionClass($class::class)->newLazyGhost(function (\$service) {\n"
@@ -299,7 +299,7 @@ final class ServiceDefinition extends Definition
 			&& $this->creator instanceof Instantiation // generateCode() runs on the completed creator
 			&& ($this->creator->arguments || $this->setup || method_exists($this->creator->class, '__construct'))
 			&& ($ancestor = ($tmp = class_parents($class = $this->creator->class)) ? array_pop($tmp) : $class)
-			&& !(new \ReflectionClass($ancestor))->isInternal();
+			&& !new \ReflectionClass($ancestor)->isInternal();
 	}
 
 

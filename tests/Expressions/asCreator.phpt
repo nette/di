@@ -62,12 +62,12 @@ test('resolveType(): special functions and a PHP literal are not resolvable (nul
 test('resolveType(): typed()/tagged() are still treated as class names', function () {
 	[, $resolver] = harness();
 	Assert::exception(
-		fn() => (new Statement('typed', [stdClass::class]))->resolveType($resolver),
+		fn() => new Statement('typed', [stdClass::class])->resolveType($resolver),
 		ServiceCreationException::class,
 		"Class 'typed' not found.",
 	);
 	Assert::exception(
-		fn() => (new Statement('tagged', ['t']))->resolveType($resolver),
+		fn() => new Statement('tagged', ['t'])->resolveType($resolver),
 		ServiceCreationException::class,
 		"Class 'tagged' not found.",
 	);
@@ -84,10 +84,10 @@ test('resolveType(): a property write reflects the assigned value; scalars and a
 	[, $resolver] = harness();
 	Assert::same(
 		stdClass::class,
-		(new Statement([new Reference('svc'), '$obj'], [new Statement(stdClass::class)]))->resolveType($resolver),
+		new Statement([new Reference('svc'), '$obj'], [new Statement(stdClass::class)])->resolveType($resolver),
 	);
-	Assert::null((new Statement([new Reference('svc'), '$obj'], [5]))->resolveType($resolver));
-	Assert::null((new Statement([new Reference('svc'), '$obj[]'], [1]))->resolveType($resolver));
+	Assert::null(new Statement([new Reference('svc'), '$obj'], [5])->resolveType($resolver));
+	Assert::null(new Statement([new Reference('svc'), '$obj[]'], [1])->resolveType($resolver));
 });
 
 

@@ -29,16 +29,16 @@ function harness(): array
 
 test('resolveType() is null (not a service type)', function () {
 	[$resolver] = harness();
-	Assert::null((new SpecialFunction('not', [true]))->resolveType($resolver));
-	Assert::null((new SpecialFunction('int', ['42']))->resolveType($resolver));
+	Assert::null(new SpecialFunction('not', [true])->resolveType($resolver));
+	Assert::null(new SpecialFunction('int', ['42'])->resolveType($resolver));
 });
 
 
 test('generateCode(): not() negates, casts call the lossless converter', function () {
 	[, $generator] = harness();
-	Assert::same('!(true)', (new SpecialFunction('not', [true]))->generateCode($generator));
-	Assert::same("Nette\\DI\\Helpers::convertType('42', 'int')", (new SpecialFunction('int', ['42']))->generateCode($generator));
-	Assert::same("Nette\\DI\\Helpers::convertType(1, 'string')", (new SpecialFunction('string', [1]))->generateCode($generator));
+	Assert::same('!(true)', new SpecialFunction('not', [true])->generateCode($generator));
+	Assert::same("Nette\\DI\\Helpers::convertType('42', 'int')", new SpecialFunction('int', ['42'])->generateCode($generator));
+	Assert::same("Nette\\DI\\Helpers::convertType(1, 'string')", new SpecialFunction('string', [1])->generateCode($generator));
 });
 
 
@@ -55,7 +55,7 @@ test('complete() converts @service value, original untouched', function () {
 
 testException('complete(): wrong arity is rejected', function () {
 	[$resolver] = harness();
-	(new SpecialFunction('not', [1, 2]))->complete($resolver);
+	new SpecialFunction('not', [1, 2])->complete($resolver);
 }, DI\ServiceCreationException::class, 'Function not() expects 1 parameter, 2 given.');
 
 
@@ -77,7 +77,7 @@ test('not()/cast Statements complete to SpecialFunction nodes', function () {
 		['float', ['1.5'], "Nette\\DI\\Helpers::convertType('1.5', 'float')"],
 		['string', [7], "Nette\\DI\\Helpers::convertType(7, 'string')"],
 	] as [$fn, $args, $expected]) {
-		$completed = (new Statement($fn, $args))->complete($resolver);
+		$completed = new Statement($fn, $args)->complete($resolver);
 		Assert::type(SpecialFunction::class, $completed);
 		Assert::same($expected, $completed->generateCode($generator));
 	}

@@ -48,9 +48,9 @@ Assert::type(Reference::class, Nette\DI\Expressions\Reference::fromType('stdClas
 // generateCode()
 $builder = new Nette\DI\ContainerBuilder;
 $generator = new PhpGenerator($builder);
-Assert::same("\$this->getService('a')", (new Reference('a'))->generateCode($generator));
-Assert::same('$service', (new Reference(Reference::Self))->generateCode($generator));
-Assert::same('$this', (new Reference(Nette\DI\ContainerBuilder::ThisContainer))->generateCode($generator));
+Assert::same("\$this->getService('a')", new Reference('a')->generateCode($generator));
+Assert::same('$service', new Reference(Reference::Self)->generateCode($generator));
+Assert::same('$this', new Reference(Nette\DI\ContainerBuilder::ThisContainer)->generateCode($generator));
 Assert::type(Reference::class, Nette\DI\Expressions\Reference::fromType('stdClass'));
 
 
@@ -59,11 +59,11 @@ $defA = $builder->addDefinition('a')->setType(stdClass::class);
 $defB = $builder->addDefinition('b')->setCreator(stdClass::class); // type not resolved yet
 $resolver = new Resolver($builder);
 
-Assert::same('stdClass', (new Reference('a'))->resolveType($resolver));
-Assert::same('stdClass', (new Reference('b'))->resolveType($resolver)); // triggers resolveDefinition()
+Assert::same('stdClass', new Reference('a')->resolveType($resolver));
+Assert::same('stdClass', new Reference('b')->resolveType($resolver)); // triggers resolveDefinition()
 Assert::same('Foo\Bar', Reference::fromType('Foo\Bar')->resolveType($resolver));
-Assert::null((new Reference(Reference::Self))->resolveType($resolver)); // no current service
-Assert::same('stdClass', (new Reference(Reference::Self))->resolveType($resolver->withCurrentService($defA)));
+Assert::null(new Reference(Reference::Self)->resolveType($resolver)); // no current service
+Assert::same('stdClass', new Reference(Reference::Self)->resolveType($resolver->withCurrentService($defA)));
 
 
 // complete()
@@ -85,7 +85,7 @@ Assert::exception(
 );
 
 Assert::exception(
-	fn() => (new Reference('missing'))->complete($resolver),
+	fn() => new Reference('missing')->complete($resolver),
 	Nette\DI\ServiceCreationException::class,
 	"Reference to missing service 'missing'.",
 );

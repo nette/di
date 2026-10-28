@@ -12,7 +12,7 @@ require __DIR__ . '/../bootstrap.php';
 
 function getPropertyValue($obj, string $name)
 {
-	$prop = (new ReflectionObject($obj))->getProperty($name);
+	$prop = new ReflectionObject($obj)->getProperty($name);
 	return $prop->getValue($obj);
 }
 

@@ -13,7 +13,6 @@ use Nette\Utils\Reflection;
 use ReflectionClass;
 use ReflectionMethod;
 use function count, is_object, is_string, sprintf;
-use const PHP_VERSION_ID;
 
 
 /**
@@ -57,7 +56,7 @@ class DependencyChecker
 					$all = [$name] + class_parents($name) + class_implements($name);
 					foreach ($all as &$item) {
 						$all += class_uses($item);
-						if ($file = (new ReflectionClass($item))->getFileName()) {
+						if ($file = new ReflectionClass($item)->getFileName()) {
 							$phpFiles[] = $file;
 						}
 						$classes[$item] = true;
@@ -158,9 +157,7 @@ class DependencyChecker
 		$flip = array_flip($classes);
 		foreach ($functions as $name) {
 			if (str_contains($name, '::')) {
-				$method = PHP_VERSION_ID < 80300
-					? new ReflectionMethod($name)
-					: ReflectionMethod::createFromMethodName($name);
+				$method = ReflectionMethod::createFromMethodName($name);
 				$class = $method->getDeclaringClass();
 				if (isset($flip[$class->name])) {
 					continue;

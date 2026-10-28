@@ -50,14 +50,14 @@ function harness(): array
 
 test('resolveType() is the class itself', function () {
 	[$resolver] = harness();
-	Assert::same(InstSvc::class, (new Instantiation(InstSvc::class))->resolveType($resolver));
+	Assert::same(InstSvc::class, new Instantiation(InstSvc::class)->resolveType($resolver));
 });
 
 
 test('generateCode() with and without arguments', function () {
 	[, $generator] = harness();
-	Assert::same('new InstNoCtor', (new Instantiation(InstNoCtor::class))->generateCode($generator));
-	Assert::same("new InstSvc(1, 'x')", (new Instantiation(InstSvc::class, [1, 'x']))->generateCode($generator));
+	Assert::same('new InstNoCtor', new Instantiation(InstNoCtor::class)->generateCode($generator));
+	Assert::same("new InstSvc(1, 'x')", new Instantiation(InstSvc::class, [1, 'x'])->generateCode($generator));
 });
 
 
@@ -75,7 +75,7 @@ test('complete() autowires the constructor, original untouched', function () {
 
 test('complete() converts @service strings in arguments', function () {
 	[$resolver] = harness();
-	$completed = (new Instantiation(InstSvc::class, ['@dep', 'hi']))->complete($resolver);
+	$completed = new Instantiation(InstSvc::class, ['@dep', 'hi'])->complete($resolver);
 	Assert::type(Reference::class, $completed->arguments[0]);
 	Assert::same('hi', $completed->arguments[1]);
 });
@@ -83,31 +83,31 @@ test('complete() converts @service strings in arguments', function () {
 
 testException('complete(): unknown class', function () {
 	[$resolver] = harness();
-	(new Instantiation('UnknownClass'))->complete($resolver);
+	new Instantiation('UnknownClass')->complete($resolver);
 }, DI\ServiceCreationException::class, "Class 'UnknownClass' not found.");
 
 
 testException('complete(): abstract class', function () {
 	[$resolver] = harness();
-	(new Instantiation(InstAbstract::class))->complete($resolver);
+	new Instantiation(InstAbstract::class)->complete($resolver);
 }, DI\ServiceCreationException::class, 'Class InstAbstract is abstract.');
 
 
 testException('complete(): private constructor', function () {
 	[$resolver] = harness();
-	(new Instantiation(InstPrivateCtor::class))->complete($resolver);
+	new Instantiation(InstPrivateCtor::class)->complete($resolver);
 }, DI\ServiceCreationException::class, 'Class InstPrivateCtor has private constructor.');
 
 
 testException('complete(): arguments to a class without constructor', function () {
 	[$resolver] = harness();
-	(new Instantiation(InstNoCtor::class, [1]))->complete($resolver);
+	new Instantiation(InstNoCtor::class, [1])->complete($resolver);
 }, DI\ServiceCreationException::class, 'Unable to pass arguments, class InstNoCtor has no constructor.');
 
 
 testException('complete(): error in arguments is annotated with the constructor', function () {
 	[$resolver] = harness();
-	(new Instantiation(InstSvc::class, ['@missing']))->complete($resolver);
+	new Instantiation(InstSvc::class, ['@missing'])->complete($resolver);
 }, DI\ServiceCreationException::class, "Reference to missing service 'missing'. (used in InstSvc::__construct())");
 
 

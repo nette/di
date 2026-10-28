@@ -43,30 +43,30 @@ Assert::same([1, 2], $call->arguments);
 
 
 // method() without arguments
-$call = (new Reference('a'))->method('foo');
+$call = new Reference('a')->method('foo');
 Assert::same([], $call->arguments);
 
 
 // named arguments via args()
-$call = (new Reference('a'))->method('foo', ['x' => 1, 'y' => 2]);
+$call = new Reference('a')->method('foo', ['x' => 1, 'y' => 2]);
 Assert::same(['x' => 1, 'y' => 2], $call->arguments);
 
 
 // property() builds a read PropertyAccess node
-$prop = (new Reference('a'))->property('bar');
+$prop = new Reference('a')->property('bar');
 Assert::type(PropertyAccess::class, $prop);
 Assert::same('bar', $prop->name);
 Assert::same(PropertyMode::Read, $prop->mode);
 
 
 // constant() builds a ConstantFetch node
-$const = (new Reference('a'))->constant('FOO');
+$const = new Reference('a')->constant('FOO');
 Assert::type(ConstantFetch::class, $const);
 Assert::same('FOO', $const->name);
 
 
 // chaining: service('a')->method('b')->method('c')
-$chain = (new Reference('a'))->method('b')->method('c');
+$chain = new Reference('a')->method('b')->method('c');
 Assert::type(Call::class, $chain);
 Assert::same('c', $chain->name);
 Assert::type(Call::class, $chain->target);
@@ -75,7 +75,7 @@ Assert::type(Reference::class, $chain->target->target);
 
 
 // chaining works on instantiation too (F7 equivalent: Foo()::b()::c())
-$chain = (new Instantiation(stdClass::class))->method('b')->method('c');
+$chain = new Instantiation(stdClass::class)->method('b')->method('c');
 Assert::type(Instantiation::class, $chain->target->target);
 
 
@@ -95,17 +95,17 @@ $builder->addDefinition('a')->setType(FluentSvc::class);
 $resolver = new Resolver($builder);
 $generator = new PhpGenerator($builder);
 
-$expr = (new Reference('a'))->method('getUrl')->method('getHost');
+$expr = new Reference('a')->method('getUrl')->method('getHost');
 $completed = $expr->complete($resolver);
 Assert::same("\$this->getService('a')->getUrl()->getHost()", $completed->generateCode($generator));
 
 
 // property read on a service (= NEON @a::$prop)
-$expr = (new Reference('a'))->property('prop');
+$expr = new Reference('a')->property('prop');
 Assert::same("\$this->getService('a')->prop", $expr->complete($resolver)->generateCode($generator));
 
 
 // code() is chainable: continue a raw expression (e.g. a generated local variable)
-$expr = (new Nette\DI\Expressions\PhpCode('$baseUrl'))->method('resolve', ['/x'])->method('getAbsoluteUrl');
+$expr = new Nette\DI\Expressions\PhpCode('$baseUrl')->method('resolve', ['/x'])->method('getAbsoluteUrl');
 $completed = $expr->complete($resolver);
 Assert::same("\$baseUrl->resolve('/x')->getAbsoluteUrl()", $completed->generateCode($generator));

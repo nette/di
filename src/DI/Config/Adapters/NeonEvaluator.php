@@ -64,7 +64,7 @@ final class NeonEvaluator extends Neon\Evaluator
 			return new Statement($head, $attributes);
 		}
 
-		$callable = (new Statement($head))->getEntity(); // normalizes Class::method, @service::method, ::function
+		$callable = new Statement($head)->getEntity(); // normalizes Class::method, @service::method, ::function
 		if (!is_array($callable)) {
 			throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$head(...)' in config file (used in '$this->file')");
 		}

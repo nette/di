@@ -119,7 +119,7 @@ class ContainerLoader
 		if (
 			!isset(self::$loaded[$file])
 			&& class_exists($class, false)
-			&& realpath((new \ReflectionClass($class))->getFileName() ?: '') === realpath($file)
+			&& realpath(new \ReflectionClass($class)->getFileName() ?: '') === realpath($file)
 		) {
 			return $class; // included outside of this loader
 		}

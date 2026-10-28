@@ -271,7 +271,7 @@ final class Helpers
 	public static function normalizeClass(string $type): string
 	{
 		return class_exists($type) || interface_exists($type)
-			? (new \ReflectionClass($type))->name
+			? new \ReflectionClass($type)->name
 			: $type;
 	}
 

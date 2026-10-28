@@ -23,7 +23,7 @@ function harness(array $params): array
 
 test('whole-value parameter (param(\'dsn\') -> Expansion(\'%dsn%\'))', function () {
 	[$resolver, $generator] = harness(['dsn' => 'mysql:host=localhost']);
-	$completed = (new Expansion('%dsn%'))->complete($resolver);
+	$completed = new Expansion('%dsn%')->complete($resolver);
 	Assert::type(PhpCode::class, $completed);
 	Assert::same("'mysql:host=localhost'", $completed->generateCode($generator));
 });
@@ -31,34 +31,34 @@ test('whole-value parameter (param(\'dsn\') -> Expansion(\'%dsn%\'))', function 
 
 test('interpolation into a string (expand(\'%dir%/cache\'))', function () {
 	[$resolver, $generator] = harness(['dir' => '/var']);
-	$completed = (new Expansion('%dir%/cache'))->complete($resolver);
+	$completed = new Expansion('%dir%/cache')->complete($resolver);
 	Assert::same("'/var/cache'", $completed->generateCode($generator));
 });
 
 
 test('a whole-value parameter may be an array', function () {
 	[$resolver, $generator] = harness(['list' => [1, 2]]);
-	$completed = (new Expansion('%list%'))->complete($resolver);
+	$completed = new Expansion('%list%')->complete($resolver);
 	Assert::same('[1, 2]', $completed->generateCode($generator));
 });
 
 
 test('nested parameter is expanded recursively', function () {
 	[$resolver, $generator] = harness(['host' => 'localhost', 'dsn' => 'mysql:host=%host%']);
-	$completed = (new Expansion('%dsn%'))->complete($resolver);
+	$completed = new Expansion('%dsn%')->complete($resolver);
 	Assert::same("'mysql:host=localhost'", $completed->generateCode($generator));
 });
 
 
 testException('missing parameter throws', function () {
 	[$resolver] = harness([]);
-	(new Expansion('%nope%'))->complete($resolver);
+	new Expansion('%nope%')->complete($resolver);
 }, Nette\InvalidArgumentException::class, "Missing parameter 'nope'.");
 
 
 testException('generateCode() before complete() throws', function () {
 	[, $generator] = harness([]);
-	(new Expansion('%dsn%'))->generateCode($generator);
+	new Expansion('%dsn%')->generateCode($generator);
 }, LogicException::class);
 
 

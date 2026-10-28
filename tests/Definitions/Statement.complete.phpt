@@ -45,7 +45,7 @@ test('not() completes to a SpecialFunction node, original untouched', function (
 
 
 test('type casts complete to SpecialFunction nodes', function () {
-	$completed = (new Statement('int', ['42']))->complete(resolver());
+	$completed = new Statement('int', ['42'])->complete(resolver());
 	Assert::type(DI\Expressions\SpecialFunction::class, $completed);
 	Assert::same('int', $completed->function);
 	Assert::same(['42'], $completed->arguments);
@@ -63,7 +63,7 @@ test('class constructor is autowired, original arguments untouched', function ()
 
 
 test('@service strings in arguments are converted to References', function () {
-	$completed = (new Statement(ComSvc::class, ['@dep']))->complete(resolver());
+	$completed = new Statement(ComSvc::class, ['@dep'])->complete(resolver());
 	Assert::type(Reference::class, $completed->arguments[0]);
 	Assert::same('dep', $completed->arguments[0]->getValue());
 });
@@ -78,10 +78,10 @@ test('completing a nested statement leaves the original graph untouched', functi
 
 
 testException('parameters passed to a reference are rejected', function () {
-	(new Statement(new Reference('dep'), [1]))->complete(resolver());
+	new Statement(new Reference('dep'), [1])->complete(resolver());
 }, DI\ServiceCreationException::class, 'Parameters were passed to reference @dep, although references cannot have any parameters.');
 
 
 testException('unknown class cannot be instantiated', function () {
-	(new Statement('NonexistentClass'))->complete(resolver());
+	new Statement('NonexistentClass')->complete(resolver());
 }, DI\ServiceCreationException::class, "Class 'NonexistentClass' not found.");

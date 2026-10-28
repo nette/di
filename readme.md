@@ -39,7 +39,7 @@ The recommended way to install is via Composer:
 composer require nette/di
 ```
 
-It requires PHP version 8.3 and supports PHP up to 8.6.
+It requires PHP version 8.4 and supports PHP up to 8.6.
 
  <!---->
 

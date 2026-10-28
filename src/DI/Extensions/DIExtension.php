@@ -15,7 +15,6 @@ use Nette\DI\Definitions\ServiceDefinition;
 use Nette\PhpGenerator\ClassType;
 use Tracy;
 use function is_array;
-use const PHP_VERSION_ID;
 
 
 /**
@@ -70,7 +69,7 @@ final class DIExtension extends Nette\DI\CompilerExtension
 	#[Hook(Phase::Modify)]
 	public function doEnableLazyProxies(ContainerBuilder $builder): void
 	{
-		if ($this->config->lazy && PHP_VERSION_ID >= 80400) {
+		if ($this->config->lazy) {
 			foreach ($builder->getAll() as $def) {
 				if ($def instanceof ServiceDefinition && $def->isLazy() === null) {
 					$def->lazy();

@@ -19,8 +19,8 @@ Assert::same([
 	'files/loader.includes.child.neon',
 	'files/loader.includes.child.php',
 	__DIR__ . DIRECTORY_SEPARATOR . 'files/loader.includes.grandchild.neon',
-	(new ReflectionClass(Nette\DI\Extensions\ServicesExtension::class))->getFileName(),
-	(new ReflectionClass(Nette\DI\Extensions\ParametersExtension::class))->getFileName(),
+	new ReflectionClass(Nette\DI\Extensions\ServicesExtension::class)->getFileName(),
+	new ReflectionClass(Nette\DI\Extensions\ParametersExtension::class)->getFileName(),
 ], array_keys($compiler->exportDependencies()[1]));
 
 

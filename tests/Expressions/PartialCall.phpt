@@ -36,19 +36,19 @@ function harness(): array
 
 test('resolveType() is always Closure', function () {
 	[$resolver] = harness();
-	Assert::same(Closure::class, (new PartialCall(null, 'trim'))->resolveType($resolver));
-	Assert::same(Closure::class, (new PartialCall(Subject::class, 'pub'))->resolveType($resolver));
+	Assert::same(Closure::class, new PartialCall(null, 'trim')->resolveType($resolver));
+	Assert::same(Closure::class, new PartialCall(Subject::class, 'pub')->resolveType($resolver));
 });
 
 
 test('generateCode(): all target forms', function () {
 	[, $generator] = harness();
-	Assert::same('trim(...)', (new PartialCall(null, 'trim'))->generateCode($generator));
-	Assert::same('Foo\bar(...)', (new PartialCall(null, 'Foo\bar'))->generateCode($generator));
-	Assert::same('Subject::pub(...)', (new PartialCall('Subject', 'pub'))->generateCode($generator));
-	Assert::same("\$this->getService('a')->pub(...)", (new PartialCall(new Reference('a'), 'pub'))->generateCode($generator));
-	Assert::same('$service->pub(...)', (new PartialCall(new Reference(Reference::Self), 'pub'))->generateCode($generator));
-	Assert::same('(new Subject)->pub(...)', (new PartialCall(new Statement(Subject::class), 'pub'))->generateCode($generator));
+	Assert::same('trim(...)', new PartialCall(null, 'trim')->generateCode($generator));
+	Assert::same('Foo\bar(...)', new PartialCall(null, 'Foo\bar')->generateCode($generator));
+	Assert::same('Subject::pub(...)', new PartialCall('Subject', 'pub')->generateCode($generator));
+	Assert::same("\$this->getService('a')->pub(...)", new PartialCall(new Reference('a'), 'pub')->generateCode($generator));
+	Assert::same('$service->pub(...)', new PartialCall(new Reference(Reference::Self), 'pub')->generateCode($generator));
+	Assert::same('(new Subject)->pub(...)', new PartialCall(new Statement(Subject::class), 'pub')->generateCode($generator));
 });
 
 
@@ -57,24 +57,24 @@ test('generateCode(): partial application with bound arguments and placeholders 
 	// single ? placeholders and a bound value
 	Assert::same(
 		"str_replace(?, ?, 'x')",
-		(new PartialCall(null, 'str_replace', [ArgumentPlaceholder::Single, ArgumentPlaceholder::Single, 'x']))->generateCode($generator),
+		new PartialCall(null, 'str_replace', [ArgumentPlaceholder::Single, ArgumentPlaceholder::Single, 'x'])->generateCode($generator),
 	);
 	// bound value then placeholder
-	Assert::same('trim(1, ?)', (new PartialCall(null, 'trim', [1, ArgumentPlaceholder::Single]))->generateCode($generator));
+	Assert::same('trim(1, ?)', new PartialCall(null, 'trim', [1, ArgumentPlaceholder::Single])->generateCode($generator));
 	// placeholder then variadic rest
 	Assert::same(
 		'Subject::pub(?, ...)',
-		(new PartialCall('Subject', 'pub', [ArgumentPlaceholder::Single, ArgumentPlaceholder::Variadic]))->generateCode($generator),
+		new PartialCall('Subject', 'pub', [ArgumentPlaceholder::Single, ArgumentPlaceholder::Variadic])->generateCode($generator),
 	);
 	// named arguments
 	Assert::same(
 		'trim(string: ?, characters: 1)',
-		(new PartialCall(null, 'trim', ['string' => ArgumentPlaceholder::Single, 'characters' => 1]))->generateCode($generator),
+		new PartialCall(null, 'trim', ['string' => ArgumentPlaceholder::Single, 'characters' => 1])->generateCode($generator),
 	);
 	// placeholder on a method call
 	Assert::same(
 		"\$this->getService('a')->pub(?)",
-		(new PartialCall(new Reference('a'), 'pub', [ArgumentPlaceholder::Single]))->generateCode($generator),
+		new PartialCall(new Reference('a'), 'pub', [ArgumentPlaceholder::Single])->generateCode($generator),
 	);
 });
 
@@ -118,43 +118,43 @@ test('complete() of expression target returns a new instance, original is untouc
 
 testException('complete(): invalid class name', function () {
 	[$resolver] = harness();
-	(new PartialCall('Foo Bar', 'm'))->complete($resolver);
+	new PartialCall('Foo Bar', 'm')->complete($resolver);
 }, DI\ServiceCreationException::class, "Expected a valid class name, 'Foo Bar' given.");
 
 
 testException('complete(): invalid method name', function () {
 	[$resolver] = harness();
-	(new PartialCall(Subject::class, 'foo bar'))->complete($resolver);
+	new PartialCall(Subject::class, 'foo bar')->complete($resolver);
 }, DI\ServiceCreationException::class, "Expected a valid method name, 'foo bar' given.");
 
 
 testException('complete(): invalid function name', function () {
 	[$resolver] = harness();
-	(new PartialCall(null, 'foo bar'))->complete($resolver);
+	new PartialCall(null, 'foo bar')->complete($resolver);
 }, DI\ServiceCreationException::class, "Expected a valid function name, 'foo bar' given.");
 
 
 testException('complete(): unknown class', function () {
 	[$resolver] = harness();
-	(new PartialCall('Unknown', 'm'))->complete($resolver);
+	new PartialCall('Unknown', 'm')->complete($resolver);
 }, DI\ServiceCreationException::class, "Class 'Unknown' not found.");
 
 
 testException('complete(): non-public method', function () {
 	[$resolver] = harness();
-	(new PartialCall(Subject::class, 'priv'))->complete($resolver);
+	new PartialCall(Subject::class, 'priv')->complete($resolver);
 }, DI\ServiceCreationException::class, 'Subject::priv() is not callable.');
 
 
 testException('complete(): reference to missing service inside target', function () {
 	[$resolver] = harness();
-	(new PartialCall(new Reference('missing'), 'm'))->complete($resolver);
+	new PartialCall(new Reference('missing'), 'm')->complete($resolver);
 }, DI\ServiceCreationException::class, "Reference to missing service 'missing'.");
 
 
 testException('complete(): plain arguments without any placeholder are rejected', function () {
 	[$resolver] = harness();
-	(new PartialCall(null, 'trim', [1, 2]))->complete($resolver);
+	new PartialCall(null, 'trim', [1, 2])->complete($resolver);
 }, DI\ServiceCreationException::class, 'First-class callable trim() must contain at least one placeholder (? or ...).');
 
 

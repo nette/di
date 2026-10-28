@@ -15,7 +15,7 @@ require __DIR__ . '/../bootstrap.php';
 
 // Statement is a final Expression, the base of no node
 Assert::same(Expression::class, get_parent_class(Statement::class));
-Assert::true((new ReflectionClass(Statement::class))->isFinal());
+Assert::true(new ReflectionClass(Statement::class)->isFinal());
 
 // every node extends Expression directly
 foreach ([

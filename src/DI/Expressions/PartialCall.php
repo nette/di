@@ -62,7 +62,7 @@ final class PartialCall extends Expression
 
 			// a missing method is tolerated because of magic __callStatic()
 			if (method_exists($this->target, $this->name)
-				&& !(new \ReflectionMethod($this->target, $this->name))->isPublic()
+				&& !new \ReflectionMethod($this->target, $this->name)->isPublic()
 			) {
 				throw new ServiceCreationException(sprintf('%s::%s() is not callable.', $this->target, $this->name));
 			}
