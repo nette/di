@@ -90,3 +90,13 @@ Assert::same(
 );
 
 Assert::false(DependencyChecker::isExpired(...$compiler->exportDependencies()));
+
+
+// internal classes have no file
+class Dep2 extends ArrayObject
+{
+}
+
+$compiler = new DI\Compiler;
+$compiler->addDependencies([new ReflectionClass(Dep2::class)]);
+Assert::same([__FILE__ => filemtime(__FILE__)], $compiler->exportDependencies()[2]);
