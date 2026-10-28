@@ -123,8 +123,8 @@ class ContainerLoader
 			return $class; // included outside of this loader
 		}
 
-		if (function_exists('opcache_invalidate')) {
-			@opcache_invalidate($file, force: true); // @ can be restricted; the file may have been rebuilt by another process
+		if (isset(self::$loaded[$file]) && function_exists('opcache_invalidate')) {
+			@opcache_invalidate($file, force: true); // @ can be restricted; the file was rebuilt by another process
 		}
 
 		$declared = @include $file; // @ - error escalated to exception
