@@ -104,11 +104,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			}
 
 			foreach (Helpers::filterArguments($config->setup) as $setup) {
-				if (is_array($setup)) {
-					$setup = new Statement(key($setup), array_values($setup));
-				}
-
-				$definition->setup($setup);
+				$definition->setup(self::createSetup($setup));
 			}
 		}
 
@@ -168,11 +164,7 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 			}
 
 			foreach (Helpers::filterArguments($config->setup) as $setup) {
-				if (is_array($setup)) {
-					$setup = new Statement(key($setup), array_values($setup));
-				}
-
-				$resultDef->setup($setup);
+				$resultDef->setup(self::createSetup($setup));
 			}
 		}
 
@@ -234,6 +226,24 @@ final class ServicesExtension extends Nette\DI\CompilerExtension
 				}
 			}
 		}
+	}
+
+
+	/**
+	 * A setup step as written in the configuration; [member => value] is an assignment such as
+	 * $prop = value or @service::prop = value.
+	 * @param  string|array<mixed>|Nette\DI\Expression  $setup
+	 */
+	private static function createSetup(string|array|Nette\DI\Expression $setup): string|Nette\DI\Expression
+	{
+		if (!is_array($setup)) {
+			return $setup;
+		}
+
+		$member = explode('::', (string) key($setup), 2);
+		return isset($member[1])
+			? Helpers::assignMember(Helpers::createTarget($member[0]), $member[1], current($setup))
+			: new Statement(key($setup), array_values($setup));
 	}
 
 

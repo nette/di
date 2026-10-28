@@ -89,7 +89,6 @@ Assert::equal(
 
 // constants
 $data = $adapter->load(Tester\FileMock::create('
-- Foo::Bar
 - ArrayIterator::STD_PROP_LIST
 - "ArrayIterator::STD_PROP_LIST"
 - ::PHP_INT_MAX
@@ -98,13 +97,26 @@ $data = $adapter->load(Tester\FileMock::create('
 
 Assert::equal(
 	[
-		'Foo::Bar',
 		ArrayIterator::STD_PROP_LIST,
 		'ArrayIterator::STD_PROP_LIST',
 		PHP_INT_MAX,
 		new Statement('ArrayIterator::STD_PROP_LIST'),
 	],
 	$data,
+);
+
+Assert::exception(
+	fn() => $adapter->load(Tester\FileMock::create('- Foo::Bar', 'neon')),
+	Nette\DI\InvalidConfigurationException::class,
+	"Constant 'Foo::Bar' is not defined (used in '%a%')",
+);
+
+
+// static properties
+Assert::equal(
+	[new Nette\DI\Expressions\PropertyAccess('ArrayIterator', 'foo', static: true), 'ArrayIterator::$foo'],
+	$adapter->load(Tester\FileMock::create('- ArrayIterator::$foo
+- "ArrayIterator::$foo"', 'neon')),
 );
 
 

@@ -20,7 +20,7 @@ services:
 			- ::globtest(7)
 
 			# local properties
-			- @lorem::$test=null
+			- @lorem::test = null
 			- [@self, $test](true)
 			- $test = false
 			- $%property%(8)
@@ -31,10 +31,10 @@ services:
 			- Ipsum::$staticTest(9)
 
 			# other service property
-			- @ipsum::$%property%(Lorem())
+			- @ipsum::%property% = Lorem()
 
 			# rich
-			- Ipsum(a)::test
+			- Ipsum(a)::test()
 			- Ipsum(b)::test(10)
 
 			# object

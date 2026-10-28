@@ -9,8 +9,8 @@ namespace Nette\DI\Config\Adapters;
 
 use Nette;
 use Nette\DI\Definitions\Statement;
-use Nette\DI\Expression;
-use Nette\DI\Expressions\{ArgumentPlaceholder, PartialCall};
+use Nette\DI\{Expression, Helpers};
+use Nette\DI\Expressions\{ArgumentPlaceholder, PartialCall, PropertyAccess};
 use Nette\Neon;
 use Nette\Neon\{Nodes, Place};
 use function count, is_array, is_string, sprintf;
@@ -60,20 +60,24 @@ final class NeonEvaluator extends Neon\Evaluator
 	protected function evaluateEntity(Nodes\EntityNode $node, Place $place): Expression
 	{
 		[$head, $attributes] = $this->evaluateParts($node);
-		if ($attributes !== [ArgumentPlaceholder::Variadic]) {
-			return new Statement($head, $attributes);
-		}
+		if (is_string($head) && str_contains($head, '::')) { // Class::method(), @service::member::method(), ::function()
+			$members = explode('::', $head);
+			$target = Helpers::createTarget(array_shift($members));
+			$name = array_pop($members);
+			return self::createCall(self::accessMembers($target, $members), $name, $attributes);
 
-		$callable = new Statement($head)->getEntity(); // normalizes Class::method, @service::method, ::function
-		if (!is_array($callable)) {
+		} elseif ($attributes === [ArgumentPlaceholder::Variadic]) {
 			throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$head(...)' in config file (used in '$this->file')");
 		}
 
-		return new PartialCall($callable[0] === '' ? null : $callable[0], $callable[1]);
+		return new Statement($head, $attributes);
 	}
 
 
-	/** Each link calls a method on the result of the links before it. */
+	/**
+	 * Each link continues with the members of the result of the links before it; the last member of a link
+	 * is called when the link has parentheses, otherwise it is read.
+	 */
 	protected function evaluateChain(Nodes\EntityChainNode $node): Expression
 	{
 		$expression = null;
@@ -84,9 +88,17 @@ final class NeonEvaluator extends Neon\Evaluator
 			}
 
 			[$head, $attributes] = $this->evaluateParts($link);
-			$expression = $attributes === [ArgumentPlaceholder::Variadic]
-				? new PartialCall($expression, ltrim($head, ':'))
-				: new Statement([$expression, ltrim($head, ':')], $attributes);
+			if (!is_string($head) || !str_starts_with($head, '::')) { // text glued after the parentheses, such as foo(x);
+				$expression = self::createCall($expression, ltrim((string) $head, ':'), $attributes);
+				continue;
+			}
+
+			$members = explode('::', substr($head, 2));
+			$name = array_pop($members);
+			$expression = self::accessMembers($expression, $members);
+			$expression = $link->attributes === null
+				? Helpers::accessMember($expression, $name)
+				: self::createCall($expression, $name, $attributes);
 		}
 		return $expression;
 	}
@@ -95,12 +107,14 @@ final class NeonEvaluator extends Neon\Evaluator
 	protected function evaluateItem(Nodes\ArrayItemNode $item): mixed
 	{
 		$value = parent::evaluateItem($item);
-		if ($item->value instanceof Nodes\LiteralNode
-			&& is_string($value)
-			&& preg_match('#^([\w\\\]*)::[A-Z]\w+$#D', $value)
-			&& defined(ltrim($value, ':'))
-		) {
-			$value = constant(ltrim($value, ':'));
+		if ($item->value instanceof Nodes\LiteralNode && is_string($value)) {
+			if (preg_match('#^[\w\\\]*::[A-Z]\w+$#D', $value)) {
+				$value = defined(ltrim($value, ':'))
+					? constant(ltrim($value, ':'))
+					: throw new Nette\DI\InvalidConfigurationException("Constant '$value' is not defined (used in '$this->file')");
+			} elseif (preg_match('#^([\w\\\]+)::\$(\w+)$#D', $value, $m)) {
+				$value = new PropertyAccess($m[1], $m[2], static: true);
+			}
 		}
 
 		$key = match (true) {
@@ -160,6 +174,31 @@ final class NeonEvaluator extends Neon\Evaluator
 			}
 		});
 		return [$head, $attributes];
+	}
+
+
+	/** @param  list<string>  $members */
+	private static function accessMembers(Expression|string $target, array $members): Expression|string
+	{
+		foreach ($members as $member) {
+			$target = Helpers::accessMember($target, $member);
+		}
+		return $target;
+	}
+
+
+	/**
+	 * A member with parentheses: a call, or the assignment to a $property with the value in parentheses.
+	 * @param  array<mixed>  $attributes
+	 */
+	private static function createCall(Expression|string $target, string $name, array $attributes): Expression
+	{
+		return match (true) {
+			$attributes === [ArgumentPlaceholder::Variadic] => new PartialCall($target === '' ? null : $target, $name),
+			str_starts_with($name, '$') && !$attributes => Helpers::accessMember($target, $name),
+			str_starts_with($name, '$') && count($attributes) === 1 => Helpers::assignMember($target, $name, reset($attributes)),
+			default => new Statement([$target, $name], $attributes),
+		};
 	}
 
 

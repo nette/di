@@ -37,8 +37,12 @@ The translation is spread across phases by how complex the string is:
 - `filterArguments` (phase A) only catches a **bare** `@name`/`@Type` (regex
   `#^@[\w\\]+$#D`) → `new Reference(...)`. It does **not** catch `@foo::bar`.
 - `convertReferences` (phase B, complete) is the smart pass: `@service` → `Reference`;
-  `@service::CONST` → a `Class::CONST` **literal**; `@service::property` → a `Statement`
-  reading the property; `@@x` → the literal `@x`.
+  each further `::member` goes through `Helpers::accessMember()`, the same convention the
+  NEON chains use: `::CONST` (a capital first) → `ConstantFetch`, `::$prop` → a static
+  `PropertyAccess` on the type, `::prop` → a `PropertyAccess` reading the property;
+  `@@x` → the literal `@x`.
+- A member written without parentheses that the class has only as a method fails with
+  a hint to add `()` (`PropertyAccess::checkIsNotMethod`).
 - A `Reference` may hold a **name** (`isName`), a **type** (`isType` — contains `\`,
   so a namespaceless `@Foo` is a *name* reference, not a type), or **self**
   (`isSelf`). `Resolver::normalizeReference` (in complete) verifies a name reference
