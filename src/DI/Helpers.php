@@ -34,7 +34,18 @@ final class Helpers
 		if (is_array($var)) {
 			$res = [];
 			foreach ($var as $key => $val) {
-				$res[self::expand($key, $params, $recursive, $path)] = self::expand($val, $params, $recursive, [...$path, $key]);
+				if ($val instanceof Definitions\Statement && $val->getEntity() === '...') { // spread ...(%array%)
+					$items = self::expand($val->arguments[0] ?? null, $params, $recursive, [...$path, $key]);
+					$res = is_array($items)
+						? [...$res, ...$items]
+						: throw new Nette\InvalidArgumentException(sprintf(
+							'Spread operator ...() expects an array known at compile time, %s given%s.',
+							get_debug_type($items),
+							self::formatLocation($path),
+						));
+				} else {
+					$res[self::expand($key, $params, $recursive, $path)] = self::expand($val, $params, $recursive, [...$path, $key]);
+				}
 			}
 			return $res;
 
@@ -143,11 +154,18 @@ final class Helpers
 				throw new Nette\InvalidArgumentException(sprintf(
 					"Missing parameter '%s'%s.",
 					$parameter,
-					$location ? " in '" . implode("\u{a0}›\u{a0}", $location) . "'" : '',
+					self::formatLocation($location),
 				));
 			}
 		}
 		return $val;
+	}
+
+
+	/** @param  list<int|string>  $location */
+	private static function formatLocation(array $location): string
+	{
+		return $location ? " in '" . implode("\u{a0}›\u{a0}", $location) . "'" : '';
 	}
 
 
