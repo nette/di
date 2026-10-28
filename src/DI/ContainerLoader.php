@@ -29,7 +29,7 @@ class ContainerLoader
 
 	/**
 	 * Loads the container class, generating it if not already cached. Returns the class name.
-	 * @param  callable(Compiler): ?string  $generator
+	 * @param  callable(Compiler): (string|void|null)  $generator
 	 * @return class-string<Container>
 	 */
 	public function load(callable $generator, mixed $key = null): string
@@ -56,7 +56,7 @@ class ContainerLoader
 
 	/**
 	 * Includes the file at most once; it is never rebuilt.
-	 * @param  (\Closure(Compiler): ?string)  $generator
+	 * @param  (\Closure(Compiler): (string|void|null))  $generator
 	 */
 	private function loadOnce(string $class, string $file, \Closure $generator): void
 	{
@@ -79,7 +79,7 @@ class ContainerLoader
 	/**
 	 * Rebuilds the file when expired and includes it whenever its content has not been loaded yet.
 	 * Every build declares a fresh class (the file returns its name), as PHP cannot redeclare a loaded one.
-	 * @param  (\Closure(Compiler): ?string)  $generator
+	 * @param  (\Closure(Compiler): (string|void|null))  $generator
 	 */
 	private function loadCurrent(string $class, string $file, \Closure $generator): string
 	{
@@ -144,7 +144,7 @@ class ContainerLoader
 	}
 
 
-	/** @param  (\Closure(Compiler): ?string)  $generator */
+	/** @param  (\Closure(Compiler): (string|void|null))  $generator */
 	private function writeContainer(string $class, string $file, \Closure $generator, ?string $returnClass = null): void
 	{
 		[$code, $meta] = $this->generate($class, $generator);
@@ -221,14 +221,17 @@ class ContainerLoader
 
 
 	/**
-	 * @param  callable(Compiler): ?string  $generator
+	 * @param  callable(Compiler): (string|void|null)  $generator
 	 * @return array{string, string} code, file
 	 */
 	protected function generate(string $class, callable $generator): array
 	{
 		$compiler = new Compiler;
 		$compiler->setClassName($class);
-		$code = $generator(...[&$compiler]) ?? $compiler->compile();
+		$code = $generator(...[&$compiler]);
+		if (!is_string($code)) {
+			$code = $compiler->compile();
+		}
 		return [
 			"<?php\n$code",
 			serialize($compiler->exportDependencies()),
