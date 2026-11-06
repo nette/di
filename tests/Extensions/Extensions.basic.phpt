@@ -62,6 +62,6 @@ foo:
 ');
 
 
-Assert::same('hello', $container->parameters['foo']);
-Assert::same('test', $container->parameters['bar']);
-Assert::same(['services', 'parameters', 'first', 'extensions', 'foo', 'bar'], $container->parameters['first']);
+Assert::same('hello', $container->getParameters()['foo']);
+Assert::same('test', $container->getParameters()['bar']);
+Assert::same(['services', 'parameters', 'first', 'extensions', 'foo', 'bar'], $container->getParameters()['first']);

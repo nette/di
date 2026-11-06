@@ -682,7 +682,7 @@ class Resolver
 
 			if ($res !== null || $parameter->isOptional()) {
 				return $res;
-			} elseif (class_exists($class) || interface_exists($class)) {
+			} elseif (class_exists($class ?? '') || interface_exists($class ?? '')) {
 				throw new ServiceCreationException(sprintf(
 					'Service of type %s required by %s not found. Did you add it to configuration file?',
 					$class,

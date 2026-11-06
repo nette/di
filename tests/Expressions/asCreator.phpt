@@ -37,7 +37,7 @@ function harness(): array
 function creatorCode(Statement $creator, ?string $type): string
 {
 	[$builder, , $generator] = harness();
-	$def = $builder->addDefinition('x')->setFactory($creator);
+	$def = $builder->addDefinition('x')->setCreator($creator);
 	if ($type !== null) {
 		$def->setType($type);
 	}

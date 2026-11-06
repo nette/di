@@ -34,7 +34,18 @@ overrides:
 			- src/DI/Container.php
 			- src/DI/Extensions/DefinitionSchema.php
 			- src/DI/Extensions/DIExtension.php
-		upgrading: {declarations: {deprecatedClass: keep, deprecatedMember: keep}}
+		upgrading: {api: keep, declarations: {deprecatedClass: keep, deprecatedMember: keep}}
+
+	- # the tests exercise the deprecated API, or read what only it exposes
+		paths:
+			- tests/Compiler/CompilerExtension.validateConfig.phpt
+			- tests/Compiler/config.phpt
+			- tests/Config/Compiler.loadConfig.include.phpt
+			- tests/Config/ConfigHelpers.merge.phpt
+			- tests/Extensions/DI.export.parameters.phpt
+			- tests/Extensions/Parameters.phpt
+			- tests/Resolver/resolveArguments.phpt
+		upgrading: {api: keep}
 
 	- # renaming the parameters would break calls naming def:
 		paths: [src/DI/Extensions/DefinitionSchema.php]
