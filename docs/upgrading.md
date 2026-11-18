@@ -1,5 +1,40 @@
 # Upgrading nette/di
 
+## 3.3.0
+
+- **Removed** a `@return` annotation on a service factory method (deprecated since 3.1.0): declare a native return type; the annotation is no longer read, so the type of the service is unknown (67c9fde9)
+- **Removed** `%parameters%` in configuration (deprecated since 3.2.0): use the `@container::getParameters()` call; using it throws `Nette\DeprecatedException` (8dde4cf5)
+- **Removed** passing arguments to a service reference in configuration, as in `@service(args)` (deprecated since 3.2.4): pass the arguments where the service is defined; using it throws `Nette\DI\ServiceCreationException` (8dde4cf5)
+- **Renamed** the NEON placeholder `...` in entity arguments → `_`; using the old form throws `Nette\DI\InvalidConfigurationException` (deprecated since 3.1.0) (8dde4cf5)
+- **Renamed** `Nette\DI\Definitions\Definition` → `Nette\DI\Definition`; the old name is silently deprecated (alias since 3.2.8) (840c118b)
+- **Renamed** `Nette\DI\Definitions\Reference` → `Nette\DI\Expressions\Reference`; the old name is silently deprecated (68510e1e)
+- **Renamed** `Nette\DI\Autowiring` → `Nette\DI\Compiler\Autowiring`; the old name is silently deprecated (83957a81)
+- **Renamed** `Nette\DI\DependencyChecker` → `Nette\DI\Compiler\DependencyChecker`; the old name is silently deprecated (83957a81)
+- **Renamed** `Nette\DI\PhpGenerator` → `Nette\DI\Compiler\PhpGenerator`; the old name is silently deprecated (83957a81)
+- **Renamed** `Nette\DI\Resolver` → `Nette\DI\Compiler\Resolver` (marked @internal); it is the parameter type of `Nette\DI\Definition::complete()` and `Nette\DI\Definition::resolveType()`; the old name is silently deprecated (83957a81)
+- **Renamed** `Nette\DI\ContainerBuilder::THIS_CONTAINER` → `Nette\DI\ContainerBuilder::ThisContainer`; using the old name triggers `E_USER_DEPRECATED` (deprecated since 3.1.0) (8668f694)
+- **Renamed** `Nette\DI\ContainerBuilder::THIS_SERVICE` → `Nette\DI\ContainerBuilder::ThisService`; using the old name triggers `E_USER_DEPRECATED` (deprecated since 3.1.0) (8668f694)
+- **Renamed** `Nette\DI\Definitions\Reference::SELF` → `Nette\DI\Expressions\Reference::Self`; using the old name triggers `E_USER_DEPRECATED` (deprecated since 3.1.0) (8668f694)
+- **Renamed** `Nette\DI\DependencyChecker::VERSION` → `Nette\DI\Compiler\DependencyChecker::Version`; using the old name triggers `E_USER_DEPRECATED` (deprecated since 3.1.0) (8668f694)
+- **Renamed** `Nette\DI\Extensions\InjectExtension::TAG_INJECT` → `Nette\DI\Extensions\InjectExtension::TagInject`; using the old name triggers `E_USER_DEPRECATED` (deprecated since 3.1.0) (8668f694)
+- **Replaced** `Nette\DI\Extensions\ExtensionsExtension::loadConfiguration()` with `Nette\DI\Extensions\ExtensionsExtension::doSetup()`: extensions are now registered by a Setup-phase hook; affects subclasses overriding `loadConfiguration()`, which no longer replaces the registration (77a8a356)
+- **Replaced** `Nette\DI\Extensions\ParametersExtension::loadConfiguration()` with `Nette\DI\Extensions\ParametersExtension::doExpandParameters()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (77a8a356)
+- **Replaced** `Nette\DI\Extensions\ParametersExtension::afterCompile()` with `Nette\DI\Extensions\ParametersExtension::doGenerateStaticParameters()`, `Nette\DI\Extensions\ParametersExtension::doGenerateDynamicParameters()` and `Nette\DI\Extensions\ParametersExtension::doAddDynamicValidators()`: the work runs as `#[Nette\DI\Attributes\Hook]` handlers; calling the old method does nothing (5591b8c7)
+- **Replaced** `Nette\DI\Extensions\ServicesExtension::loadConfiguration()` with `Nette\DI\Extensions\ServicesExtension::doRegister()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (77a8a356)
+- **Replaced** `Nette\DI\Extensions\InjectExtension::beforeCompile()` with `Nette\DI\Extensions\InjectExtension::doProcessInjectAttributes()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (77a8a356)
+- **Replaced** `Nette\DI\Extensions\DIExtension::loadConfiguration()` with `Nette\DI\Extensions\DIExtension::doRegisterExcludedClasses()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (167134a6)
+- **Replaced** `Nette\DI\Extensions\DIExtension::beforeCompile()` with `Nette\DI\Extensions\DIExtension::doEnableLazyProxies()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (167134a6)
+- **Replaced** `Nette\DI\Extensions\DIExtension::afterCompile()` with `Nette\DI\Extensions\DIExtension::doConfigureContainerClass()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (167134a6)
+- **Replaced** `Nette\DI\Extensions\DecoratorExtension::beforeCompile()` with `Nette\DI\Extensions\DecoratorExtension::doApplyDecorations()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (167134a6)
+- **Replaced** `Nette\DI\Extensions\SearchExtension::loadConfiguration()` with `Nette\DI\Extensions\SearchExtension::doScanDirectories()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (77a8a356)
+- **Replaced** `Nette\DI\Extensions\SearchExtension::beforeCompile()` with `Nette\DI\Extensions\SearchExtension::doDiscoverServices()`: the work runs as a `#[Nette\DI\Attributes\Hook]` handler; calling the old method does nothing (77a8a356)
+- **Deprecated** the `@inject` annotation on a property: use `#[Nette\DI\Attributes\Inject]` with a native property type; using it triggers `E_USER_DEPRECATED` (3a4dd947)
+- **Deprecated** `Nette\DI\Definition::generateMethod()`: implement `generateCode(Nette\DI\Compiler\PhpGenerator $generator): string` returning the method body instead; the method is no longer abstract; the old name is silently deprecated (723f49e7)
+- **Deprecated** `Nette\DI\Compiler\PhpGenerator::formatStatement()`: call `generateCode()` on the `Nette\DI\Definitions\Statement` instead; the old name is silently deprecated (f11552da)
+- **Signature** `Nette\DI\Definitions\ServiceDefinition::getCreator()` now returns `Nette\DI\Expression`; previously `Nette\DI\Definitions\Statement`; a first-class callable `create: foo(...)` yields `Nette\DI\Expressions\PartialCall`, so check `instanceof Nette\DI\Definitions\Statement` before reading its entity or arguments (e4ff07a0)
+- **Signature** `Nette\DI\Definitions\ServiceDefinition::getFactory()` now returns `Nette\DI\Expression`; previously `Nette\DI\Definitions\Statement`; check `instanceof Nette\DI\Definitions\Statement` before reading its entity or arguments (e4ff07a0)
+- **Changed** `Nette\DI\Compiler::addConfig()` called after the parameters are expanded now expands the added configuration immediately and throws `Nette\InvalidStateException` for a `parameters` section; previously the configuration stayed unexpanded and a late `parameters` section was ignored (165fd5db)
+
 ## 3.2.8
 
 - **Renamed** `Nette\DI\Definitions\Definition` → `Nette\DI\Definition`; the old name still works as an alias (ab66fdcd)
