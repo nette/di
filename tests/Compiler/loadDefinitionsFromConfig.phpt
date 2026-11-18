@@ -11,7 +11,7 @@ require __DIR__ . '/../bootstrap.php';
 
 $builder = new DI\ContainerBuilder;
 $config = (new DI\Config\Adapters\NeonAdapter)->load(__DIR__ . '/files/compiler.parseServices.namespace.neon');
-(new DI\Compiler($builder))->loadDefinitionsFromConfig($config['services']);
+new DI\Compiler($builder)->loadDefinitionsFromConfig($config['services']);
 
 
 Assert::true($builder->hasDefinition('comments'));

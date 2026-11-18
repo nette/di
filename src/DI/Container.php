@@ -182,10 +182,10 @@ class Container
 			return $this->getServiceType($this->aliases[$name]);
 
 		} elseif (isset($this->methods[$method])) {
-			return (string) (new \ReflectionMethod($this, $method))->getReturnType();
+			return (string) new \ReflectionMethod($this, $method)->getReturnType();
 
 		} elseif ($cb = $this->factories[$name] ?? null) {
-			return (string) (new \ReflectionFunction($cb))->getReturnType();
+			return (string) new \ReflectionFunction($cb)->getReturnType();
 
 		} else {
 			throw new MissingServiceException(sprintf("Type of service '%s' not known.", $name));

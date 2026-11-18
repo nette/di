@@ -49,7 +49,7 @@ final class ServiceCollection extends Expression
 		$references = [];
 		foreach (array_unique($names) as $name) {
 			if ($name !== $current) {
-				$references[$name] = (new Reference($name))->complete($resolver);
+				$references[$name] = new Reference($name)->complete($resolver);
 			}
 		}
 

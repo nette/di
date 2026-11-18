@@ -12,29 +12,29 @@ require __DIR__ . '/../bootstrap.php';
 
 
 test('plain string entity is kept', function () {
-	Assert::same('Foo', (new Statement('Foo'))->getEntity());
+	Assert::same('Foo', new Statement('Foo')->getEntity());
 });
 
 
 test('Class::method string is normalized to a tuple', function () {
-	Assert::same(['Foo', 'bar'], (new Statement('Foo::bar'))->getEntity());
+	Assert::same(['Foo', 'bar'], new Statement('Foo::bar')->getEntity());
 });
 
 
 test('PHP literal (contains ?) is not split on ::', function () {
-	Assert::same('Foo::CONST . ?', (new Statement('Foo::CONST . ?'))->getEntity());
+	Assert::same('Foo::CONST . ?', new Statement('Foo::CONST . ?')->getEntity());
 });
 
 
 test('@service string is normalized to a Reference', function () {
-	$entity = (new Statement('@foo'))->getEntity();
+	$entity = new Statement('@foo')->getEntity();
 	Assert::type(Reference::class, $entity);
 	Assert::same('foo', $entity->getValue());
 });
 
 
 test('@service in a tuple head is normalized to a Reference', function () {
-	[$head, $member] = (new Statement(['@foo', 'bar']))->getEntity();
+	[$head, $member] = new Statement(['@foo', 'bar'])->getEntity();
 	Assert::type(Reference::class, $head);
 	Assert::same('foo', $head->getValue());
 	Assert::same('bar', $member);
@@ -42,20 +42,20 @@ test('@service in a tuple head is normalized to a Reference', function () {
 
 
 test('null entity is allowed (used for argument-only statements)', function () {
-	Assert::null((new Statement(null, [1, 2]))->getEntity());
-	Assert::same([1, 2], (new Statement(null, [1, 2]))->arguments);
+	Assert::null(new Statement(null, [1, 2])->getEntity());
+	Assert::same([1, 2], new Statement(null, [1, 2])->arguments);
 });
 
 
 test('Expression in a tuple head is allowed', function () {
 	$inner = new Statement('Foo');
-	Assert::same([$inner, 'bar'], (new Statement([$inner, 'bar']))->getEntity());
+	Assert::same([$inner, 'bar'], new Statement([$inner, 'bar'])->getEntity());
 });
 
 
 test('tuple member is not validated by the constructor (checked later in complete())', function () {
 	// documents current behaviour: only the tuple head is type-checked here
-	Assert::equal([new Reference('a'), 123], (new Statement([new Reference('a'), 123]))->getEntity());
+	Assert::equal([new Reference('a'), 123], new Statement([new Reference('a'), 123])->getEntity());
 });
 
 

@@ -163,7 +163,7 @@ class Resolver
 					throw new ServiceCreationException(sprintf("Service '%s' does not match the expected service.", $val->getName()));
 				}
 
-				$val = (new Reference($val->getName()))->complete($this);
+				$val = new Reference($val->getName())->complete($this);
 			}
 		});
 		return $arguments;
@@ -181,7 +181,7 @@ class Resolver
 		foreach ($method->getParameters() as $param) {
 			$key = array_key_exists($param->name, $arguments) ? $param->name : $param->getPosition();
 			if (!$param->isVariadic() && array_key_exists($key, $arguments) && $param->getAttributes(\SensitiveParameter::class)) {
-				$code = (new PhpGenerator($this->builder))->formatPhp('/*sensitive{*/?/*}*/', [$arguments[$key]]);
+				$code = new PhpGenerator($this->builder)->formatPhp('/*sensitive{*/?/*}*/', [$arguments[$key]]);
 				$arguments[$key] = ContainerBuilder::literal($code);
 			}
 		}

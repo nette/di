@@ -18,12 +18,12 @@ Assert::with($loader, function () {
 });
 
 // ensure files are created
-$file = (new ReflectionClass('class1'))->getFileName();
+$file = new ReflectionClass('class1')->getFileName();
 Assert::true(is_file($file));
 Assert::true(is_file("$file.meta"));
 
 // load again
 Assert::with($loader, function () {
 	$class = $this->loadCurrent('class1', "$this->tempDirectory/class1.php", function () { Assert::fail('Should not be recreated'); });
-	Assert::same((new ReflectionClass('class1'))->getName(), $class);
+	Assert::same(new ReflectionClass('class1')->getName(), $class);
 });

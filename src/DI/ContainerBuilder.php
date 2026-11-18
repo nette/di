@@ -442,6 +442,6 @@ class ContainerBuilder
 				$val = new Expressions\Reference($val->getName());
 			}
 		});
-		return (new PhpGenerator($this))->formatPhp($statement, $args);
+		return new PhpGenerator($this)->formatPhp($statement, $args);
 	}
 }

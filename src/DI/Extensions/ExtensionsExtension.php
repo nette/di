@@ -49,7 +49,7 @@ class ExtensionsExtension extends Nette\DI\CompilerExtension
 				));
 			}
 
-			$this->compiler->addExtension($name, (new \ReflectionClass($class))->newInstanceArgs($args));
+			$this->compiler->addExtension($name, new \ReflectionClass($class)->newInstanceArgs($args));
 		}
 	}
 }

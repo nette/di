@@ -37,8 +37,8 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 
 		$this->file = $file;
 		return class_exists(Neon\Evaluator::class)
-			? (array) (new NeonEvaluator($file))->evaluate(Neon\Neon::parse($input)->value)
-			: $this->process((array) (new NeonVisitors($file))->decode($input));
+			? (array) new NeonEvaluator($file)->evaluate(Neon\Neon::parse($input)->value)
+			: $this->process((array) new NeonVisitors($file)->decode($input));
 	}
 
 
@@ -89,7 +89,7 @@ final class NeonAdapter implements Nette\DI\Config\Adapter
 				return new DI\Expressions\PartialCall($this->buildExpression($chain), ltrim($value, ':'));
 			}
 
-			$callable = (new Statement($value))->getEntity(); // normalizes Class::method, @service::method, ::function
+			$callable = new Statement($value)->getEntity(); // normalizes Class::method, @service::method, ::function
 			if (!is_array($callable)) {
 				throw new Nette\DI\InvalidConfigurationException("Cannot create closure for '$value(...)' in config file (used in '$this->file')");
 			}

@@ -30,7 +30,7 @@ $expire = function (string $file, int $mtime): void {
 	file_put_contents("$file.meta", serialize($meta));
 };
 
-$class = (new DI\ContainerLoader($tempDir))->getClassName($key);
+$class = new DI\ContainerLoader($tempDir)->getClassName($key);
 $file = "$tempDir/$class.php";
 
 
@@ -40,8 +40,8 @@ Assert::same(1, $generation);
 Assert::match($class . '_%h%', $first);
 Assert::true((new $first)->hasService('gen1'));
 Assert::true(class_exists($class, autoload: false));
-Assert::same($first, (new ReflectionClass($class))->getName());
-Assert::same(realpath($file), realpath((new ReflectionClass($first))->getFileName()));
+Assert::same($first, new ReflectionClass($class)->getName());
+Assert::same(realpath($file), realpath(new ReflectionClass($first)->getFileName()));
 
 
 // unchanged config: cache hit, no regeneration
@@ -58,7 +58,7 @@ Assert::notSame($first, $second);
 Assert::match($class . '_%h%', $second);
 Assert::true((new $second)->hasService('gen2'));
 Assert::true(class_exists($first, autoload: false));
-Assert::same($first, (new ReflectionClass($class))->getName()); // alias keeps pointing to the first one
+Assert::same($first, new ReflectionClass($class)->getName()); // alias keeps pointing to the first one
 
 
 // unchanged config after reload: the reloaded class is returned again, not the first one
@@ -90,7 +90,7 @@ file_put_contents($file, $thirdCode);
 
 // file compiled by an older version (declares the base name itself, returns nothing)
 $legacyDir = "$tempDir/legacy";
-$legacyClass = (new DI\ContainerLoader($legacyDir))->getClassName('legacy');
+$legacyClass = new DI\ContainerLoader($legacyDir)->getClassName('legacy');
 Nette\Utils\FileSystem::write("$legacyDir/$legacyClass.php", "<?php\nclass $legacyClass extends Nette\\DI\\Container {}\n");
 Nette\Utils\FileSystem::write("$legacyDir/$legacyClass.php.meta", file_get_contents("$file.meta"));
 $loader = new DI\ContainerLoader($legacyDir, autoRebuild: true);

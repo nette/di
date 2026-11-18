@@ -103,7 +103,7 @@ final class InjectExtension extends DI\CompilerExtension
 		$classes = [];
 		foreach (get_class_methods($class) as $name) {
 			if (str_starts_with($name, 'inject')) {
-				$classes[$name] = (new \ReflectionMethod($class, $name))->getDeclaringClass()->name;
+				$classes[$name] = new \ReflectionMethod($class, $name)->getDeclaringClass()->name;
 			}
 		}
 
@@ -123,7 +123,7 @@ final class InjectExtension extends DI\CompilerExtension
 	public static function getInjectProperties(string $class): array
 	{
 		$res = [];
-		foreach ((new \ReflectionClass($class))->getProperties() as $rp) {
+		foreach (new \ReflectionClass($class)->getProperties() as $rp) {
 			$hasAttr = $rp->getAttributes(DI\Attributes\Inject::class);
 			if ($hasAttr || DI\Helpers::parseAnnotation($rp, 'inject') !== null) {
 				if (!$hasAttr) {
