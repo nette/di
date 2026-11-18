@@ -287,6 +287,7 @@ abstract class CompilerExtension
 
 	/**
 	 * Processes extension configuration and registers services. Override in subclasses.
+	 * Deprecated: use #[Hook(Phase::Register)]
 	 * @return void
 	 */
 	public function loadConfiguration()
@@ -296,6 +297,7 @@ abstract class CompilerExtension
 
 	/**
 	 * Adjusts the container before compilation. Override in subclasses.
+	 * Deprecated: use #[Hook(Phase::Modify)]
 	 * @return void
 	 */
 	public function beforeCompile()
@@ -305,6 +307,7 @@ abstract class CompilerExtension
 
 	/**
 	 * Adjusts the generated container class. Override in subclasses.
+	 * Deprecated: use #[Hook(Phase::Compile)]
 	 * @return void
 	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
