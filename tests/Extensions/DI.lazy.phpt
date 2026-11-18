@@ -2,7 +2,6 @@
 
 /**
  * Test: DIExtension lazy services
- * @phpVersion 8.4
  */
 
 use Nette\DI;
